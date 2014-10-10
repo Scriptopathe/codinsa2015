@@ -173,7 +173,7 @@ namespace Clank.Core.Model.Semantic
                 // Macro ?
                 decl.Func.IsMacro = context.BlockName == Language.SemanticConstants.MacroBk;
                 
-                // Vérification de validité :
+                // Vérification de validité (si constructeur):
                 if(decl.Func.IsConstructor && decl.Func.ReturnType.BaseType != decl.Func.Owner)
                 {
                     string ownerFullName = decl.Func.Owner.GetFullNameAndGenericArgs();
@@ -183,6 +183,19 @@ namespace Clank.Core.Model.Semantic
                     string error = "Un constructeur doit avoir comme type de retour le type dont il est le constructeur. Attendu : " +
                         ownerFullName + ", Obtenu " + this.Types.FetchInstancedType(type, context);
                     this.Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
+
+                    if (StrictCompilation)
+                        throw new InvalidOperationException(error);
+                }
+
+                // Vérification d'accessibilité incohérente.
+                if(decl.Func.HasPrivateReturnTypeOrParameterType() && decl.Func.Owner != null && decl.Func.Owner.IsPublic)
+                {
+                    string error = "Accessibilité incohérente : le type '" + context.Container.GetFullName() +
+                        "' est public et contient une fonction '" + decl.Func.Name +
+                        "' de type dont le type de retour ou le type des arguments " +
+                        "est un type privé ou contient des types privés en paramètre générique.";
+                    Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
 
                     if (StrictCompilation)
                         throw new InvalidOperationException(error);
@@ -330,11 +343,24 @@ namespace Clank.Core.Model.Semantic
                     if (fromClass && preparse)
                         context.Container.InstanceVariables.Add(decl.Var.Name, decl.Var);
 
+                    // Vérifie que cette variable ne présente pas de symptome d'accessibilité incohérente.
+                    if (fromClass && !preparse && decl.Var.Type.IsPrivateOrHasPrivateGenericArgs() && context.Container.IsPublic)
+                    {
+                        string error = "Accessibilité incohérente : le type '" + context.Container.GetFullName() +
+                            "' est public et contient une variable '" + decl.Var.Name +
+                            "' de type '" + decl.Var.Type.GetFullName() +
+                            "' qui est un type privé ou contient des types privés en paramètres génériques.";
+                        Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
+
+                        if(StrictCompilation)
+                            throw new InvalidOperationException(error);
+                    }
+
                     return decl;
                 }
                 else
                 {
-                    string error = "Le type " + match.FindByIdentifier("Type").First().MatchedToken.ToReadableCode() + " n'existe pas dans le contexte actuel";
+                    string error = "Le type " + match.FindByIdentifier("Type").First().MatchedToken.ToReadableCode() + " n'existe pas dans le contexte actuel.";
                     Log.AddError(error, decl.Line, decl.Character, decl.Source);
                     throw new InvalidOperationException(error);
                 }
@@ -367,7 +393,7 @@ namespace Clank.Core.Model.Semantic
                         if (!grp.Operand1.Type.Equals(grp.Operand2.Type))
                         {
                             string error = "Impossible d'affecter une valeur de type " + grp.Operand2.Type.GetFullName() + " à une variable de type " +
-                                grp.Operand1.Type.GetFullName();
+                                grp.Operand1.Type.GetFullName() + ".";
 
                             Log.AddWarning(error, instructionToken.Line, instructionToken.Character, instructionToken.Source);
                             aff.Comment = error;
@@ -575,7 +601,7 @@ namespace Clank.Core.Model.Semantic
                 }
             }
 
-            throw new Clank.Core.Tokenizers.SyntaxError("Instruction mal formée", instructionToken.Line, instructionToken.Source);
+            throw new Clank.Core.Tokenizers.SyntaxError("Instruction mal formée.", instructionToken.Line, instructionToken.Source);
         }
 
         /// <summary>
@@ -641,7 +667,7 @@ namespace Clank.Core.Model.Semantic
                         return new Language.Typename() { Name = type, Type = Types.TypeInstances["Type"] };
                     }
 
-                    error = "Variable ou type : " + token.Content + " inexistant(e) dans le contexte actuel";
+                    error = "Variable ou type : " + token.Content + " inexistant(e) dans le contexte actuel.";
                     Log.AddError(error, token.Line, token.Character, token.Source);
                     throw new InvalidOperationException(error);
                 case TokenType.GenericType:
@@ -653,7 +679,7 @@ namespace Clank.Core.Model.Semantic
                     }
 
                     
-                    error = "Type générique : " + token.Content + " inexistant(e) dans le contexte actuel";
+                    error = "Type générique : " + token.Content + " inexistant(e) dans le contexte actuel.";
                     Log.AddError(error, token.Line, token.Character, token.Source);
                     throw new InvalidOperationException(error);
                 // List
@@ -703,7 +729,7 @@ namespace Clank.Core.Model.Semantic
                                         !(owner.GetFullName() == "State" && (context.BlockName == "write" || context.BlockName == "access")))
                                     {
                                         error = "La variable d'instance " + access.VariableName + " du type " + ctype.GetFullName() +
-                                            "existe mais n'est pas accessible dans le contexte actuel. (mot clef public manquant ?)";
+                                            " existe mais n'est pas accessible dans le contexte actuel. (mot clef public manquant ?).";
                                         Log.AddWarning(error, token.Line, token.Character, token.Source);
 
                                         if (StrictCompilation)

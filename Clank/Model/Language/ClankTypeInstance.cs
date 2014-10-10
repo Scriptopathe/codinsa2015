@@ -33,6 +33,25 @@ namespace Clank.Core.Model.Language
         {
             GenericArguments = new List<ClankTypeInstance>();
         }
+
+        /// <summary>
+        /// Retourne une valeur indiquant si ce type :
+        /// 1. est privé
+        /// OU
+        /// 2. a des paramètres génériques privés.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsPrivateOrHasPrivateGenericArgs()
+        {
+            if (!BaseType.IsPublic)
+                return true;
+            foreach(ClankTypeInstance inst in GenericArguments)
+            {
+                if (inst.IsPrivateOrHasPrivateGenericArgs())
+                    return true;
+            }
+            return false;
+        }
         /// <summary>
         /// Nom par lequel se référer à ce type.
         /// </summary>

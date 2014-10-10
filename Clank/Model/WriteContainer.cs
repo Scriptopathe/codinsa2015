@@ -59,8 +59,10 @@ namespace Clank.Core.Model
                     if(!decl.Func.IsPublic)
                         ParsingLog.AddWarning("Les fonctions contenues dans le block write doivent être publiques.",
                             instruction.Line, instruction.Character, instruction.Source);
-                    if (!decl.Func.ReturnType.BaseType.IsPublic)
-                        ParsingLog.AddWarning("Les types de retour des déclaration de fonction doivent être des types publics. (donné : " + decl.Func.ReturnType.GetFullName() + ")",
+                    if (decl.Func.ReturnType.IsPrivateOrHasPrivateGenericArgs())
+                        ParsingLog.AddWarning("Les types de retour des déclaration de fonction du bloc write doivent être des types publics" + 
+                            " et ne pas contenir de paramètre générique privé. (donné : "
+                            + decl.Func.ReturnType.GetFullName() + ")",
                             instruction.Line, instruction.Character, instruction.Source);
                     
                     Declarations.Add((Language.FunctionDeclaration)instruction);

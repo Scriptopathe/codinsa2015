@@ -195,8 +195,7 @@ main {
             // - Numérotation des lignes / identification correcte des fichiers (incorrect quand y'a un include).
             // - Instruction  : foreach(int a, v) { };
             // - Protections : state ne doit pas contenir de fonctions (quoique ?)
-            // -               public obligatoire dans access / write.
-            // -               type de retour et args de access / write : CLASSES PUBLIQUES !!!! Vérifier toute l'arborescence du type !
+            // -               type de retour / args des fonctions dans les classes publiques.
             // Remplir la todo-list !
             // TODO 2 : le retour de la vengeance :
             // - Doc.

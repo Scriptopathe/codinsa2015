@@ -73,6 +73,22 @@ namespace Clank.Core.Model.Language
         }
 
         /// <summary>
+        /// Retourne une valeur indiquant si la fonction a un type de retour privé ou 
+        /// des paramètres de types privés.
+        /// </summary>
+        /// <returns></returns>
+        public bool HasPrivateReturnTypeOrParameterType()
+        {
+            if (ReturnType.IsPrivateOrHasPrivateGenericArgs())
+                return true;
+            foreach(FunctionArgument arg in Arguments)
+            {
+                if (arg.ArgType.IsPrivateOrHasPrivateGenericArgs())
+                    return true;
+            }
+            return false;
+        }
+        /// <summary>
         /// Retourne une version instanciée de cette fonction avec les types génériques donnés.
         /// </summary>
         public Function Instanciate(List<ClankTypeInstance> genArgs)
