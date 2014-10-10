@@ -109,10 +109,11 @@ namespace Clank.Core.Generation
             List<OutputFile> outputFiles = new List<OutputFile>();
 
             // Lance le pré-processeur sur le script
-            string processedScript = Preprocessor.Run(script);
+            Dictionary<int, Generation.Preprocessor.Preprocessor.LineInfo> lineMapping = new Dictionary<int,Preprocessor.Preprocessor.LineInfo>();
+            string processedScript = Preprocessor.Run(script, ref lineMapping);
 
             // Crée les jetons d'expression à partir du script.
-            var tokens = Tokenizers.Tokenizer.Parse(processedScript);
+            var tokens = Tokenizers.Tokenizer.Parse(processedScript, lineMapping);
             var exprTokens = Tokenizers.ExpressionParser.Parse(tokens);
 
             // Crée la table des types à partir des jetons d'expression.

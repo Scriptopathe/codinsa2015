@@ -73,13 +73,13 @@ namespace Clank.Core.Tokenizers
         /// <summary>
         /// Crée une nouvelle instance de Token avec les paramètres passés en argument.
         /// </summary>
-        public Token(string content, TokenType type, int line, int charIndex)
+        public Token(string content, TokenType type, int line, int charIndex, string source)
         {
             Content = content;
             TkType = type;
             Line = line;
             Character = charIndex;
-            Source = "[memory]";
+            Source = source;
         }
 
         public override string ToString()

@@ -15,7 +15,7 @@ namespace Clank.Core.Tokenizers
         /// </summary>
         /// <param name="script"></param>
         /// <returns></returns>
-        public static List<Token> Parse(string script)
+        public static List<Token> Parse(string script, Dictionary<int, Generation.Preprocessor.Preprocessor.LineInfo> lineMappings)
         {
             List<Token> tokens = new List<Token>(); // jetons construits à partir du script
             List<Char> currentWord = new List<char>(); // mot en cours de "traitement"
@@ -25,18 +25,26 @@ namespace Clank.Core.Tokenizers
             bool isParsingOperator = false;
             bool isParsingComment = false;
             bool isEscapedChar =false;
-            int line = 0;
+            int _line = 0;
             int charIndex = 0;
+            int line;
+            string source;
+            
             script = script + " ";
             foreach(char chr in script)
             {
                 // Incrémente le compteur de ligne.
                 if(chr == '\n')
                 {
-                    line++;
+                    _line++;
                     charIndex = 0;
                 }
                 charIndex++;
+
+                // Récupère la ligne / source correcte depuis le mapping entre ligne du
+                // script final et ligne des scripts included.
+                line = lineMappings[_line].Line;
+                source = lineMappings[_line].Source;
 
                 // Ignore les caractères si c'est un commentaire.
                 if(isParsingComment)
@@ -64,7 +72,7 @@ namespace Clank.Core.Tokenizers
                     else if(isParsingOperator)
                     {
                         // On a fini de parser l'opérateur, on peut le terminer et parser un nouveau mot (number).
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex);
+                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
                         currentWord.Clear();
                         currentWord.Add(chr);
                         isParsingNumber = true;
@@ -90,7 +98,7 @@ namespace Clank.Core.Tokenizers
                     else if (isParsingOperator)
                     {
                         // On a fini de parser l'opérateur, on peut le terminer et parser un nouveau mot (bame).
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex);
+                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
                         currentWord.Clear();
                         currentWord.Add(chr);
                         isParsingName = true;
@@ -111,7 +119,7 @@ namespace Clank.Core.Tokenizers
                     // Nom / Number / Special char : l'opérateur les termine.
                     if(isParsingName)
                     {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex);
+                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex, source);
                         currentWord.Clear();
                         currentWord.Add(chr);
                         isParsingName = false;
@@ -120,7 +128,7 @@ namespace Clank.Core.Tokenizers
                     }
                     else if(isParsingNumber)
                     {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex);
+                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex, source);
                         currentWord.Clear();
                         currentWord.Add(chr);
                         isParsingNumber = false;
@@ -148,30 +156,30 @@ namespace Clank.Core.Tokenizers
                      // Nom / Number / Special char : l'opérateur les termine.
                     if(isParsingName)
                     {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex);
+                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex, source);
                         currentWord.Clear();
                         isParsingName = false;
                         tokens.Add(newToken);
                         if(!isIgnoredChar(chr))
-                            tokens.Add(new Token(chr.ToString(), type, line, charIndex));
+                            tokens.Add(new Token(chr.ToString(), type, line, charIndex, source));
                     }
                     else if(isParsingNumber)
                     {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex);
+                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex, source);
                         currentWord.Clear();
                         isParsingNumber = false;
                         tokens.Add(newToken);
                         if(!isIgnoredChar(chr))
-                            tokens.Add(new Token(chr.ToString(), type, line, charIndex));
+                            tokens.Add(new Token(chr.ToString(), type, line, charIndex, source));
                     }
                     else if(isParsingOperator)
                     {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex);
+                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
                         currentWord.Clear();
                         isParsingOperator = false;
                         tokens.Add(newToken);
                         if(!isIgnoredChar(chr))
-                            tokens.Add(new Token(chr.ToString(), type, line, charIndex));
+                            tokens.Add(new Token(chr.ToString(), type, line, charIndex, source));
                     }
                     else if(isParsingString)
                     {
@@ -181,7 +189,7 @@ namespace Clank.Core.Tokenizers
                     else if(!isIgnoredChar(chr)) // espaces, fin de lignes etc...
                     {
                         // A ce point, currentWord doit être vide.
-                        Token newToken = new Token(chr.ToString(), type, line, charIndex);
+                        Token newToken = new Token(chr.ToString(), type, line, charIndex, source);
       
                         tokens.Add(newToken);
                     }
@@ -193,7 +201,7 @@ namespace Clank.Core.Tokenizers
                     // Nom / Number / Special char : l'opérateur les termine.
                     if(isParsingName)
                     {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex);
+                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex, source);
                         currentWord.Clear();
                         isParsingName = false;
                         isParsingString = true;
@@ -201,7 +209,7 @@ namespace Clank.Core.Tokenizers
                     }
                     else if(isParsingNumber)
                     {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex);
+                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex, source);
                         currentWord.Clear();
                         isParsingNumber = false;
                         isParsingString = true;
@@ -209,7 +217,7 @@ namespace Clank.Core.Tokenizers
                     }
                     else if(isParsingOperator)
                     {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex);
+                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
                         currentWord.Clear();
                         isParsingOperator = false;
                         isParsingString = true;
@@ -224,7 +232,7 @@ namespace Clank.Core.Tokenizers
                         }
                         else
                         {
-                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.StringLiteral, line, charIndex);
+                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.StringLiteral, line, charIndex, source);
                             currentWord.Clear();
                             isParsingString = false;
                             tokens.Add(newToken);

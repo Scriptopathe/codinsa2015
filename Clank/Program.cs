@@ -40,7 +40,7 @@ main {
             { 
                 string CS = 'List';
                 string Python = 'List';
-
+                int haha = '6556';
             }
 
             string PATATE(int id)
@@ -179,12 +179,13 @@ main {
             List<GenerationTarget> clientTargets = new List<GenerationTarget>() { new GenerationTarget("CS", "Client.cs"),
                                                             new GenerationTarget("Python", "Client.py") };
             ProjectGenerator generator = new ProjectGenerator();
-
-            List<OutputFile> files2 = generator.Generate(System.IO.File.ReadAllText("samplescript.clank"), serverTarget, clientTargets, out generationLog);
+            // System.IO.File.ReadAllText("samplescript.clank")
+            List<OutputFile> files2 = generator.Generate("#include samplescript.clank", serverTarget, clientTargets, out generationLog);
             // Loader
             Generation.Preprocessor.MemoryIncludeLoader loader = new Generation.Preprocessor.MemoryIncludeLoader();
             loader.AddFile("myScript", s1);
             loader.AddFile("outside", s2);
+            loader.AddFile("main", script);
             generator.Preprocessor.ScriptIncludeLoader = loader;
 
             List<OutputFile> files = generator.Generate(script, serverTarget, clientTargets, out generationLog);
