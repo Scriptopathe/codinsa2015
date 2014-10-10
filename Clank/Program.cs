@@ -11,7 +11,7 @@ namespace Clank
         static void Main(string[] args)
         {
             #region New
-            string s1 = @"
+            string s1 = @" 
 
         public class Array<T>
         {
@@ -19,6 +19,7 @@ namespace Clank
             { 
                 string CS = 'List';
                 string Python = 'List';
+                string Java = 'Haha';
             }
 
             string Item(int id)
