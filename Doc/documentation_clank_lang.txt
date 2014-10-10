@@ -1,0 +1,136 @@
+Clank Language Reference
+
+1. Blocs nommés
+	Plusieurs ensembles de code peuvent être générés à l'aide de Clank.
+	Ces ensembles de code sont sont :
+		- header : contient des informations sur les types autorisés, et le modèle de communication (détaillé après).
+		- macros : Représentent des types et fonctions considérées built-in des langages cibles. Par exemple, les classes telles que les listes, ou autres sont à renseigner dans les macros.
+		- state  : Contient uniquement des classes et des variables. Les variables contenues dans un bloc state peuvent utiliser les classes déclarées dans ce même bloc ainsi que les classes définis dans les blocs "macros".
+		- access : Contient uniquement des fonctions permettant l'accès à des variables de State. Dans ce bloc, le mot clef state est réservé et est une instance d'une classe State contenant les variables définies dans les blocs "state". La variable client_id est réservée et contient le numéro du client.
+		- write  : Contient uniquement des fonctions permettant la modification de variables de State. Dans ce bloc, le mot clef state est réservé et se comporte comme dans le bloc access. La variable client_id est réservée et contient le numéro du client.
+	Ces différents blocs seront détaillés dans leur propre section.
+
+	Les modifications de variables ou l'accès à des variables du mot clef state sont faits avec la syntaxe suivante :
+		state.machin				# Accès à la variable machin
+		state.machin = valeur; 		# Modification de la variable machin
+
+	En réalité, ces opérations passent par le réseau ou se font directement en mémoire, mais le modèle en fait abstraction.
+
+	Syntaxe de déclaration d'un bloc nommé :
+	nom_du_bloc 
+	{ 
+		# Instructions...
+	}
+
+2. Déclaration de classes
+	La déclaration de classe se fait en utilisant le pattern suivant :
+		Modificateurs class NomDeClasse<ParamGenerique1, ParamGenerique2, ...>
+		{
+			# Instructions : déclaration de variables, méthodes...
+		}
+
+	Les modificateurs et Paramètres génériques sont optionnels.
+	Le seul modificateur accepté pour l'instant est "public".
+	Le modificateur public indique que la classe concernée est manipulable directement par le client. (pour être par exemple exportée en JSON ensuite).
+	Dans le cas contraire, seuls les accesseurs définis dans les blocs access/write permettent d'accéder aux champs.
+	
+	Les paramètres génériques fonctionnement comme dans la plupart des langages orientés objets : quand on crée une instance, les paramètres
+	génériques sont remplacés par les types concernés.
+
+	Les Nested Types ne sont pas conseillés. (ça marche mais c'est pas vraiment supporté).
+	
+3. Déclaration de fonctions
+	La déclaration de fonctions se fait suivant le pattern suivant :
+		Modificateurs TypeRetour NomDeFonction(Type arg1, Type arg2, ...)
+		{
+			# Instructions
+		}
+		Les modificateurs acceptés sont : public, static, constructor.
+		public : à utiliser de préférence pour les fonctions de tous les types publics que le client peut manipuler.
+		static : rend la fonction statique. (Non implémenté pour l'instant).
+		constructor : voir ci-après.
+		
+	La déclaration d'un constructeur se fait ainsi :
+		public constructor NomDeClasse<Arg1, Arg2, ...> New(Type arg1, ...)
+		{
+			# Instructions
+		}
+		
+4. Modèles de communication.
+	Deux modèles de communication Client/Serveur sont supportés pour le moment, il s'agit de 
+		- full_snapshot
+		- full_commands
+	
+	4.1. Modèle full_snapshot (adapté au tour par tout)
+		En full_snapshot (FS) le serveur et le client s'échangent la totalité de l'état du jeu (ou d'un joueur...).
+		Client :
+		Les classes contenues dans state sont toutes exportées chez le client. Seules les classes "publiques" ont leur champs accessibles. Les champs contenus directement dans state sont par défaut privés, et sont encapsulés dans une classe State.
+		Les fonctions contenues dans access sont traduites dans le langage cible et exportées dans la classe State du client. Toutes les références à state dans les fonctions du block access sont remplacées par "this".
+		Les fonctions contenues dans write sont traduites dans le langage cible et exportées dans la classe State du client. Toutes les références à state dans les fonctions du block write sont remplacées par "this".
+		A chaque classe contenue dans State est associé une méthode Serialize qui retourne une JSON Value, et une méthode statique Deserialize qui permet de créer une instance de la classe à partir d'une JSON Value.
+		
+		Les méthodes suivantes sont aussi encapsulées dans State.
+			- send() 		-> envoie l'état complet par TCP au serveur.
+			- get()			-> attend et récupère l'état complet du serveur par TCP.
+			- init() 		-> initialise le serveur (avec des paramètres éventuellement).
+		
+		Serveur :
+		Seul l'état du serveur est généré, au biais de la classe state.
+		Toutes les classes contenues dans state sont exportées dans la classe State.
+			- Les méthodes send(), get() sont exportées dans State.
+		
+	4.2. Modèle full_commands (adapté au temps réel)
+		En full_commands (FC) le serveur et le client ne communiquent que par "commandes".
+		Le state représente donc les données échangeables entre client et serveur, et il y en a donc un par client.
+		
+		Client :
+		Les classes PUBLIQUES contenues dans state sont exportées chez le client.
+		Les fonctions contenues dans access et write sont traduites dans le langage cible et exportées dans la classe State du client. Toutes les références à State sont remplacés par des requêtes d'envoi / réception au serveur [A préciser : Méthodes get() et set() )
+		A chaque classe contenue dans State est associé une méthode Serialize qui retourne une JSON Value, et une méthode statique Deserialize qui permet de créer une instance de la classe à partir d'une JSON Value.
+		
+		Les méthodes suivantes sont aussi encapsulées dans State.
+			- init() 		-> initialise le socket client / serveur.
+		
+		Serveur :
+		Seul l'état du serveur est généré, au biais de la classe State. 
+		Toutes les classes contenues dans state sont exportées dans la classe State.
+		Une fonction ProcessCommand(string msg) est créée, et :
+			- Pour chaque méthode de access, un pattern matching est effectué sur le message pour voir s'il commence pat "get method_name" et est suivi d'une JSON Value.
+			  Si le pattern matching réussit, la méthode Get_MethodName est appelée avec la JSON Value qui a été parsée. 
+			  Cette méthode contient le code traduit dans le langage du serveur de la méthode décrite en langage Clank.
+			  La valeur "retournée" par la méthode Clank est alors traduite en JSON, et renvoyée au client.
+			- Idem pour chaque méthode de write. Sauf que le serveur ne renvoie que "OK", ou "ERROR".
+			
+5. Fonctionnement des Macros.
+	Les classes contenues dans le block macro sont un peu particulières.
+	Elles concernent des classes built-in au langage ou alors rajoutées manuellement.
+	ELles permettent de pouvoir utiliser de telles classes (pour pouvoir générer du code dans tous les langages cibles) sans en connaître le code.
+	
+	Pour cela il faut :
+	 1. Créer la classe normalement.
+	 2. Créer une fonction string Name() contenant une variable de type string du nom de chaque langage cible, et contenant le nom de la classe à utiliser dans le langage cible (pour les déclarations etc...).
+	 3. Créer des fonctions "normalement" : c'est à dire, écrire leur signature correcte. En lieu et place du corps, pour chaque langage cible, créer une variable de type string du nom du langage cible contenant le code à exécuter dans le langage cible.
+	    Pour que cela marche correctement, il faut remplacer les noms des arguments de la fonction par $argument$.
+		
+		Exemple pour une classe de Liste :
+		class List<T> 
+		{ 
+			string Name()
+			{
+				string Java = "ArrayList";
+				string CS = "List";
+			}
+			
+			public T get(int index)
+			{
+				string Java = "get($index$)";
+				string CS   = "[$index$]";
+			}
+		}
+
+6. Instructions pouvant être traduites :
+- Déclarations de variables
+- Affectations
+- Expressions
+- Appels de fonctions
+- Structures de contrôles (TODO).

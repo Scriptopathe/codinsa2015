@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Clank.Generation.Languages
+{
+    /// <summary>
+    /// Interface dont doivent hériter tous les générateurs dans les différents langages.
+    /// </summary>
+    public interface ILanguageGenerator
+    {
+        /// <summary>
+        /// Génère une instruction dans le langage cible.
+        /// </summary>
+        string GenerateInstruction(Model.Language.Instruction decl);
+        /// <summary>
+        /// Définit le projet contenant les informations nécessaires à la génération de code.
+        /// </summary>
+        void SetProject(Model.ProjectFile proj);
+    }
+}

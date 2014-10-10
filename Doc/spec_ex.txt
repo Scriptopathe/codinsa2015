@@ -1,0 +1,65 @@
+header {
+	allowed_lang = {Java, C++, C#, Python}
+}
+
+# Macro fonctions livrées avec le programme.
+# ---------------------------------------------------
+macro http_get_int(s)
+{
+	Java {
+		// Utilisation de json pour envoyer l'objet s.
+	}
+}
+
+macro http_get_struct(s)
+{
+	Java {
+		// Utilisation de s.Serialize()
+	}
+}
+#-----------------------------------------------------
+
+# Définition de macro-fonctions
+macro func(x, y) {
+	Java { }
+	C++ { }
+	C# { }
+	Python { }
+}
+
+data
+{
+	# Enums
+	enum MyEnum
+	{
+		Elem1,
+		Elem2
+	}
+
+	# Structures
+	struct MyStruct
+	{
+		int a
+		MyEnum e
+		wrapper:func funk
+		wrapper:accessor<x> get_x
+		wrapper:setter<x> set_x
+	}
+}
+
+commands
+{
+	# Commandes
+	command Cmd
+	{
+		Client => int get_thing()
+		{
+		
+		}
+		
+		Server => void answer_get_thing(int x)
+		{
+		
+		}
+	}
+	}

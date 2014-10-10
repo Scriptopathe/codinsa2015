@@ -1,0 +1,89 @@
+# Modèle n°1
+.header
+{
+	allowed_lang = {"Java", "C++", "Python", "C#"};
+	model = full_snapshot;
+}
+
+# Décrit les variables composant l'état du serveur.
+# Si model = full_snapshot : le serveur et le client embarqueront ce modèle.
+# Si model = only_commands : le client enverra des messages au serveur pour récupérer les variables. 
+.state
+{
+	# Déclaration de l'état : structures, variables
+	# Structure publique, pouvant être manipulée par le client
+	public struct Carott
+	{
+		int number;
+	}
+	# Structure interne, pas accessible directement
+	struct Potato 
+	{
+		int patate;
+		int steack;
+		list<string> lst;
+		# Auto-généré :
+		# serialise / deserialise
+	}
+	
+	# Variables
+	var Potato potato;
+	var Carott carott;
+	var int thing;
+}
+
+# Décrit des fonctions utilisables dans tous les langages.
+.macros
+{
+	string get_str_from_list(string lst, int id)
+	{
+		Java {
+			return lst.get(id);
+		}
+		Python {
+			return lst[id]
+		}
+		# Etc..
+	}
+}
+
+# Décrit les méthodes permettant au client d'accéder à des variables.
+# Si model = full_snapshot : ce sont des accès direct à la copie du modèle
+# Si model = only_commands : ce sont des commandes 
+.access
+{
+	Carott get_carott()
+	{
+		return state.carrot;
+	}
+	
+	# Chez le client :
+	# Produit du code permettant la récupération de la donnée (par TCP/accès à la copie du modèle)
+	# OC : Potato.deserialize(ask("get state.potato.lst"));
+	# FS  : state.potato.lst
+	# Chez le serveur (si OC):
+	# Produit du code permettant l'envoi de la donnée.
+	# Côté listening :  if(buffer == "get state.potato.lst") => call send_get_potato_str
+	# Côté envoi     : send_get_potato_str() { socket.send(state.potato.lst.serialize()) }
+	string get_potato_str(int id)
+	{
+		return @get_str_from_list(state.potato.lst, id);
+	}
+}
+
+# Décrit les méthode permettant au client de demander des modifications à des variables
+# Si model = full_snapshot : modification du snapshot
+# Si model = only_commands : envoi d'une commande au format standart.
+# Dans tous les cas, indique à qu'elle variable de l'état on accède.
+.write
+{
+	void set_carott(Carott carott)
+	{
+		state.carott = carott;
+	}
+	
+	void set_potato_str(int id, string value)
+	{
+		@set_potato_str(state.potato.lst, id, value); 
+	}
+}
