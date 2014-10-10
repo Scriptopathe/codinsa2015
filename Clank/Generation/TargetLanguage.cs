@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Generation
+namespace Clank.Core.Generation
 {
     /// <summary>
     /// Représente une cible de génération.

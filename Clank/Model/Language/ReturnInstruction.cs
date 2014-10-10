@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model.Language
+namespace Clank.Core.Model.Language
 {
     /// <summary>
-    /// Représente une instruction return en language Clank.
+    /// Représente une instruction return en language Clank.Core.
     /// </summary>
     public class ReturnInstruction : Instruction
     {

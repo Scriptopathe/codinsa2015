@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model
+namespace Clank.Core.Model
 {
     /// <summary>
     /// Regroupe un ensemble d'unités "access".
@@ -17,7 +17,7 @@ namespace Clank.Model
         /// <summary>
         /// Journal d'erreurs survenues lors du parsing.
         /// </summary>
-        public Tools.Log ParsingLog { get; set; }
+        public Tools.EventLog ParsingLog { get; set; }
         
         
         /// <summary>
@@ -25,7 +25,7 @@ namespace Clank.Model
         /// </summary>
         public WriteContainer()
         {
-            ParsingLog = new Tools.Log();
+            ParsingLog = new Tools.EventLog();
             Declarations = new List<Language.FunctionDeclaration>();
         }
 
@@ -56,7 +56,14 @@ namespace Clank.Model
                 {
                     Language.FunctionDeclaration decl = (Language.FunctionDeclaration)instruction;
                     decl.Func.Owner = table.Types["State"];
-                    Declarations.Add(decl);
+                    if(!decl.Func.IsPublic)
+                        ParsingLog.AddWarning("Les fonctions contenues dans le block write doivent être publiques.",
+                            instruction.Line, instruction.Character, instruction.Source);
+                    if (!decl.Func.ReturnType.BaseType.IsPublic)
+                        ParsingLog.AddWarning("Les types de retour des déclaration de fonction doivent être des types publics. (donné : " + decl.Func.ReturnType.GetFullName() + ")",
+                            instruction.Line, instruction.Character, instruction.Source);
+                    
+                    Declarations.Add((Language.FunctionDeclaration)instruction);
                 }
                 else
                 {

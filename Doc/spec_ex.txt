@@ -42,8 +42,8 @@ data
 		int a
 		MyEnum e
 		wrapper:func funk
-		wrapper:accessor<x> get_x
 		wrapper:setter<x> set_x
+		wrapper:accessor<x> get_x
 	}
 }
 

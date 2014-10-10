@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model
+namespace Clank.Core.Model
 {
     /// <summary>
     /// Représente un "fichier" projet, contenant les compartiments
@@ -34,17 +34,21 @@ namespace Clank.Model
         /// Table des types.
         /// </summary>
         public Semantic.TypeTable Types { get; set; }
-
+        /// <summary>
+        /// Système de journalisation des erreurs.
+        /// </summary>
+        public Tools.EventLog Log { get; private set; }
         #region Methods
         /// <summary>
         /// Crée une nouvelle instance de ProjectFile 
         /// </summary>
         public ProjectFile()
         {
-            Access = new AccessContainer();
-            State = new StateContainer();
-            Macros = new MacroContainer();
-            Write = new WriteContainer();
+            Log = new Tools.EventLog();
+            Access = new AccessContainer() { ParsingLog = Log };
+            State = new StateContainer() { ParsingLog = Log };
+            Macros = new MacroContainer() { ParsingLog = Log };
+            Write = new WriteContainer() { ParsingLog = Log };
         }
 
         /// <summary>

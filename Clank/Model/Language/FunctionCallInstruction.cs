@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model.Language
+namespace Clank.Core.Model.Language
 {
     /// <summary>
-    /// Représente un appel de fonction dans le langage clank.
+    /// Représente un appel de fonction dans le langage Clank.Core.
     /// </summary>
     public class FunctionCallInstruction : Instruction
     {

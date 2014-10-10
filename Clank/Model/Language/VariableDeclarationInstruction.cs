@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model.Language
+namespace Clank.Core.Model.Language
 {
     /// <summary>
     /// Représente une déclaration de variable.
@@ -13,7 +13,7 @@ namespace Clank.Model.Language
         /// <summary>
         /// Modificateurs de la déclaration.
         /// </summary>
-        public List<string> Modifiers { get; set; }
+        public List<string> Modifiers { get { return Var.Modifiers; } set { Var.Modifiers = value; } }
         /// <summary>
         /// Variable déclarée.
         /// </summary>
@@ -29,7 +29,6 @@ namespace Clank.Model.Language
         /// </summary>
         public VariableDeclarationInstruction()
         {
-            Modifiers = new List<string>();
         }
 
         /// <summary>

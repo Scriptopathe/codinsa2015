@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model.Language
+namespace Clank.Core.Model.Language
 {
     /// <summary>
     /// Représente une expression composée d'un opérateur et d'une opérande.

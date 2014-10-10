@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Token = Clank.Tokenizers.ExpressionToken;
-using TokenType = Clank.Tokenizers.ExpressionToken.ExpressionTokenType;
-namespace Clank.Model.Semantic
+using Token = Clank.Core.Tokenizers.ExpressionToken;
+using TokenType = Clank.Core.Tokenizers.ExpressionToken.ExpressionTokenType;
+namespace Clank.Core.Model.Semantic
 {
     public class Pattern
     {

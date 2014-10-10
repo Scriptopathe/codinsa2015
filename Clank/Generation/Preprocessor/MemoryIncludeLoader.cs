@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Generation.Preprocessor
+namespace Clank.Core.Generation.Preprocessor
 {
     /// <summary>
     /// Permet de charger des scripts depuis la mémoire.

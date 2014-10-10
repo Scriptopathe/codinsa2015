@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model
+namespace Clank.Core.Model
 {
     /// <summary>
     /// Regroupe un ensemble d'unités "macros".
@@ -11,13 +11,13 @@ namespace Clank.Model
     public class MacroContainer
     {
         /// <summary>
-        /// Représente une classe macro, reliant le type en language clank aux types dans les langages cibles.
+        /// Représente une classe macro, reliant le type en language Clank.Core aux types dans les langages cibles.
         /// </summary>
         public class MacroClass
         {
 
             /// <summary>
-            /// Type en langage clank wrappé par cette macro.
+            /// Type en langage Clank.Core wrappé par cette macro.
             /// </summary>
             public Language.ClankType Type { get; set; }
             /// <summary>
@@ -27,7 +27,7 @@ namespace Clank.Model
             /// </summary>
             public Dictionary<string, string> LanguageToTypeName { get; set; }
             /// <summary>
-            /// Dictionaire mappant les noms des fonctions en langage clank aux macro fonctions
+            /// Dictionaire mappant les noms des fonctions en langage Clank.Core aux macro fonctions
             /// représentatives de ces fonctions.
             /// </summary>
             public Dictionary<string, MacroFunction> Functions { get; set; }
@@ -36,13 +36,13 @@ namespace Clank.Model
         }
 
         /// <summary>
-        /// Représente une fonction "macro", mappant reliant la fonction en language clank aux fonctions
+        /// Représente une fonction "macro", mappant reliant la fonction en language Clank.Core aux fonctions
         /// dans les langages cibles.
         /// </summary>
         public class MacroFunction
         {
             /// <summary>
-            /// Function du langage clank wrappée par cette macro.
+            /// Function du langage Clank.Core wrappée par cette macro.
             /// </summary>
             public Language.Function Function { get; set; }
             /// <summary>
@@ -63,13 +63,13 @@ namespace Clank.Model
         /// <summary>
         /// Journal d'erreurs/warnings.
         /// </summary>
-        public Tools.Log ParsingLog { get; set; }
+        public Tools.EventLog ParsingLog { get; set; }
         /// <summary>
         /// Crée une nouvelle instance de MacroContainer.
         /// </summary>
         public MacroContainer()
         {
-            ParsingLog = new Tools.Log();
+            ParsingLog = new Tools.EventLog();
             ClassDeclarations = new List<MacroClass>();
         }
 
@@ -115,7 +115,7 @@ namespace Clank.Model
                     Language.ClassDeclaration classDecl = (Language.ClassDeclaration)instruction;
                     MacroClass classMacro = new MacroClass();
 
-                    // Récupération du type en language clank.
+                    // Récupération du type en language Clank.Core.
                     Language.ClankType type = table.Types[classDecl.GetFullName()];
                     classMacro.Type = type;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model
+namespace Clank.Core.Model
 {
     /// <summary>
     /// Regroupe un ensemble d'unités "state".
@@ -21,7 +21,7 @@ namespace Clank.Model
         /// <summary>
         /// Journal d'erreurs survenues lors du parsing.
         /// </summary>
-        public Tools.Log ParsingLog { get; set; }
+        public Tools.EventLog ParsingLog { get; set; }
 
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Clank.Model
         /// </summary>
         public StateContainer()
         {
-            ParsingLog = new Tools.Log();
+            ParsingLog = new Tools.EventLog();
             StateClass = new Language.ClassDeclaration() { Name = "State", Source = "generated" };// new Language.ClankType() { Name = "State" };
             Classes = new List<Language.ClassDeclaration>();
         }

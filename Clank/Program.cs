@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Clank.Generation;
-using Clank.Generation.Languages;
-namespace Clank
+using Clank.Core.Generation;
+using Clank.Core.Generation.Languages;
+namespace Clank.Core
 {
     class Program
     {
@@ -142,6 +142,7 @@ main {
             int haha;
             if(haha + 5) { int jeSuisUnInt = 5; }
             elsif(haha + 5) { int jeSuisUnInt = 5; }
+            Ship<Vector2> shiiip = Ship<Vector2>.New(Vector2.New());
             while(haha + 5) { int jeSuisdeUnInt = 5; }
             #carotte.JeFaisPlanter();
         }
@@ -164,6 +165,7 @@ main {
             Ship<Vector2> ship = state.Ships.get(index);
             ship.Position.SetX(ship.Position.GetX() + dir.GetX());
             ship.Position.SetY(ship.Position.GetX() + dir.GetX());
+            
             return true;
         }
     }
@@ -177,8 +179,8 @@ main {
             List<GenerationTarget> clientTargets = new List<GenerationTarget>() { new GenerationTarget("CS", "Client.cs"),
                                                             new GenerationTarget("Python", "Client.py") };
             ProjectGenerator generator = new ProjectGenerator();
-            
 
+            List<OutputFile> files2 = generator.Generate(System.IO.File.ReadAllText("samplescript.clank"), serverTarget, clientTargets, out generationLog);
             // Loader
             Generation.Preprocessor.MemoryIncludeLoader loader = new Generation.Preprocessor.MemoryIncludeLoader();
             loader.AddFile("myScript", s1);
@@ -187,14 +189,18 @@ main {
 
             List<OutputFile> files = generator.Generate(script, serverTarget, clientTargets, out generationLog);
 
+            
             // TODO : 
             // - Créer une interface console propre, et synpathique.
             // - Numérotation des lignes / identification correcte des fichiers (incorrect quand y'a un include).
             // - Instruction  : foreach(int a, v) { };
-
+            // - Protections : state ne doit pas contenir de fonctions (quoique ?)
+            // -               public obligatoire dans access / write.
+            // -               type de retour et args de access / write : CLASSES PUBLIQUES !!!! Vérifier toute l'arborescence du type !
             // Remplir la todo-list !
             // TODO 2 : le retour de la vengeance :
             // - Doc.
         }
     }
 }
+

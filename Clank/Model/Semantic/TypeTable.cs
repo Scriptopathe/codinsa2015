@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Token = Clank.Tokenizers.ExpressionToken;
-using TokenType = Clank.Tokenizers.ExpressionToken.ExpressionTokenType;
-namespace Clank.Model.Semantic
+using Token = Clank.Core.Tokenizers.ExpressionToken;
+using TokenType = Clank.Core.Tokenizers.ExpressionToken.ExpressionTokenType;
+namespace Clank.Core.Model.Semantic
 {
     /// <summary>
     /// Permet la recherche, la sauvegarde et l'accès aux types standards et à ceux créés à partir du script.

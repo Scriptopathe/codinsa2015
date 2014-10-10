@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Token = Clank.Tokenizers.ExpressionToken;
-using TokenType = Clank.Tokenizers.ExpressionToken.ExpressionTokenType;
+using Token = Clank.Core.Tokenizers.ExpressionToken;
+using TokenType = Clank.Core.Tokenizers.ExpressionToken.ExpressionTokenType;
 
-namespace Clank.Model.Semantic
+namespace Clank.Core.Model.Semantic
 {
     /// <summary>
-    /// Classe permettant de transformer un ensemble de jetons en Arbre syntaxique dans le langage Clank.
+    /// Classe permettant de transformer un ensemble de jetons en Arbre syntaxique dans le langage Clank.Core.
     /// </summary>
     public class SemanticParser
     {
@@ -26,7 +26,7 @@ namespace Clank.Model.Semantic
         public TypeTable Types { get; set; }
 
         /// <summary>
-        /// Parse le block donné pour en déduire des instructions à language clank.
+        /// Parse le block donné pour en déduire des instructions à language Clank.Core.
         /// </summary>
         public Language.NamedBlockDeclaration Parse(Token mainBlock)
         {
@@ -99,6 +99,39 @@ namespace Clank.Model.Semantic
         {
             if (instructionToken.TkType != TokenType.List)
                 throw new InvalidOperationException();
+
+            #region Return
+            // Mot clef return.
+            if (!preparse && instructionToken.ChildToken.TkType == TokenType.Name && instructionToken.ChildToken.Content == Language.SemanticConstants.Return)
+            {
+                Language.ReturnInstruction ret = new Language.ReturnInstruction();
+                ret.Line = instructionToken.ChildToken.Line;
+                ret.Character = instructionToken.ChildToken.Character;
+                ret.Source = instructionToken.ChildToken.Source;
+                if (instructionToken.ListTokens.Count == 2)
+                {
+                    ret.Value = ParseEvaluable(instructionToken.ListTokens[1], context, preparse);
+
+                    // Type checking
+                    if (ret.Value.Type.GetFullName() != context.ContainingFunc.Func.ReturnType.GetFullName())
+                    {
+                        string error = "Type de retour invalide. Attendu : " + context.ContainingFunc.Func.ReturnType.GetFullName() +
+                            ". Obtenu : " + ret.Value.Type.GetFullName() + ".";
+                        Log.AddWarning(error, ret.Line, ret.Character, ret.Source);
+
+                        if (StrictCompilation)
+                            throw new InvalidOperationException(error);
+                    }
+                }
+                else
+                {
+                    string error = "Le mot clef return doit être suivi d'un jeton évaluable";
+                    Log.AddError(error, instructionToken.Line, instructionToken.Character, instructionToken.Source);
+                    throw new InvalidOperationException(error);
+                }
+                return ret;
+            }
+            #endregion
 
             // Déclaration de fonction
             #region Function Declaration
@@ -277,14 +310,16 @@ namespace Clank.Model.Semantic
                 decl.Var = new Language.Variable();
                 decl.Var.Type = Types.FetchInstancedType(match.FindByIdentifier("Type").First().MatchedToken, context);
                 decl.Var.Name = nameToken.Content;
+                decl.Var.Modifiers = match.FindByIdentifier("Modifiers").Select((Pattern.MatchUnit unit) =>
+                {
+                    return unit.MatchedToken.Content;
+                }).ToList();
+
                 decl.Line = nameToken.Line;
                 decl.Source = nameToken.Source;
                 decl.Character = nameToken.Character;
                 decl.IsInstanceVariable = context.ContainingFunc == null;
-                decl.Modifiers = match.FindByIdentifier("Modifiers").Select( (Pattern.MatchUnit unit) =>
-                {
-                    return unit.MatchedToken.Content;
-                }).ToList();
+
 
                 if (decl.Var.Type != null)
                 {
@@ -418,7 +453,7 @@ namespace Clank.Model.Semantic
 
                     }
                     else
-                        throw new InvalidOperationException();
+                        throw new Clank.Core.Tokenizers.SyntaxError("Instruction d'affectation mal formée.", instructionToken.Line, instructionToken.Source);
                 }
             }
             #endregion
@@ -429,6 +464,32 @@ namespace Clank.Model.Semantic
                 Token tok = instructionToken.ListTokens[0];
                 if(tok.TkType == TokenType.ExpressionGroup && tok.Operator.Content == ".")
                 {
+                    Token functionTk = tok.Operands2;
+                    // Dans ce cas, on a un appel de fonction sur un objet.
+                    if (functionTk.TkType == TokenType.FunctionCall)
+                    {
+                        return new Language.FunctionCallInstruction()
+                        {
+                            Call = ParseFunctionCall(tok, context, preparse),
+                            Line = tok.Line,
+                            Source = tok.Source,
+                            Character = tok.Character
+                        };
+                    }
+                    // Si le jeton est un nom, c'est un accès à une variable, mais ça n'a pas d'intérêt.
+                    else if(functionTk.TkType == TokenType.Name)
+                    {
+                        throw new Clank.Core.Tokenizers.SyntaxError("Une référence à une variable ne peut pas être considérée comme instruction.", instructionToken.Line, instructionToken.Source); 
+                    }
+                    else
+                    {
+                        throw new Clank.Core.Tokenizers.SyntaxError("Instruction mal formée.", instructionToken.Line, instructionToken.Source);
+                    }
+                        
+                }
+                else if(tok.TkType == TokenType.FunctionCall)
+                {
+                    // Appel de fonction sans objet source.
                     return new Language.FunctionCallInstruction()
                     {
                         Call = ParseFunctionCall(tok, context, preparse),
@@ -436,7 +497,6 @@ namespace Clank.Model.Semantic
                         Source = tok.Source,
                         Character = tok.Character
                     };
-                        
                 }
             }
 
@@ -481,38 +541,7 @@ namespace Clank.Model.Semantic
             }
             #endregion
 
-            #region Return
-            // Mot clef return.
-            if(!preparse && instructionToken.ChildToken.TkType == TokenType.Name && instructionToken.ChildToken.Content == Language.SemanticConstants.Return)
-            {
-                Language.ReturnInstruction ret = new Language.ReturnInstruction();
-                ret.Line = instructionToken.ChildToken.Line;
-                ret.Character = instructionToken.ChildToken.Character;
-                ret.Source = instructionToken.ChildToken.Source;
-                if (instructionToken.ListTokens.Count == 2)
-                {
-                    ret.Value = ParseEvaluable(instructionToken.ListTokens[1], context, preparse);
 
-                    // Type checking
-                    if(ret.Value.Type.GetFullName() != context.ContainingFunc.Func.ReturnType.GetFullName())
-                    {
-                        string error = "Type de retour invalide. Attendu : " + context.ContainingFunc.Func.ReturnType.GetFullName() +
-                            ". Obtenu : " + ret.Value.Type.GetFullName() + ".";
-                        Log.AddWarning(error, ret.Line, ret.Character, ret.Source);
-
-                        if (StrictCompilation)
-                            throw new InvalidOperationException(error);
-                    }
-                }
-                else
-                {
-                    string error = "Le mot clef return doit être suivi d'un jeton évaluable";
-                    Log.AddError(error, instructionToken.Line, instructionToken.Character, instructionToken.Source);
-                    throw new InvalidOperationException(error);
-                }
-                return ret;
-            }
-            #endregion
 
             // Si on y trouve un autre bloc
             if (instructionToken.ChildToken.TkType == TokenType.NamedCodeBlock)
@@ -545,7 +574,8 @@ namespace Clank.Model.Semantic
                     return ParseNamedBlock(instructionToken.ChildToken, childContext, preparse);
                 }
             }
-            return null;
+
+            throw new Clank.Core.Tokenizers.SyntaxError("Instruction mal formée", instructionToken.Line, instructionToken.Source);
         }
 
         /// <summary>
@@ -651,7 +681,36 @@ namespace Clank.Model.Semantic
                                 Language.VariableAccess access = new Language.VariableAccess();
                                 access.Left = ParseEvaluable(token.Operands1, context, preparse);
                                 access.VariableName = token.Operands2.Content;
-                                access.Type = access.Left.Type.BaseType.InstanceVariables[access.VariableName].Type.Instanciate(access.Left.Type.GenericArguments);
+
+                                // Vérification de l'accessibilité
+                                Language.ClankType ctype = access.Left.Type.BaseType;
+                                if(!ctype.InstanceVariables.ContainsKey(access.VariableName))
+                                {
+                                    error = "La variable d'instance " + access.VariableName + " n'existe pas pour les objets de type : " + ctype.GetFullName() + ".";
+                                    Log.AddError(error, token.Line, token.Character, token.Source);
+                                    throw new InvalidOperationException(error);
+                                }
+
+                                access.Type = ctype.InstanceVariables[access.VariableName].Type.Instanciate(access.Left.Type.GenericArguments);
+
+                                // Vérification de l'accessibilité
+                                Language.ClankType current = context.Container;
+                                Language.ClankType owner = ctype;
+                                if (!ctype.InstanceVariables[access.VariableName].IsPublic)
+                                {
+                                    // Si on n'est pas dans le type, ou qu'on opère pas sur un objet state depuis write/access.
+                                    if (current != owner && 
+                                        !(owner.GetFullName() == "State" && (context.BlockName == "write" || context.BlockName == "access")))
+                                    {
+                                        error = "La variable d'instance " + access.VariableName + " du type " + ctype.GetFullName() +
+                                            "existe mais n'est pas accessible dans le contexte actuel. (mot clef public manquant ?)";
+                                        Log.AddWarning(error, token.Line, token.Character, token.Source);
+
+                                        if (StrictCompilation)
+                                            throw new InvalidOperationException(error);
+                                    }
+                                }
+                              
                                 return access;
                             }
 
@@ -684,11 +743,18 @@ namespace Clank.Model.Semantic
                                     }
                                 }
                             }
+                            else if (grp.Operator == Language.Operator.Affectation)
+                            {
+                                // Une affectation n'est pas évaluable.
+                                error = "Une affectation n'est pas une expression évaluable. Peut être avez-vous oublié un point-virgule, ou peut être vous êtes vous cru en C?";
+                                Log.AddError(error, token.Line, token.Character, token.Source);
+                                throw new Clank.Core.Tokenizers.SyntaxError(error, token.Line, token.Source);
+                            }
 
                             // Si le type n'existe pas, on lève une erreur.
                             if(typename == null)
                             {
-                                error = ("L'opérateur " + grp.Operator.ToString() + " ne peut pas être utilisé avec des opérandes" +
+                                error = ("L'opérateur " + grp.Operator.ToString() + " ne peut pas être utilisé avec des opérandes " +
                                     "de type " + grp.Operand1.Type.GetFullName() + " et " + grp.Operand2.Type.GetFullName());
 
                                 Log.AddError(error, token.Line, token.Character, token.Source);
@@ -769,7 +835,9 @@ namespace Clank.Model.Semantic
             Token functionTk;
             // Indique si la fonction est un constructeur.
             bool isConstructor = false;
-
+            // Indique si la fonction est une fonction contenue dans la même classe que celle
+            // correspondant à ce contexte.
+            bool thisClassFunction = false;
             if(exprGrp.TkType == TokenType.ExpressionGroup)
             {
                 #region Expr group
@@ -841,11 +909,43 @@ namespace Clank.Model.Semantic
                 srcObj = null;
                 if (instanciatedFunction == null)
                 {
-                    string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
-                    Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
-                    throw new InvalidOperationException(error);
+                    // La fonction est peut être une fonction d'instance du contexte actuel !
+                    Language.ClankType owner = context.Container;
+                    if (owner != null)
+                    {
+                        instanciatedFunction = Types.GetInstanceFunction(owner, functionTk.FunctionCallIdentifier.Content, context);
+                        if(instanciatedFunction == null)
+                        {
+                            string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
+                            Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
+                            throw new InvalidOperationException(error);
+                        }
+                        thisClassFunction = true;
+                    }
+                    else
+                    {
+                        string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
+                        Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
+                        throw new InvalidOperationException(error);
+                    }
                 }
                 #endregion
+            }
+
+            // Vérification de l'accessibilité.
+            if(!instanciatedFunction.IsPublic)
+            {
+                Language.ClankType owner = instanciatedFunction.Owner;
+                Language.ClankType current = context.Container;
+                if(owner != current)
+                {
+                    // Type non accessible.
+                    string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'est pas accessible dans le contexte actuel. (mot clef public manquant ?)";
+                    Log.AddWarning(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
+
+                    if(StrictCompilation)
+                        throw new InvalidOperationException(error);
+                }
             }
 
             // Création du function call.
@@ -854,6 +954,7 @@ namespace Clank.Model.Semantic
             call.Type = instanciatedFunction.ReturnType;
             call.IsConstructor = isConstructor;
             call.Src = srcObj;
+            call.IsThisClassFunction = thisClassFunction;
             
             call.Arguments = functionTk.FunctionCallArgs.ListTokens.Select(delegate(Token tk)
             {

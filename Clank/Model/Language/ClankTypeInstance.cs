@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model.Language
+namespace Clank.Core.Model.Language
 {
     /// <summary>
-    /// Représente une instance de type utilisable dans le language Clank.
+    /// Représente une instance de type utilisable dans le language Clank.Core.
     /// 
     /// Ces instances de type ne servent qu'à connaître les paramètres du type pour la génération de code.
     /// </summary>

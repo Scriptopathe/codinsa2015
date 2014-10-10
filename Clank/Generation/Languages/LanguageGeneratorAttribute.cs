@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Generation.Languages
+namespace Clank.Core.Generation.Languages
 {
     /// <summary>
     /// Attribut que doivent posséder tous les languages.

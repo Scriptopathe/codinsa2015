@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model.Language.Macros
+namespace Clank.Core.Model.Language.Macros
 {
     /// <summary>
     /// Représente une séquence d'instruction (dépendante du language) permettant de traiter les messages côté serveur.

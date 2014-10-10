@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Generation.Languages
+namespace Clank.Core.Generation.Languages
 {
     /// <summary>
     /// Interface dont doivent hériter tous les générateurs dans les différents langages.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model.Language
+namespace Clank.Core.Model.Language
 {
     /// <summary>
     /// Représente une déclaration de fonction.
@@ -69,7 +69,7 @@ namespace Clank.Model.Language
         /// </summary>
         public bool IsPublic
         {
-            get { return Modifiers.Contains(Language.SemanticConstants.Public); }
+            get { return Modifiers.Contains(Language.SemanticConstants.Public) || IsMacro; }
         }
 
         /// <summary>

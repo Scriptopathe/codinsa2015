@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clank", "Clank\Clank.csproj", "{17E4DACD-74DC-4197-8142-911DC0833C7A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clank.Core", "Clank\Clank.Core.csproj", "{17E4DACD-74DC-4197-8142-911DC0833C7A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clank.Server", "Clank.Server\Clank.Server.csproj", "{00722835-7E31-4140-A0CB-37BDEA8964CC}"
 EndProject
@@ -11,7 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clank.Client", "Clank.Clien
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clank.View", "Clank.View\Clank.View\Clank.View.csproj", "{69BA97D2-8F6F-4AA4-8870-C5234BCF26BE}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Clank.ViewContent", "Clank.View\Clank.ViewContent\Clank.ViewContent.contentproj", "{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clank.ViewContent", "Clank.View\Clank.ViewContent\Clank.ViewContent.contentproj", "{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clank.Compiler", "Clank.Compiler\Clank.Compiler.csproj", "{16B7ABE0-12C7-41C2-9BAB-DE736813CE95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,16 @@ Global
 		{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}.Release|Any CPU.ActiveCfg = Release|x86
 		{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}.Release|x86.ActiveCfg = Release|x86
+		{16B7ABE0-12C7-41C2-9BAB-DE736813CE95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16B7ABE0-12C7-41C2-9BAB-DE736813CE95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16B7ABE0-12C7-41C2-9BAB-DE736813CE95}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{16B7ABE0-12C7-41C2-9BAB-DE736813CE95}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{16B7ABE0-12C7-41C2-9BAB-DE736813CE95}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{16B7ABE0-12C7-41C2-9BAB-DE736813CE95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16B7ABE0-12C7-41C2-9BAB-DE736813CE95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16B7ABE0-12C7-41C2-9BAB-DE736813CE95}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{16B7ABE0-12C7-41C2-9BAB-DE736813CE95}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{16B7ABE0-12C7-41C2-9BAB-DE736813CE95}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

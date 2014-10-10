@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model.Language.Macros
+namespace Clank.Core.Model.Language.Macros
 {
     /// <summary>
     /// Représente un wrapper permettant d'appeler une fonction sur le serveur distant 

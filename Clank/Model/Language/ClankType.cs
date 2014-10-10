@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model.Language
+namespace Clank.Core.Model.Language
 {
     public enum JSONType
     {
@@ -15,7 +15,7 @@ namespace Clank.Model.Language
         Bool,
     }
     /// <summary>
-    /// Représente un type de base du language Clank.
+    /// Représente un type de base du language Clank.Core.
     /// 
     /// Les types de base ne véhiculent pas d'informations sur les arguments génériques, ni sur les tableaux.
     /// Les informations qu'ils véhiculent servent au mapping des méthodes de types built-in dans les différents langages, ou de

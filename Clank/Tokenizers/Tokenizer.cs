@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Tokenizers
+namespace Clank.Core.Tokenizers
 {
     /// <summary>
     /// Représente le parseur syntaxique utilisé pour la décomposition du fichier en tokens.

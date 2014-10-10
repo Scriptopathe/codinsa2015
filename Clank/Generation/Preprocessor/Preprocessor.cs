@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Generation.Preprocessor
+namespace Clank.Core.Generation.Preprocessor
 {
     /// <summary>
     /// Représente un pré-processeur de code, permettant de modifier le script à

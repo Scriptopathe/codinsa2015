@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TType = Clank.Tokenizers.ExpressionToken.ExpressionTokenType;
-namespace Clank.Tokenizers
+using TType = Clank.Core.Tokenizers.ExpressionToken.ExpressionTokenType;
+namespace Clank.Core.Tokenizers
 {
     /// <summary>
     /// Permet de parser des expressions et de regrouper des jetons au sein de mêmes expressions.
@@ -56,6 +56,12 @@ namespace Clank.Tokenizers
                         token.TkType == TType.CodeBlock || token.TkType == TType.FunctionDeclaration)
                         currentEvaluableTokens.Add(token);
 
+                    // Erreur de syntaxe : liste de jetons vide entre 2 séparateurs.
+                    if(currentEvaluableTokens.Count == 0)
+                    {
+                        throw new SyntaxError("Jeton '" + token.ToString() + "' inattendu.", token.Line, token.Source);
+                    }
+
                     newTokens.Add(ParseEvaluable(currentEvaluableTokens));
                     currentEvaluableTokens.Clear();
                 }
@@ -107,8 +113,8 @@ namespace Clank.Tokenizers
                     {
                         case "(": case "{": case "[": case "<":
                         case ")": case "}": case "]": case ">":
-                        case ";": case ",":
-                            throw new Exception();
+                        case ";": case ",": case ":":
+                            throw new SyntaxError("Jeton '" + token.Content + "' inattendu.", token.Line, token.Source);
                         case "$":
                         case "@":
                             return new ExpressionToken() { TkType = ExpressionToken.ExpressionTokenType.Modifier, Content = token.Content,
@@ -163,7 +169,7 @@ namespace Clank.Tokenizers
             // Supprime l'eventuel "return".
             if(tokens.Count > 0)
             {
-                if(tokens[0].TkType == TType.Name && tokens[0].Content == Clank.Model.Language.SemanticConstants.Return)
+                if(tokens[0].TkType == TType.Name && tokens[0].Content == Clank.Core.Model.Language.SemanticConstants.Return)
                 {
                     newTokens.Add(tokens[0]);
                     tokens.RemoveAt(0);
@@ -339,6 +345,11 @@ namespace Clank.Tokenizers
             }
             else
             {
+                // S'il n'y a pas au moins 3 jetons, on a quelque chose de mal formé.
+                if(tokens.Count < 3)
+                {
+                    throw new SyntaxError("L'expression est mal formée, il y a peut être un opérateur en trop.", tokens.First().Line, tokens.First().Source);
+                }
                 // Opérateur binaire : facile on crée l'expression en parsant ce qu'il y a à droite et à gauche.
                 return new ExpressionToken()
                 {
@@ -653,13 +664,17 @@ namespace Clank.Tokenizers
                                 terminateGroup();
                                 break;
                             case ")":
-                                throw new InvalidOperationException();
+                                throw new SyntaxError("Jeton ')' inattendu. Une parenthèse a été mal fermée." + 
+                                    " (attention : la ligne de l'erreur n'est peut être pas celle où il y a la parenthèse à supprimer.).", token.Line, token.Source);
                             case "]":
-                                throw new InvalidOperationException();
+                                throw new SyntaxError("Jeton ']' inattendu. Un crochet a été mal fermé." +
+                                    " (attention : la ligne de l'erreur n'est peut être pas celle où il y a le crochet à supprimer.).", token.Line, token.Source);
                             case ">":
-                                throw new InvalidOperationException();
+                                throw new SyntaxError("Jeton '>' inattendu. Un chevron a été mal fermé." +
+                                    " (attention : la ligne de l'erreur n'est peut être pas celle où il y a le chevron à supprimer.).", token.Line, token.Source);
                             case "}":
-                                throw new InvalidOperationException();
+                                throw new SyntaxError("Jeton '}' inattendu. Une accolade a été mal fermée." +
+                                    " (attention : la ligne de l'erreur n'est peut être pas celle où il y a l'accolade à supprimer.).", token.Line, token.Source);
                             case ";":
                                 // Jetons précédent le ;
                                 exprs.AddRange(currentExpr.Select(x => ToExpressionToken(x)).ToList());

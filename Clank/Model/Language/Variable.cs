@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Model.Language
+namespace Clank.Core.Model.Language
 {
     /// <summary>
     /// Représente une variable.
@@ -15,6 +15,20 @@ namespace Clank.Model.Language
         /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Modificateurs de la variable.
+        /// </summary>
+        public List<string> Modifiers { get; set; }
+
+        /// <summary>
+        /// Obtient une valeur indiquant si cette variable est publique (dans le cas d'une variable d'instance).
+        /// </summary>
+        public bool IsPublic
+        {
+            get { return Modifiers.Contains("public"); }
+        }
+
+        public Variable() { Modifiers = new List<string>(); }
         /// <summary>
         /// Retourne une instance de System.String représentant l'objet actuel.
         /// </summary>

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Clank.Model.Language;
-namespace Clank.Generation.Languages
+using Clank.Core.Model.Language;
+namespace Clank.Core.Generation.Languages
 {
     /// <summary>
     /// Représente un langage de programmation.

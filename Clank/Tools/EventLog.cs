@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Tools
+namespace Clank.Core.Tools
 {
     /// <summary>
     /// Représente un système permettant la journalisation des erreurs, warnings et autres infos.

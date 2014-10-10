@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.Tools
+namespace Clank.Core.Tools
 {
     /// <summary>
     /// Contient des fonctions utilitaires pour opérer sur des string.

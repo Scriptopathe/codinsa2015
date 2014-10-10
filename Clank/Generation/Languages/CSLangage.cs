@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Clank.Model.Language;
-namespace Clank.Generation.Languages
+using Clank.Core.Model.Language;
+namespace Clank.Core.Generation.Languages
 {
     /// <summary>
     /// Représente un langage de programmation.
@@ -15,14 +15,14 @@ namespace Clank.Generation.Languages
     {
         public const string LANG_KEY = "CS";
         #region Variables
-        Clank.Model.ProjectFile m_project;
+        Clank.Core.Model.ProjectFile m_project;
         #endregion
 
         /// <summary>
         /// Crée une nouvelle instance de CSGenerator avec un fichier projet passé en paramètre.
         /// </summary>
         /// <param name="project"></param>
-        public CSGenerator(Clank.Model.ProjectFile project)
+        public CSGenerator(Clank.Core.Model.ProjectFile project)
         {
             SetProject(project);
         }
@@ -46,8 +46,9 @@ namespace Clank.Generation.Languages
         {
             StringBuilder builder = new StringBuilder();
             string inheritance = declaration.InheritsFrom == null ? "" : " : " + declaration.InheritsFrom;
-
-            builder.Append("public class " + declaration.Name);
+            if (declaration.Modifiers.Contains("public"))
+                builder.Append("public ");
+            builder.Append("class " + declaration.Name);
             
             // Paramètres génériques
             if (declaration.GenericParameters.Count > 0)
@@ -284,7 +285,7 @@ namespace Clank.Generation.Languages
         string GenerateProcessMessageMacro(Model.Language.Macros.ProcessMessageMacro instruction)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine("public string ProcessRequest(string request, int " + Clank.Model.Language.SemanticConstants.ClientID + ")\r\n{");
+            builder.AppendLine("public string ProcessRequest(string request, int " + Clank.Core.Model.Language.SemanticConstants.ClientID + ")\r\n{");
             builder.AppendLine("\tNewtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(request);");
             builder.AppendLine("\tint functionId = o.Value<int>(0);");
             builder.AppendLine("\tswitch(functionId)\r\n\t{");
@@ -446,6 +447,8 @@ namespace Clank.Generation.Languages
             StringBuilder builder = new StringBuilder();
             if (call.Src != null)
                 builder.Append(GenerateEvaluable(call.Src) + ".");
+            else if (call.IsThisClassFunction)
+                builder.Append("this.");
 
             builder.Append(call.Func.Name);
             builder.Append("(");
@@ -498,9 +501,9 @@ namespace Clank.Generation.Languages
             if (call.Src != null)
                 builder.Append(GenerateEvaluable(call.Src) + ".");
 
-            Clank.Model.MacroContainer macros = m_project.Macros;
+            Clank.Core.Model.MacroContainer macros = m_project.Macros;
             var klass = macros.FindClassByType(call.Src.Type.BaseType);
-            Clank.Model.MacroContainer.MacroFunction func = klass.Functions[call.Func.Name]; // TODO : GetFullName() ??
+            Clank.Core.Model.MacroContainer.MacroFunction func = klass.Functions[call.Func.Name]; // TODO : GetFullName() ??
 
             // Nom de la fonctin native dont les paramètres sont entourés par des $
             string nativeFuncName = func.LanguageToFunctionName[LANG_KEY];

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
-namespace Clank.Generation
+namespace Clank.Core.Generation
 {
     public class OutputFile
     {
@@ -129,7 +129,7 @@ namespace Clank.Generation
             {
                 // Project file.
                 Model.ProjectFile project = new Model.ProjectFile() { Types = parser.Types };
-
+                project.Log.OnEvent += logHandler;
                 // Parse les différents blocks "main".
                 foreach(var tk in exprTokens[0].ListTokens)
                 {
