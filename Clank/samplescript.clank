@@ -1,0 +1,88 @@
+main
+{
+	# Représente l'état du serveur.
+	state 
+	{
+		# Déclaration d'une classe qui doit être connue à la fois par le client
+		# et le serveur.
+		public class Car 
+		{
+			# Une variable accessible par le client et le serveur s'ils disposent
+			# d'une instance de Car.
+			public string color;
+			
+			# Une variable privée.
+			int m_speed;
+			
+			# Un constructeur
+			public constructor Car New(string c)
+			{
+				color = c;
+			}
+			
+			# Une fonction publique (exportée chez le client et le serveur)
+			public void SetSpeed(int speed)
+			{
+				m_speed = speed;
+				DoSmth();
+			}
+			
+			public int GetSpeed()
+			{
+				return m_speed;
+			}
+			# Une fonction privée (utilisée seulement par les fonctions publiques 
+			# de cette classe).
+			void DoSmth() { }
+		}
+		
+		# Déclaration d'une classe qui ne sera exportée que sur le serveur.
+		# Le fonctions des blocs read/write ne doivent pas retourner d'objet de
+		# ce type.
+		class PrivateClass
+		{
+			public int someVariable;
+			
+		}
+		# Déclaration de variables utilisables par le serveur, mais
+		# inconnues du client.
+		int myVariable;
+		Car myCar;
+		PrivateClass mySecret;
+		
+		
+	}
+	
+	# Bloc contenant toutes les fonction permettant au client de récupérer des données depuis le serveur.
+	access 
+	{
+		# Les fonctions du block access doivent toutes être publiques.
+		public int GetMyVariable()
+		{
+			return state.myVariable;
+		}
+		
+		
+	}
+	
+	write
+	{
+		# Une fonction qui modifie l'état du serveur.
+		public void DoSecretThing()
+		{
+			state.mySecret = PrivateClass.New();
+		}
+		
+		# Fonction qui va retourner et prendre en paramètre des objets dont la classe
+		# est spécifiée dans le block state, et est PUBLIQUE ! 
+		# Si la fonction retourne une variable de type PrivateClass, une exception sera
+		# levée.
+		public Car GetARedOne(Car c)
+		{
+			Car newCar = Car.New("red");
+			newCar.SetSpeed(c.GetSpeed());
+			return newCar;
+		}
+	}
+
+}

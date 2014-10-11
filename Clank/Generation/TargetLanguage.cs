@@ -27,5 +27,71 @@ namespace Clank.Core.Generation
             LanguageIdentifier = identifier;
             OutputFilename = outputFilename;
         }
+        public GenerationTarget()
+        {
+            LanguageIdentifier = "";
+            OutputFilename = "";
+        }
+        /// <summary>
+        /// Crée une nouvelle cible de génération à partir d'un string au format:
+        /// Identifier:filename
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static GenerationTarget FromString(string str)
+        {
+            if (str.Contains(":"))
+            {
+                string[] parts = str.Split(':');
+                GenerationTarget target = new GenerationTarget();
+                target.LanguageIdentifier = parts[0];
+                target.OutputFilename = parts[1].Trim('"');
+                return target;
+            }
+            else
+                return new GenerationTarget();
+        }
+
+        /// <summary>
+        /// Convertit cette cible de génération en string.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            if (LanguageIdentifier == "" && OutputFilename == "")
+                return "";
+            return LanguageIdentifier.ToString() + ":\"" + OutputFilename.ToString() + "\"";
+        }
+
+        /// <summary>
+        /// Convertit une liste de GenerationTarget en string.
+        /// </summary>
+        public static string TargetsToString(List<GenerationTarget> targets)
+        {
+            StringBuilder builer = new StringBuilder();
+            foreach(var target in targets)
+            {
+                builer.Append(target.ToString() + (target == targets.Last() ? "" : "|"));
+            }
+            return builer.ToString();
+        }
+
+        /// <summary>
+        /// Convertit un string au format :
+        /// LanguageIdentifier:Filename|LanguageIdentifier:Filename
+        /// en une liste de GenerationTarget.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static List<GenerationTarget> TargetsFromString(string str)
+        {
+            List<GenerationTarget> targets = new List<GenerationTarget>();
+            string[] parts = str.Split('|');
+            foreach(string part in parts)
+            {
+                targets.Add(FromString(part));
+            }
+            return targets;
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace Clank.Core.Model.Language
         /// </summary>
         public bool IsPublic
         {
-            get { return Modifiers.Contains("public"); }
+            get { return Modifiers.Contains(SemanticConstants.Public); }
         }
 
         public Variable() { Modifiers = new List<string>(); }

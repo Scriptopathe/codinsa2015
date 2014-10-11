@@ -10,7 +10,8 @@ namespace Clank.Core.Generation.Preprocessor
     /// </summary>
     public class FileIncludeLoader : IScriptIncludeLoader
     {
-        public FileIncludeLoader() { }
+        public string BaseDirectory { get; set; }
+        public FileIncludeLoader() { BaseDirectory = ""; }
         /// <summary>
         /// Charge le script dont l'uri est passée en paramètre.
         /// </summary>
@@ -18,7 +19,10 @@ namespace Clank.Core.Generation.Preprocessor
         /// <returns></returns>
         public string Load(string uri)
         {
-            return System.IO.File.ReadAllText(uri);
+            if (System.IO.Path.IsPathRooted(uri))
+                return System.IO.File.ReadAllText(uri);
+            else
+                return System.IO.File.ReadAllText(BaseDirectory + "\\" +  uri);
         }
     }
 }

@@ -4,9 +4,14 @@ using System.Linq;
 using System.Text;
 using Token = Clank.Core.Tokenizers.ExpressionToken;
 using TokenType = Clank.Core.Tokenizers.ExpressionToken.ExpressionTokenType;
-
+using SyntaxError = Clank.Core.Tokenizers.SyntaxError;
 namespace Clank.Core.Model.Semantic
 {
+    public class SemanticError : Exception
+    {
+        public SemanticError() : base() { }
+        public SemanticError(string msg) : base(msg) { }
+    }
     /// <summary>
     /// Classe permettant de transformer un ensemble de jetons en Arbre syntaxique dans le langage Clank.Core.
     /// </summary>
@@ -120,14 +125,14 @@ namespace Clank.Core.Model.Semantic
                         Log.AddWarning(error, ret.Line, ret.Character, ret.Source);
 
                         if (StrictCompilation)
-                            throw new InvalidOperationException(error);
+                            throw new SemanticError(error);
                     }
                 }
                 else
                 {
                     string error = "Le mot clef return doit être suivi d'un jeton évaluable";
                     Log.AddError(error, instructionToken.Line, instructionToken.Character, instructionToken.Source);
-                    throw new InvalidOperationException(error);
+                    throw new SemanticError(error);
                 }
                 return ret;
             }
@@ -185,7 +190,7 @@ namespace Clank.Core.Model.Semantic
                     this.Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
 
                     if (StrictCompilation)
-                        throw new InvalidOperationException(error);
+                        throw new SemanticError(error);
                 }
 
                 // Vérification d'accessibilité incohérente.
@@ -198,7 +203,7 @@ namespace Clank.Core.Model.Semantic
                     Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
 
                     if (StrictCompilation)
-                        throw new InvalidOperationException(error);
+                        throw new SemanticError(error);
                 }
 
                 // Constructeur privé : le code généré n'a pas les bonnes garanties d'accessibilité des données.
@@ -208,7 +213,7 @@ namespace Clank.Core.Model.Semantic
                     this.Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
 
                     if (StrictCompilation)
-                        throw new InvalidOperationException(error);
+                        throw new SemanticError(error);
                 }
 
                 // -- Code
@@ -353,7 +358,7 @@ namespace Clank.Core.Model.Semantic
                         Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
 
                         if(StrictCompilation)
-                            throw new InvalidOperationException(error);
+                            throw new SemanticError(error);
                     }
 
                     return decl;
@@ -362,7 +367,7 @@ namespace Clank.Core.Model.Semantic
                 {
                     string error = "Le type " + match.FindByIdentifier("Type").First().MatchedToken.ToReadableCode() + " n'existe pas dans le contexte actuel.";
                     Log.AddError(error, decl.Line, decl.Character, decl.Source);
-                    throw new InvalidOperationException(error);
+                    throw new SemanticError(error);
                 }
                     
             }
@@ -399,7 +404,7 @@ namespace Clank.Core.Model.Semantic
                             aff.Comment = error;
 
                             if (StrictCompilation)
-                                throw new InvalidOperationException(error);
+                                throw new SemanticError(error);
                         }
                         // Création de l'instruction.
                         aff.Line = operatorr.Line;
@@ -560,7 +565,7 @@ namespace Clank.Core.Model.Semantic
                     Log.AddWarning(error, statement.Line, statement.Character, statement.Source);
 
                     if (StrictCompilation)
-                        throw new InvalidOperationException(error);
+                        throw new SemanticError(error);
                 }
 
                 return statement;
@@ -669,7 +674,7 @@ namespace Clank.Core.Model.Semantic
 
                     error = "Variable ou type : " + token.Content + " inexistant(e) dans le contexte actuel.";
                     Log.AddError(error, token.Line, token.Character, token.Source);
-                    throw new InvalidOperationException(error);
+                    throw new SemanticError(error);
                 case TokenType.GenericType:
                     Language.ClankTypeInstance genType;
                     string fullname = token.GetTypeFullName();
@@ -681,7 +686,7 @@ namespace Clank.Core.Model.Semantic
                     
                     error = "Type générique : " + token.Content + " inexistant(e) dans le contexte actuel.";
                     Log.AddError(error, token.Line, token.Character, token.Source);
-                    throw new InvalidOperationException(error);
+                    throw new SemanticError(error);
                 // List
                 case TokenType.List:
                     // Dans certains cas, le tokenizer génère une liste contenant 1 seule expression group, il faut
@@ -733,14 +738,14 @@ namespace Clank.Core.Model.Semantic
                                         Log.AddWarning(error, token.Line, token.Character, token.Source);
 
                                         if (StrictCompilation)
-                                            throw new InvalidOperationException(error);
+                                            throw new SemanticError(error);
                                     }
                                 }
                               
                                 return access;
                             }
 
-                            throw new InvalidOperationException();
+                            throw new SemanticError("Source d'erreur inconnue [Semantic Parser.ParseEvaluable:ExpressionGroup]");
                         }
 
                         Language.BinaryExpressionGroup grp = new Language.BinaryExpressionGroup();
@@ -784,7 +789,7 @@ namespace Clank.Core.Model.Semantic
                                     "de type " + grp.Operand1.Type.GetFullName() + " et " + grp.Operand2.Type.GetFullName());
 
                                 Log.AddError(error, token.Line, token.Character, token.Source);
-                                throw new InvalidOperationException(error);
+                                throw new SemanticError(error);
                             }
 
                             // Type OK.
@@ -830,7 +835,7 @@ namespace Clank.Core.Model.Semantic
                             error = ("L'opérateur " + grp.Operator.ToString() + " ne peut pas être utilisé avec l'opérande " +
                                 "de type " + grp.Operand.Type.GetFullName() + ".");
                             Log.AddError(error, token.Line, token.Character, token.Source);
-                            throw new InvalidOperationException(error);
+                            throw new SemanticError(error);
                         }
 
                         // Type OK.
@@ -901,7 +906,7 @@ namespace Clank.Core.Model.Semantic
                         {
                             string error = "La fonction statique " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
                             Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
-                            throw new InvalidOperationException(error);
+                            throw new SemanticError(error);
                         }
 
                         // Instanciation de la fonction.
@@ -944,7 +949,7 @@ namespace Clank.Core.Model.Semantic
                         {
                             string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
                             Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
-                            throw new InvalidOperationException(error);
+                            throw new SemanticError(error);
                         }
                         thisClassFunction = true;
                     }
@@ -952,7 +957,7 @@ namespace Clank.Core.Model.Semantic
                     {
                         string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
                         Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
-                        throw new InvalidOperationException(error);
+                        throw new SemanticError(error);
                     }
                 }
                 #endregion
@@ -970,7 +975,7 @@ namespace Clank.Core.Model.Semantic
                     Log.AddWarning(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
 
                     if(StrictCompilation)
-                        throw new InvalidOperationException(error);
+                        throw new SemanticError(error);
                 }
             }
 
@@ -989,7 +994,7 @@ namespace Clank.Core.Model.Semantic
 
             // Vérification du nombre d'arguments..
             if (call.Arguments.Count != call.Func.Arguments.Count)
-                throw new InvalidOperationException("Le nombre d'arguments passés à la fonction " + call.Func.GetFullName() + " est incorrect");
+                throw new SemanticError("Le nombre d'arguments passés à la fonction " + call.Func.GetFullName() + " est incorrect");
 
             // Vérification du type des arguments.
             for(int i = 0; i < call.Arguments.Count; i++)
@@ -1000,7 +1005,7 @@ namespace Clank.Core.Model.Semantic
                     string error = "Le type de l'argument passé à la fonction est invalide";
                     Log.AddWarning(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
                     if (StrictCompilation)
-                        throw new InvalidOperationException(error);
+                        throw new SemanticError(error);
 
                 }
             }

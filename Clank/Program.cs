@@ -193,10 +193,8 @@ main {
             
             // TODO : 
             // - Créer une interface console propre, et synpathique.
-            // - Numérotation des lignes / identification correcte des fichiers (incorrect quand y'a un include).
             // - Instruction  : foreach(int a, v) { };
             // - Protections : state ne doit pas contenir de fonctions (quoique ?)
-            // -               type de retour / args des fonctions dans les classes publiques.
             // Remplir la todo-list !
             // TODO 2 : le retour de la vengeance :
             // - Doc.

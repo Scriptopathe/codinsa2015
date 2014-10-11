@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<!-- syntaxdefinition for C# 2000 by Mike Krueger -->
+
+<SyntaxDefinition name = "geom" extensions = ".geom">
+	
+	<Environment>
+		<Custom name="TypeReference" bold="false" italic="false" color="#04ABAB" />
+		<Custom name="UnknownEntity" bold="false" italic="false" color="#AB0404" />
+	</Environment>
+	
+	<Properties>
+		<Property name="LineComment" value="//"/>
+	</Properties>
+	
+	<Digits name = "Digits" bold = "false" italic = "false" color = "Black"/>
+	
+	<RuleSets>
+		<RuleSet ignorecase="false">
+			<Delimiters>&amp;&lt;&gt;~!%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
+			
+			<Span name = "PreprocessorDirectives" rule = "PreprocessorSet" bold="false" italic="false" color="Green" stopateol = "true">
+				<Begin>#</Begin>
+			</Span>
+			
+			<Span name = "DocLineComment" rule = "DocCommentSet" bold = "false" italic = "false" color = "Green" stopateol = "true" noescapesequences="true">
+				<Begin bold = "false" italic = "false" color = "Gray">///@!/@</Begin>
+			</Span>
+			
+			<Span name = "LineComment" rule = "CommentMarkerSet" bold = "false" italic = "false" color = "Green" stopateol = "true">
+				<Begin>//@!/@</Begin>
+			</Span>
+			<Span name = "LineComment2" rule = "CommentMarkerSet" bold = "false" italic = "false" color = "Green" stopateol = "true">
+				<Begin>////</Begin>
+			</Span>
+  
+			<Span name = "String" bold = "false" italic = "false" color = "#A31515" stopateol = "true" escapecharacter="\">
+				<Begin>"</Begin>
+				<End>"</End>
+			</Span>
+		
+			
+			<MarkPrevious bold = "true" italic = "false" color = "MidnightBlue">(</MarkPrevious>
+			
+			<KeyWords name = "Punctuation" bold = "false" italic = "false" color = "Blue">
+				<Key word = "," />
+				<Key word = "." />
+				<Key word = "(" />
+				<Key word = ")" />
+				<Key word = "%" />
+        <Key word = ":" />
+        <Key word = "="/>
+        <Key word = "&lt;=" />
+			</KeyWords>
+			
+			
+			<KeyWords name = "OperatorKeywords" bold="true" italic="false" color="#0000FF">
+        <Key word = "return" />
+        <Key word = "function" />
+        <Key word = "lambda" />
+				<Key word = "new" />
+				<Key word = "true" />
+				<Key word = "false" />
+        <Key word = "if"/>
+        <Key word = "else"/>
+        <Key word = "elsif" />
+        <Key word = "while" />
+        <Key word = "for" />
+        <Key word = "foreach" />
+        <Key word = "using" />
+        <Key word = "include" />
+        <Key word = "patch" />
+        <Key word = "patchkey"/>
+			</KeyWords>
+			
+			
+			<KeyWords name = "BaseTypes" bold="false" italic="false" color="DodgerBlue">
+				<Key word = "string" />
+
+				<Key word = "bool" />
+        <Key word = "double" />
+        <Key word = "float" />
+        <Key word = "long" />
+        <Key word = "ulong" />
+        <Key word = "uint" />
+        <Key word = "int" />
+        <Key word = "short" />
+        <Key word = "ushort" />
+        <Key word = "string" />
+        <Key word = "byte" />
+        <Key word = "object" />
+				<Key word = "Interpreter" />
+			</KeyWords>
+		</RuleSet>
+    
+    <RuleSet name = "CommentMarkerSet" ignorecase = "false">
+      <Delimiters>&lt;&gt;~!@%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
+      <KeyWords name = "ErrorWords" bold="true" italic="false" color="Red">
+        <Key word = "TODO" />
+        <Key word = "FIXME" />
+      </KeyWords>
+      <KeyWords name = "WarningWords" bold="true" italic="false" color="#EEE0E000">
+        <Key word = "HACK" />
+        <Key word = "UNDONE" />
+      </KeyWords>
+    </RuleSet>
+    
+		<RuleSet name = "DocCommentSet" ignorecase = "false">
+			<Delimiters>&lt;&gt;~!@%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
+			
+			<Span name = "XmlTag" rule = "XmlDocSet" bold = "false" italic = "false" color = "Gray" stopateol = "true">
+				<Begin>&lt;</Begin>
+				<End>&gt;</End>
+			</Span>
+			
+			<KeyWords name = "ErrorWords" bold="true" italic="false" color="Red">
+				<Key word = "TODO" />
+				<Key word = "FIXME" />
+			</KeyWords>
+			
+			<KeyWords name = "WarningWords" bold="true" italic="false" color="#EEE0E000">
+				<Key word = "HACK" />
+				<Key word = "UNDONE" />
+			</KeyWords>
+		</RuleSet>
+		
+		<RuleSet name = "PreprocessorSet" ignorecase="false">
+			<Delimiters>&amp;&lt;&gt;~!%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
+			
+			<KeyWords name = "PreprocessorDirectives" bold="true" italic="false" color="Green">
+				<Key word = "origin" />
+				<Key word = "scaling" />
+				<Key word = "grad" />
+			</KeyWords>
+		</RuleSet>
+    <RuleSet name = "XmlDocSet" ignorecase = "false">
+      <Delimiters>&lt;&gt;~!@%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
+
+      <Span name = "String" bold = "true" italic = "false" color = "Silver" stopateol = "true">
+        <Begin>"</Begin>
+        <End>"</End>
+      </Span>
+
+      <KeyWords name = "Punctuation" bold = "true" italic = "false" color = "Gray">
+        <Key word = "/" />
+      </KeyWords>
+
+      <KeyWords name = "SpecialComment" bold="true" italic="false" color="Gray">
+        <Key word = "c" />
+      </KeyWords>
+    </RuleSet>
+	</RuleSets>
+</SyntaxDefinition>
+

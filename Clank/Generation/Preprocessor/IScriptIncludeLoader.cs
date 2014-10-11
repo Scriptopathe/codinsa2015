@@ -19,4 +19,11 @@ namespace Clank.Core.Generation.Preprocessor
         /// <returns></returns>
         string Load(string uri);
     }
+
+    public class RessourceNotFoundException : Exception
+    {
+        public string Ressource {get;set;}
+        public RessourceNotFoundException() : base() { }
+        public RessourceNotFoundException(string file) : base() { Ressource = file; }
+    }
 }

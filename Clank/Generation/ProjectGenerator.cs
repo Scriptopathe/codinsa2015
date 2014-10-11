@@ -110,34 +110,51 @@ namespace Clank.Core.Generation
 
             // Lance le pré-processeur sur le script
             Dictionary<int, Generation.Preprocessor.Preprocessor.LineInfo> lineMapping = new Dictionary<int,Preprocessor.Preprocessor.LineInfo>();
-            string processedScript = Preprocessor.Run(script, ref lineMapping);
 
-            // Crée les jetons d'expression à partir du script.
-            var tokens = Tokenizers.Tokenizer.Parse(processedScript, lineMapping);
-            var exprTokens = Tokenizers.ExpressionParser.Parse(tokens);
-
-            // Crée la table des types à partir des jetons d'expression.
-            // A ce point de l'exécution, la table ne contient pas les fonctions.
-            Model.Semantic.TypeTable table = new Model.Semantic.TypeTable();
-            table.FetchTypes(exprTokens);
-
-            // Initialise le parseur sémantique et le log du parseur sémantique.
-            Model.Semantic.SemanticParser parser = new Model.Semantic.SemanticParser();
-            parser.Types = table;
-            parser.Log.OnEvent += logHandler;
-
+            string processedScript;
             try
             {
+                processedScript = Preprocessor.Run(script, ref lineMapping);
+            }
+            catch(Generation.Preprocessor.RessourceNotFoundException e)
+            {
+                logHandler(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, "[Preprocessor] La ressource '" + e.Ressource + "' est introuvable", 0, 0, "[unknown]"));
+                return new List<OutputFile>();
+            }
+            try
+            {
+                // Crée les jetons d'expression à partir du script.
+                var tokens = Tokenizers.Tokenizer.Parse(processedScript, lineMapping);
+                var exprTokens = Tokenizers.ExpressionParser.Parse(tokens);
+
+                // Crée la table des types à partir des jetons d'expression.
+                // A ce point de l'exécution, la table ne contient pas les fonctions.
+                Model.Semantic.TypeTable table = new Model.Semantic.TypeTable();
+                table.FetchTypes(exprTokens);
+
+                // Initialise le parseur sémantique et le log du parseur sémantique.
+                Model.Semantic.SemanticParser parser = new Model.Semantic.SemanticParser();
+                parser.Types = table;
+                parser.Log.OnEvent += logHandler;
+
+
                 // Project file.
                 Model.ProjectFile project = new Model.ProjectFile() { Types = parser.Types };
                 project.Log.OnEvent += logHandler;
                 // Parse les différents blocks "main".
-                foreach(var tk in exprTokens[0].ListTokens)
+                try
                 {
-                    var mainBlock = parser.Parse(tk);
-                    project.ParseScript(mainBlock);
+                    foreach (var tk in exprTokens[0].ListTokens)
+                    {
+                        var mainBlock = parser.Parse(tk);
+                        project.ParseScript(mainBlock);
+                    }
                 }
-               
+                finally
+                {
+                    project.Log.OnEvent -= logHandler;
+                    parser.Log.OnEvent -= logHandler;
+                }
 
                 // Crée les instructions pour le projet Client et Serveur.
                 List<Model.Language.Instruction> clientDecl = project.GenerateClientProject();
@@ -165,11 +182,14 @@ namespace Clank.Core.Generation
                 }
 
             }
-            catch (EncoderFallbackException e)
+            catch (Core.Tokenizers.SyntaxError syntaxError)
             {
-
+                logHandler(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, "Erreur de syntaxe : " + syntaxError.Message, syntaxError.Line, 0, syntaxError.Source));
             }
-
+            catch (Core.Model.Semantic.SemanticError semError)
+            {
+                // Le parseur sémantique utilise déjà le log.
+            }
             return outputFiles;
         }
 
