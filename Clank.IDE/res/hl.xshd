@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<!-- syntaxdefinition for C# 2000 by Mike Krueger -->
-
-<SyntaxDefinition name = "geom" extensions = ".geom">
+<SyntaxDefinition name = "clank" extensions = ".clank">
 	
 	<Environment>
 		<Custom name="TypeReference" bold="false" italic="false" color="#04ABAB" />
@@ -32,63 +30,49 @@
 			<Span name = "LineComment2" rule = "CommentMarkerSet" bold = "false" italic = "false" color = "Green" stopateol = "true">
 				<Begin>////</Begin>
 			</Span>
-  
+			
 			<Span name = "String" bold = "false" italic = "false" color = "#A31515" stopateol = "true" escapecharacter="\">
 				<Begin>"</Begin>
 				<End>"</End>
 			</Span>
+			
+			<MarkPrevious bold = "false" italic = "false" color = "#404060">(</MarkPrevious>
+			<MarkPrevious bold = "false" italic = "false" color = "#0090BF">&lt;</MarkPrevious>
 		
 			
-			<MarkPrevious bold = "true" italic = "false" color = "MidnightBlue">(</MarkPrevious>
-			
-			<KeyWords name = "Punctuation" bold = "false" italic = "false" color = "Blue">
-				<Key word = "," />
-				<Key word = "." />
-				<Key word = "(" />
-				<Key word = ")" />
-				<Key word = "%" />
-        <Key word = ":" />
-        <Key word = "="/>
-        <Key word = "&lt;=" />
+			<KeyWords name = "Blocks" bold="false" italic="false" color="#4040D0">
+				<Key word = "state" />
+				<Key word = "macro" />
+				<Key word = "access" />
+				<Key word = "write"/>
+				<Key word = "main"/>
+				<Key word = "clientId" />
 			</KeyWords>
 			
 			
-			<KeyWords name = "OperatorKeywords" bold="true" italic="false" color="#0000FF">
-        <Key word = "return" />
-        <Key word = "function" />
-        <Key word = "lambda" />
-				<Key word = "new" />
+			<KeyWords name = "OperatorKeywords" bold="false" italic="false" color="#0000FF">
+				<Key word = "return" />
 				<Key word = "true" />
 				<Key word = "false" />
-        <Key word = "if"/>
-        <Key word = "else"/>
-        <Key word = "elsif" />
-        <Key word = "while" />
-        <Key word = "for" />
-        <Key word = "foreach" />
-        <Key word = "using" />
-        <Key word = "include" />
-        <Key word = "patch" />
-        <Key word = "patchkey"/>
+				<Key word = "if"/>
+				<Key word = "else"/>
+				<Key word = "elsif" />
+				<Key word = "while" />
+				<Key word = "for" />
+				<Key word = "include" />
+				<Key word = "class" />
+				<Key word = "public" />
+				<Key word = "static" />
+				<Key word = "constructor" />
 			</KeyWords>
 			
 			
-			<KeyWords name = "BaseTypes" bold="false" italic="false" color="DodgerBlue">
+			<KeyWords name = "BaseTypes" bold="false" italic="false" color="#0000FF">
 				<Key word = "string" />
-
 				<Key word = "bool" />
-        <Key word = "double" />
-        <Key word = "float" />
-        <Key word = "long" />
-        <Key word = "ulong" />
-        <Key word = "uint" />
-        <Key word = "int" />
-        <Key word = "short" />
-        <Key word = "ushort" />
-        <Key word = "string" />
-        <Key word = "byte" />
-        <Key word = "object" />
-				<Key word = "Interpreter" />
+				<Key word = "float" />
+				<Key word = "int" />
+				<Key word = "void" />
 			</KeyWords>
 		</RuleSet>
     
@@ -127,11 +111,10 @@
 			<Delimiters>&amp;&lt;&gt;~!%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
 			
 			<KeyWords name = "PreprocessorDirectives" bold="true" italic="false" color="Green">
-				<Key word = "origin" />
-				<Key word = "scaling" />
-				<Key word = "grad" />
+				<Key word = "include" />
 			</KeyWords>
 		</RuleSet>
+		
     <RuleSet name = "XmlDocSet" ignorecase = "false">
       <Delimiters>&lt;&gt;~!@%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
 

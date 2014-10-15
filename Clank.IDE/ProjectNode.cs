@@ -47,7 +47,7 @@ namespace Clank.IDE
         /// <param name="sourceFullPath"></param>
         public void AddSource(string sourceFullPath)
         {
-            SourceFiles.Add(GetStoredFilename(sourceFullPath));
+            SourceFiles.Add(GetFilenameRelativeToProjectFolder(sourceFullPath));
         }
 
         /// <summary>
@@ -56,35 +56,56 @@ namespace Clank.IDE
         /// <param name="fullpath"></param>
         public void SetMainfile(string fullpath)
         {
-            MainFile = GetStoredFilename(fullpath);
+            MainFile = GetFilenameRelativeToProjectFolder(fullpath);
         }
 
         /// <summary>
         /// Obtient le nom de fichier à stocker dans SourceFiles / MainFile : relatif au dossier
+        /// du projet.
         /// de SavePath.
         /// </summary>
         /// <param name="sourceFullpath"></param>
         /// <returns></returns>
-        public string GetStoredFilename(string sourceFullpath)
+        public string GetFilenameRelativeToProjectFolder(string sourceFullpath)
         {
-            string dir = Path.GetFullPath(Path.GetDirectoryName(SavePath));
-
-            Uri newUri = new Uri(Path.GetFullPath(sourceFullpath));
-            Uri from = new Uri(dir).MakeRelativeUri(newUri);
-            return from.ToString();
+            return GetFilenameRelativeTo(SavePath, sourceFullpath);
         }
 
         /// <summary>
-        /// Retourne le chemin d'accès réel du fichier.
+        /// Obtient un nom de fichier pour filename relatif au dossier directory.
         /// </summary>
-        /// <param name="filename"></param>
+        /// <param name="directory"></param>
         /// <returns></returns>
-        public string GetFullFilename(string filename)
+        public string GetFilenameRelativeTo(string directory, string filename)
         {
-            Uri dir = new Uri(Path.GetFullPath(Path.GetDirectoryName(SavePath)));
-            Uri fileRel = new Uri(dir.ToString() + "\\..\\" + filename);
+            string dir = Path.GetFullPath(directory);
+            Uri newUri = new Uri(Path.GetFullPath(filename));
+            Uri from = new Uri(dir).MakeRelativeUri(newUri);
+            return from.ToString();
+        }
+        /// <summary>
+        /// Retourne le chemin d'accès réel du fichier à partir du chemin d'accès relatif au dossier donné.
+        /// </summary>
+        /// <returns></returns>
+        public string GetFilenameFromRelative(string directory, string filename)
+        {
+            Uri dir = new Uri(Path.GetFullPath(directory));// Path.GetFullPath(Path.GetDirectoryName(SavePath));
+            Uri fileRel = new Uri(dir.ToString() + "\\" + filename); // "\\..\\"
             string final = Uri.UnescapeDataString(fileRel.AbsolutePath);
             return final;
+        }
+        /// <summary>
+        /// Retourne le chemin d'accès réel du fichier à partir du chemin d'accès relatif au dossier du projet.
+        /// </summary>
+        /// <returns></returns>
+        public string GetFullFilename(string filenameRelativeToProjectFolder)
+        {
+            return GetFilenameFromRelative(Path.GetDirectoryName(SavePath), filenameRelativeToProjectFolder);
+            /*
+            Uri dir = new Uri(Path.GetFullPath(Path.GetDirectoryName(SavePath)));// Path.GetFullPath(Path.GetDirectoryName(SavePath));
+            Uri fileRel = new Uri(dir.ToString() + "\\" + filenameRelativeToProjectFolder); // "\\..\\"
+            string final = Uri.UnescapeDataString(fileRel.AbsolutePath);
+            return final;*/
         }
         /// <summary>
         /// Retourne vrai si le projet contient le fichier donné.

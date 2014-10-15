@@ -12,6 +12,16 @@ namespace Clank.Core.Model.Semantic
     public class TypeTable
     {
         /// <summary>
+        /// Event appelé lorsqu'une erreur doit être ajoutée au log.
+        /// </summary>
+        /// <param name="?"></param>
+        /// <returns></returns>
+        public event Tools.EventLog.EventLogHandler OnLog;
+        /// <summary>
+        /// Obtient ou définit une valeur indiquant si une exception est levée lors d'une erreur "récupérable".
+        /// </summary>
+        public bool RaiseOnError { get; set; }
+        /// <summary>
         /// Représente les instances de types disponibles.
         /// </summary>
         public Dictionary<string, Language.ClankTypeInstance> TypeInstances = new Dictionary<string, Language.ClankTypeInstance>();
@@ -35,8 +45,11 @@ namespace Clank.Core.Model.Semantic
             if (Functions.ContainsKey(fullName))
             {
                 Language.Function func = Functions[fullName];
+                // Vérification : la fonction est-elle une méthode d'instance ?
                 if (func.IsStatic)
-                    throw new InvalidOperationException("La fonction " + functionName + " n'est pas une méthode d'instance de " + owner.GetFullName() + ".");
+                {
+                    throw new SemanticError("La fonction " + functionName + " n'est pas une méthode d'instance de " + owner.GetFullName() + ".");
+                }
                 return Functions[fullName];
             }
             return null;
@@ -70,8 +83,11 @@ namespace Clank.Core.Model.Semantic
             if (Functions.ContainsKey(fullName))
             {
                 Language.Function func = Functions[fullName];
+                // Vérification : la fonction est-elle statique ?
                 if (!func.IsStatic)
-                    throw new InvalidOperationException("La fonction " + functionName + " n'est pas une méthode statique de " + owner.GetFullName() + ".");
+                {
+                    throw new SemanticError("La fonction " + functionName + " n'est pas une méthode statique de " + owner.GetFullName() + ".");
+                }
                 return Functions[fullName];
             }
             return null;
@@ -86,8 +102,12 @@ namespace Clank.Core.Model.Semantic
             if (Functions.ContainsKey(fullName))
             {
                 Language.Function func = Functions[fullName];
+
+                // Vérification : la fonction est-elle bien marquée comme constructeur ?
                 if (!func.IsConstructor)
-                    throw new InvalidOperationException("La fonction " + Language.SemanticConstants.New + " n'est pas un constructeur de " + owner.GetFullName() + ".");
+                {
+                    throw new SemanticError("La fonction " + Language.SemanticConstants.New + " n'est pas un constructeur de " + owner.GetFullName() + ".");
+                }
                 return func.Instanciate(inst.GenericArguments);
             }
 
@@ -104,6 +124,8 @@ namespace Clank.Core.Model.Semantic
             };
             return cons;
         }
+
+        static int instCOunt;
         /// <summary>
         /// Crée une nouvelle instance de TypeTable.
         /// </summary>
@@ -115,7 +137,7 @@ namespace Clank.Core.Model.Semantic
             Types.Add("void", Language.ClankType.Void);
             Types.Add("Array", Language.ClankType.Array);
             Types.Add("float", Language.ClankType.Float);
-            Types.Add("State", new Language.ClankType() { Name = "State", IsPublic = true });
+            Types.Add(Language.SemanticConstants.StateClass, new Language.ClankType() { Name = Language.SemanticConstants.StateClass, IsPublic = true });
             Types.Add("Type", new Language.ClankType() { Name = "Type" });
 
             TypeInstances.Add("string", new Language.ClankTypeInstance() { BaseType = Language.ClankType.String, IsGeneric = false });
@@ -123,8 +145,10 @@ namespace Clank.Core.Model.Semantic
             TypeInstances.Add("bool", new Language.ClankTypeInstance() { BaseType = Language.ClankType.Bool, IsGeneric = false });
             TypeInstances.Add("int", new Language.ClankTypeInstance() { BaseType = Language.ClankType.Int32, IsGeneric = false });
             TypeInstances.Add("float", new Language.ClankTypeInstance() { BaseType = Language.ClankType.Float, IsGeneric = false });
-            TypeInstances.Add("State", new Language.ClankTypeInstance() { BaseType = Types["State"], IsGeneric = false });
+            TypeInstances.Add(Language.SemanticConstants.StateClass, new Language.ClankTypeInstance() { BaseType = Types[Language.SemanticConstants.StateClass], IsGeneric = false });
             TypeInstances.Add("Type", new Language.ClankTypeInstance() { BaseType = Types["Type"], IsGeneric = false });
+
+            instCOunt++;
         }
 
         #region Classes
@@ -184,7 +208,7 @@ namespace Clank.Core.Model.Semantic
                     else
                         return Container.Name;
                 else
-                    if (ParentContext.Container == Container || (Container.Name == "State")) // TODO : fix crade à rendre propre.
+                    if (ParentContext.Container == Container || (Container.Name == Language.SemanticConstants.StateClass)) // TODO : fix crade à rendre propre.
                         return ParentContext.GetContextPrefix();
                     else
                         return ParentContext.GetContextPrefix() + Container.Name + ".";
@@ -478,10 +502,19 @@ namespace Clank.Core.Model.Semantic
             {
                 baseType = Types[token.GenericTypeIdentifier.Content];
                 isGeneric = true;
-                // TODO : gérer le cas du nom des arguments génériques.
                 foreach(Token tok in token.GenericTypeArgs.ListTokens)
                 {
                     genericArguments.Add(FetchInstancedType(tok, context));
+                
+                }
+                // Vérification : le nombre d'arguments du type générique est-il correct ?
+                if(baseType.GenericArgumentNames.Count != token.GenericTypeArgs.ListTokens.Count)
+                {
+                    string error = "Nombre d'arguments pour le type '" + baseType.GetFullName() + "' incorrect. Attendu : " + baseType.GetFullNameAndGenericArgs() +
+                        ". Obtenu " + baseType.GetFullName() + "<" + token.GenericTypeArgs.ToReadableCode() + "> (" + token.GenericTypeArgs.ListTokens.Count + " args).";
+
+                    if(OnLog != null)
+                        OnLog(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, error, token.Line, token.Character, token.Source));
                 }
             }
             else if (token.TkType == TokenType.Name)

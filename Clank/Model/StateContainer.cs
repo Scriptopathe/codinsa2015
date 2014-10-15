@@ -30,7 +30,7 @@ namespace Clank.Core.Model
         public StateContainer()
         {
             ParsingLog = new Tools.EventLog();
-            StateClass = new Language.ClassDeclaration() { Name = "State", Source = "generated" };// new Language.ClankType() { Name = "State" };
+            StateClass = new Language.ClassDeclaration() { Name = Language.SemanticConstants.StateClass, Source = "generated" };// new Language.ClankType() { Name = "State" };
             Classes = new List<Language.ClassDeclaration>();
         }
 

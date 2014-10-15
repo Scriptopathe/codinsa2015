@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Clank.IDE</RootNamespace>
     <AssemblyName>Clank.IDE</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -50,6 +51,7 @@
     <Compile Include="ClankIDE.Designer.cs">
       <DependentUpon>ClankIDE.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration.cs" />
     <Compile Include="FileHelper.cs" />
     <Compile Include="SettingsDialog.cs">
       <SubType>Form</SubType>

@@ -10,10 +10,10 @@ namespace Clank.Core.Generation.Languages
     /// Cette classe prend en charge la traduction du code d'un arbre abstrait 
     /// vers le langage de programmation de destination.
     /// </summary>
-    [LanguageGenerator("CS")]
+    [LanguageGenerator("cs")]
     public class CSGenerator : ILanguageGenerator
     {
-        public const string LANG_KEY = "CS";
+        public const string LANG_KEY = "cs";
         #region Variables
         Clank.Core.Model.ProjectFile m_project;
         #endregion
@@ -416,8 +416,12 @@ namespace Clank.Core.Generation.Languages
         {
             if(type.IsMacro)
             {
+                
                 // Pour les types macro, on remplace le nom du type par le nom du type natif.
                 Model.MacroContainer.MacroClass mcClass = m_project.Macros.FindClassByType(type);
+                if (!mcClass.LanguageToTypeName.ContainsKey(LANG_KEY))
+                    throw new InvalidOperationException("Le nom de la macro classe '" + type.GetFullNameAndGenericArgs() + "' n'est pas renseigné pour le langage '" + LANG_KEY + "'");
+
                 return mcClass.LanguageToTypeName[LANG_KEY];
             }
             else
@@ -498,8 +502,6 @@ namespace Clank.Core.Generation.Languages
         string GenerateMacroFunctionCall(FunctionCall call)
         {
             StringBuilder builder = new StringBuilder();
-            if (call.Src != null)
-                builder.Append(GenerateEvaluable(call.Src) + ".");
 
             Clank.Core.Model.MacroContainer macros = m_project.Macros;
             var klass = macros.FindClassByType(call.Src.Type.BaseType);
@@ -508,12 +510,18 @@ namespace Clank.Core.Generation.Languages
             // Nom de la fonctin native dont les paramètres sont entourés par des $
             string nativeFuncName = func.LanguageToFunctionName[LANG_KEY];
 
+            if (call.Src != null && !nativeFuncName.Contains(SemanticConstants.SelfKW))
+                builder.Append(GenerateEvaluable(call.Src) + ".");
+
             // Remplace les paramètres par leurs values.
             for(int i = 0; i < call.Func.Arguments.Count; i++)
             {
-                nativeFuncName = nativeFuncName.Replace("$" + call.Func.Arguments[i].ArgName + "$",
+                nativeFuncName = nativeFuncName.Replace(SemanticConstants.ReplaceChr + "(" + call.Func.Arguments[i].ArgName + ")",
                     GenerateEvaluable(call.Arguments[i]));
             }
+
+            // Remplace @self par le nom de la variable.
+            nativeFuncName = nativeFuncName.Replace(SemanticConstants.SelfKW, GenerateEvaluable(call.Src));
 
             builder.Append(nativeFuncName);
             return builder.ToString().Replace(".[", "[");
@@ -525,7 +533,7 @@ namespace Clank.Core.Generation.Languages
         /// <returns></returns>
         string GenerateVariableAccess(VariableAccess access)
         {
-            if(access.Left.Type.GetFullName() == "State")
+            if(access.Left.Type.GetFullName() == Core.Model.Language.SemanticConstants.StateClass)
             {
                 return "this." + access.VariableName;
             }

@@ -130,7 +130,7 @@ namespace Clank.Core.Generation
                 // Crée la table des types à partir des jetons d'expression.
                 // A ce point de l'exécution, la table ne contient pas les fonctions.
                 Model.Semantic.TypeTable table = new Model.Semantic.TypeTable();
-                table.FetchTypes(exprTokens);
+                table.OnLog += logHandler;
 
                 // Initialise le parseur sémantique et le log du parseur sémantique.
                 Model.Semantic.SemanticParser parser = new Model.Semantic.SemanticParser();
@@ -141,6 +141,7 @@ namespace Clank.Core.Generation
                 // Project file.
                 Model.ProjectFile project = new Model.ProjectFile() { Types = parser.Types };
                 project.Log.OnEvent += logHandler;
+
                 // Parse les différents blocks "main".
                 try
                 {
@@ -154,6 +155,7 @@ namespace Clank.Core.Generation
                 {
                     project.Log.OnEvent -= logHandler;
                     parser.Log.OnEvent -= logHandler;
+                    table.OnLog -= logHandler;
                 }
 
                 // Crée les instructions pour le projet Client et Serveur.

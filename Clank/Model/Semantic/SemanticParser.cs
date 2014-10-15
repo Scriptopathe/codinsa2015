@@ -39,9 +39,10 @@ namespace Clank.Core.Model.Semantic
                 throw new InvalidOperationException();
 
             // Crée la table de types.
-            Types = new TypeTable();
+            if(Types == null)
+                Types = new TypeTable();
             Types.FetchTypes(mainBlock.ListTokens);
-            
+
             // Préparse le block pour ajouter les fonctions et variables d'instance à la table des types.
             ParseNamedBlock(mainBlock, new TypeTable.Context(), true);
             
@@ -187,7 +188,7 @@ namespace Clank.Core.Model.Semantic
                     // L'erreur n'est pas fatale, mais on la signale.
                     string error = "Un constructeur doit avoir comme type de retour le type dont il est le constructeur. Attendu : " +
                         ownerFullName + ", Obtenu " + this.Types.FetchInstancedType(type, context);
-                    this.Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
+                    this.Log.AddError(error, decl.Line, decl.Character, decl.Source);
 
                     if (StrictCompilation)
                         throw new SemanticError(error);
@@ -400,7 +401,7 @@ namespace Clank.Core.Model.Semantic
                             string error = "Impossible d'affecter une valeur de type " + grp.Operand2.Type.GetFullName() + " à une variable de type " +
                                 grp.Operand1.Type.GetFullName() + ".";
 
-                            Log.AddWarning(error, instructionToken.Line, instructionToken.Character, instructionToken.Source);
+                            Log.AddError(error, instructionToken.Line, instructionToken.Character, instructionToken.Source);
                             aff.Comment = error;
 
                             if (StrictCompilation)
@@ -582,7 +583,7 @@ namespace Clank.Core.Model.Semantic
                     // On simule le fait d'être dans la classe State pour y ajouter les variables d'instance.
                     // Création du contexte fils
                     TypeTable.Context childContext = new TypeTable.Context();
-                    childContext.Container = Types.Types["State"];
+                    childContext.Container = Types.Types[Language.SemanticConstants.StateClass];
                     childContext.ParentContext = context;
                     childContext.BlockName = instructionToken.ChildToken.NamedCodeBlockIdentifier.Content;
                     return ParseNamedBlock(instructionToken.ChildToken, childContext, preparse, true);
@@ -599,7 +600,10 @@ namespace Clank.Core.Model.Semantic
                     if (instructionToken.ChildToken.NamedCodeBlockIdentifier.Content == Language.SemanticConstants.AccessBk ||
                         instructionToken.ChildToken.NamedCodeBlockIdentifier.Content == Language.SemanticConstants.WriteBk)
                     {
-                        childContext.Variables.Add(Language.SemanticConstants.State, new Language.Variable() { Name = Language.SemanticConstants.State, Type = Types.TypeInstances["State"] });
+                        childContext.Variables.Add(Language.SemanticConstants.State, new Language.Variable() {
+                            Name = Language.SemanticConstants.State, 
+                            Type = Types.TypeInstances[Language.SemanticConstants.StateClass] 
+                        });
                     }
 
                     return ParseNamedBlock(instructionToken.ChildToken, childContext, preparse);
@@ -624,8 +628,7 @@ namespace Clank.Core.Model.Semantic
             {
                 // Appels de fonction
                 case TokenType.FunctionCall:
-                    // TODO : ce bout de code n'est appelé que pour les function call simples.
-                    //        faire en sorte que ç marche (faut modifier ParseFunctionCall).
+                    // ce bout de code n'est appelé que pour les function call simples sans srcObj.
                     return ParseFunctionCall(token, context, preparse);
                 // Litéraux string
                 case TokenType.StringLiteral:
@@ -676,15 +679,16 @@ namespace Clank.Core.Model.Semantic
                     Log.AddError(error, token.Line, token.Character, token.Source);
                     throw new SemanticError(error);
                 case TokenType.GenericType:
-                    Language.ClankTypeInstance genType;
                     string fullname = token.GetTypeFullName();
-                    if (Types.ContainsType(fullname, out type))
+                    type = Types.FetchInstancedType(token, context);
+                    if (type != null)
                     {
+                        // Vérification : nombre d'arguments du type générique.
                         return new Language.Typename() { Name = type, Type = Types.TypeInstances["Type"] };
                     }
 
                     
-                    error = "Type générique : " + token.Content + " inexistant(e) dans le contexte actuel.";
+                    error = "Type générique : " + fullname + " inexistant(e) dans le contexte actuel.";
                     Log.AddError(error, token.Line, token.Character, token.Source);
                     throw new SemanticError(error);
                 // List
@@ -698,7 +702,7 @@ namespace Clank.Core.Model.Semantic
                     if (token.Operator.IsBinaryOperator)
                     {
                         #region Binary Operator
-                        // Cas spécial : fonction call
+                        // Cas spécial : fonction call / accès à une variable.
                         if(token.Operator.Content == ".")
                         {
                             if(token.Operands2.TkType == TokenType.FunctionCall)
@@ -719,10 +723,19 @@ namespace Clank.Core.Model.Semantic
                                 {
                                     error = "La variable d'instance " + access.VariableName + " n'existe pas pour les objets de type : " + ctype.GetFullName() + ".";
                                     Log.AddError(error, token.Line, token.Character, token.Source);
-                                    throw new InvalidOperationException(error);
+                                    throw new SemanticError(error);
                                 }
 
-                                access.Type = ctype.InstanceVariables[access.VariableName].Type.Instanciate(access.Left.Type.GenericArguments);
+                                try
+                                {
+                                    access.Type = ctype.InstanceVariables[access.VariableName].Type.Instanciate(access.Left.Type.GenericArguments);
+                                }
+                                catch(SemanticError e)
+                                {
+                                    error = e.Message;
+                                    Log.AddError(error, token.Line, token.Character, token.Source);
+                                    throw new SemanticError(error);
+                                }
 
                                 // Vérification de l'accessibilité
                                 Language.ClankType current = context.Container;
@@ -731,11 +744,12 @@ namespace Clank.Core.Model.Semantic
                                 {
                                     // Si on n'est pas dans le type, ou qu'on opère pas sur un objet state depuis write/access.
                                     if (current != owner && 
-                                        !(owner.GetFullName() == "State" && (context.BlockName == "write" || context.BlockName == "access")))
+                                        !(owner.GetFullName() == Language.SemanticConstants.StateClass && 
+                                        (context.BlockName == Language.SemanticConstants.WriteBk || context.BlockName == Language.SemanticConstants.AccessBk)))
                                     {
                                         error = "La variable d'instance " + access.VariableName + " du type " + ctype.GetFullName() +
                                             " existe mais n'est pas accessible dans le contexte actuel. (mot clef public manquant ?).";
-                                        Log.AddWarning(error, token.Line, token.Character, token.Source);
+                                        Log.AddError(error, token.Line, token.Character, token.Source);
 
                                         if (StrictCompilation)
                                             throw new SemanticError(error);
@@ -923,7 +937,9 @@ namespace Clank.Core.Model.Semantic
                     {
                         string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
                         Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
-                        throw new InvalidOperationException(error);
+
+
+                        throw new SemanticError(error);
                     }
                     // Instanciation de la fonction.
                     instanciatedFunction = function.Instanciate(srcGenArgs);
@@ -972,7 +988,7 @@ namespace Clank.Core.Model.Semantic
                 {
                     // Type non accessible.
                     string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'est pas accessible dans le contexte actuel. (mot clef public manquant ?)";
-                    Log.AddWarning(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
+                    Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
 
                     if(StrictCompilation)
                         throw new SemanticError(error);
@@ -994,22 +1010,29 @@ namespace Clank.Core.Model.Semantic
 
             // Vérification du nombre d'arguments..
             if (call.Arguments.Count != call.Func.Arguments.Count)
-                throw new SemanticError("Le nombre d'arguments passés à la fonction " + call.Func.GetFullName() + " est incorrect");
-
-            // Vérification du type des arguments.
-            for(int i = 0; i < call.Arguments.Count; i++)
             {
-                if (call.Arguments[i].Type.GetFullName() != call.Func.Arguments[i].ArgType.GetFullName())
+                string error = "Le nombre d'arguments passés à la fonction " + call.Func.GetFullName() + " est incorrect";
+                Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
+                if (StrictCompilation)
+                    throw new SemanticError(error);
+            }
+            else
+            {
+                // Vérification du type des arguments.
+                for (int i = 0; i < call.Arguments.Count; i++)
                 {
+                    if (call.Arguments[i].Type.GetFullName() != call.Func.Arguments[i].ArgType.GetFullName())
+                    {
 
-                    string error = "Le type de l'argument passé à la fonction est invalide";
-                    Log.AddWarning(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
-                    if (StrictCompilation)
-                        throw new SemanticError(error);
+                        string error = "Le type de l'argument " + i + " passé à la fonction '" + call.Func.Name + "' est invalide. Attendu : " +
+                            call.Func.Arguments[i].ArgType.GetFullName() + ". Obtenu : " + call.Arguments[i].Type.GetFullName() + ".";
+                        Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
+                        if (StrictCompilation)
+                            throw new SemanticError(error);
 
+                    }
                 }
             }
-
             return call;
         }
         /// <summary>

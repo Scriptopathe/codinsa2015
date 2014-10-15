@@ -87,9 +87,16 @@ namespace Clank.Core.Model.Language
                 GenericParameterType parameter = (GenericParameterType)this.BaseType;
                 return genArgs[parameter.ParamId];
             }
+
             // Sinon, on instancie tous les arguments génériques.
             newInstance.IsGeneric = IsGeneric;
             newInstance.GenericArguments = new List<ClankTypeInstance>();
+            if(BaseType.GenericArgumentNames.Count != genArgs.Count)
+            {
+                throw new Semantic.SemanticError(
+                    "Nombre de paramètres génériques invalide. Attendu : " + BaseType.GenericArgumentNames.Count + ". Reçu " + genArgs.Count + ".");
+
+            }
             foreach (ClankTypeInstance inst in GenericArguments)
             {
                 newInstance.GenericArguments.Add(inst.Instanciate(genArgs));

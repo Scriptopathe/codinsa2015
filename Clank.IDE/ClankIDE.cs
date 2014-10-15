@@ -22,6 +22,9 @@ namespace Clank.IDE
         ProjectNode m_project;
         Core.Tools.EventLog.EventLogHandler m_handlerFunction;
         List<Core.Tools.EventLog.Entry> m_errors;
+        Timer m_generationTimer;
+        Configuration m_configuration;
+        
         #endregion
 
         #region Properties
@@ -55,23 +58,61 @@ namespace Clank.IDE
             {
                 SaveCurrent();
             };
-            projectTree1.NodeMouseDoubleClick += OnProjectNodeDoubleClick;
+
+            m_projectTree.NodeMouseDoubleClick += OnProjectNodeDoubleClick;
+
+            // Setup des logs
             m_errors = new List<Core.Tools.EventLog.Entry>();
             m_handlerFunction = new Core.Tools.EventLog.EventLogHandler(AddEntry);
 
             InitErrorList();
+
             // Simule l'ouverture d'un projet.
             m_project = new ProjectNode();
-            m_project.MainFile = "main.clank";
-            m_project.SourceFiles = new List<string>() { "main.clank" };
+            m_project.MainFile = null;
             m_project.Settings.ServerTarget = new Core.Generation.GenerationTarget("CS", "server.cs");
             m_project.Settings.ClientTargets = new List<Core.Generation.GenerationTarget>() { new Core.Generation.GenerationTarget("CS", "client.cs") };
-            CreateNewPage(Path.GetFullPath("main.clank"), false);
             SetStatusMessage("Prêt.");
-            projectTree1.SetProject(m_project);
+            m_projectTree.SetProject(m_project);
             
+
+            // Démarre le timer de compilation
+            m_generationTimer = new Timer() { Interval = 1000 };
+            m_generationTimer.Tick += OnCompileTimer;
+
+            // Charge la config
+            m_configuration = Configuration.Load("config.xml");
+            SetupRecentProjectsList();
+
         }
 
+        /// <summary>
+        /// Compile le projet pour afficher les erreurs à intervalle de temps régulier
+        /// si le joueur modifie un fichier à compiler.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void OnCompileTimer(object sender, EventArgs e)
+        {
+            GenerateCurrent(false, true);
+        }
+
+        /// <summary>
+        /// Mets en place la liste des projets récents.
+        /// </summary>
+        void SetupRecentProjectsList()
+        {
+            m_recentProjectStrip.DropDownItems.Clear();
+            foreach(string str in m_configuration.RecentProjects)
+            {
+                ToolStripMenuItem item = new ToolStripMenuItem(str);
+                item.Click += (object sender, EventArgs e) =>
+                {
+                    OpenProjectFile(str);
+                };
+                m_recentProjectStrip.DropDownItems.Add(item);
+            }
+        }
 
 
         #region Main functions
@@ -94,7 +135,7 @@ namespace Clank.IDE
         /// <summary>
         /// Crée une nouvelle page.
         /// </summary>
-        void CreateNewPage(string filename, bool load)
+        void CreateNewPage(string fullpath, bool load)
         {
             // Création de l'éditeur de code.
             ICSharpCode.TextEditor.TextEditorControl editor = new ICSharpCode.TextEditor.TextEditorControl();
@@ -103,64 +144,155 @@ namespace Clank.IDE
             if (Directory.Exists(dir))
             {
                 fsmProvider = new FileSyntaxModeProvider(dir);
+                
                 HighlightingManager.Manager.AddSyntaxModeFileProvider(fsmProvider);
-                editor.SetHighlighting("geom");
+                editor.SetHighlighting("clank");
             }
             editor.ConvertTabsToSpaces = true;
             editor.Dock = System.Windows.Forms.DockStyle.Fill;
             editor.IsReadOnly = false;
             editor.Location = new System.Drawing.Point(0, 0);
             editor.Size = new System.Drawing.Size(591, 249);
+            editor.Font = new System.Drawing.Font("Consolas", 10);
             editor.TabIndex = 0;
-            editor.Text = "Hello";
+            editor.Text = "main\r\n{\r\n}\r\n";
             editor.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-
             // Ajout d'un nouveau tab page.
             int index = m_codeTabs.TabCount;
-            string display = filename;
-            if (File.Exists(filename))
+            string display = fullpath;
+            if (File.Exists(fullpath))
             {
-                display = Path.GetFileName(filename);
+                display = Path.GetFileName(fullpath);
             }
             TabPage page = new TabPage(display);
             page.Controls.Add(editor);
-            PageInfo info = new PageInfo() { SourceFile = filename, Page = page, Editor = editor };
+            PageInfo info = new PageInfo() { SourceFile = fullpath, Page = page, Editor = editor };
             m_pageInfos.Add(info);
 
-
+            editor.TextChanged += (object sender, EventArgs e) => { OnEditorTextChanged(info); };
+            
             // Chargement ?
-            if (load && File.Exists(filename))
+            if (load && File.Exists(fullpath))
             {
-                string text = File.ReadAllText(filename);
+                string text = File.ReadAllText(fullpath);
                 editor.Text = text;
             }
             
             m_codeTabs.TabPages.Add(page);
             m_codeTabs.SelectedTab = page;
         }
+
         /// <summary>
-        /// Génère le script dans l'onglet courrant.
+        /// Se produit lorsque l'utilisateur modifie le texte d'un des éditeurs, cela
+        /// a pour effet de relancer le timer pour la génération automatique.
         /// </summary>
-        void GenerateCurrent()
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void OnEditorTextChanged(PageInfo info)
         {
+            m_generationTimer.Stop();
+            m_generationTimer.Start();
+            info.Page.Text = Path.GetFileName(info.SourceFile) + "*";
+        }
+        
+        /// <summary>
+        /// Crée une map nom de fichier (par rapport au dossier contenant le main file) / contenu en mémoire pour une compilation
+        /// à la volée (afin de vérifier les erreurs).
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<string, string> MapFilesInMemory()
+        {
+            Dictionary<string, string> files = new Dictionary<string, string>();
+            string mainFilePath = m_project.GetFullFilename(m_project.MainFile);
+            string baseDir = Path.GetDirectoryName(mainFilePath);
+            foreach(string file in m_project.SourceFiles)
+            {
+                // Chemin absolu
+                string absolutePath = m_project.GetFullFilename(file);
+                string dirName = Path.GetDirectoryName(m_project.GetFullFilename(m_project.MainFile));
+                string relativeToMainfile = m_project.GetFilenameRelativeTo(dirName + "\\", absolutePath);
+
+                // Si le fichier est déjà ouvert.
+                var page = GetPageByFullFilename(absolutePath);
+                string content;
+                if (page == null)
+                    content = File.ReadAllText(absolutePath, Encoding.UTF8);
+                else
+                    content = page.Editor.Text;
+
+                files.Add(relativeToMainfile, content);
+            }
+            return files;
+        }
+        /// <summary>
+        /// Génère le main script du projet.
+        /// </summary>
+        void GenerateCurrent(bool saveOutputFiles=true, bool compileFromMemory=false)
+        {
+            // Vérification de la possibilité de la compilation.
+            if(m_project.MainFile == null)
+            {
+                if(!compileFromMemory)
+                    MessageBox.Show("Le projet actuel ne contient pas de main file !");
+                return;
+            }
+            else if( !File.Exists(m_project.GetFullFilename(m_project.MainFile)))
+            {
+                if(!compileFromMemory)
+                    MessageBox.Show("La cible de compilation principale '" + m_project.GetFullFilename(m_project.MainFile) + "' est introuvable.");
+                return;
+            }
+
+            // On arrête le timer de génération.
+            m_generationTimer.Stop();
             m_errors.Clear();
+
+            // On nettoie la liste d'erreur.
             InitErrorList();
 
             SetStatusMessage("Compilation en cours...");
-            string dir = m_project.GetFullFilename(m_project.MainFile);
             Clank.Core.Generation.ProjectGenerator generator = new Core.Generation.ProjectGenerator();
-            ((Clank.Core.Generation.Preprocessor.FileIncludeLoader)generator.Preprocessor.ScriptIncludeLoader).BaseDirectory = Path.GetDirectoryName(dir);
-            List<Core.Generation.OutputFile> files;
+
+            // Définit le répertoire de base pour les include comme le répertoire contenant le main file.
+            string dir = m_project.GetFullFilename(m_project.MainFile);
+
+            // Configuration du préprocesseur.
+            if (compileFromMemory)
+            {
+                var m = MapFilesInMemory();
+                Clank.Core.Generation.Preprocessor.MemoryIncludeLoader loader = new Core.Generation.Preprocessor.MemoryIncludeLoader();
+                foreach (var kvp in m) { loader.AddFile(kvp.Key, kvp.Value); }
+                generator.Preprocessor.ScriptIncludeLoader = loader;
+            }
+            else
+            {
+                Clank.Core.Generation.Preprocessor.FileIncludeLoader loader = new Core.Generation.Preprocessor.FileIncludeLoader();
+                loader.BaseDirectory = Path.GetDirectoryName(dir);
+                generator.Preprocessor.ScriptIncludeLoader = loader;
+            }
+            List<Core.Generation.OutputFile> files = new List<Core.Generation.OutputFile>();
+
+            // Début de la génération
             try
             {
                 files = generator.Generate("#include " + Path.GetFileName(m_project.MainFile), m_project.Settings.ServerTarget, m_project.Settings.ClientTargets, m_handlerFunction);
             }
-            catch (Exception e)
+            /*catch (Exception e)
             {
+                
                 m_handlerFunction(new Core.Tools.EventLog.Entry(Core.Tools.EventLog.EntryType.Error, "Erreur interne du compilateur: " + e.Message + ".\r\n" + e.StackTrace, 0, 0, "[unknown]"));
-            }
+            }*/
+            finally { }
+
+            // Informe l'utilisateur que la compilation est terminée.
             SetStatusMessage("Compilation terminée.");
-            // TODO : écrire les fichiers.
+            
+            // Ecriture des fichiers.
+            foreach(var file in files)
+            {
+                string path = Path.GetDirectoryName(m_project.SavePath) + "\\" + file.Name;
+                File.WriteAllText(path, file.Content);
+            }
 
         }
 
@@ -169,10 +301,14 @@ namespace Clank.IDE
         /// </summary>
         void SaveCurrent()
         {
+            if (m_codeTabs.SelectedIndex == -1)
+                return;
+
             var info = m_pageInfos[m_codeTabs.SelectedIndex];
             string filename = info.SourceFile;
             string content = info.Editor.Text;
             System.IO.File.WriteAllText(filename, content, Encoding.UTF8);
+            info.Page.Text = Path.GetFileName(info.SourceFile);
             SetStatusMessage("Fichier " + filename + " sauvegardé avec succès.");
         }
 
@@ -232,14 +368,14 @@ namespace Clank.IDE
         void OpenTabPage(string fullPath)
         {
             string shorName = Path.GetFileName(fullPath);
-            var page = GetPageByFilename(shorName);
+            var page = GetPageByShortFilename(shorName);
             fullPath = Path.GetFullPath(fullPath);
             // Si la page n'existe pas
             if (page == null && File.Exists(fullPath))
             {
                 // Charge le fichier
                 CreateNewPage(fullPath, true);
-                page = GetPageByFilename(shorName);
+                page = GetPageByShortFilename(shorName);
             }
 
             // Déplace le curseur à la ligne concernée.
@@ -261,14 +397,14 @@ namespace Clank.IDE
             string baseDir = Path.GetDirectoryName(m_project.GetFullFilename(m_project.MainFile));
             string fullPath = baseDir + "\\" + item.Source;
             string shorName = Path.GetFileName(fullPath);
-            var page = GetPageByFilename(shorName);
+            var page = GetPageByShortFilename(shorName);
 
             // Si la page n'existe pas
             if(page == null && File.Exists(fullPath))
             {
                 // Charge le fichier
                 CreateNewPage(fullPath, true);
-                page = GetPageByFilename(shorName);
+                page = GetPageByShortFilename(shorName);
             }
 
             // Déplace le curseur à la ligne concernée.
@@ -309,8 +445,22 @@ namespace Clank.IDE
         {
             if (m_codeTabs.TabCount != 0 && m_codeTabs.SelectedIndex != -1)
             {
+                int index = m_codeTabs.SelectedIndex;
+                PageInfo info = m_pageInfos[index];
+                if (info.Page.Text.Contains("*"))
+                {
+                    // Page non sauvegardée :
+                    var res = MessageBox.Show("Le fichier '" + info.SourceFile + "' contient des modifications non enregistrées. Voulez-vous les sauvegarder ?",
+                        "Modifications non enregistrées", MessageBoxButtons.YesNoCancel);
+                    if (res == System.Windows.Forms.DialogResult.Yes)
+                        SaveCurrent();
+                    else if (res == System.Windows.Forms.DialogResult.Cancel)
+                        return;
+                        
+                }
                 m_pageInfos.RemoveAt(m_codeTabs.SelectedIndex);
                 m_codeTabs.TabPages[m_codeTabs.SelectedIndex].Dispose();
+                
             }
         }
 
@@ -322,10 +472,12 @@ namespace Clank.IDE
         {
             ProjectNode proj = ProjectNode.Load(filename);
             m_project = proj;
-            projectTree1.SetProject(proj);
+            m_projectTree.SetProject(proj);
             m_codeTabs.TabPages.Clear();
             m_pageInfos.Clear();
-            Text = "Clank.IDE - " + m_project.Name;
+            Text = "Clank.IDE - " + m_project.Name + " (" + m_project.SavePath + ")";
+            m_configuration.AddRecentProject(filename);
+            m_configuration.Save("config.xml");
             SetStatusMessage("Projet '" + m_project.Name + "' ouvert avec succès.");
         }
         #endregion
@@ -346,15 +498,30 @@ namespace Clank.IDE
         #region Tools
         /// <summary>
         /// Retourne la page ayant le nom (nom du fichier court) passé en paramètre.
+        /// [Déconseillé]
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public PageInfo GetPageByFilename(string name)
+        public PageInfo GetPageByShortFilename(string name)
         {
             foreach(PageInfo info in m_pageInfos)
             {
                 string src = Path.GetFileName(info.SourceFile);
                 if (name == src)
+                    return info;
+            }
+            return null;
+        }
+        /// <summary>
+        /// Retourne la page ayant le fichier source (full path) passé en paramètre.
+        /// </summary>
+        public PageInfo GetPageByFullFilename(string fullpath)
+        {
+            string fullPathNormalized = fullpath.Replace("/", "\\");
+            foreach (PageInfo info in m_pageInfos)
+            {
+                string src = info.SourceFile.Replace("/", "\\");
+                if (fullPathNormalized == src)
                     return info;
             }
             return null;
@@ -381,13 +548,13 @@ namespace Clank.IDE
         {
             if (m_codeTabs.SelectedIndex == -1)
             {
-                projectTree1.RefreshTree();
+                m_projectTree.RefreshTree();
                 return;
             }
             if (m_project.ContainsFile(m_pageInfos[m_codeTabs.SelectedIndex].SourceFile))
             {
                 m_project.SetMainfile(m_pageInfos[m_codeTabs.SelectedIndex].SourceFile);
-                projectTree1.RefreshTree();
+                m_projectTree.RefreshTree();
                 SetStatusMessage("Le fichier '" + m_project.MainFile + "' est désormais le fichier principal.");
             }
             else
@@ -405,8 +572,8 @@ namespace Clank.IDE
         }
         private void m_saveProject_Click(object sender, EventArgs e)
         {
-            m_project.Save(m_project.Name);
-            SetStatusMessage("Projet '" + m_project.Name + "' sauvegardé avec succès.");
+            m_project.Save(m_project.SavePath);
+            SetStatusMessage("Projet '" + m_project.SavePath + "' sauvegardé avec succès.");
         }
 
         /// <summary>
@@ -422,7 +589,7 @@ namespace Clank.IDE
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 OpenProjectFile(dlg.FileName);
-
+                SetupRecentProjectsList();
             }
         }
         /// <summary>
@@ -446,7 +613,7 @@ namespace Clank.IDE
 
                 m_saveProject_Click(sender, e);
                 m_errorList.Clear();
-                projectTree1.SetProject(m_project);
+                m_projectTree.SetProject(m_project);
             }
         }
         /// <summary>

@@ -11,7 +11,7 @@ namespace Clank.Core.Generation.Preprocessor
     /// </summary>
     public class Preprocessor
     {
-        const int MAX_DEPTH = 5000;
+        const int MAX_DEPTH = 100;
         #region Variables
         IScriptIncludeLoader m_scriptIncludeLoader;
         #endregion
@@ -96,7 +96,7 @@ namespace Clank.Core.Generation.Preprocessor
         public string Run(string script,  ref Dictionary<int, LineInfo> lineMapping, int depth=0, int firstLineAbsolute=0, string source="memory")
         {
             if (depth > MAX_DEPTH)
-                throw new InvalidOperationException("Preprocesseur: Inclusion circulaire détectée.");
+                throw new RessourceNotFoundException("Preprocesseur: Inclusion circulaire détectée.");
 
             
             // Recherche tous les include

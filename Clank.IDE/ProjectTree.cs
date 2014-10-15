@@ -86,7 +86,8 @@ namespace Clank.IDE
                     {
                         string old = System.IO.Path.GetFileName(m_projectNode.MainFile);
                         if(old != null)
-                            Nodes["project"].Nodes[old].Text = Nodes["project"].Nodes[old].Name; ;
+                            if(Nodes["project"].Nodes[old] != null)
+                                Nodes["project"].Nodes[old].Text = Nodes["project"].Nodes[old].Name; ;
                         m_projectNode.SetMainfile(node.File);
                         node.Text = node.Name + " (main)";
                     };

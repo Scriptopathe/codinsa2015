@@ -195,6 +195,11 @@ main {
             // - Créer une interface console propre, et synpathique.
             // - Instruction  : foreach(int a, v) { };
             // - Protections : state ne doit pas contenir de fonctions (quoique ?)
+            // - tester @self
+            // - implémenter java
+            // - implémenter cpp
+            // - implémenter python
+
             // Remplir la todo-list !
             // TODO 2 : le retour de la vengeance :
             // - Doc.

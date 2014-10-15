@@ -55,7 +55,7 @@ namespace Clank.Core.Model
                 if(instruction is Language.FunctionDeclaration)
                 {
                     Language.FunctionDeclaration decl = (Language.FunctionDeclaration)instruction;
-                    decl.Func.Owner = table.Types["State"];
+                    decl.Func.Owner = table.Types[Language.SemanticConstants.StateClass];
                     if(!decl.Func.IsPublic)
                         ParsingLog.AddWarning("Les fonctions contenues dans le block write doivent être publiques.",
                             instruction.Line, instruction.Character, instruction.Source);

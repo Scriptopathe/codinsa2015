@@ -13,14 +13,14 @@ namespace Clank.Core.Model.Language
         #region Special variables
         public const string ClientID = "clientId";
         public const string State = "state";
-
+        public const string StateClass = "State";
         #endregion
 
         #region Language Semantics
         public const string Public = "public";
         public const string Static = "static";
         public const string Constructor = "constructor";
-        public const string New = "New";
+        public const string New = "new";
         public const string Return = "return";
         public const string Class = "class";
         #endregion
@@ -30,6 +30,11 @@ namespace Clank.Core.Model.Language
         public const string AccessBk = "access";
         public const string WriteBk = "write";
         public const string StateBk = "state";
+        #endregion
+
+        #region Macro
+        public const string SelfKW = "@self";
+        public const string ReplaceChr = "$";
         #endregion
         #region Others
 

@@ -502,7 +502,7 @@ namespace Clank.Core.Generation.Languages
         /// <returns></returns>
         string GenerateVariableAccess(VariableAccess access)
         {
-            if(access.Left.Type.GetFullName() == "State")
+            if(access.Left.Type.GetFullName() == Core.Model.Language.SemanticConstants.StateClass)
             {
                 return "self." + access.VariableName;
             }

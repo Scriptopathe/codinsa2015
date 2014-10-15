@@ -56,7 +56,7 @@ namespace Clank.Core.Model
                 {
                     // Vérifie que le type de retour de la fonction est public.
                     Language.FunctionDeclaration decl = (Language.FunctionDeclaration)instruction;
-                    decl.Func.Owner = table.Types["State"];
+                    decl.Func.Owner = table.Types[Language.SemanticConstants.StateClass];
                     if (!decl.Func.IsPublic)
                         ParsingLog.AddWarning("Les fonctions contenues dans le block access doivent être publiques.",
                             instruction.Line, instruction.Character, instruction.Source);

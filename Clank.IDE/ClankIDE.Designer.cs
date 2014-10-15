@@ -47,6 +47,7 @@
             this.m_newProject = new System.Windows.Forms.ToolStripMenuItem();
             this.m_openProject = new System.Windows.Forms.ToolStripMenuItem();
             this.m_saveProject = new System.Windows.Forms.ToolStripMenuItem();
+            this.m_recentProjectStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.générationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.m_generate = new System.Windows.Forms.ToolStripMenuItem();
             this.configurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,7 +63,6 @@
             this.m_messageColumn2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.m_lineColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.m_sourceColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.projectTree1 = new Clank.IDE.ProjectTree();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.m_openButton = new System.Windows.Forms.ToolStripButton();
             this.m_saveButton = new System.Windows.Forms.ToolStripButton();
@@ -71,6 +71,7 @@
             this.m_setAsMainButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.m_closeTabButton = new System.Windows.Forms.ToolStripButton();
+            this.m_projectTree = new Clank.IDE.ProjectTree();
             this.m_status.SuspendLayout();
             this.m_menu.SuspendLayout();
             this.m_mainLayout.SuspendLayout();
@@ -87,6 +88,7 @@
             // 
             // m_status
             // 
+            this.m_status.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.m_status.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_statusLabel});
             this.m_status.Location = new System.Drawing.Point(0, 375);
@@ -102,6 +104,7 @@
             // 
             // m_menu
             // 
+            this.m_menu.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.m_menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fichierToolStripMenuItem,
             this.générationToolStripMenuItem,
@@ -121,7 +124,8 @@
             this.toolStripSeparator3,
             this.m_newProject,
             this.m_openProject,
-            this.m_saveProject});
+            this.m_saveProject,
+            this.m_recentProjectStrip});
             this.fichierToolStripMenuItem.Name = "fichierToolStripMenuItem";
             this.fichierToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.fichierToolStripMenuItem.Text = "Fichier";
@@ -181,6 +185,12 @@
             this.m_saveProject.Size = new System.Drawing.Size(240, 22);
             this.m_saveProject.Text = "Enregister le projet";
             this.m_saveProject.Click += new System.EventHandler(this.m_saveProject_Click);
+            // 
+            // m_recentProjectStrip
+            // 
+            this.m_recentProjectStrip.Name = "m_recentProjectStrip";
+            this.m_recentProjectStrip.Size = new System.Drawing.Size(240, 22);
+            this.m_recentProjectStrip.Text = "Projets récents";
             // 
             // générationToolStripMenuItem
             // 
@@ -247,7 +257,6 @@
             // 
             // m_lateralSpliter
             // 
-            this.m_lateralSpliter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.m_lateralSpliter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_lateralSpliter.Location = new System.Drawing.Point(3, 28);
             this.m_lateralSpliter.Name = "m_lateralSpliter";
@@ -255,17 +264,18 @@
             // m_lateralSpliter.Panel1
             // 
             this.m_lateralSpliter.Panel1.Controls.Add(this.m_verticalSplit);
+            this.m_lateralSpliter.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // m_lateralSpliter.Panel2
             // 
-            this.m_lateralSpliter.Panel2.Controls.Add(this.projectTree1);
+            this.m_lateralSpliter.Panel2.Controls.Add(this.m_projectTree);
+            this.m_lateralSpliter.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.m_lateralSpliter.Size = new System.Drawing.Size(1087, 320);
             this.m_lateralSpliter.SplitterDistance = 970;
             this.m_lateralSpliter.TabIndex = 3;
             // 
             // m_verticalSplit
             // 
-            this.m_verticalSplit.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.m_verticalSplit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_verticalSplit.Location = new System.Drawing.Point(0, 0);
             this.m_verticalSplit.Name = "m_verticalSplit";
@@ -274,10 +284,12 @@
             // m_verticalSplit.Panel1
             // 
             this.m_verticalSplit.Panel1.Controls.Add(this.m_codeTabs);
+            this.m_verticalSplit.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // m_verticalSplit.Panel2
             // 
             this.m_verticalSplit.Panel2.Controls.Add(this.m_errorList);
+            this.m_verticalSplit.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.m_verticalSplit.Size = new System.Drawing.Size(970, 320);
             this.m_verticalSplit.SplitterDistance = 213;
             this.m_verticalSplit.TabIndex = 0;
@@ -288,7 +300,7 @@
             this.m_codeTabs.Location = new System.Drawing.Point(0, 0);
             this.m_codeTabs.Name = "m_codeTabs";
             this.m_codeTabs.SelectedIndex = 0;
-            this.m_codeTabs.Size = new System.Drawing.Size(968, 211);
+            this.m_codeTabs.Size = new System.Drawing.Size(970, 213);
             this.m_codeTabs.TabIndex = 0;
             // 
             // m_errorList
@@ -305,7 +317,7 @@
             listViewItem1});
             this.m_errorList.Location = new System.Drawing.Point(0, 0);
             this.m_errorList.Name = "m_errorList";
-            this.m_errorList.Size = new System.Drawing.Size(968, 101);
+            this.m_errorList.Size = new System.Drawing.Size(970, 103);
             this.m_errorList.TabIndex = 0;
             this.m_errorList.UseCompatibleStateImageBehavior = false;
             this.m_errorList.View = System.Windows.Forms.View.Details;
@@ -328,16 +340,6 @@
             // 
             this.m_sourceColumn.Text = "Fichier";
             this.m_sourceColumn.Width = 232;
-            // 
-            // projectTree1
-            // 
-            this.projectTree1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.projectTree1.ImageIndex = 0;
-            this.projectTree1.Location = new System.Drawing.Point(0, 0);
-            this.projectTree1.Name = "projectTree1";
-            this.projectTree1.SelectedImageIndex = 0;
-            this.projectTree1.Size = new System.Drawing.Size(111, 318);
-            this.projectTree1.TabIndex = 0;
             // 
             // toolStrip1
             // 
@@ -416,10 +418,21 @@
             this.m_closeTabButton.Text = "Ferme l\'onglet.";
             this.m_closeTabButton.Click += new System.EventHandler(this.m_closeTabButton_Click);
             // 
+            // m_projectTree
+            // 
+            this.m_projectTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.m_projectTree.ImageIndex = 0;
+            this.m_projectTree.Location = new System.Drawing.Point(0, 0);
+            this.m_projectTree.Name = "m_projectTree";
+            this.m_projectTree.SelectedImageIndex = 0;
+            this.m_projectTree.Size = new System.Drawing.Size(113, 320);
+            this.m_projectTree.TabIndex = 0;
+            // 
             // ClankIDE
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1093, 397);
             this.Controls.Add(this.m_mainLayout);
             this.Controls.Add(this.m_status);
@@ -427,6 +440,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.m_menu;
             this.Name = "ClankIDE";
+            this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Clank.IDE";
             this.m_status.ResumeLayout(false);
             this.m_status.PerformLayout();
@@ -481,11 +495,12 @@
         private System.Windows.Forms.ToolStripButton m_setAsMainButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton m_closeTabButton;
-        private ProjectTree projectTree1;
+        private ProjectTree m_projectTree;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem m_newProject;
         private System.Windows.Forms.ToolStripMenuItem m_openProject;
         private System.Windows.Forms.ToolStripMenuItem m_saveProject;
+        private System.Windows.Forms.ToolStripMenuItem m_recentProjectStrip;
     }
 }
 
