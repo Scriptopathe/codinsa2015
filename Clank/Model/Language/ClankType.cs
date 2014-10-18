@@ -96,6 +96,34 @@ namespace Clank.Core.Model.Language
         }
 
         /// <summary>
+        /// Retourne une instance de ce type, avec les paramètres génériques non renseignés.
+        /// </summary>
+        public ClankTypeInstance AsInstance()
+        {
+            Language.ClankTypeInstance instance = new Language.ClankTypeInstance();
+            instance.BaseType = this;
+
+            // Crée une instance du type, avec ses paramètres génériques.
+            int i = 0;
+            instance.GenericArguments.AddRange(this.GenericArgumentNames.Select((string str) =>
+            {
+                int haha = i;
+                i++;
+                return new Language.ClankTypeInstance()
+                {
+                    BaseType = new Language.GenericParameterType()
+                    {
+                        Prefix = this.GetFullName(),
+                        ParamId = haha,
+                        Name = str
+                    },
+                    IsGeneric = true
+                };
+            }));
+
+            return instance;
+        }
+        /// <summary>
         /// Retourne le nom du type avec ses arguments génériques.
         /// </summary>
         /// <returns></returns>

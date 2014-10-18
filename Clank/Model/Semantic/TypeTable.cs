@@ -33,27 +33,7 @@ namespace Clank.Core.Model.Semantic
         /// Représente les différentes fonctions créées et adressables.
         /// </summary>
         public Dictionary<string, Language.Function> Functions = new Dictionary<string, Language.Function>();
-        /// <summary>
-        /// Retourne la fonction d'instance pour un type donné dont le nom est passé en paramètre.
-        /// </summary>
-        /// <param name="functionName"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public Language.Function GetInstanceFunction(Language.ClankType owner, string functionName, Context context)
-        {
-            string fullName = owner.GetFullName() + "." + functionName;
-            if (Functions.ContainsKey(fullName))
-            {
-                Language.Function func = Functions[fullName];
-                // Vérification : la fonction est-elle une méthode d'instance ?
-                if (func.IsStatic)
-                {
-                    throw new SemanticError("La fonction " + functionName + " n'est pas une méthode d'instance de " + owner.GetFullName() + ".");
-                }
-                return Functions[fullName];
-            }
-            return null;
-        }
+
 
         /// <summary>
         /// Retourne la fonction dont le nom est passé en paramètre.
@@ -71,37 +51,68 @@ namespace Clank.Core.Model.Semantic
             }
             return null;
         }
+
+        /// <summary>
+        /// Retourne la fonction d'instance pour un type donné dont le nom est passé en paramètre.
+        /// </summary>
+        /// <param name="functionName"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public Language.Function GetInstanceFunction(Language.ClankTypeInstance instance, string functionName, List<Language.Evaluable> args, Context context)
+        {
+            Language.ClankType owner = instance.BaseType;
+            string fullName = owner.GetFullName() + "." + functionName + Language.Evaluable.GetArgTypesString(args);
+            var instanciatedOverloads = InstanciatedFunc(instance);
+            if (instanciatedOverloads.ContainsKey(fullName))
+            {
+                Language.Function func = instanciatedOverloads[fullName];
+                // Vérification : la fonction est-elle une méthode d'instance ?
+                if (func.IsStatic)
+                {
+                    throw new SemanticError("La fonction " + functionName + " n'est pas une méthode d'instance de " + owner.GetFullName() + ".");
+                }
+                return instanciatedOverloads[fullName];
+            }
+            return null;
+        }
+
         /// <summary>
         /// Retourne la fonction statique pour un type donné dont le nom est passé en paramètre.
         /// </summary>
         /// <param name="functionName"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public Language.Function GetStaticFunction(Language.ClankType owner, string functionName, Context context)
+        public Language.Function GetStaticFunction(Language.ClankTypeInstance instancedType, string functionName, List<Language.Evaluable> args, Context context)
         {
-            string fullName = owner.GetFullName() + "." + functionName;
-            if (Functions.ContainsKey(fullName))
+            // Obtient le nom complet de la fonction (avec les args).
+            Language.ClankType owner = instancedType.BaseType;
+            string fullName = owner.GetFullName() + "." + functionName + Language.Evaluable.GetArgTypesString(args);
+
+            var instanciatedOverloads = InstanciatedFunc(instancedType);
+            if (instanciatedOverloads.ContainsKey(fullName))
             {
-                Language.Function func = Functions[fullName];
+                Language.Function func = instanciatedOverloads[fullName];
                 // Vérification : la fonction est-elle statique ?
                 if (!func.IsStatic)
                 {
                     throw new SemanticError("La fonction " + functionName + " n'est pas une méthode statique de " + owner.GetFullName() + ".");
                 }
-                return Functions[fullName];
+                return instanciatedOverloads[fullName];
             }
             return null;
         }
-        
+
+
         /// <summary>
         /// Retourne le constructeur (instancié) pour un type donné.
         /// </summary>
-        public Language.Function GetConstructor(Language.ClankType owner, Language.ClankTypeInstance inst, Context context)
+        public Language.Function GetConstructor(Language.ClankType owner, Language.ClankTypeInstance inst, List<Language.Evaluable> args, Context context)
         {
-            string fullName = owner.GetFullName() + "." + Language.SemanticConstants.New;
-            if (Functions.ContainsKey(fullName))
+            string fullName = owner.GetFullName() + "." + Language.SemanticConstants.New + Language.Evaluable.GetArgTypesString(args);
+            var instanciedOverloads = InstanciatedFunc(inst);
+            if (instanciedOverloads.ContainsKey(fullName))
             {
-                Language.Function func = Functions[fullName];
+                Language.Function func = instanciedOverloads[fullName];
 
                 // Vérification : la fonction est-elle bien marquée comme constructeur ?
                 if (!func.IsConstructor)
@@ -123,6 +134,29 @@ namespace Clank.Core.Model.Semantic
                 Name = Language.SemanticConstants.New
             };
             return cons;
+        }
+        /// <summary>
+        /// Retourne une copie de Functions dont les arguments génériques dans les clefs sont remplacés par les arguments donnés.
+        /// Ex :
+        /// Args = (5)
+        /// List.add(List'T) => List.add(int)
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <returns></returns>
+        public Dictionary<string, Language.Function> InstanciatedFunc(Language.ClankTypeInstance instance)
+        {
+            Dictionary<string, Language.Function> funcs = new Dictionary<string, Language.Function>();
+            foreach (var kvp in Functions)
+            {
+                string key = kvp.Key;
+                for (int i = 0; i < instance.BaseType.GenericArgumentNames.Count; i++)
+                {
+                    string argName = instance.BaseType.GenericArgumentNames[i];
+                    key = key.Replace(instance.BaseType.GetFullName() + "'" + argName, instance.GenericArguments[i].GetFullName());
+                }
+                funcs.Add(key, kvp.Value);
+            }
+            return funcs;
         }
 
         static int instCOunt;

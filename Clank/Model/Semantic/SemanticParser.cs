@@ -243,7 +243,7 @@ namespace Clank.Core.Model.Semantic
                     
                     Types.Functions.Add(decl.Func.GetFullName(), decl.Func);
                     if (fromClass)
-                        context.Container.InstanceMethods.Add(decl.Func.Name, decl);
+                        context.Container.InstanceMethods.Add(decl.Func.GetFullName(), decl);
                 }
                 else
                 { 
@@ -904,6 +904,8 @@ namespace Clank.Core.Model.Semantic
             Language.Function instanciatedFunction;
             // Objet sur lequel appeler la fonction (null si aucun).
             Language.Evaluable srcObj;
+            // Arguments de la fonction
+            List<Language.Evaluable> args;
             // Jeton contenant le function call
             Token functionTk;
             // Indique si la fonction est un constructeur.
@@ -916,7 +918,10 @@ namespace Clank.Core.Model.Semantic
                 #region Expr group
                 Token lMember = exprGrp.Operands1;
                 functionTk = exprGrp.Operands2; //  FunctionCall
-
+                args = functionTk.FunctionCallArgs.ListTokens.Select(delegate(Token tk)
+                {
+                    return ParseEvaluable(tk.ChildToken, context, preparse); // TODO : à vérifier.
+                }).ToList();
                 // Vérifie que le jeton function est un appel de fonction.
                 if (functionTk.TkType != TokenType.FunctionCall)
                     throw new InvalidOperationException();
@@ -935,7 +940,7 @@ namespace Clank.Core.Model.Semantic
                     if (functionTk.FunctionCallIdentifier.Content == Language.SemanticConstants.New)
                     {
                         Language.Typename typename = (Language.Typename)srcObj;
-                        instanciatedFunction = Types.GetConstructor(typename.Name.BaseType, typename.Name, context);
+                        instanciatedFunction = Types.GetConstructor(typename.Name.BaseType, typename.Name, args, context);
                         isConstructor = true;
                     }
                     else
@@ -944,14 +949,8 @@ namespace Clank.Core.Model.Semantic
                         Language.Function function;
                         Language.Typename typename = (Language.Typename)srcObj;
 
-                        /*// Obtient le nom complet de la fonction.
-                        List<Language.Evaluable> args = functionTk.FunctionCallArgs.ListTokens.Select(delegate(Token tk)
-                        {
-                            return ParseEvaluable(tk.ChildToken, context, preparse); // TODO : à vérifier.
-                        }).ToList();
-                        */
-
-                        function = Types.GetStaticFunction(typename.Name.BaseType, functionTk.FunctionCallIdentifier.Content, context);
+                        // Obtient le nom complet de la fonction.
+                        function = Types.GetStaticFunction(typename.Name, functionTk.FunctionCallIdentifier.Content, args, context);
                         if (function == null)
                         {
                             string error = "La fonction statique " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
@@ -968,10 +967,10 @@ namespace Clank.Core.Model.Semantic
                 {
                     // Méthodes d'instance.
                     Language.Function function;
-                    function = Types.GetInstanceFunction(srcType.BaseType, functionTk.FunctionCallIdentifier.Content, context);
+                    function = Types.GetInstanceFunction(srcType, functionTk.FunctionCallIdentifier.Content, args, context);
                     if (function == null)
                     {
-                        string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
+                        string error = "La fonction d'instance" + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
                         Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
 
 
@@ -996,6 +995,10 @@ namespace Clank.Core.Model.Semantic
                 #region Function call
                 // Fonctions sans objet source
                 functionTk = exprGrp;
+                args = functionTk.FunctionCallArgs.ListTokens.Select(delegate(Token tk)
+                {
+                    return ParseEvaluable(tk.ChildToken, context, preparse); // TODO : à vérifier.
+                }).ToList();
                 instanciatedFunction = Types.GetFunction(functionTk.FunctionCallIdentifier.Content, context);
                 isConstructor = false;
                 srcObj = null;
@@ -1003,9 +1006,12 @@ namespace Clank.Core.Model.Semantic
                 {
                     // La fonction est peut être une fonction d'instance du contexte actuel !
                     Language.ClankType owner = context.Container;
+                    Language.ClankTypeInstance ownerInstance = owner.AsInstance();
+
+
                     if (owner != null)
                     {
-                        instanciatedFunction = Types.GetInstanceFunction(owner, functionTk.FunctionCallIdentifier.Content, context);
+                        instanciatedFunction = Types.GetInstanceFunction(ownerInstance, functionTk.FunctionCallIdentifier.Content, args, context);
                         if(instanciatedFunction == null)
                         {
                             string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
@@ -1048,10 +1054,7 @@ namespace Clank.Core.Model.Semantic
             call.Src = srcObj;
             call.IsThisClassFunction = thisClassFunction;
             
-            call.Arguments = functionTk.FunctionCallArgs.ListTokens.Select(delegate(Token tk)
-            {
-                return ParseEvaluable(tk.ChildToken, context, preparse); // TODO : à vérifier.
-            }).ToList();
+            call.Arguments = args;
 
             // Vérification du nombre d'arguments..
             if (call.Arguments.Count != call.Func.Arguments.Count)

@@ -141,7 +141,7 @@ namespace Clank.Core.Model
                                 MacroFunction func = new MacroFunction();
                                 func.Function = funcDecl.Func;
                                 func.LanguageToFunctionName = ParseLanguageTranslations(funcDecl);
-                                classMacro.Functions.Add(func.Function.Name, func);
+                                classMacro.Functions.Add(func.Function.GetFullName(), func);
                             }
                         }
                         else

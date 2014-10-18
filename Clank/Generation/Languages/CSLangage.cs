@@ -531,7 +531,7 @@ namespace Clank.Core.Generation.Languages
                 owner = call.Src.Type;
 
             Model.MacroContainer.MacroClass klass = macros.FindClassByType(owner.BaseType);
-            Clank.Core.Model.MacroContainer.MacroFunction func = klass.Functions[call.Func.Name]; // TODO : GetFullName() ??
+            Clank.Core.Model.MacroContainer.MacroFunction func = klass.Functions[call.Func.GetFullName()]; // TODO : GetFullName() ??
 
             // Nom de la fonctin native dont les paramètres sont entourés par des $
             string nativeFuncName = func.LanguageToFunctionName[LANG_KEY];

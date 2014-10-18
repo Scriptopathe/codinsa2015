@@ -50,8 +50,9 @@ namespace Clank.Core.Model.Language
             }
             argTypes.Append(")");
 
-            return Owner.GetFullName() + "." + Name;
+            return Owner.GetFullName() + "." + Name + argTypes;
         }
+        
         /// <summary>
         /// Valeur indiquant si la fonction est une fonction Macro, c'est à dire si elle fait partie du block macro,
         /// et doit être remplacée à la génération de code par une fonction avec un autre nom, et potentiellement des 
@@ -149,5 +150,7 @@ namespace Clank.Core.Model.Language
 
             return newFunc;
         }
+
+        
     }
 }
