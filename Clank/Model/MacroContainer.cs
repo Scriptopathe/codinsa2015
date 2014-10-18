@@ -129,7 +129,7 @@ namespace Clank.Core.Model
                         Language.FunctionDeclaration funcDecl = funcDeclInstruction as Language.FunctionDeclaration;
                         if(funcDecl != null)
                         {
-                            if(funcDecl.Func.Name == "Name")
+                            if(funcDecl.Func.Name == "name")
                             {
                                 // Nom de la classe
                                 foundName = true;
@@ -155,7 +155,7 @@ namespace Clank.Core.Model
                     // Erreur si pas de nom de classe trouvé :
                     if(!foundName)
                     {
-                        ParsingLog.AddError("Fonction 'string " + type.Name + "()' attendue dans la déclaration de macro du type '" + type.Name + "'.", 
+                        ParsingLog.AddError("Fonction 'string name()' attendue dans la déclaration de macro du type '" + type.Name + "'.", 
                             instruction.Line, instruction.Character, instruction.Source);
                     }
                 }

@@ -195,7 +195,9 @@ main {
             // - Créer une interface console propre, et synpathique.
             // - Instruction  : foreach(int a, v) { };
             // - Protections : state ne doit pas contenir de fonctions (quoique ?)
-            // - tester @self
+            // - documenter changements récents.
+            // - modifier : collection_serialize / deserialize ?
+            // - Surcharge des fonctions.
             // - implémenter java
             // - implémenter cpp
             // - implémenter python

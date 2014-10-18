@@ -41,6 +41,15 @@ namespace Clank.Core.Model.Language
         {
             if (Owner == null)
                 return Name;
+
+            StringBuilder argTypes = new StringBuilder();
+            argTypes.Append("(");
+            foreach(FunctionArgument arg in Arguments)
+            {
+                argTypes.Append(arg.ArgType.GetFullName() + (arg == Arguments.Last() ? "" : ", "));
+            }
+            argTypes.Append(")");
+
             return Owner.GetFullName() + "." + Name;
         }
         /// <summary>

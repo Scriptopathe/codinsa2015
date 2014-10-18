@@ -22,6 +22,24 @@ namespace Clank.Core.Model.Language
         /// </summary>
         public bool IsGeneric { get; set; }
         /// <summary>
+        /// Obtient une valeur indiquant si ce type est un array.
+        /// </summary>
+        public bool IsArray { get { return BaseType.GetFullName() == "Array"; } }
+        /// <summary>
+        /// Retourne la dimension de ce type, si c'est un type array >1.
+        /// Sinon = 0.
+        /// </summary>
+        public int ArrayDimensions
+        {
+            get
+            {
+                if (IsArray)
+                    return 1 + GenericArguments[0].ArrayDimensions;
+                else
+                    return 0;
+            }
+        }
+        /// <summary>
         /// Indique le type d'arguments génériques de ce type.
         /// </summary>
         public List<ClankTypeInstance> GenericArguments { get; set; }
@@ -91,12 +109,7 @@ namespace Clank.Core.Model.Language
             // Sinon, on instancie tous les arguments génériques.
             newInstance.IsGeneric = IsGeneric;
             newInstance.GenericArguments = new List<ClankTypeInstance>();
-            if(BaseType.GenericArgumentNames.Count != genArgs.Count)
-            {
-                throw new Semantic.SemanticError(
-                    "Nombre de paramètres génériques invalide. Attendu : " + BaseType.GenericArgumentNames.Count + ". Reçu " + genArgs.Count + ".");
-
-            }
+  
             foreach (ClankTypeInstance inst in GenericArguments)
             {
                 newInstance.GenericArguments.Add(inst.Instanciate(genArgs));

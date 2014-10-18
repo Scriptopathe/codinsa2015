@@ -691,6 +691,33 @@ namespace Clank.Core.Model.Semantic
                     error = "Type générique : " + fullname + " inexistant(e) dans le contexte actuel.";
                     Log.AddError(error, token.Line, token.Character, token.Source);
                     throw new SemanticError(error);
+                case TokenType.ArrayType:
+                    // Type d'array (param générique du type array)
+                    var arrayType = token.ArrayTypeIdentifier;
+                    type = Types.FetchInstancedType(arrayType, context);
+                    if(type == null)
+                    {
+                        error = "Type : " + arrayType.GetTypeFullName() + " inexistant(e) dans le contexte actuel.";
+                        Log.AddError(error, token.Line, token.Character, token.Source);
+                        throw new SemanticError(error);
+                    }
+
+                    // Type de l'array.
+                    var arrType = Types.FetchInstancedType(new Language.ClankTypeInstance()
+                    {
+                        BaseType = Types.Types["Array"],
+                        GenericArguments = new List<Language.ClankTypeInstance>() { type },
+                        IsGeneric = true
+                    }.GetFullName(), context);
+
+                    if (arrType != null)
+                    {
+                        return new Language.Typename { Name = arrType, Type = Types.TypeInstances["Type"] };
+                    }
+
+                    error = "Type array : " + arrayType + " inexistant(e) dans le contexte actuel.";
+                    Log.AddError(error, token.Line, token.Character, token.Source);
+                    throw new SemanticError(error);
                 // List
                 case TokenType.List:
                     // Dans certains cas, le tokenizer génère une liste contenant 1 seule expression group, il faut
@@ -861,6 +888,7 @@ namespace Clank.Core.Model.Semantic
 
                     break;
             }
+            // TODO : array
             throw new NotImplementedException();
         }
 
@@ -915,6 +943,14 @@ namespace Clank.Core.Model.Semantic
                         // Méthodes statiques
                         Language.Function function;
                         Language.Typename typename = (Language.Typename)srcObj;
+
+                        /*// Obtient le nom complet de la fonction.
+                        List<Language.Evaluable> args = functionTk.FunctionCallArgs.ListTokens.Select(delegate(Token tk)
+                        {
+                            return ParseEvaluable(tk.ChildToken, context, preparse); // TODO : à vérifier.
+                        }).ToList();
+                        */
+
                         function = Types.GetStaticFunction(typename.Name.BaseType, functionTk.FunctionCallIdentifier.Content, context);
                         if (function == null)
                         {
@@ -942,7 +978,16 @@ namespace Clank.Core.Model.Semantic
                         throw new SemanticError(error);
                     }
                     // Instanciation de la fonction.
-                    instanciatedFunction = function.Instanciate(srcGenArgs);
+                    try
+                    {
+
+                        instanciatedFunction = function.Instanciate(srcGenArgs);
+                    }
+                    catch(SemanticError err)
+                    {
+                        Log.AddError(err.Message, exprGrp.Line, exprGrp.Character, exprGrp.Source);
+                        throw err;
+                    }
                 }
             #endregion
             }
@@ -1013,8 +1058,7 @@ namespace Clank.Core.Model.Semantic
             {
                 string error = "Le nombre d'arguments passés à la fonction " + call.Func.GetFullName() + " est incorrect";
                 Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
-                if (StrictCompilation)
-                    throw new SemanticError(error);
+                throw new SemanticError(error);
             }
             else
             {

@@ -277,11 +277,11 @@ namespace Clank.IDE
             {
                 files = generator.Generate("#include " + Path.GetFileName(m_project.MainFile), m_project.Settings.ServerTarget, m_project.Settings.ClientTargets, m_handlerFunction);
             }
-            /*catch (Exception e)
+            catch (Exception e)
             {
                 
                 m_handlerFunction(new Core.Tools.EventLog.Entry(Core.Tools.EventLog.EntryType.Error, "Erreur interne du compilateur: " + e.Message + ".\r\n" + e.StackTrace, 0, 0, "[unknown]"));
-            }*/
+            }
             finally { }
 
             // Informe l'utilisateur que la compilation est terminée.

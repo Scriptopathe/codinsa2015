@@ -401,7 +401,24 @@ namespace Clank.Core.Generation.Languages
                     if (tArg != type.GenericArguments.Last())
                         b.Append(",");
                 }
-                return GenerateTypeName(type.BaseType) + "<" + b.ToString() + ">";
+
+                if(!type.BaseType.IsMacro)
+                    return GenerateTypeName(type.BaseType) + "<" + b.ToString() + ">";
+                else
+                {
+                    // Si on a un type macro on va remplacer :
+                    // $(T) => type concerné
+                    string nativeFuncName = GenerateTypeName(type.BaseType);
+
+                    // Remplace les params génériques par leurs valeurs.
+                    for (int i = 0; i < type.BaseType.GenericArgumentNames.Count; i++)
+                    {
+                        nativeFuncName = nativeFuncName.Replace(SemanticConstants.ReplaceChr + "(" + type.BaseType.GenericArgumentNames[i] + ")",
+                            GenerateTypeInstanceName(type.GenericArguments[i]));
+                    }
+
+                    return nativeFuncName;
+                }
             }
 
             return GenerateTypeName(type.BaseType);
@@ -421,6 +438,8 @@ namespace Clank.Core.Generation.Languages
                 Model.MacroContainer.MacroClass mcClass = m_project.Macros.FindClassByType(type);
                 if (!mcClass.LanguageToTypeName.ContainsKey(LANG_KEY))
                     throw new InvalidOperationException("Le nom de la macro classe '" + type.GetFullNameAndGenericArgs() + "' n'est pas renseigné pour le langage '" + LANG_KEY + "'");
+
+                string nativeClassName = mcClass.LanguageToTypeName[LANG_KEY];
 
                 return mcClass.LanguageToTypeName[LANG_KEY];
             }
@@ -504,20 +523,33 @@ namespace Clank.Core.Generation.Languages
             StringBuilder builder = new StringBuilder();
 
             Clank.Core.Model.MacroContainer macros = m_project.Macros;
-            var klass = macros.FindClassByType(call.Src.Type.BaseType);
+            ClankTypeInstance owner;
+            
+            if (call.IsConstructor)
+                owner = call.Func.ReturnType;
+            else
+                owner = call.Src.Type;
+
+            Model.MacroContainer.MacroClass klass = macros.FindClassByType(owner.BaseType);
             Clank.Core.Model.MacroContainer.MacroFunction func = klass.Functions[call.Func.Name]; // TODO : GetFullName() ??
 
             // Nom de la fonctin native dont les paramètres sont entourés par des $
             string nativeFuncName = func.LanguageToFunctionName[LANG_KEY];
 
-            if (call.Src != null && !nativeFuncName.Contains(SemanticConstants.SelfKW))
-                builder.Append(GenerateEvaluable(call.Src) + ".");
 
             // Remplace les paramètres par leurs values.
             for(int i = 0; i < call.Func.Arguments.Count; i++)
             {
                 nativeFuncName = nativeFuncName.Replace(SemanticConstants.ReplaceChr + "(" + call.Func.Arguments[i].ArgName + ")",
                     GenerateEvaluable(call.Arguments[i]));
+            }
+
+
+            // Remplace les params génériques par leurs valeurs.
+            for(int i = 0; i < call.Func.Owner.GenericArgumentNames.Count; i++)
+            {
+                nativeFuncName = nativeFuncName.Replace(SemanticConstants.ReplaceChr + "(" + call.Func.Owner.GenericArgumentNames[i] + ")",
+                    GenerateTypeInstanceName(owner.GenericArguments[i]));
             }
 
             // Remplace @self par le nom de la variable.
@@ -663,6 +695,8 @@ namespace Clank.Core.Generation.Languages
             StringBuilder builder = new StringBuilder();
             if (decl.Func.IsPublic)
                 builder.Append("public ");
+            if (decl.Func.IsStatic)
+                builder.Append("static ");
 
             if (decl.Func.IsConstructor)
             {

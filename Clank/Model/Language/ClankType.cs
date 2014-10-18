@@ -110,7 +110,7 @@ namespace Clank.Core.Model.Language
             return builder.ToString();
         }
         #region Static
-        public static ClankType Array = new ClankType() { Name = "Array", IsPublic = true, JType = JSONType.Array};
+        public static ClankType Array = new ClankType() { Name = "Array", IsPublic = true, JType = JSONType.Array, IsMacro = true, GenericArgumentNames = new List<string>() { "T" }};
         public static ClankType Int32 = new ClankType() { Name = "int", IsPublic = true, JType = JSONType.Int };
         public static ClankType Float = new ClankType() { Name = "float", IsPublic = true, JType = JSONType.Float };
         public static ClankType String = new ClankType() { Name = "string", IsPublic = true, JType = JSONType.String };

@@ -168,6 +168,9 @@ namespace Clank.Core.Generation
                 
 
                 // Crée le code du serveur.
+                if (!m_languagesTable.ContainsKey(serverTarget.LanguageIdentifier))
+                    throw new Exception("Le langage sélectionné pour le serveur '" + serverTarget.LanguageIdentifier + "' n'est pas implémenté");
+
                 Generation.Languages.ILanguageGenerator servGen = m_languagesTable[serverTarget.LanguageIdentifier];
                 servGen.SetProject(project);
                 foreach(Model.Language.Instruction inst in servDecl) { builder.AppendLine(servGen.GenerateInstruction(inst)); }
@@ -177,6 +180,10 @@ namespace Clank.Core.Generation
                 foreach(GenerationTarget clientTarget in clientTargets)
                 {
                     builder.Clear();
+
+                    if (!m_languagesTable.ContainsKey(clientTarget.LanguageIdentifier))
+                        throw new Exception("Le langage sélectionné pour le client '" + serverTarget.LanguageIdentifier + "' n'est pas implémenté");
+
                     Generation.Languages.ILanguageGenerator clientGen = m_languagesTable[clientTarget.LanguageIdentifier];
                     clientGen.SetProject(project);
                     foreach (Model.Language.Instruction inst in clientDecl) { builder.AppendLine(clientGen.GenerateInstruction(inst)); }
