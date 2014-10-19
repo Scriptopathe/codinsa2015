@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generation\Languages\CppLangage.cs" />
     <Compile Include="Generation\Languages\PythonLanguage.cs" />
     <Compile Include="Generation\Languages\ILanguageGenerator.cs" />
     <Compile Include="Generation\Languages\LanguageGeneratorAttribute.cs" />

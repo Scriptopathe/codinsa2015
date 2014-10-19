@@ -240,8 +240,8 @@ namespace Clank.Core.Model.Semantic
                 // Sinon, on parse le code.
                 if (preparse)
                 {
-                    
-                    Types.Functions.Add(decl.Func.GetFullName(), decl.Func);
+                    string fullname = decl.Func.GetFullName();
+                    Types.Functions.Add(fullname, decl.Func);
                     if (fromClass)
                         context.Container.InstanceMethods.Add(decl.Func.GetFullName(), decl);
                 }
@@ -265,13 +265,22 @@ namespace Clank.Core.Model.Semantic
                 match = (match.MatchPattern ? match : match2);
                 var modifiers = match.FindByIdentifier("Modifiers");
                 var block = match.FindByIdentifier("Block").First();
-                
+                var jsonModifierTk = match.FindByIdentifier("JsonModifiers");
+
+                // Récupération du modificateur json (JsonObject par défaut).
+                string jsonModifier;
+                if(jsonModifierTk.Count == 0)
+                    jsonModifier = Language.SemanticConstants.JsonObject;
+                else
+                    jsonModifier = match.FindByIdentifier("JsonModifiers").First().MatchedToken.Content;
+
                 // Modificateurs
                 Language.ClassDeclaration decl = new Language.ClassDeclaration();
                 decl.Modifiers = modifiers.Select(delegate(Pattern.MatchUnit unit)
                 {
                     return unit.MatchedToken.Content;
                 }).ToList();
+
 
                 decl.Line = block.MatchedToken.Line;
                 decl.Source = block.MatchedToken.Source;
@@ -296,16 +305,37 @@ namespace Clank.Core.Model.Semantic
                     }).ToList();
                 }
 
+                // Si le modifier JsonArray est donné, on marque le type comme un array.
+                if(jsonModifier == Language.SemanticConstants.JsonArray && !preparse)
+                {
+                    Language.ClankType type = Types.Types[decl.Name];
+                    type.JType = Language.JSONType.Array;
+
+                    // Détermine le type des éléments de l'array.
+                    string functionName = type.GetFullName() + "." + Language.SemanticConstants.ArrayElementTypeFunc;
+                    if (type.InstanceMethods.ContainsKey(functionName))
+                    {
+                        type.JArrayElementType = type.InstanceMethods[functionName].Func.ReturnType.BaseType;
+                    }
+                    else
+                    {
+                        string error = "Les types array doivent contenir une fonction '" + Language.SemanticConstants.ArrayElementTypeFunc + 
+                            "' ayant pour type de retour le type des éléments contenus dans l'array, afin de permettre la sérialisation du type.";
+                        Log.AddError(error, instructionToken.Line, instructionToken.Character, instructionToken.Source);
+                        throw new SemanticError(error);
+                    }
+                }
+
                 // Prefixe
                 decl.ContextPrefix = context.GetContextPrefix();
 
-                // Block de code
-
-                // Contexte fils
+                // Création du contexte fils
                 TypeTable.Context childContext = new TypeTable.Context();
                 childContext.ParentContext = context;
                 childContext.Container = Types.Types[decl.Name];
                 childContext.BlockName = context.BlockName;
+
+                // Ajout des instructions de la classe.
                 if(block.MatchedToken.TkType == TokenType.NamedCodeBlock)
                 {
                     decl.Instructions = ParseBlock(block.MatchedToken.NamedCodeBlockInstructions, childContext, true, preparse);
@@ -940,7 +970,15 @@ namespace Clank.Core.Model.Semantic
                     if (functionTk.FunctionCallIdentifier.Content == Language.SemanticConstants.New)
                     {
                         Language.Typename typename = (Language.Typename)srcObj;
-                        instanciatedFunction = Types.GetConstructor(typename.Name.BaseType, typename.Name, args, context);
+                        try
+                        {
+                            instanciatedFunction = Types.GetConstructor(typename.Name.BaseType, typename.Name, args, context);
+                        }
+                        catch(SemanticError err)
+                        {
+                            Log.AddError(err.Message, functionTk.Line, functionTk.Character, functionTk.Source);
+                            throw new SemanticError(err.Message);
+                        }
                         isConstructor = true;
                     }
                     else
@@ -953,7 +991,14 @@ namespace Clank.Core.Model.Semantic
                         function = Types.GetStaticFunction(typename.Name, functionTk.FunctionCallIdentifier.Content, args, context);
                         if (function == null)
                         {
-                            string error = "La fonction statique " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
+                            string candidates = Types.GetCandidatesStr(typename.Name, functionTk.FunctionCallIdentifier.Content);
+                            string error;
+                            if (candidates == "") // la fonction n'existe carrément pas
+                                error = "La fonction statique " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
+                            else
+                                error = "Aucune fonction statique de " + typename.Name.GetFullName() + " ne matche les arguments de type " + 
+                                        Language.Evaluable.GetArgTypesString(args) + ". Candidats possibles : " + candidates;
+
                             Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
                             throw new SemanticError(error);
                         }
@@ -970,7 +1015,14 @@ namespace Clank.Core.Model.Semantic
                     function = Types.GetInstanceFunction(srcType, functionTk.FunctionCallIdentifier.Content, args, context);
                     if (function == null)
                     {
-                        string error = "La fonction d'instance" + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
+                        string candidates = Types.GetCandidatesStr(srcType, functionTk.FunctionCallIdentifier.Content);
+                        string error;
+                        if (candidates == "") // la fonction n'existe carrément pas
+                            error = "La fonction d'instance " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
+                        else
+                            error = "Aucune fonction d'instance de " + srcType.GetFullName() + " ne matche les arguments de type " +
+                                    Language.Evaluable.GetArgTypesString(args) + ". Candidats possibles : " + candidates;
+
                         Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
 
 
@@ -1014,7 +1066,14 @@ namespace Clank.Core.Model.Semantic
                         instanciatedFunction = Types.GetInstanceFunction(ownerInstance, functionTk.FunctionCallIdentifier.Content, args, context);
                         if(instanciatedFunction == null)
                         {
-                            string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
+                            string candidates = Types.GetCandidatesStr(ownerInstance, functionTk.FunctionCallIdentifier.Content);
+                            string error;
+                            if (candidates == "") // la fonction n'existe carrément pas
+                                error = "La fonction  " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
+                            else
+                                error = "Aucune fonction d'instance de " + ownerInstance.GetFullName() + " ne matche les arguments de type " +
+                                        Language.Evaluable.GetArgTypesString(args) + ". Candidats possibles : " + candidates;
+
                             Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
                             throw new SemanticError(error);
                         }
@@ -1022,7 +1081,14 @@ namespace Clank.Core.Model.Semantic
                     }
                     else
                     {
-                        string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
+                        string candidates = Types.GetCandidatesStr(ownerInstance, functionTk.FunctionCallIdentifier.Content);
+                        string error;
+                        if (candidates == "") // la fonction n'existe carrément pas
+                            error = "La fonction  " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
+                        else
+                            error = "Aucune fonction globale ne matche les arguments de type " +
+                                    Language.Evaluable.GetArgTypesString(args) + ". Candidats possibles : " + candidates;
+
                         Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
                         throw new SemanticError(error);
                     }
@@ -1038,7 +1104,8 @@ namespace Clank.Core.Model.Semantic
                 if(owner != current)
                 {
                     // Type non accessible.
-                    string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + " n'est pas accessible dans le contexte actuel. (mot clef public manquant ?)";
+                    string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + 
+                        Language.Evaluable.GetArgTypesString(args) + " n'est pas accessible dans le contexte actuel. (mot clef public manquant ?)";
                     Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
 
                     if(StrictCompilation)

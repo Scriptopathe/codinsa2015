@@ -25,6 +25,11 @@ namespace Clank.Core.Model.Language
         public bool IsInstanceVariable { get; set; }
 
         /// <summary>
+        /// Retourne une valeur indiquant si cette déclaration est publique.
+        /// </summary>
+        public bool IsPublic { get { return Modifiers.Contains(Language.SemanticConstants.Public); } }
+
+        /// <summary>
         /// Crée une nouvelle instance de VariableDeclarationInstruction.
         /// </summary>
         public VariableDeclarationInstruction()

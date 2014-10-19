@@ -230,17 +230,25 @@ namespace Clank.Core.Model.Semantic
             Optional = true,
             Next = new Pattern()
             {
-                Identifier = "StructKW",
                 Repeats = false,
-                Content = new List<string>() { Language.SemanticConstants.Class },
-                TkType = new List<TokenType>() { TokenType.Name },
+                Content = new List<string>() { Language.SemanticConstants.JsonArray, Language.SemanticConstants.JsonObject },
+                TkType = new List<TokenType>() { TokenType.Name},
+                Optional = true,
+                Identifier = "JsonModifiers",
                 Next = new Pattern()
                 {
-                    Identifier = "Block",
+                    Identifier = "StructKW",
                     Repeats = false,
-                    Content = null,
-                    TkType = new List<TokenType>() { TokenType.NamedCodeBlock },
-                    Next = null,
+                    Content = new List<string>() { Language.SemanticConstants.Class },
+                    TkType = new List<TokenType>() { TokenType.Name },
+                    Next = new Pattern()
+                    {
+                        Identifier = "Block",
+                        Repeats = false,
+                        Content = null,
+                        TkType = new List<TokenType>() { TokenType.NamedCodeBlock },
+                        Next = null,
+                    }
                 }
             }
         };
@@ -257,17 +265,25 @@ namespace Clank.Core.Model.Semantic
             Optional = true,
             Next = new Pattern()
             {
-                Identifier = "StructKW",
+                Identifier = "JsonModifiers",
                 Repeats = false,
-                Content = new List<string>() { Language.SemanticConstants.Class },
+                Content = new List<string>() { Language.SemanticConstants.JsonArray, Language.SemanticConstants.JsonObject },
                 TkType = new List<TokenType>() { TokenType.Name },
+                Optional = true,
                 Next = new Pattern()
                 {
-                    Identifier = "Block",
+                    Identifier = "StructKW",
                     Repeats = false,
-                    Content = null,
-                    TkType = new List<TokenType>() { TokenType.NamedGenericCodeBlock },
-                    Next = null,
+                    Content = new List<string>() { Language.SemanticConstants.Class },
+                    TkType = new List<TokenType>() { TokenType.Name },
+                    Next = new Pattern()
+                    {
+                        Identifier = "Block",
+                        Repeats = false,
+                        Content = null,
+                        TkType = new List<TokenType>() { TokenType.NamedGenericCodeBlock },
+                        Next = null,
+                    }
                 }
             }
         };

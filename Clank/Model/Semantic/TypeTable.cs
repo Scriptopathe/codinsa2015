@@ -122,6 +122,10 @@ namespace Clank.Core.Model.Semantic
                 return func.Instanciate(inst.GenericArguments);
             }
 
+            if (args.Count != 0)
+                throw new SemanticError("Aucun constructeur de '" + owner.GetFullName() + "' ne matche les arguments de type : " +
+                    Language.Evaluable.GetArgTypesString(args) + ". Candidats possibles : " + GetCandidatesStr(inst, Language.SemanticConstants.New));
+
             // Si le constructeur n'existe pas, on crée le constructeur par défaut.
             Language.Function cons = new Language.Function()
             {
@@ -158,7 +162,41 @@ namespace Clank.Core.Model.Semantic
             }
             return funcs;
         }
-
+        /// <summary>
+        /// Retourne les fonctions candidates ayant le nom donné.
+        /// (utile pour afficher des erreurs à l'utilisateur).
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public List<string> GetCandidates(Language.ClankTypeInstance inst, string name)
+        {
+            var funcs = InstanciatedFunc(inst);
+            List<string> candidates = new List<string>();
+            foreach(var kvp in funcs)
+            {
+                if (kvp.Key.Contains(inst.BaseType.GetFullName() + "." + name))
+                    candidates.Add(kvp.Key);
+            }
+            return candidates;
+        }
+        /// <summary>
+        /// Retourne sous forme de string les fonctions candidates ayant le nom donné.
+        /// (utile pour afficher des erreurs à l'utilisateur).
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public string GetCandidatesStr(Language.ClankTypeInstance inst, string name)
+        {
+            var funcs = InstanciatedFunc(inst);
+            string val = "";
+            foreach(var kvp in funcs)
+            {
+                if (kvp.Key.Contains(inst.BaseType.GetFullName() + "." + name))
+                    val += kvp.Key + "  ";
+            }
+            return val;
+        }
         static int instCOunt;
         /// <summary>
         /// Crée une nouvelle instance de TypeTable.
@@ -182,6 +220,8 @@ namespace Clank.Core.Model.Semantic
             TypeInstances.Add(Language.SemanticConstants.StateClass, new Language.ClankTypeInstance() { BaseType = Types[Language.SemanticConstants.StateClass], IsGeneric = false });
             TypeInstances.Add("Type", new Language.ClankTypeInstance() { BaseType = Types["Type"], IsGeneric = false });
 
+            // Setup de Array
+            Types["Array"].JArrayElementType = Types["Array"].AsInstance().GenericArguments[0].BaseType;
             instCOunt++;
         }
 
@@ -534,6 +574,13 @@ namespace Clank.Core.Model.Semantic
             }
             else if (token.TkType == TokenType.GenericType)
             {
+                if(!Types.ContainsKey(token.GenericTypeIdentifier.Content))
+                {
+                    // Erreur type inconnu.
+                    string error = "Le type générique '" + token.GenericTypeIdentifier.Content + "' est inconnu.";
+                    OnLog(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, error, token.Line, token.Character, token.Source));
+                    throw new SemanticError(error);
+                }
                 baseType = Types[token.GenericTypeIdentifier.Content];
                 isGeneric = true;
                 foreach(Token tok in token.GenericTypeArgs.ListTokens)

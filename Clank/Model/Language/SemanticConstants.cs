@@ -14,9 +14,12 @@ namespace Clank.Core.Model.Language
         public const string ClientID = "clientId";
         public const string State = "state";
         public const string StateClass = "State";
+        public const string ArrayElementTypeFunc = "getArrayElementType()";
         #endregion
 
         #region Language Semantics
+        public const string JsonArray = "array";
+        public const string JsonObject = "object";
         public const string Public = "public";
         public const string Static = "static";
         public const string Constructor = "constructor";

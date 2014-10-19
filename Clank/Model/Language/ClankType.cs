@@ -13,6 +13,7 @@ namespace Clank.Core.Model.Language
         Array,
         Object,
         Bool,
+        UnknownGeneric
     }
     /// <summary>
     /// Représente un type de base du language Clank.Core.
@@ -66,9 +67,26 @@ namespace Clank.Core.Model.Language
         }
 
         /// <summary>
+        /// Retourne vrai ce type est built-in dans le langage.
+        /// </summary>
+        public virtual bool IsBuiltIn
+        {
+            get;
+            set;
+        }
+        /// <summary>
         /// Obtient ou définit le type JSON associé à ce type.
         /// </summary>
         public virtual JSONType JType
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Si JType == Array, obtient ou définit le type des éléments de cet Array.
+        /// </summary>
+        public ClankType JArrayElementType
         {
             get;
             set;
@@ -139,13 +157,13 @@ namespace Clank.Core.Model.Language
         }
         #region Static
         public static ClankType Array = new ClankType() { Name = "Array", IsPublic = true, JType = JSONType.Array, IsMacro = true, GenericArgumentNames = new List<string>() { "T" }};
-        public static ClankType Int32 = new ClankType() { Name = "int", IsPublic = true, JType = JSONType.Int };
-        public static ClankType Float = new ClankType() { Name = "float", IsPublic = true, JType = JSONType.Float };
-        public static ClankType String = new ClankType() { Name = "string", IsPublic = true, JType = JSONType.String };
-        public static ClankType Void = new ClankType() { Name = "void", IsPublic = true, JType = JSONType.Object };
+        public static ClankType Int32 = new ClankType() { Name = "int", IsPublic = true, JType = JSONType.Int, IsBuiltIn = true};
+        public static ClankType Float = new ClankType() { Name = "float", IsPublic = true, JType = JSONType.Float, IsBuiltIn = true };
+        public static ClankType String = new ClankType() { Name = "string", IsPublic = true, JType = JSONType.String, IsBuiltIn = true };
+        public static ClankType Void = new ClankType() { Name = "void", IsPublic = true, JType = JSONType.Object, IsBuiltIn = true };
         public static ClankType List = new ClankType() { Name = "List", IsPublic = true, JType = JSONType.Array};
         public static ClankType Dictionary = new ClankType() { Name = "Dictionary", IsPublic = true, JType = JSONType.Array };
-        public static ClankType Bool = new ClankType() { Name = "bool", IsPublic = true, JType = JSONType.Bool };
+        public static ClankType Bool = new ClankType() { Name = "bool", IsPublic = true, JType = JSONType.Bool, IsBuiltIn = true };
         public static ClankType GenericParameter = new ClankType() { Name = "GenericParameter", IsPublic = true };
         #endregion
     }

@@ -197,7 +197,8 @@ main {
             // - Protections : state ne doit pas contenir de fonctions (quoique ?)
             // - documenter changements récents.
             // - modifier : collection_serialize / deserialize ?
-            // - Surcharge des fonctions.
+            // - Surcharge des fonctions. OK
+            // - Modificateurs macros : jsontype = array !
             // - implémenter java
             // - implémenter cpp
             // - implémenter python

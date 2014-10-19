@@ -39,8 +39,7 @@ namespace Clank.Core.Model.Language
         /// </summary>
         public string GetFullName()
         {
-            if (Owner == null)
-                return Name;
+
 
             StringBuilder argTypes = new StringBuilder();
             argTypes.Append("(");
@@ -50,7 +49,10 @@ namespace Clank.Core.Model.Language
             }
             argTypes.Append(")");
 
-            return Owner.GetFullName() + "." + Name + argTypes;
+            if (Owner == null)
+                return Name + argTypes;
+            else
+                return Owner.GetFullName() + "." + Name + argTypes;
         }
         
         /// <summary>
