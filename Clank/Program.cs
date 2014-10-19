@@ -192,15 +192,11 @@ main {
 
             
             // TODO : 
-            // - Créer une interface console propre, et synpathique.
-            // - Instruction  : foreach(int a, v) { };
-            // - Protections : state ne doit pas contenir de fonctions (quoique ?)
-            // - documenter changements récents.
-            // - modifier : collection_serialize / deserialize ?
+            // - documenter changements récents. ---> TODO
             // - Surcharge des fonctions. OK
-            // - Modificateurs macros : jsontype = array !
+            // - Modificateurs macros : jsontype = array ! OK
             // - implémenter java
-            // - implémenter cpp
+            // - implémenter cpp : headers / implémentation.
             // - implémenter python
 
             // Remplir la todo-list !

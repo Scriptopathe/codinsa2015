@@ -64,6 +64,8 @@
 				<Key word = "public" />
 				<Key word = "static" />
 				<Key word = "constructor" />
+				<Key word = "array" />
+				<Key word = "object" />
 			</KeyWords>
 			
 			
