@@ -119,15 +119,24 @@ namespace Clank.Core.Model.Semantic
                     ret.Value = ParseEvaluable(instructionToken.ListTokens[1], context, preparse);
 
                     // Type checking
-                    if (ret.Value.Type.GetFullName() != context.ContainingFunc.Func.ReturnType.GetFullName())
+                    if(context.ContainingFunc.Func.IsConstructor)
                     {
-                        string error = "Type de retour invalide. Attendu : " + context.ContainingFunc.Func.ReturnType.GetFullName() +
-                            ". Obtenu : " + ret.Value.Type.GetFullName() + ".";
-                        Log.AddWarning(error, ret.Line, ret.Character, ret.Source);
+                        string error = "Instruction 'return' inattendue dans un constructeur.";
 
+                        Log.AddWarning(error, ret.Line, ret.Character, ret.Source);
                         if (StrictCompilation)
                             throw new SemanticError(error);
                     }
+                    else
+                        if (ret.Value.Type.GetFullName() != context.ContainingFunc.Func.ReturnType.GetFullName())
+                        {
+                            string error = "Type de retour invalide. Attendu : " + context.ContainingFunc.Func.ReturnType.GetFullName() +
+                                ". Obtenu : " + ret.Value.Type.GetFullName() + ".";
+                            Log.AddWarning(error, ret.Line, ret.Character, ret.Source);
+
+                            if (StrictCompilation)
+                                throw new SemanticError(error);
+                        }
                 }
                 else
                 {
@@ -178,45 +187,61 @@ namespace Clank.Core.Model.Semantic
 
                 // Macro ?
                 decl.Func.IsMacro = context.BlockName == Language.SemanticConstants.MacroBk;
-                
-                // Vérification de validité (si constructeur):
-                if(decl.Func.IsConstructor && decl.Func.ReturnType.BaseType != decl.Func.Owner)
+
+                // Vérifications de validté en pre-parsing.
+                if (!preparse)
                 {
-                    string ownerFullName = decl.Func.Owner.GetFullNameAndGenericArgs();
-                    decl.Func.ReturnType =  this.Types.FetchInstancedType(ownerFullName, context);
+                    // Vérification de validité (si constructeur):
+                    if (decl.Func.IsConstructor && decl.Func.ReturnType.BaseType != decl.Func.Owner)
+                    {
+                        string ownerFullName = decl.Func.Owner.GetFullNameAndGenericArgs();
+                        decl.Func.ReturnType = this.Types.FetchInstancedType(ownerFullName, context);
 
-                    // L'erreur n'est pas fatale, mais on la signale.
-                    string error = "Un constructeur doit avoir comme type de retour le type dont il est le constructeur. Attendu : " +
-                        ownerFullName + ", Obtenu " + this.Types.FetchInstancedType(type, context);
-                    this.Log.AddError(error, decl.Line, decl.Character, decl.Source);
+                        // L'erreur n'est pas fatale, mais on la signale.
+                        string error = "Un constructeur doit avoir comme type de retour le type dont il est le constructeur. Attendu : " +
+                            ownerFullName + ", Obtenu " + this.Types.FetchInstancedType(type, context);
+                        this.Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
 
-                    if (StrictCompilation)
-                        throw new SemanticError(error);
+                        if (StrictCompilation)
+                            throw new SemanticError(error);
+                    }
+
+                    // Vérifie que le type de retour / le type des arguments supporte la sérialisation.
+                    if(context.BlockName == Language.SemanticConstants.AccessBk || context.BlockName == Language.SemanticConstants.WriteBk)
+                    {
+                        if(!decl.Func.ReturnType.DoesSupportSerialization())
+                        {
+                            string error = "Le type '" + decl.Func.ReturnType.GetFullName() + " ou un de ses arguments génériques ne prend pas en charge la sérialisation.";
+                            Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
+
+                            if (StrictCompilation)
+                                throw new SemanticError(error);
+                        }
+                    }
+
+                    // Vérification d'accessibilité incohérente.
+                    if (decl.Func.HasPrivateReturnTypeOrParameterType() && decl.Func.Owner != null && decl.Func.Owner.IsPublic)
+                    {
+                        string error = "Accessibilité incohérente : le type '" + context.Container.GetFullName() +
+                            "' est public et contient une fonction '" + decl.Func.Name +
+                            "' de type dont le type de retour ou le type des arguments " +
+                            "est un type privé ou contient des types privés en paramètre générique.";
+                        Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
+
+                        if (StrictCompilation)
+                            throw new SemanticError(error);
+                    }
+
+                    // Constructeur privé : le code généré n'a pas les bonnes garanties d'accessibilité des données.
+                    if (decl.Func.IsConstructor && !decl.Func.IsPublic)
+                    {
+                        string error = "Un constructeur doit être public.";
+                        this.Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
+
+                        if (StrictCompilation)
+                            throw new SemanticError(error);
+                    }
                 }
-
-                // Vérification d'accessibilité incohérente.
-                if(decl.Func.HasPrivateReturnTypeOrParameterType() && decl.Func.Owner != null && decl.Func.Owner.IsPublic)
-                {
-                    string error = "Accessibilité incohérente : le type '" + context.Container.GetFullName() +
-                        "' est public et contient une fonction '" + decl.Func.Name +
-                        "' de type dont le type de retour ou le type des arguments " +
-                        "est un type privé ou contient des types privés en paramètre générique.";
-                    Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
-
-                    if (StrictCompilation)
-                        throw new SemanticError(error);
-                }
-
-                // Constructeur privé : le code généré n'a pas les bonnes garanties d'accessibilité des données.
-                if(decl.Func.IsConstructor && !decl.Func.IsPublic)
-                {
-                    string error = "Un constructeur doit être public.";
-                    this.Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
-
-                    if (StrictCompilation)
-                        throw new SemanticError(error);
-                }
-
                 // -- Code
                 // Contexte fils
                 TypeTable.Context childContext = new TypeTable.Context();
@@ -228,6 +253,13 @@ namespace Clank.Core.Model.Semantic
                 // Ajout des arguments au contexte.
                 foreach(Language.FunctionArgument arg in decl.Func.Arguments)
                 {
+                    // Vérification anti-doublons.
+                    if(childContext.Variables.ContainsKey(arg.ArgName))
+                    {
+                        string error = "La variable '" + arg.ArgName + "' est déjà définie dans le contexte actuel.";
+                        Log.AddError(error, decl.Line, decl.Character, decl.Source);
+                        throw new SemanticError(error);
+                    }
                     childContext.Variables.Add(arg.ArgName, new Language.Variable() { Name = arg.ArgName, Type = arg.ArgType });
                 }
                 
@@ -241,14 +273,31 @@ namespace Clank.Core.Model.Semantic
                 if (preparse)
                 {
                     string fullname = decl.Func.GetFullName();
+
+                    // Vérification de l'unicité de la fonction.
+                    if(Types.Functions.ContainsKey(fullname))
+                    {
+                        string error = "Reféfinition de la fonction " + fullname + ".";
+                        Log.AddError(error, decl.Line, decl.Character, decl.Source);
+                        throw new SemanticError(error);
+                    }
+
                     Types.Functions.Add(fullname, decl.Func);
                     if (fromClass)
-                        context.Container.InstanceMethods.Add(decl.Func.GetFullName(), decl);
+                        context.Container.InstanceMethods.Add(fullname, decl);
                 }
                 else
                 { 
                     // Ajout du code.
                     decl.Code = ParseBlock(codeBlock, childContext, false, preparse); // depuis une fonction
+                    
+                    // Vérification de la présence d'une instruction return dans une fonction.
+                    if(!decl.Func.IsConstructor && decl.Func.ReturnType.GetFullName() != "void")
+                    {
+                        bool hasReturn = false;
+                        // TODO
+                        // Vérififier la présence d'un return récursivement dans les instructions.
+                    }
                 }
                 
 
@@ -326,6 +375,31 @@ namespace Clank.Core.Model.Semantic
                     }
                 }
 
+                // Indique si la sérialisation est supportée.
+                if(!preparse)
+                {
+                    Language.ClankType type = Types.Types[decl.Name];
+                    bool doesSupportSerialization = false; // default
+                    bool containsSerializeKW = decl.Modifiers.Contains(Language.SemanticConstants.IsSerializable);
+                    if (containsSerializeKW)
+                    {
+                        doesSupportSerialization = true;
+
+
+                    }
+                    else
+                    {
+                        // Avertit l'utilisateur que le modificateur est nécessaire.
+                        if (!type.IsMacro)
+                        {
+                            string warn = "Le modificateur '" + Language.SemanticConstants.IsSerializable.ToString() + " est nécessaire si vous voulez sérialiser cet objet.";
+                            Log.AddWarning(warn, instructionToken.Line, instructionToken.Character, instructionToken.Source);
+                        }
+
+                    }
+                    type.SupportSerialization = doesSupportSerialization;
+                }
+
                 // Prefixe
                 decl.ContextPrefix = context.GetContextPrefix();
 
@@ -372,6 +446,14 @@ namespace Clank.Core.Model.Semantic
 
                 if (decl.Var.Type != null)
                 {
+                    // Vérification anti-doublon.
+                    if(context.Variables.ContainsKey(decl.Var.Name))
+                    {
+                        string error = "La variable '" + decl.Var.Name + "' est déjà définie dans le contexte actuel.";
+                        Log.AddError(error, decl.Line, decl.Character, decl.Source);
+                        throw new SemanticError(error);
+                    }
+
                     context.Variables.Add(decl.Var.Name, decl.Var);
 
                     // On n'ajoute les variables d'instance qu'au moment du preparsing et seulement pour les déclarations dans
@@ -431,7 +513,7 @@ namespace Clank.Core.Model.Semantic
                             string error = "Impossible d'affecter une valeur de type " + grp.Operand2.Type.GetFullName() + " à une variable de type " +
                                 grp.Operand1.Type.GetFullName() + ".";
 
-                            Log.AddError(error, instructionToken.Line, instructionToken.Character, instructionToken.Source);
+                            Log.AddWarning(error, instructionToken.Line, instructionToken.Character, instructionToken.Source);
                             aff.Comment = error;
 
                             if (StrictCompilation)
@@ -737,7 +819,6 @@ namespace Clank.Core.Model.Semantic
                     {
                         BaseType = Types.Types["Array"],
                         GenericArguments = new List<Language.ClankTypeInstance>() { type },
-                        IsGeneric = true
                     }.GetFullName(), context);
 
                     if (arrType != null)
@@ -806,7 +887,7 @@ namespace Clank.Core.Model.Semantic
                                     {
                                         error = "La variable d'instance " + access.VariableName + " du type " + ctype.GetFullName() +
                                             " existe mais n'est pas accessible dans le contexte actuel. (mot clef public manquant ?).";
-                                        Log.AddError(error, token.Line, token.Character, token.Source);
+                                        Log.AddWarning(error, token.Line, token.Character, token.Source);
 
                                         if (StrictCompilation)
                                             throw new SemanticError(error);
@@ -1106,7 +1187,7 @@ namespace Clank.Core.Model.Semantic
                     // Type non accessible.
                     string error = "La fonction " + functionTk.FunctionCallIdentifier.Content + 
                         Language.Evaluable.GetArgTypesString(args) + " n'est pas accessible dans le contexte actuel. (mot clef public manquant ?)";
-                    Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
+                    Log.AddWarning(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
 
                     if(StrictCompilation)
                         throw new SemanticError(error);
@@ -1140,7 +1221,7 @@ namespace Clank.Core.Model.Semantic
 
                         string error = "Le type de l'argument " + i + " passé à la fonction '" + call.Func.Name + "' est invalide. Attendu : " +
                             call.Func.Arguments[i].ArgType.GetFullName() + ". Obtenu : " + call.Arguments[i].Type.GetFullName() + ".";
-                        Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
+                        Log.AddWarning(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
                         if (StrictCompilation)
                             throw new SemanticError(error);
 

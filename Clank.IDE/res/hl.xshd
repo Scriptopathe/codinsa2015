@@ -24,12 +24,6 @@
 				<Begin bold = "false" italic = "false" color = "Gray">///@!/@</Begin>
 			</Span>
 			
-			<Span name = "LineComment" rule = "CommentMarkerSet" bold = "false" italic = "false" color = "Green" stopateol = "true">
-				<Begin>//@!/@</Begin>
-			</Span>
-			<Span name = "LineComment2" rule = "CommentMarkerSet" bold = "false" italic = "false" color = "Green" stopateol = "true">
-				<Begin>////</Begin>
-			</Span>
 			
 			<Span name = "String" bold = "false" italic = "false" color = "#A31515" stopateol = "true" escapecharacter="\">
 				<Begin>"</Begin>
@@ -66,6 +60,8 @@
 				<Key word = "constructor" />
 				<Key word = "array" />
 				<Key word = "object" />
+				<Key word = "serializable" />
+				<Key word = "this" />
 			</KeyWords>
 			
 			

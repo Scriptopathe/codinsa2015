@@ -225,7 +225,7 @@ namespace Clank.Core.Model.Semantic
         {
             Identifier = "Modifiers",
             Repeats = true,
-            Content = new List<string>() { Language.SemanticConstants.Public },
+            Content = new List<string>() { Language.SemanticConstants.Public, Language.SemanticConstants.IsSerializable },
             TkType = new List<TokenType>() { TokenType.Name },
             Optional = true,
             Next = new Pattern()
@@ -260,7 +260,7 @@ namespace Clank.Core.Model.Semantic
         {
             Identifier = "Modifiers",
             Repeats = true,
-            Content = new List<string>() { Language.SemanticConstants.Public },
+            Content = new List<string>() { Language.SemanticConstants.Public, Language.SemanticConstants.IsSerializable },
             TkType = new List<TokenType>() { TokenType.Name },
             Optional = true,
             Next = new Pattern()

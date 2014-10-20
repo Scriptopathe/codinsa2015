@@ -61,7 +61,14 @@ namespace Clank.Core.Model.Semantic
         public Language.Function GetInstanceFunction(Language.ClankTypeInstance instance, string functionName, List<Language.Evaluable> args, Context context)
         {
             Language.ClankType owner = instance.BaseType;
-            string fullName = owner.GetFullName() + "." + functionName + Language.Evaluable.GetArgTypesString(args);
+            string fullName = "";
+
+            // Pour les fonctions du bloc state, elles ne sont pas préfixées dans la table.
+            if (owner.GetFullName() == Language.SemanticConstants.StateClass)
+                fullName = functionName + Language.Evaluable.GetArgTypesString(args);
+            else
+                fullName = owner.GetFullName() + "." + functionName + Language.Evaluable.GetArgTypesString(args);
+
             var instanciatedOverloads = InstanciatedFunc(instance);
             if (instanciatedOverloads.ContainsKey(fullName))
             {
@@ -190,9 +197,18 @@ namespace Clank.Core.Model.Semantic
         {
             var funcs = InstanciatedFunc(inst);
             string val = "";
+
+            // Fullname : si on est sur une méthode d'instance de State, celle ci n'est pas préfixée
+            // de state dans la table.
+            string fullname = "";
+            if (inst.BaseType.GetFullName() == Language.SemanticConstants.StateClass)
+                fullname = name;
+            else
+                fullname = inst.BaseType.GetFullName() + "." + name;
+
             foreach(var kvp in funcs)
             {
-                if (kvp.Key.Contains(inst.BaseType.GetFullName() + "." + name))
+                if (kvp.Key.Contains(fullname))
                     val += kvp.Key + "  ";
             }
             return val;
@@ -207,18 +223,18 @@ namespace Clank.Core.Model.Semantic
             Types.Add("int", Language.ClankType.Int32);
             Types.Add("bool", Language.ClankType.Bool);
             Types.Add("void", Language.ClankType.Void);
-            Types.Add("Array", Language.ClankType.Array);
+            Types.Add("Array", new Language.ClankType() { Name = "Array", IsPublic = true, JType = Language.JSONType.Array, IsMacro = true, GenericArgumentNames = new List<string>() { "T" }});
             Types.Add("float", Language.ClankType.Float);
             Types.Add(Language.SemanticConstants.StateClass, new Language.ClankType() { Name = Language.SemanticConstants.StateClass, IsPublic = true });
             Types.Add("Type", new Language.ClankType() { Name = "Type" });
 
-            TypeInstances.Add("string", new Language.ClankTypeInstance() { BaseType = Language.ClankType.String, IsGeneric = false });
-            TypeInstances.Add("void", new Language.ClankTypeInstance() { BaseType = Language.ClankType.Void, IsGeneric = false });
-            TypeInstances.Add("bool", new Language.ClankTypeInstance() { BaseType = Language.ClankType.Bool, IsGeneric = false });
-            TypeInstances.Add("int", new Language.ClankTypeInstance() { BaseType = Language.ClankType.Int32, IsGeneric = false });
-            TypeInstances.Add("float", new Language.ClankTypeInstance() { BaseType = Language.ClankType.Float, IsGeneric = false });
-            TypeInstances.Add(Language.SemanticConstants.StateClass, new Language.ClankTypeInstance() { BaseType = Types[Language.SemanticConstants.StateClass], IsGeneric = false });
-            TypeInstances.Add("Type", new Language.ClankTypeInstance() { BaseType = Types["Type"], IsGeneric = false });
+            TypeInstances.Add("string", new Language.ClankTypeInstance() { BaseType = Language.ClankType.String });
+            TypeInstances.Add("void", new Language.ClankTypeInstance() { BaseType = Language.ClankType.Void });
+            TypeInstances.Add("bool", new Language.ClankTypeInstance() { BaseType = Language.ClankType.Bool });
+            TypeInstances.Add("int", new Language.ClankTypeInstance() { BaseType = Language.ClankType.Int32 });
+            TypeInstances.Add("float", new Language.ClankTypeInstance() { BaseType = Language.ClankType.Float });
+            TypeInstances.Add(Language.SemanticConstants.StateClass, new Language.ClankTypeInstance() { BaseType = Types[Language.SemanticConstants.StateClass] });
+            TypeInstances.Add("Type", new Language.ClankTypeInstance() { BaseType = Types["Type"] });
 
             // Setup de Array
             Types["Array"].JArrayElementType = Types["Array"].AsInstance().GenericArguments[0].BaseType;
@@ -309,7 +325,6 @@ namespace Clank.Core.Model.Semantic
                     Type = new Language.ClankTypeInstance()
                     {
                         BaseType = Container,
-                        IsGeneric = false
                     }
                 };
 
@@ -365,7 +380,6 @@ namespace Clank.Core.Model.Semantic
                         {
                             BaseType = newType,
                             GenericArguments = new List<Language.ClankTypeInstance>(),
-                            IsGeneric = false,
                         };
 
                         TypeInstances.Add(newTypeInstance.GetFullName(), newTypeInstance);
@@ -396,10 +410,10 @@ namespace Clank.Core.Model.Semantic
                         };
 
                         // Override pour le type array.
-                        if (newType.Name == "Array" && newType.GenericArgumentNames.Count == 1)
+                        if (newType.Name == "Array" && newType.GenericArgumentNames.Count == 1 && newType.IsMacro)
                         {
-                            Types[newType.Name] = newType;
-
+                            // Types[newType.Name] = newType;
+                            newType = Types[newType.Name];
                         }
                         else
                         {
@@ -425,7 +439,6 @@ namespace Clank.Core.Model.Semantic
                             TypeInstances.Add(contextPrefix + genericArgsNames[i], new Language.ClankTypeInstance()
                             {
                                 BaseType = genericType,
-                                IsGeneric = false,
                             });
                         }
                         
@@ -436,8 +449,8 @@ namespace Clank.Core.Model.Semantic
                     }
                     else
                     {
-                        throw new InvalidOperationException("Déclaration de classe attendue.");
-
+                        // throw new InvalidOperationException("Déclaration de classe attendue.");
+                        continue;
                     }
                     #endregion
 
@@ -568,7 +581,7 @@ namespace Clank.Core.Model.Semantic
             else if (token.TkType == TokenType.ArrayType)
             {
                 // On crée un array avec comme param générique le type de cette array.
-                baseType = Language.ClankType.Array;
+                baseType = Types["Array"];
                 genericArguments.Add(FetchInstancedType(token.ArrayTypeIdentifier, context));
                 isGeneric = true;
             }
@@ -624,7 +637,6 @@ namespace Clank.Core.Model.Semantic
 
             Language.ClankTypeInstance type = new Language.ClankTypeInstance()
             {
-                IsGeneric = isGeneric,
                 BaseType = baseType,
                 GenericArguments = genericArguments
             };

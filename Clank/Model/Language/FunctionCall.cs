@@ -32,5 +32,10 @@ namespace Clank.Core.Model.Language
         /// Indique si cet appel de fonction est un appel de constructeur.
         /// </summary>
         public bool IsConstructor { get; set; }
+
+        public FunctionCall()
+        {
+            Arguments = new List<Evaluable>();
+        }
     }
 }

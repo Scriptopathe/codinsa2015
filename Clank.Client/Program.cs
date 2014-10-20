@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using Newtonsoft.Json;
 namespace Clank.Client
 {
 
@@ -14,6 +15,9 @@ namespace Clank.Client
         static void Main(string[] args)
         {
 
+            string s = JsonConvert.SerializeObject(new List<Object> () { new Vector2() { X = 1 }, new Vector2(), 5, new Vector2[] {new Vector2() { X = 6 } }});
+            var val = JsonConvert.DeserializeObject<List<Object>>(s);
+            Vector2 vects = val.Last().
             TCPHelper.Initialize(5000);
             Console.WriteLine("Enter blbl to exit, or type a command.");
             State state = new State();

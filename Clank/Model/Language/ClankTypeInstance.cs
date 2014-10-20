@@ -20,7 +20,7 @@ namespace Clank.Core.Model.Language
         /// Indique si ce type est générique.
         /// Un tableau ne peut pas être générique.
         /// </summary>
-        public bool IsGeneric { get; set; }
+        public bool IsGeneric { get { return GenericArguments.Count > 0; } }
         /// <summary>
         /// Obtient une valeur indiquant si ce type est un array.
         /// </summary>
@@ -71,6 +71,23 @@ namespace Clank.Core.Model.Language
             return false;
         }
         /// <summary>
+        /// Retourne une valeur indiquant si ce type ansi que ses arguments génériques 
+        /// supportent la sérialisation.
+        /// </summary>
+        /// <returns></returns>
+        public bool DoesSupportSerialization()
+        {
+            if (!BaseType.SupportSerialization)
+                return false;
+
+            foreach(ClankTypeInstance inst in GenericArguments)
+            {
+                if (!inst.DoesSupportSerialization())
+                    return false;
+            }
+            return true;
+        }
+        /// <summary>
         /// Nom par lequel se référer à ce type.
         /// </summary>
         /// <returns></returns>
@@ -107,7 +124,6 @@ namespace Clank.Core.Model.Language
             }
 
             // Sinon, on instancie tous les arguments génériques.
-            newInstance.IsGeneric = IsGeneric;
             newInstance.GenericArguments = new List<ClankTypeInstance>();
   
             foreach (ClankTypeInstance inst in GenericArguments)
@@ -158,6 +174,20 @@ namespace Clank.Core.Model.Language
             set
             {
                 //throw new InvalidOperationException();
+            }
+        }
+        /// <summary>
+        /// Obtient une valeur indiquant si ce type supporte la sérialisation (false pour un paramètre générique).
+        /// </summary>
+        public override bool SupportSerialization
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+                
             }
         }
         /// <summary>

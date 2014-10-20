@@ -56,7 +56,6 @@ namespace Clank.Core.Model.Language
             get;
             set;
         }
-
         /// <summary>
         /// Obtient ou définit une valeur indiquant si ce type est un type "macro".
         /// </summary>
@@ -65,7 +64,14 @@ namespace Clank.Core.Model.Language
             get;
             set;
         }
-
+        /// <summary>
+        /// Obtient ou définit une valeur indiquant si ce type peut être sérialisé.
+        /// </summary>
+        public virtual bool SupportSerialization
+        {
+            get;
+            set;
+        }
         /// <summary>
         /// Retourne vrai ce type est built-in dans le langage.
         /// </summary>
@@ -120,7 +126,6 @@ namespace Clank.Core.Model.Language
         {
             Language.ClankTypeInstance instance = new Language.ClankTypeInstance();
             instance.BaseType = this;
-
             // Crée une instance du type, avec ses paramètres génériques.
             int i = 0;
             instance.GenericArguments.AddRange(this.GenericArgumentNames.Select((string str) =>
@@ -135,7 +140,6 @@ namespace Clank.Core.Model.Language
                         ParamId = haha,
                         Name = str
                     },
-                    IsGeneric = true
                 };
             }));
 
@@ -156,7 +160,6 @@ namespace Clank.Core.Model.Language
             return builder.ToString();
         }
         #region Static
-        public static ClankType Array = new ClankType() { Name = "Array", IsPublic = true, JType = JSONType.Array, IsMacro = true, GenericArgumentNames = new List<string>() { "T" }};
         public static ClankType Int32 = new ClankType() { Name = "int", IsPublic = true, JType = JSONType.Int, IsBuiltIn = true};
         public static ClankType Float = new ClankType() { Name = "float", IsPublic = true, JType = JSONType.Float, IsBuiltIn = true };
         public static ClankType String = new ClankType() { Name = "string", IsPublic = true, JType = JSONType.String, IsBuiltIn = true };

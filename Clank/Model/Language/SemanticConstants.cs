@@ -20,6 +20,7 @@ namespace Clank.Core.Model.Language
         #region Language Semantics
         public const string JsonArray = "array";
         public const string JsonObject = "object";
+        public const string IsSerializable = "serializable";
         public const string Public = "public";
         public const string Static = "static";
         public const string Constructor = "constructor";
