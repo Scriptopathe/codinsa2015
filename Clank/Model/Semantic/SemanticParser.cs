@@ -209,9 +209,11 @@ namespace Clank.Core.Model.Semantic
                     // Vérifie que le type de retour / le type des arguments supporte la sérialisation.
                     if(context.BlockName == Language.SemanticConstants.AccessBk || context.BlockName == Language.SemanticConstants.WriteBk)
                     {
-                        if(!decl.Func.ReturnType.DoesSupportSerialization())
+                        List<string> outNotWorkingVariables;
+                        if(!decl.Func.ReturnType.DoesSupportSerialization(out outNotWorkingVariables))
                         {
-                            string error = "Le type '" + decl.Func.ReturnType.GetFullName() + " ou un de ses arguments génériques ne prend pas en charge la sérialisation.";
+                            string error = "Le type '" + decl.Func.ReturnType.GetFullName() + " ou un de ses arguments génériques ne prend pas en charge la sérialisation :";
+                            error += Tools.StringUtils.Join(outNotWorkingVariables, ", ");
                             Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
 
                             if (StrictCompilation)
@@ -384,8 +386,6 @@ namespace Clank.Core.Model.Semantic
                     if (containsSerializeKW)
                     {
                         doesSupportSerialization = true;
-
-
                     }
                     else
                     {
@@ -397,6 +397,7 @@ namespace Clank.Core.Model.Semantic
                         }
 
                     }
+                    type.SupportSerializationAsGeneric = containsSerializeKW;
                     type.SupportSerialization = doesSupportSerialization;
                 }
 
@@ -1241,6 +1242,14 @@ namespace Clank.Core.Model.Semantic
             arg.ArgName = token.ListTokens[1].Content;
             arg.ArgType = Types.FetchInstancedType(token.ListTokens[0], context);
             
+            // Type inexistant.
+            if(arg.ArgType == null)
+            {
+                string error = "Le type '" + token.ChildToken.GetTypeFullName() + " n'existe pas dans le contexte actuel.";
+                Log.AddError(error, token.Line, token.Character, token.Source);
+                throw new SemanticError(error);
+            }
+
             return arg;
         }
     }

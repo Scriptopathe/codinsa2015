@@ -582,7 +582,17 @@ namespace Clank.Core.Model.Semantic
             {
                 // On crée un array avec comme param générique le type de cette array.
                 baseType = Types["Array"];
-                genericArguments.Add(FetchInstancedType(token.ArrayTypeIdentifier, context));
+                Language.ClankTypeInstance inst = FetchInstancedType(token.ArrayTypeIdentifier, context);
+
+                if (inst == null)
+                {
+                    string error = "Le type " + token.ArrayTypeIdentifier.Content + " n'existe pas.";
+                    if (OnLog != null)
+                        OnLog(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, error, token.Line, token.Character, token.Source));
+                    throw new SemanticError(error);
+                }
+
+                genericArguments.Add(inst);
                 isGeneric = true;
             }
             else if (token.TkType == TokenType.GenericType)
@@ -598,7 +608,15 @@ namespace Clank.Core.Model.Semantic
                 isGeneric = true;
                 foreach(Token tok in token.GenericTypeArgs.ListTokens)
                 {
-                    genericArguments.Add(FetchInstancedType(tok, context));
+                    Language.ClankTypeInstance inst = FetchInstancedType(tok, context);
+                    if(inst == null)
+                    {
+                        string error = "Le type " + token.Content + " n'existe pas.";
+                        if(OnLog != null)
+                            OnLog(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, error, token.Line, token.Character, token.Source));
+                        throw new SemanticError(error);
+                    }
+                    genericArguments.Add(inst);
                 
                 }
                 // Vérification : le nombre d'arguments du type générique est-il correct ?

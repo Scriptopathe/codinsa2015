@@ -77,7 +77,7 @@ namespace Clank.IDE
             
 
             // Démarre le timer de compilation
-            m_generationTimer = new Timer() { Interval = 1000 };
+            m_generationTimer = new Timer() { Interval = 10000 };
             m_generationTimer.Tick += OnCompileTimer;
 
             // Charge la config
@@ -271,24 +271,35 @@ namespace Clank.IDE
                 generator.Preprocessor.ScriptIncludeLoader = loader;
             }
             List<Core.Generation.OutputFile> files = new List<Core.Generation.OutputFile>();
+            DateTime start = DateTime.Now;
 
-            // Début de la génération
-            try
+            bool throwOnError = true;
+            if (throwOnError)
             {
+                // Début de la génération
                 files = generator.Generate("#include " + Path.GetFileName(m_project.MainFile), m_project.Settings.ServerTarget, m_project.Settings.ClientTargets, m_handlerFunction);
             }
-            /*catch (Exception e)
+            else
             {
-                
-                m_handlerFunction(new Core.Tools.EventLog.Entry(Core.Tools.EventLog.EntryType.Error, "Erreur interne du compilateur: " + e.Message + ".\r\n" + e.StackTrace, 0, 0, "[unknown]"));
-            }*/
-            finally { }
+                // Début de la génération
+                try
+                {
+                    files = generator.Generate("#include " + Path.GetFileName(m_project.MainFile), m_project.Settings.ServerTarget, m_project.Settings.ClientTargets, m_handlerFunction);
+                }
+                catch (Exception e)
+                {
 
+                    m_handlerFunction(new Core.Tools.EventLog.Entry(Core.Tools.EventLog.EntryType.Error, "Erreur interne du compilateur: " + e.Message + ".\r\n" + e.StackTrace, 0, 0, "[unknown]"));
+                }
+                finally { }
+            }
+
+            double elapsedTime = (DateTime.Now - start).TotalSeconds;
             // Informe l'utilisateur que la compilation est terminée.
             if (files.Count != 1 + m_project.Settings.ClientTargets.Count)
                 SetStatusMessage("Echec de la compilation !");
             else
-                SetStatusMessage("Compilation terminée.");
+                SetStatusMessage("Compilation terminée. (" + elapsedTime + "s)");
             
             // Ecriture des fichiers.
             foreach(var file in files)

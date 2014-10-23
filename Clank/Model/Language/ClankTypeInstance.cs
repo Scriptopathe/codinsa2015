@@ -75,17 +75,60 @@ namespace Clank.Core.Model.Language
         /// supportent la sérialisation.
         /// </summary>
         /// <returns></returns>
-        public bool DoesSupportSerialization()
+        public bool DoesSupportSerialization(out List<string> notWorkingVariables)
         {
+            notWorkingVariables = new List<string>();
             if (!BaseType.SupportSerialization)
                 return false;
-
-            foreach(ClankTypeInstance inst in GenericArguments)
-            {
-                if (!inst.DoesSupportSerialization())
-                    return false;
-            }
+            
+            // Support Serialization as generic parameter.
+            if (HasNonSerializableGenericInstanceVariables(ref notWorkingVariables))
+                return false;
+            
             return true;
+        }
+        /// <summary>
+        /// Retourne une valeur indiquant si ce type a des variables d'instance génériques non sérialisables.
+        /// Cad, des variable d'instance de type générique T où T ne supporte pas la sérialisation générique.
+        /// </summary>
+        /// <returns></returns>
+        public bool HasNonSerializableGenericInstanceVariables(ref List<string> variables, int depth=0)
+        {
+            if(depth > 50)
+            {
+                string error = "Type circulaire détecté : " + BaseType.ToString() + ".";
+                throw new Semantic.SemanticError(error);
+            }
+            foreach(var kvp in BaseType.InstanceVariables)
+            {
+                Variable var = kvp.Value;
+                if (var.Type.BaseType is Language.GenericParameterType)
+                {
+                    ClankTypeInstance inst = var.Type.Instanciate(GenericArguments);
+                    Variable newVar = new Variable() { Type = inst, Name = var.Name };
+                    if (!inst.BaseType.SupportSerializationAsGeneric)
+                    {
+                        variables.Add(newVar.ToString() + " n'est pas sérialisable en tant que variable générique du type '" + var.Type.ToString() + "'.");
+                        return true;
+                    }
+                    else if (inst.HasNonSerializableGenericInstanceVariables(ref variables, depth+1))
+                    {
+                        //variables.Add(newVar.ToString() + " contient des variables d'instances non sérializables en tant que variables génériques.");
+                        return true;
+                    }
+                }
+                else if (var.Type.BaseType.HasGenericParameterTypeMembers())
+                {
+                    var type = var.Type.Instanciate(GenericArguments);
+                    if(type.HasNonSerializableGenericInstanceVariables(ref variables, depth+1))
+                    {
+
+                        //variables.Add(type.ToString() + " " + var.Name + " contient des variables d'instances non sérializables en tant que variables génériques.");
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
         /// <summary>
         /// Nom par lequel se référer à ce type.
@@ -145,6 +188,10 @@ namespace Clank.Core.Model.Language
             return GetFullName() == t2.GetFullName();
         }
 
+        public override string ToString()
+        {
+            return GetFullName();
+        }
     }
 
     /// <summary>

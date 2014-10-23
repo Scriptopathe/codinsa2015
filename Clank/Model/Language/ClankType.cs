@@ -72,6 +72,25 @@ namespace Clank.Core.Model.Language
             get;
             set;
         }
+
+        /// <summary>
+        /// Obtient ou définit une valeur si ce type peut être sérialisé dans le cas où il
+        /// est paramètre générique d'un type ayant pour variable d'instance une variable
+        /// de ce type.
+        /// Ex :
+        /// class Ex&lt;T&gt;
+        /// {
+        ///     T var;
+        /// }
+        /// Ex&lt;string&gt; var;
+        /// 
+        /// var est sérializable si string supporte la sérialization as generic.
+        /// </summary>
+        public virtual bool SupportSerializationAsGeneric
+        {
+            get;
+            set;
+        }
         /// <summary>
         /// Retourne vrai ce type est built-in dans le langage.
         /// </summary>
@@ -97,6 +116,8 @@ namespace Clank.Core.Model.Language
             get;
             set;
         }
+
+
         /// <summary>
         /// Crée une nouvelle instance de ClankType.
         /// </summary>
@@ -108,6 +129,26 @@ namespace Clank.Core.Model.Language
             IsPublic = false;
             IsEnum = false;
             JType = JSONType.Object;
+        }
+
+        /// <summary>
+        /// Retourne une valeur indiquant si ce type a des variables d'instances génériques, 
+        /// ou contient des variables d'instance ayant des variables d'instances génériques.
+        /// Cette méthode permet de déterminer si la totalité des types des membres de la 
+        /// classe peuvent être assimilés à des types connus à la compilation.
+        /// </summary>
+        /// <returns></returns>
+        public bool HasGenericParameterTypeMembers()
+        {
+            foreach (var kvp in InstanceVariables)
+            {
+                if (kvp.Value.Type.BaseType is Language.GenericParameterType)
+                    return true;
+                else if (kvp.Value.Type.BaseType.HasGenericParameterTypeMembers())
+                    return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -169,6 +210,11 @@ namespace Clank.Core.Model.Language
         public static ClankType Bool = new ClankType() { Name = "bool", IsPublic = true, JType = JSONType.Bool, IsBuiltIn = true };
         public static ClankType GenericParameter = new ClankType() { Name = "GenericParameter", IsPublic = true };
         #endregion
+
+        public override string ToString()
+        {
+            return GetFullNameAndGenericArgs();
+        }
     }
 
     /// <summary>
@@ -198,5 +244,7 @@ namespace Clank.Core.Model.Language
         {
             Members = new List<string>();
         }
+
+
     }
 }

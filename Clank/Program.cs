@@ -195,8 +195,8 @@ main {
             // - documenter changements récents. ---> TODO
             // - Surcharge des fonctions. OK
             // - Modificateurs macros : jsontype = array ! OK
-            // - implémenter java
-            // - implémenter cpp : headers / implémentation.
+            // - implémenter java OK
+            // - implémenter cpp : headers / implémentation. OK
             // - implémenter python
 
             // Remplir la todo-list !
