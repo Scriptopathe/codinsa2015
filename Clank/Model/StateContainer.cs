@@ -23,7 +23,6 @@ namespace Clank.Core.Model
         /// </summary>
         public Tools.EventLog ParsingLog { get; set; }
 
-
         /// <summary>
         /// Crée une nouvelle instance de StateContainer.
         /// </summary>
@@ -59,6 +58,7 @@ namespace Clank.Core.Model
             {
                 if (instruction is Language.ClassDeclaration)
                 {
+                    PerformSerializableChecking((Language.ClassDeclaration)instruction, types);
                     Classes.Add((Language.ClassDeclaration)instruction);
                 }
                 else if(instruction is Language.VariableDeclarationInstruction)
@@ -74,6 +74,51 @@ namespace Clank.Core.Model
                         instruction.Source
                         );
                 }
+            }
+        }
+
+        /// <summary>
+        /// Vérifie que la classe passée en paramètre respecte les conditions pour être marquée sérializable
+        /// (si elle l'est).
+        /// </summary>
+        void PerformSerializableChecking(Language.ClassDeclaration decl, Semantic.TypeTable types)
+        {
+            Language.ClankType type = types.Types[decl.Name];
+            if (!type.SupportSerialization)
+                return;
+
+            bool hasError = false;
+            string error = "La classe '" + decl.Name + "' est marquée serializable mais contient des variables non serializables : ";
+            // Vérifie que les types des variables d'instances sont tous "serializable".
+            foreach(var kvp in type.InstanceVariables)
+            {
+                string name = kvp.Key;
+                Language.Variable variable = kvp.Value;
+                // Si la variable a des paramètres génériqu
+                if(variable.Type.BaseType.HasGenericParameterTypeMembers())
+                {
+                    /*if(!variable.Type.BaseType.SupportSerializationAsGeneric)
+                    {
+                        hasError = true;
+                        error += variable.ToString() + " ne supporte pas la sérialisation en tant que param générique, ";
+                    }*/
+                    // On ne peut pas check maintenant, il faut connaître les params génériques.
+                }
+                else if(!(variable.Type.BaseType is Language.GenericParameterType))
+                {
+                    List<string> dummy;
+                    if(!variable.Type.DoesSupportSerialization(out dummy))
+                    {
+                        hasError = true;
+                        error += variable.ToString() + "ne supporte pas la sérialisation, ";
+                    }
+                }
+            }
+            
+            if(hasError)
+            {
+                error = error.TrimEnd(',', ' ');
+                ParsingLog.AddWarning(error, decl.Line, decl.Character, decl.Source);
             }
         }
     }

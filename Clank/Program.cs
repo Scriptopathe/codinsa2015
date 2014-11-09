@@ -198,7 +198,10 @@ main {
             // - implémenter java OK
             // - implémenter cpp : headers / implémentation. OK
             // - implémenter python
-
+            // - checks : si serializable :
+            //  - vérifier que toutes les variables le sont  ok
+            //  - serializable + pas public = warning        ok
+            // - write/access : arguments de type public et serializable.
             // Remplir la todo-list !
             // TODO 2 : le retour de la vengeance :
             // - Doc.

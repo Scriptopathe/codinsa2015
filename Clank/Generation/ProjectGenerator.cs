@@ -170,11 +170,21 @@ namespace Clank.Core.Generation
                 // Crée le code du serveur.
                 if (!m_languagesTable.ContainsKey(serverTarget.LanguageIdentifier))
                     throw new Exception("Le langage sélectionné pour le serveur '" + serverTarget.LanguageIdentifier + "' n'est pas implémenté");
-
                 Generation.Languages.ILanguageGenerator servGen = m_languagesTable[serverTarget.LanguageIdentifier];
                 servGen.SetProject(project);
-                foreach(Model.Language.Instruction inst in servDecl) { builder.AppendLine(servGen.GenerateInstruction(inst)); }
-                outputFiles.Add(new OutputFile(serverTarget.OutputFilename, builder.ToString()));
+
+                foreach(Model.Language.Instruction inst in servDecl) {
+                    if (inst is Model.Language.ClassDeclaration)
+                    {
+                        outputFiles.Add(new OutputFile(serverTarget.OutputDirectory + "/" + ((Model.Language.ClassDeclaration)inst).Name + "." + serverTarget.LanguageIdentifier,
+                            servGen.GenerateInstruction(inst)));
+                    }
+                    else
+                    {
+                        logHandler(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Warning, "Instruction de type " + inst.GetType().ToString() + " inattendue.", inst.Line, inst.Character, inst.Source));
+                    }
+                }
+                
 
                 // Crée le code pour les clients
                 foreach(GenerationTarget clientTarget in clientTargets)
@@ -185,9 +195,20 @@ namespace Clank.Core.Generation
                         throw new Exception("Le langage sélectionné pour le client '" + serverTarget.LanguageIdentifier + "' n'est pas implémenté");
 
                     Generation.Languages.ILanguageGenerator clientGen = m_languagesTable[clientTarget.LanguageIdentifier];
-                    clientGen.SetProject(project);
-                    foreach (Model.Language.Instruction inst in clientDecl) { builder.AppendLine(clientGen.GenerateInstruction(inst)); }
-                    outputFiles.Add(new OutputFile(clientTarget.OutputFilename, builder.ToString()));
+                    clientGen.SetProject(project); 
+                    
+                    foreach (Model.Language.Instruction inst in clientDecl)
+                    {
+                        if (inst is Model.Language.ClassDeclaration)
+                        {
+                            outputFiles.Add(new OutputFile(clientTarget.OutputDirectory + "/" + ((Model.Language.ClassDeclaration)inst).Name + "." + clientTarget.LanguageIdentifier,
+                                clientGen.GenerateInstruction(inst)));
+                        }
+                        else
+                        {
+                            logHandler(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Warning, "Instruction de type " + inst.GetType().ToString() + " inattendue.", inst.Line, inst.Character, inst.Source));
+                        }
+                    }
                 }
 
             }

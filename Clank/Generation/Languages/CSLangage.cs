@@ -521,17 +521,31 @@ namespace Clank.Core.Generation.Languages
         string GenerateMacroFunctionCall(FunctionCall call)
         {
             StringBuilder builder = new StringBuilder();
-
+            Clank.Core.Model.MacroContainer.MacroFunction func;
             Clank.Core.Model.MacroContainer macros = m_project.Macros;
-            ClankTypeInstance owner;
-            
-            if (call.IsConstructor)
-                owner = call.Func.ReturnType;
+            ClankTypeInstance owner = null;
+            if (call.Src == null)
+            {
+                // Fonction "globale".
+                func = macros.FindFunctionByName(call.Func.Name);
+            }
             else
-                owner = call.Src.Type;
+            {
+                if (call.IsConstructor)
+                    owner = call.Func.ReturnType;
+                else
+                    owner = call.Src.Type;
 
-            Model.MacroContainer.MacroClass klass = macros.FindClassByType(owner.BaseType);
-            Clank.Core.Model.MacroContainer.MacroFunction func = klass.Functions[call.Func.GetFullName()]; // TODO : GetFullName() ??
+                Model.MacroContainer.MacroClass klass = macros.FindClassByType(owner.BaseType);
+                func = klass.Functions[call.Func.GetFullName()]; // TODO : GetFullName() ??
+            }
+
+            // Vérification
+            if(!func.LanguageToFunctionName.ContainsKey(LANG_KEY))
+            {
+                throw new InvalidOperationException("Le nom de la macro fonction '" + func.Function.GetFullName() + "' n'est pas renseigné pour le langage '" + LANG_KEY + "'");
+            }
+
 
             // Nom de la fonctin native dont les paramètres sont entourés par des $
             string nativeFuncName = func.LanguageToFunctionName[LANG_KEY];
@@ -545,15 +559,17 @@ namespace Clank.Core.Generation.Languages
             }
 
 
-            // Remplace les params génériques par leurs valeurs.
-            for(int i = 0; i < call.Func.Owner.GenericArgumentNames.Count; i++)
-            {
-                nativeFuncName = nativeFuncName.Replace(SemanticConstants.ReplaceChr + "(" + call.Func.Owner.GenericArgumentNames[i] + ")",
-                    GenerateTypeInstanceName(owner.GenericArguments[i]));
-            }
+            // Remplace les params génériques par leurs valeurs (si fonction non globale)
+            if(owner != null)
+                for(int i = 0; i < call.Func.Owner.GenericArgumentNames.Count; i++)
+                {
+                    nativeFuncName = nativeFuncName.Replace(SemanticConstants.ReplaceChr + "(" + call.Func.Owner.GenericArgumentNames[i] + ")",
+                        GenerateTypeInstanceName(owner.GenericArguments[i]));
+                }
 
             // Remplace @self par le nom de la variable.
-            nativeFuncName = nativeFuncName.Replace(SemanticConstants.SelfKW, GenerateEvaluable(call.Src));
+            if(call.Src != null)
+                nativeFuncName = nativeFuncName.Replace(SemanticConstants.SelfKW, GenerateEvaluable(call.Src));
 
             builder.Append(nativeFuncName);
             return builder.ToString().Replace(".[", "[");

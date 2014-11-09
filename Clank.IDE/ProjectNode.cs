@@ -131,6 +131,10 @@ namespace Clank.IDE
         /// <param name="filename"></param>
         public void Save(string filename)
         {
+            if(!File.Exists(filename))
+            {
+                return;
+            }
             Stream f = File.Open(filename, FileMode.Create);
             XmlSerializer ser = new XmlSerializer(typeof(ProjectNode));
             ser.Serialize(f, this);

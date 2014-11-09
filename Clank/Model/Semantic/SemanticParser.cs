@@ -191,6 +191,17 @@ namespace Clank.Core.Model.Semantic
                 // Vérifications de validté en pre-parsing.
                 if (!preparse)
                 {
+
+
+                    // Type de retour
+                    if(decl.Func.ReturnType == null)
+                    {
+                        string error = "Le type '" + type.Content.ToString() + "' est n'existe pas.";
+                        Log.AddError(error, decl.Line, decl.Character, decl.Source);
+                        throw new SemanticError(error);
+                        
+                    }
+
                     // Vérification de validité (si constructeur):
                     if (decl.Func.IsConstructor && decl.Func.ReturnType.BaseType != decl.Func.Owner)
                     {
@@ -204,21 +215,6 @@ namespace Clank.Core.Model.Semantic
 
                         if (StrictCompilation)
                             throw new SemanticError(error);
-                    }
-
-                    // Vérifie que le type de retour / le type des arguments supporte la sérialisation.
-                    if(context.BlockName == Language.SemanticConstants.AccessBk || context.BlockName == Language.SemanticConstants.WriteBk)
-                    {
-                        List<string> outNotWorkingVariables;
-                        if(!decl.Func.ReturnType.DoesSupportSerialization(out outNotWorkingVariables))
-                        {
-                            string error = "Le type '" + decl.Func.ReturnType.GetFullName() + " ou un de ses arguments génériques ne prend pas en charge la sérialisation :";
-                            error += Tools.StringUtils.Join(outNotWorkingVariables, ", ");
-                            Log.AddWarning(error, decl.Line, decl.Character, decl.Source);
-
-                            if (StrictCompilation)
-                                throw new SemanticError(error);
-                        }
                     }
 
                     // Vérification d'accessibilité incohérente.
@@ -381,24 +377,14 @@ namespace Clank.Core.Model.Semantic
                 if(!preparse)
                 {
                     Language.ClankType type = Types.Types[decl.Name];
-                    bool doesSupportSerialization = false; // default
                     bool containsSerializeKW = decl.Modifiers.Contains(Language.SemanticConstants.IsSerializable);
-                    if (containsSerializeKW)
-                    {
-                        doesSupportSerialization = true;
-                    }
-                    else
-                    {
-                        // Avertit l'utilisateur que le modificateur est nécessaire.
-                        if (!type.IsMacro)
-                        {
-                            string warn = "Le modificateur '" + Language.SemanticConstants.IsSerializable.ToString() + " est nécessaire si vous voulez sérialiser cet objet.";
-                            Log.AddWarning(warn, instructionToken.Line, instructionToken.Character, instructionToken.Source);
-                        }
 
-                    }
+                    // Tous les types ayant le mot clef serialize supportent la serialisation en tant 
+                    // que type générique. 
+                    // Les cas où SupportSerializationAsGeneric != SupportSerialization sont
+                    // - types built-in (string, etc...)
                     type.SupportSerializationAsGeneric = containsSerializeKW;
-                    type.SupportSerialization = doesSupportSerialization;
+                    type.SupportSerialization = containsSerializeKW;
                 }
 
                 // Prefixe
@@ -1140,7 +1126,9 @@ namespace Clank.Core.Model.Semantic
                 {
                     // La fonction est peut être une fonction d'instance du contexte actuel !
                     Language.ClankType owner = context.Container;
-                    Language.ClankTypeInstance ownerInstance = owner.AsInstance();
+                    Language.ClankTypeInstance ownerInstance = null;
+                    if(owner != null)
+                        ownerInstance = owner.AsInstance();
 
 
                     if (owner != null)
@@ -1163,16 +1151,21 @@ namespace Clank.Core.Model.Semantic
                     }
                     else
                     {
-                        string candidates = Types.GetCandidatesStr(ownerInstance, functionTk.FunctionCallIdentifier.Content);
-                        string error;
-                        if (candidates == "") // la fonction n'existe carrément pas
-                            error = "La fonction  " + functionTk.FunctionCallIdentifier.Content + " n'existe pas dans le contexte actuel";
-                        else
-                            error = "Aucune fonction globale ne matche les arguments de type " +
-                                    Language.Evaluable.GetArgTypesString(args) + ". Candidats possibles : " + candidates;
+                        instanciatedFunction = Types.GetInstanceFunction(ownerInstance, functionTk.FunctionCallIdentifier.Content, args, context);
+                        if (instanciatedFunction == null)
+                        {
+                            string candidates = Types.GetCandidatesStr(ownerInstance, functionTk.FunctionCallIdentifier.Content);
+                            string error;
+                            if (candidates == "") // la fonction n'existe carrément pas
+                                error = "La fonction globale '" + functionTk.FunctionCallIdentifier.Content + "' n'existe pas dans le contexte actuel";
+                            else
+                                error = "Aucune fonction globale '" + functionTk.FunctionCallIdentifier.Content + "' ne matche les arguments de type " +
+                                        Language.Evaluable.GetArgTypesString(args) + ". Candidats possibles : " + candidates;
 
-                        Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
-                        throw new SemanticError(error);
+                            Log.AddError(error, exprGrp.Line, exprGrp.Character, exprGrp.Source);
+                            throw new SemanticError(error);
+                        }
+                        thisClassFunction = true;
                     }
                 }
                 #endregion

@@ -54,16 +54,42 @@ namespace Clank.Core.Model
             {
                 if(instruction is Language.FunctionDeclaration)
                 {
+                    // Vérifie que le type de retour de la fonction est public.
                     Language.FunctionDeclaration decl = (Language.FunctionDeclaration)instruction;
                     decl.Func.Owner = table.Types[Language.SemanticConstants.StateClass];
-                    if(!decl.Func.IsPublic)
+                    if (!decl.Func.IsPublic)
                         ParsingLog.AddWarning("Les fonctions contenues dans le block write doivent être publiques.",
                             instruction.Line, instruction.Character, instruction.Source);
                     if (decl.Func.ReturnType.IsPrivateOrHasPrivateGenericArgs())
-                        ParsingLog.AddWarning("Les types de retour des déclaration de fonction du bloc write doivent être des types publics" + 
+                        ParsingLog.AddWarning("Les types de retour des déclaration de fonction du bloc write doivent être des types publics" +
                             " et ne pas contenir de paramètre générique privé. (donné : "
                             + decl.Func.ReturnType.GetFullName() + ")",
                             instruction.Line, instruction.Character, instruction.Source);
+
+                    // Vérification du return type.
+                    List<string> outReasons;
+                    if (!decl.Func.ReturnType.DoesSupportSerialization(out outReasons))
+                    {
+                        string error;
+                        error = "Le type de retour de la fonction '" + decl.Func.GetFullName() + "' (" + decl.Func.ReturnType.GetFullName() +
+                                ") ne prend pas en charge la sérialisation. Raisons : ";
+                        error += Tools.StringUtils.Join(outReasons, ", ") + ".";
+                        ParsingLog.AddWarning(error, decl.Line, decl.Character, decl.Source);
+                    }
+
+                    // Vérification des types des arguments.
+                    foreach (Language.FunctionArgument arg in decl.Func.Arguments)
+                    {
+                        if (!arg.ArgType.DoesSupportSerialization(out outReasons))
+                        {
+                            string error;
+                            error = "Le type de l'argument '" + arg.ArgName + "' (" + arg.ArgType + ") de la fonction " + decl.Func.GetFullName() +
+                                    " ne prend pas en charge la sérialisation. Reasons : ";
+
+                            error += Tools.StringUtils.Join(outReasons, ", ") + ".";
+                            ParsingLog.AddWarning(error, decl.Line, decl.Character, decl.Source);
+                        }
+                    }
                     
                     Declarations.Add((Language.FunctionDeclaration)instruction);
                 }

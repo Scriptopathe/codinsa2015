@@ -15,9 +15,9 @@ namespace Clank.Core.Generation
         /// </summary>
         public string LanguageIdentifier { get; set; }
         /// <summary>
-        /// Nom du fichier de sortie.
+        /// Nom du dossier dans lequel mettre les fichiers en sortie.
         /// </summary>
-        public string OutputFilename { get; set; }
+        public string OutputDirectory { get; set; }
         /// <summary>
         /// Crée une nouvelle instance de GenerationTarget.
         /// </summary>
@@ -25,12 +25,12 @@ namespace Clank.Core.Generation
         public GenerationTarget(string identifier, string outputFilename)
         {
             LanguageIdentifier = identifier;
-            OutputFilename = outputFilename;
+            OutputDirectory = outputFilename;
         }
         public GenerationTarget()
         {
             LanguageIdentifier = "";
-            OutputFilename = "";
+            OutputDirectory = "";
         }
         /// <summary>
         /// Crée une nouvelle cible de génération à partir d'un string au format:
@@ -45,7 +45,7 @@ namespace Clank.Core.Generation
                 string[] parts = str.Split(':');
                 GenerationTarget target = new GenerationTarget();
                 target.LanguageIdentifier = parts[0];
-                target.OutputFilename = parts[1].Trim('"');
+                target.OutputDirectory = parts[1].Trim('"');
                 return target;
             }
             else
@@ -58,9 +58,9 @@ namespace Clank.Core.Generation
         /// <returns></returns>
         public override string ToString()
         {
-            if (LanguageIdentifier == "" && OutputFilename == "")
+            if (LanguageIdentifier == "" && OutputDirectory == "")
                 return "";
-            return LanguageIdentifier.ToString() + ":\"" + OutputFilename.ToString() + "\"";
+            return LanguageIdentifier.ToString() + ":\"" + OutputDirectory.ToString() + "\"";
         }
 
         /// <summary>

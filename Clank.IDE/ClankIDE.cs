@@ -77,7 +77,7 @@ namespace Clank.IDE
             
 
             // Démarre le timer de compilation
-            m_generationTimer = new Timer() { Interval = 10000 };
+            m_generationTimer = new Timer() { Interval = 1000 };
             m_generationTimer.Tick += OnCompileTimer;
 
             // Charge la config
@@ -216,7 +216,13 @@ namespace Clank.IDE
                 var page = GetPageByFullFilename(absolutePath);
                 string content;
                 if (page == null)
-                    content = File.ReadAllText(absolutePath, Encoding.UTF8);
+                {
+                    if (File.Exists(absolutePath))
+                        content = File.ReadAllText(absolutePath, Encoding.UTF8);
+                    else
+                        content = "(file does not exist anymore)";
+                }
+                    
                 else
                     content = page.Editor.Text;
 

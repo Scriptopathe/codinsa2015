@@ -60,14 +60,13 @@ namespace Clank.Core.Model.Semantic
         /// <returns></returns>
         public Language.Function GetInstanceFunction(Language.ClankTypeInstance instance, string functionName, List<Language.Evaluable> args, Context context)
         {
-            Language.ClankType owner = instance.BaseType;
             string fullName = "";
 
             // Pour les fonctions du bloc state, elles ne sont pas préfixées dans la table.
-            if (owner.GetFullName() == Language.SemanticConstants.StateClass)
+            if (instance == null || instance.BaseType.GetFullName() == Language.SemanticConstants.StateClass)
                 fullName = functionName + Language.Evaluable.GetArgTypesString(args);
             else
-                fullName = owner.GetFullName() + "." + functionName + Language.Evaluable.GetArgTypesString(args);
+                fullName = instance.BaseType.GetFullName() + "." + functionName + Language.Evaluable.GetArgTypesString(args);
 
             var instanciatedOverloads = InstanciatedFunc(instance);
             if (instanciatedOverloads.ContainsKey(fullName))
@@ -76,7 +75,10 @@ namespace Clank.Core.Model.Semantic
                 // Vérification : la fonction est-elle une méthode d'instance ?
                 if (func.IsStatic)
                 {
-                    throw new SemanticError("La fonction " + functionName + " n'est pas une méthode d'instance de " + owner.GetFullName() + ".");
+                    if(instance != null)
+                        throw new SemanticError("La fonction " + functionName + " n'est pas une méthode d'instance de " + instance.BaseType.GetFullName() + ".");
+                    else
+                        throw new SemanticError("La fonction globale " + functionName + " n'est pas une méthode d'instance.");
                 }
                 return instanciatedOverloads[fullName];
             }
@@ -160,10 +162,13 @@ namespace Clank.Core.Model.Semantic
             foreach (var kvp in Functions)
             {
                 string key = kvp.Key;
-                for (int i = 0; i < instance.BaseType.GenericArgumentNames.Count; i++)
+                if (instance != null)
                 {
-                    string argName = instance.BaseType.GenericArgumentNames[i];
-                    key = key.Replace(instance.BaseType.GetFullName() + "'" + argName, instance.GenericArguments[i].GetFullName());
+                    for (int i = 0; i < instance.BaseType.GenericArgumentNames.Count; i++)
+                    {
+                        string argName = instance.BaseType.GenericArgumentNames[i];
+                        key = key.Replace(instance.BaseType.GetFullName() + "'" + argName, instance.GenericArguments[i].GetFullName());
+                    }
                 }
                 funcs.Add(key, kvp.Value);
             }
@@ -201,7 +206,7 @@ namespace Clank.Core.Model.Semantic
             // Fullname : si on est sur une méthode d'instance de State, celle ci n'est pas préfixée
             // de state dans la table.
             string fullname = "";
-            if (inst.BaseType.GetFullName() == Language.SemanticConstants.StateClass)
+            if (inst == null || inst.BaseType.GetFullName() == Language.SemanticConstants.StateClass)
                 fullname = name;
             else
                 fullname = inst.BaseType.GetFullName() + "." + name;
@@ -319,21 +324,26 @@ namespace Clank.Core.Model.Semantic
                         variables.Add(kvp.Key, kvp.Value);
 
                 // Ajout de this
-                Language.Variable thisVar = new Language.Variable()
+                if (Container != null)
                 {
-                    Name = "this",
-                    Type = new Language.ClankTypeInstance()
+                    Language.Variable thisVar = new Language.Variable()
                     {
-                        BaseType = Container,
-                    }
-                };
+                        Name = "this",
+                        Type = new Language.ClankTypeInstance()
+                        {
+                            BaseType = Container,
+                        }
+                    };
 
-                if (variables.ContainsKey("this"))
-                {
-                    variables["this"] = thisVar;
+                    if (variables.ContainsKey("this"))
+                    {
+                        variables["this"] = thisVar;
+                    }
+                    else
+                        variables.Add("this", thisVar);
                 }
-                else
-                    variables.Add("this", thisVar);
+
+ 
 
                 return variables;
             }
@@ -600,7 +610,7 @@ namespace Clank.Core.Model.Semantic
                 if(!Types.ContainsKey(token.GenericTypeIdentifier.Content))
                 {
                     // Erreur type inconnu.
-                    string error = "Le type générique '" + token.GenericTypeIdentifier.Content + "' est inconnu.";
+                    string error = "Le type générique '" + token.GenericTypeIdentifier.Content + "' est n'existe pas.";
                     OnLog(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, error, token.Line, token.Character, token.Source));
                     throw new SemanticError(error);
                 }

@@ -113,7 +113,7 @@ namespace Clank.Core.Tokenizers
                     {
                         case "(": case "{": case "[": case "<":
                         case ")": case "}": case "]": case ">":
-                        case ";": case ",": case ":":
+                        case ";": case ",": case ":": case "'":
                             throw new SyntaxError("Jeton '" + token.Content + "' inattendu.", token.Line, token.Source);
                         case "$":
                         case "@":

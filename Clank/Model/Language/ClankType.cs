@@ -65,7 +65,9 @@ namespace Clank.Core.Model.Language
             set;
         }
         /// <summary>
-        /// Obtient ou définit une valeur indiquant si ce type peut être sérialisé.
+        /// Obtient ou définit une valeur indiquant si ce type peut être sérialisé tel quel.
+        /// /!\ Un type ayant SupportSerialization a true ne peut pas forcément être sérialisé en tant
+        /// que paramètre générique. (ex : types built in).
         /// </summary>
         public virtual bool SupportSerialization
         {
@@ -194,21 +196,22 @@ namespace Clank.Core.Model.Language
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(Name);
-            builder.Append("<");
-            foreach (string arg in GenericArgumentNames)
-                builder.Append(arg + (arg == GenericArgumentNames.Last() ? "" : ","));
-            builder.Append(">");
+            if (GenericArgumentNames.Count != 0)
+            {
+                builder.Append("<");
+                foreach (string arg in GenericArgumentNames)
+                    builder.Append(arg + (arg == GenericArgumentNames.Last() ? "" : ","));
+                builder.Append(">");
+            }
             return builder.ToString();
         }
         #region Static
-        public static ClankType Int32 = new ClankType() { Name = "int", IsPublic = true, JType = JSONType.Int, IsBuiltIn = true};
-        public static ClankType Float = new ClankType() { Name = "float", IsPublic = true, JType = JSONType.Float, IsBuiltIn = true };
-        public static ClankType String = new ClankType() { Name = "string", IsPublic = true, JType = JSONType.String, IsBuiltIn = true };
+        public static ClankType Int32 = new ClankType() { Name = "int", IsPublic = true, JType = JSONType.Int, IsBuiltIn = true, SupportSerialization = true};
+        public static ClankType Float = new ClankType() { Name = "float", IsPublic = true, JType = JSONType.Float, IsBuiltIn = true , SupportSerialization = true};
+        public static ClankType String = new ClankType() { Name = "string", IsPublic = true, JType = JSONType.String, IsBuiltIn = true, SupportSerialization = true };
         public static ClankType Void = new ClankType() { Name = "void", IsPublic = true, JType = JSONType.Object, IsBuiltIn = true };
-        public static ClankType List = new ClankType() { Name = "List", IsPublic = true, JType = JSONType.Array};
-        public static ClankType Dictionary = new ClankType() { Name = "Dictionary", IsPublic = true, JType = JSONType.Array };
-        public static ClankType Bool = new ClankType() { Name = "bool", IsPublic = true, JType = JSONType.Bool, IsBuiltIn = true };
-        public static ClankType GenericParameter = new ClankType() { Name = "GenericParameter", IsPublic = true };
+        public static ClankType Bool = new ClankType() { Name = "bool", IsPublic = true, JType = JSONType.Bool, IsBuiltIn = true , SupportSerialization = true};
+        public static ClankType GenericParameter = new ClankType() { Name = "GenericParameter", IsPublic = true};
         #endregion
 
         public override string ToString()

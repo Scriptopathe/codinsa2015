@@ -75,15 +75,29 @@ namespace Clank.Core.Model.Language
         /// supportent la sérialisation.
         /// </summary>
         /// <returns></returns>
-        public bool DoesSupportSerialization(out List<string> notWorkingVariables)
+        public bool DoesSupportSerialization(out List<string> reasons)
         {
-            notWorkingVariables = new List<string>();
+            reasons = new List<string>();
             if (!BaseType.SupportSerialization)
+            {
+                reasons.Add("Le type " + BaseType.GetFullName() + " n'a pas été déclaré comme étant serializable");
                 return false;
-            
+            }
+                
+
+            if(!BaseType.IsPublic)
+            {
+                reasons.Add("Le type " + BaseType.GetFullName() + " n'est pas public");
+                return false;
+            }
+
             // Support Serialization as generic parameter.
-            if (HasNonSerializableGenericInstanceVariables(ref notWorkingVariables))
+            if (HasNonSerializableGenericInstanceVariables(ref reasons))
+            {
+                reasons.Insert(0, "Le type " + GetFullName() + " contient des arguments génériques non serializables");
                 return false;
+            }
+                
             
             return true;
         }
@@ -92,7 +106,7 @@ namespace Clank.Core.Model.Language
         /// Cad, des variable d'instance de type générique T où T ne supporte pas la sérialisation générique.
         /// </summary>
         /// <returns></returns>
-        public bool HasNonSerializableGenericInstanceVariables(ref List<string> variables, int depth=0)
+        public bool HasNonSerializableGenericInstanceVariables(ref List<string> reasons, int depth=0)
         {
             if(depth > 50)
             {
@@ -108,22 +122,21 @@ namespace Clank.Core.Model.Language
                     Variable newVar = new Variable() { Type = inst, Name = var.Name };
                     if (!inst.BaseType.SupportSerializationAsGeneric)
                     {
-                        variables.Add(newVar.ToString() + " n'est pas sérialisable en tant que variable générique du type '" + var.Type.ToString() + "'.");
+                        reasons.Add(newVar.ToString() + " n'est pas sérialisable en tant que variable générique du type '" + var.Type.ToString() + "'");
                         return true;
                     }
-                    else if (inst.HasNonSerializableGenericInstanceVariables(ref variables, depth+1))
+                    else if (inst.HasNonSerializableGenericInstanceVariables(ref reasons, depth+1))
                     {
-                        //variables.Add(newVar.ToString() + " contient des variables d'instances non sérializables en tant que variables génériques.");
+                        
                         return true;
                     }
                 }
                 else if (var.Type.BaseType.HasGenericParameterTypeMembers())
                 {
                     var type = var.Type.Instanciate(GenericArguments);
-                    if(type.HasNonSerializableGenericInstanceVariables(ref variables, depth+1))
+                    if(type.HasNonSerializableGenericInstanceVariables(ref reasons, depth+1))
                     {
 
-                        //variables.Add(type.ToString() + " " + var.Name + " contient des variables d'instances non sérializables en tant que variables génériques.");
                         return true;
                     }
                 }

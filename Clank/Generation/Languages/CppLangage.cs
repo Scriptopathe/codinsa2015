@@ -49,7 +49,7 @@ namespace Clank.Core.Generation.Languages
             string inheritance = declaration.InheritsFrom == null ? "" : " : " + declaration.InheritsFrom;
 
 
-            // Paramètres génériques
+            /*// Paramètres génériques
             if (declaration.GenericParameters.Count > 0)
             {
                 builder.Append("template");
@@ -66,7 +66,7 @@ namespace Clank.Core.Generation.Languages
             builder.Append("class " + declaration.Name);
 
             // Héritage
-            builder.AppendLine(inheritance + "\n{\n");
+            builder.AppendLine(inheritance + "\n{\n");*/
             
             // Classe les instruction
             List<Instruction> publicInstructions = new List<Instruction>();
@@ -85,32 +85,36 @@ namespace Clank.Core.Generation.Languages
                 else if (instruction is Model.Language.Macros.RemoteFunctionWrapper)
                     isPublic = true;
 
-                if (isPublic)
-                    publicInstructions.Add(instruction);
-                else
-                    privateInstructions.Add(instruction);
+                if (! (instruction is VariableDeclarationInstruction) && !(instruction is VariableDeclarationAndAssignmentInstruction))
+                {
+                    if (isPublic)
+                        publicInstructions.Add(instruction);
+                    else
+                        privateInstructions.Add(instruction);
+                }
             }
 
             // Génère les instructions publiques.
-            builder.AppendLine("public: ");
+            // builder.AppendLine("public: ");
             foreach (Instruction instruction in publicInstructions)
             {
-                builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 1));
+                builder.Append(GenerateInstruction(instruction));
                 builder.Append("\n");
             }
-            builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializer(declaration)));
-            builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializer(declaration)));
+
+            builder.AppendLine(GenerateSerializer(declaration));
+            builder.AppendLine(GenerateDeserializer(declaration));
             // Génère les instructions privées.
-            if(privateInstructions.Count > 0)
-                builder.AppendLine("private: ");
+            //if(privateInstructions.Count > 0)
+            //    builder.AppendLine("private: ");
 
             foreach (Instruction instruction in privateInstructions)
             {
-                builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 1));
+                builder.Append(GenerateInstruction(instruction));
                 builder.Append("\n");
             }
 
-            builder.Append("};");
+//            builder.Append("};");
             return builder.ToString();
         }
 
@@ -123,7 +127,7 @@ namespace Clank.Core.Generation.Languages
         {
             StringBuilder builder = new StringBuilder();
             // Nom de la fonction.
-            builder.AppendLine("Value serialize()\r\n{");
+            builder.AppendLine("Value " + GenerateTypeName(m_project.Types.Types[declaration.Name]) + "::serialize()\r\n{");
 
             builder.AppendLine("\tValue root0(Json::objectValue);");
             // Serialise les attributs
@@ -171,6 +175,7 @@ namespace Clank.Core.Generation.Languages
             string typename = GenerateTypeName(m_project.Types.Types[declaration.GetFullName()]);
             builder.Append("static ");
             builder.Append(typename + " ");
+            builder.Append(GenerateTypeName(m_project.Types.Types[declaration.Name]) + "::");
             builder.Append("deserialize(Value& val)\r\n{\r\n");
             builder.AppendLine("\t" + typename + " obj0 = " + typename + "();");
 
@@ -430,7 +435,8 @@ namespace Clank.Core.Generation.Languages
             Function func = instruction.Func.Func;
             StringBuilder builder = new StringBuilder();
             string returnTypeName = GenerateTypeInstanceName(func.ReturnType);
-            builder.Append(returnTypeName + " " + func.Name + "(");
+            string containerName = GenerateTypeName(instruction.Func.Func.Owner);
+            builder.Append(returnTypeName + " " + containerName + "::" + func.Name + "(");
             
             // Arg list
             foreach(var arg in func.Arguments)
@@ -538,7 +544,7 @@ namespace Clank.Core.Generation.Languages
         string GenerateProcessMessageMacro(Model.Language.Macros.ProcessMessageMacro instruction)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine("string processRequest(string request, int " + Clank.Core.Model.Language.SemanticConstants.ClientID + ")\r\n{");
+            builder.AppendLine("string State::processRequest(string request, int " + Clank.Core.Model.Language.SemanticConstants.ClientID + ")\r\n{");
             builder.AppendLine("\tReader reader = Reader();");
             builder.AppendLine("\tFastWriter writer = FastWriter();");
             builder.AppendLine("\tValue response = Value(arrayValue);");
@@ -968,17 +974,26 @@ namespace Clank.Core.Generation.Languages
             if (decl.Func.IsStatic)
                 builder.Append("static ");
 
+
+
             if (decl.Func.IsConstructor)
             {
                 // Constructeur
+
+                if (decl.Func.Owner != null)
+                    builder.Append(GenerateTypeName(decl.Func.Owner) + "::");
                 builder.Append(GenerateTypeName(decl.Func.ReturnType.BaseType));
+                
             }
             else
             {
                 // Fonction classique
                 builder.Append(GenerateTypeInstanceName(decl.Func.ReturnType) + " ");
+                if (decl.Func.Owner != null)
+                    builder.Append(GenerateTypeName(decl.Func.Owner) + "::");
                 builder.Append(decl.Func.Name);
             }
+            
             builder.Append("(");
 
             // Ajout des arguments.

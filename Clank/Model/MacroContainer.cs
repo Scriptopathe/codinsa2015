@@ -61,6 +61,10 @@ namespace Clank.Core.Model
         /// </summary>
         public List<MacroClass> ClassDeclarations { get; set; }
         /// <summary>
+        /// Obtient ou définit les déclarations de fonctions contenues dans cette unité de macro.
+        /// </summary>
+        public List<MacroFunction> FunctionDeclarations { get; set; }
+        /// <summary>
         /// Journal d'erreurs/warnings.
         /// </summary>
         public Tools.EventLog ParsingLog { get; set; }
@@ -71,6 +75,7 @@ namespace Clank.Core.Model
         {
             ParsingLog = new Tools.EventLog();
             ClassDeclarations = new List<MacroClass>();
+            FunctionDeclarations = new List<MacroFunction>();
         }
 
         /// <summary>
@@ -86,6 +91,21 @@ namespace Clank.Core.Model
                     return klass;
             }
             throw new Exception("Class not found : " + type.GetFullName());
+        }
+
+        /// <summary>
+        /// Finds a function by its name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public MacroFunction FindFunctionByName(string name)
+        {
+            foreach (MacroFunction f in FunctionDeclarations)
+            {
+                if (f.Function.Name == name)
+                    return f;
+            }
+            throw new Exception("Function not found : " + name);
         }
         /// <summary>
         /// Ajoute des déclarations à ce Container à partir d'un block.
@@ -158,6 +178,14 @@ namespace Clank.Core.Model
                         ParsingLog.AddError("Fonction 'string name()' attendue dans la déclaration de macro du type '" + type.Name + "'.", 
                             instruction.Line, instruction.Character, instruction.Source);
                     }
+                }
+                else if(instruction is Language.FunctionDeclaration)
+                {
+                    Language.FunctionDeclaration funcDecl = (Language.FunctionDeclaration)instruction;
+                    MacroFunction func = new MacroFunction();
+                    func.Function = funcDecl.Func;
+                    func.LanguageToFunctionName = ParseLanguageTranslations(funcDecl);
+                    FunctionDeclarations.Add(func);
                 }
                 else
                 {

@@ -65,7 +65,32 @@ namespace Clank.Core.Model
                             " et ne pas contenir de paramètre générique privé. (donné : "
                             + decl.Func.ReturnType.GetFullName() + ")",
                             instruction.Line, instruction.Character, instruction.Source);
+
+                    // Vérification du return type.
+                    List<string> outReasons;
+                    if (!decl.Func.ReturnType.DoesSupportSerialization(out outReasons))
+                    {
+                        string error;
+                        error = "Le type de retour de la fonction '" + decl.Func.GetFullName() + "' (" + decl.Func.ReturnType.GetFullName() +
+                                ") ne prend pas en charge la sérialisation. Raisons : ";
+                        error += Tools.StringUtils.Join(outReasons, ", ") + ".";
+                        ParsingLog.AddWarning(error, decl.Line, decl.Character, decl.Source);
+                    }
                     
+                    // Vérification des types des arguments.
+                    foreach(Language.FunctionArgument arg in decl.Func.Arguments)
+                    {
+                        if (!arg.ArgType.DoesSupportSerialization(out outReasons))
+                        {
+                            string error;
+                            error = "Le type de l'argument '" + arg.ArgName + "' (" + arg.ArgType + ") de la fonction " + decl.Func.GetFullName() + 
+                                    " ne prend pas en charge la sérialisation. Reasons : ";
+         
+
+                            error += Tools.StringUtils.Join(outReasons, ", ") + ".";
+                            ParsingLog.AddWarning(error, decl.Line, decl.Character, decl.Source);
+                        }
+                    }
                     Declarations.Add((Language.FunctionDeclaration)instruction);
                 }
                 else
