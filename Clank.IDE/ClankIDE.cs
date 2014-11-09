@@ -279,7 +279,7 @@ namespace Clank.IDE
             List<Core.Generation.OutputFile> files = new List<Core.Generation.OutputFile>();
             DateTime start = DateTime.Now;
 
-            bool throwOnError = true;
+            bool throwOnError = false;
             if (throwOnError)
             {
                 // Début de la génération

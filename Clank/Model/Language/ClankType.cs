@@ -76,6 +76,13 @@ namespace Clank.Core.Model.Language
         }
 
         /// <summary>
+        /// Méta-datas données aux générateurs de code concernant cette classe.
+        /// Ces méta-data sont interprétées différemment selon le générateur utilisé.
+        /// Clefs : language identifier, nom de propriété => valeur de la propriété.
+        /// </summary>
+        public Dictionary<string, Dictionary<string, string>> LanguageMetadata { get; set; }
+
+        /// <summary>
         /// Obtient ou définit une valeur si ce type peut être sérialisé dans le cas où il
         /// est paramètre générique d'un type ayant pour variable d'instance une variable
         /// de ce type.
@@ -128,6 +135,7 @@ namespace Clank.Core.Model.Language
             InstanceVariables = new Dictionary<string, Variable>();
             InstanceMethods = new Dictionary<string, FunctionDeclaration>();
             GenericArgumentNames = new List<string>();
+            LanguageMetadata = new Dictionary<string, Dictionary<string, string>>();
             IsPublic = false;
             IsEnum = false;
             JType = JSONType.Object;

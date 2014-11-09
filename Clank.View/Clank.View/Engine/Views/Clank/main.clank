@@ -1,0 +1,7 @@
+﻿#include stdtypes.clank
+#include XNAMacros.clank
+#include EntityTypeView.clank
+#include EntityView.clank
+#include SpellView.clank
+#include interface.clank
+

@@ -1,0 +1,11 @@
+﻿main
+{
+    state
+    {
+        # Représente une vue sur un spell.
+        public serializable class SpellView
+        {
+        
+        }
+    }
+}

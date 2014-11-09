@@ -1,0 +1,200 @@
+﻿# Types standard dans les langages supportés.
+main
+{
+    state
+    {
+        # Integer sérialisable.
+        public serializable class Integer 
+        {
+            public int Value;
+            public constructor Integer new() { }
+            public constructor Integer new(int value) { Value = value; }
+        }
+        
+        # Type "double" sérialisable.
+        public serializable class Double
+        {
+            public float Value;
+            public constructor Double new() { }
+            public constructor Double new(float value) { Value = value; }
+        }
+        
+        public class String
+        {
+            public string Value;
+            public constructor String new() { }
+            public constructor String new(string value) { Value = value; }
+        }
+        
+    }
+    macro
+    {
+        # Représente un tableau bidimensionnel. 
+        public serializable array class Matrix<T>
+        {
+            # Nom de la matrice dans les différents langages.
+            string name()
+            {
+                string cs = "$(T)[,]";
+                string cpp = "vector<vector<$(T)>>";
+                string java = "ArrayList<ArrayList<$(T)>>";
+            }
+            
+            # Type des éléments de l'array.
+            List<T> getArrayElementType() { }
+            
+            # Retourne l'élément à la case (x, y).
+            T get(int x, int y)
+            {
+                string cs = "@self[$(x), $(y)]";
+                string cpp = "@self.at($(x)).at($(y))";
+                string java = "@self.get($(x)).get($(y))";
+            }
+            
+            # Crée une nouvelle instance de matrice avec les paramètres de taille donnés.
+            constructor Matrix<T> new(int width, int height)
+            {
+                string cs = "new $(T)[$(width), $(height)]";
+                string cpp = "vector<vector<$(T)>>($(width), vector<$(T)>($(height), 0))";
+                string java = "new ArrayList<ArrayList<$(T)>>()";
+            }
+            
+            constructor Matrix<T> new()
+            {
+                string cs = "new $(T)()";
+                string cpp = "$(T)()";
+                string java = "new ArrayList<ArrayList<$(T)>>()";
+            }
+        }
+        
+        # Tableau
+        public serializable array class Array<T>
+        {
+            # Type des éléments de l'array.
+            T getArrayElementType() { }
+            
+            # Nom du type "Array" dans les différents langages cibles.
+            string name()
+            {
+                string cs = "$(T)[]";
+                string java = "ArrayList<$(T)>";
+                string cpp = "vector<$(T)>";
+                string python = "array"; 
+            }
+            
+            # Obtient un élément de la liste à l'index donné.
+            T get(int index)
+            {
+                string cs = "@self[$(index)]";
+                string java = "@self.get($(index))";
+                string cpp = "@self.at($(index))";
+                string python = "@self[$(index)]";
+            }
+            
+            # Ajoute un élément à la fin de la liste.
+            void add(T value)
+            {
+                string cs = "@self.Add($(value))";
+                string java = "@self.add($(value))";
+                string cpp = "@self.push_back($(value))";
+                string python = "@self.append($(value))";
+            }
+            
+            # Obtient le nombre d'éléments de la liste.
+            int count()
+            {
+                string cs = "@self.Count";
+                string java = "@self.length()";
+                string cpp = "@self.size()";
+                string python = "len(@self)";
+            }
+            
+            # Supprime l'élément de la liste à la position donnée.
+            void removeat(int index)
+            {
+                string cs = "@self.RemoveAt($(index))";
+                string java = "@self.remove($(index))";
+                string cpp = "erase(@self.begin() + $(index))";
+                string python = "del @self[$(index)]";
+            }
+            
+            # Crée un nouvel array de la taille spécifiée.
+            public constructor Array<T> new(int size)
+            {
+                string cs = "new $(T)[size]";
+                string cpp = "vector<$(T)>($(size))";
+                string java = "new ArrayList<$(T)>($(size))";
+            }
+            public constructor Array<T> new()
+            {
+                string cs = "new $(T)[0]";
+                string cpp = "vector<$(T)>()";
+                string java = "new ArrayList<$(T)>()";
+            }
+        }
+        
+        # Représente une "liste".
+        # Ce conteneur est à utiliser en lieu et place des array, et autres,
+        # car il est compatible avec la plupart des langages et facile à utiliser.
+        # Cependant, l'implémentation ne sera pas forcément optimale, mais ce n'est
+        # pas très important.
+        public serializable array class List<T>
+        {
+            T getArrayElementType() { }
+            # Nom du type "List" dans les différents langages cibles.
+            string name()
+            {
+                string cs = "List<$(T)>";
+                string java = "ArrayList<$(T)>";
+                string cpp = "vector<$(T)>";
+                string python = "array";
+            }
+            
+            constructor List<T> new()
+            {
+                string cs = "new List<$(T)>()";
+                string java = "new ArrayList<$(T)>()";
+                string cpp = "vector<$(T)>()";
+                string python = "[]";
+            }
+            
+            # Obtient un élément de la liste à l'index donné.
+            T get(int index)
+            {
+                string cs = "@self[$(index)]";
+                string java = "@self.get($(index))";
+                string cpp = "@self.at($(index))";
+                string python = "@self[$(index)]";
+            }
+            
+            # Ajoute un élément à la fin de la liste.
+            void add(T value)
+            {
+                string cs = "@self.Add($(value))";
+                string java = "@self.add($(value))";
+                string cpp = "@self.push_back($(value))";
+                string python = "@self.append($(value))";
+            }
+            
+            # Obtient le nombre d'éléments de la liste.
+            int count()
+            {
+                string cs = "@self.Count";
+                string java = "@self.size()";
+                string cpp = "@self.size()";
+                string python = "len(@self)";
+            }
+            
+            # Supprime l'élément de la liste à la position donnée.
+            void removeat(int index)
+            {
+                string cs = "@self.RemoveAt($(index))";
+                string java = "@self.remove($(index))";
+                string cpp = "erase(@self.begin() + $(index))";
+                string python = "del @self[$(index)]";
+            }
+            
+            
+        }
+    }
+}

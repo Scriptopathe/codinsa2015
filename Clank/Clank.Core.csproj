@@ -67,6 +67,7 @@
     <Compile Include="Model\Language\ConditionalStatement.cs" />
     <Compile Include="Model\Language\Macros\ProcessMessageMacro.cs" />
     <Compile Include="Model\Language\Macros\RemoteFunctionWrapper.cs" />
+    <Compile Include="Model\Language\PlaceholderInstruction.cs" />
     <Compile Include="Model\Language\ReturnInstruction.cs" />
     <Compile Include="Model\Language\SemanticConstants.cs" />
     <Compile Include="Model\Language\Typename.cs" />

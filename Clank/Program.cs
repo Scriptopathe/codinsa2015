@@ -204,7 +204,9 @@ main {
             // - write/access : arguments de type public et serializable.
             // Remplir la todo-list !
             // TODO 2 : le retour de la vengeance :
-            // - Doc.
+            // - Documenter macro fonctions
+            // - Enums !!!
+            // - Gérer les paramètres de métadonnées pour les classes (ex : C# namespace, java / python / cpp includes).
         }
     }
 }

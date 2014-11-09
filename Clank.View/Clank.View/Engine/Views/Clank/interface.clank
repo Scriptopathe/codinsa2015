@@ -1,0 +1,25 @@
+﻿main
+{
+    state
+    {
+        # Rajoute les statements using et le bon namespace pour la classe state.
+        void getClassMetadata_cs()
+        {
+            string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+            string namespace = "Clank.View.Engine.Views";
+        }
+    }
+    macro
+    {
+        # Get the entities on sight of the given client.
+        List<EntityView> serv_getEntitiesOnSight(int clientId) { string cs = "Interface.getEntitiesOnSight($(clientId))"; }
+    
+    }
+    access
+    {
+        public List<EntityView> getEntitiesOnSight()
+        {
+            return serv_getEntitiesOnSight(clientId);
+        }
+    }
+}

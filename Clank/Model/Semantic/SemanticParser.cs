@@ -168,6 +168,8 @@ namespace Clank.Core.Model.Semantic
                 // Nom
                 decl.Func.Name = identifier.Content;
 
+  
+
                 // Arguments
                 decl.Func.Arguments = new List<Language.FunctionArgument>();
                 for (int j = 0; j < args.ListTokens.Count; j++)
@@ -192,11 +194,21 @@ namespace Clank.Core.Model.Semantic
                 if (!preparse)
                 {
 
+                    // Fonction spéciale : getClassMetadata_langName() => 
+                    if(decl.Func.Name.Contains("getClassMetadata") && decl.Func.Name.Contains("_"))
+                    {
+                        string srcLang = decl.Func.Name.Split('_')[1];
+                        Language.ClankType metaClass = decl.Func.Owner == null ? Types.Types[Language.SemanticConstants.StateClass] : decl.Func.Owner;
+
+                        ParseClassMetadata(metaClass, srcLang, ParseBlock(codeBlock, context, false, false));
+
+                        return new Language.PlaceholderInstruction();
+                    }
 
                     // Type de retour
                     if(decl.Func.ReturnType == null)
                     {
-                        string error = "Le type '" + type.Content.ToString() + "' est n'existe pas.";
+                        string error = "Le type '" + type.Content.ToString() + "' n'existe pas.";
                         Log.AddError(error, decl.Line, decl.Character, decl.Source);
                         throw new SemanticError(error);
                         
@@ -712,6 +724,36 @@ namespace Clank.Core.Model.Semantic
             throw new Clank.Core.Tokenizers.SyntaxError("Instruction mal formée.", instructionToken.Line, instructionToken.Source);
         }
 
+        /// <summary>
+        /// Recherche des propriétés de méta données dans une liste d'instructions (string propertyName = "value"; etc...),
+        /// et les ajoute au type donné pour le langage donné.
+        /// </summary>
+        void ParseClassMetadata(Language.ClankType type, string langIdentifier, List<Language.Instruction> instructions)
+        {
+            Dictionary<string, string> metadata = new Dictionary<string, string>();
+            foreach(Language.Instruction inst in instructions)
+            {
+                if(inst is Language.VariableDeclarationAndAssignmentInstruction)
+                {
+                    Language.VariableDeclarationAndAssignmentInstruction decl = (Language.VariableDeclarationAndAssignmentInstruction)inst;
+                    if(!(decl.Assignment.Expression.Operand2 is Language.StringLiteral))
+                    {
+                        Log.AddError("Les métadonnées contenues dans les fonctions 'getClassMetadata' doivent être des litéraux de string. Obtenu : "
+                            + decl.Assignment.Expression.Operand2.ToString(), inst.Line, inst.Character, inst.Source);
+                    }
+
+                    metadata.Add(decl.Declaration.Var.Name, ((Language.StringLiteral)decl.Assignment.Expression.Operand2).Value);
+
+                }
+                else
+                {
+                    Log.AddWarning("Les métadonnées contenues dans les fonctions 'getClassMetadata' doivent être des variables de type string. Obtenu : " + 
+                        inst.GetType().ToString(), inst.Line, inst.Character, inst.Source);
+                }
+            }
+
+            type.LanguageMetadata.Add(langIdentifier, metadata);
+        }
         /// <summary>
         /// Parse un jeton pour en extraire une expression évaluable.
         /// Sont évaluables :

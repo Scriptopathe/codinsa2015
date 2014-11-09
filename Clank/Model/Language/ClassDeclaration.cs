@@ -34,7 +34,7 @@ namespace Clank.Core.Model.Language
         /// Préfixe à placer devant ce nom de classe pour le retrouver une TypeTable.
         /// </summary>
         public string ContextPrefix { get; set; }
-        
+
         /// <summary>
         /// Crée et retourne une copie superficielle de cette déclaration de classe.
         /// </summary>

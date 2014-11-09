@@ -1,0 +1,39 @@
+﻿main
+{
+    macro
+    {
+        public serializable class Vector2
+        {
+            string name()
+            {
+                string cs = "Vector2";
+                string java = "Vector2";
+                string cpp = "Vector2";
+                string python = "Vector2";
+            }
+            
+            float getX()
+            {
+                string cs = "@self.X";
+            }
+            
+            float getY()
+            {
+                string cs = "@self.Y";
+            }
+            
+            void setX(float value)
+            {
+                string cs = "@self.X = $(value)";
+            }
+            
+            void setY(float value)
+            {
+                string cs = "@self.Y = $(value)";
+            }
+        }
+        
+        
+    
+    }
+}

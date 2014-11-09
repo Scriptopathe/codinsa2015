@@ -66,6 +66,7 @@ namespace Clank.Core.Model
                     Language.VariableDeclarationInstruction variable = (Language.VariableDeclarationInstruction)instruction;
                     StateClass.Instructions.Add(variable);
                 }
+                else if (instruction is Language.PlaceholderInstruction) { }
                 else
                 {
                     ParsingLog.AddError("Instruction de type " + instruction.GetType().Name + " invalide dans un StateBlock",

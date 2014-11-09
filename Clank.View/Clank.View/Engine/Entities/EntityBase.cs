@@ -127,7 +127,7 @@ namespace Clank.View.Engine.Entities
         /// Le type inclut des informations sur l'équipe de l'entité (Team1, Team2 ou Neutral),
         /// ainsi que sur sa catégorie (Héros, tour, idole etc...).
         /// </summary>
-        EntityType Type
+        public EntityType Type
         {
             get { return m_type; }
             protected set { m_type = value; }

@@ -65,6 +65,9 @@
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Clank.Server\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -75,6 +78,14 @@
     <Compile Include="Engine\Entities\EntityBase.cs" />
     <Compile Include="Engine\Entities\EntityHero.cs" />
     <Compile Include="Engine\Entities\EntityType.cs" />
+    <Compile Include="Engine\Map.cs" />
+    <Compile Include="Engine\Spellcasts\Spellcast.cs" />
+    <Compile Include="Engine\Views\Clank\ServerCS\Double.cs" />
+    <Compile Include="Engine\Views\Clank\ServerCS\EntityView.cs" />
+    <Compile Include="Engine\Views\Clank\ServerCS\Integer.cs" />
+    <Compile Include="Engine\Views\Clank\ServerCS\SpellView.cs" />
+    <Compile Include="Engine\Views\Clank\ServerCS\State.cs" />
+    <Compile Include="Engine\Views\Clank\ServerCS\String.cs" />
     <Compile Include="Engine\Views\EntityView.cs" />
     <Compile Include="Engine\Shapes\Shape.cs" />
     <Compile Include="Engine\Spells\Spell.cs" />
@@ -118,7 +129,19 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Engine\Views\Clank\clankserv.clankproject" />
+    <None Include="Engine\Views\Clank\EntityTypeView.clank" />
+    <None Include="Engine\Views\Clank\EntityView.clank" />
+    <None Include="Engine\Views\Clank\interface.clank" />
+    <None Include="Engine\Views\Clank\main.clank" />
+    <None Include="Engine\Views\Clank\SpellView.clank" />
+    <None Include="Engine\Views\Clank\stdtypes.clank" />
+    <None Include="Engine\Views\Clank\XNAMacros.clank" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Engine\Particles\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

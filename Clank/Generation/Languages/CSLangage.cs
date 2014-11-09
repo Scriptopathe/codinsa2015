@@ -42,9 +42,37 @@ namespace Clank.Core.Generation.Languages
         /// </summary>
         /// <param name="declaration"></param>
         /// <returns></returns>
-        string GenerateClass(ClassDeclaration declaration)
+        string GenerateClass(ClassDeclaration declaration, bool generateIncludes=true)
         {
             StringBuilder builder = new StringBuilder();
+
+            // Récupère les métadonnées.
+            Dictionary<string, string> metadata = new Dictionary<string, string>();
+            if(m_project.Types.Types[declaration.Name].LanguageMetadata.ContainsKey(LANG_KEY))
+            {
+                metadata = m_project.Types.Types[declaration.Name].LanguageMetadata[LANG_KEY];
+            }
+
+
+            builder.AppendLine(@"using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;");
+
+            // Ajoute les headers supplémentaires
+            if(metadata.ContainsKey("usingStatements"))
+            {
+                builder.AppendLine(metadata["usingStatements"].Replace(";", ";\r\n"));
+            }
+            builder.AppendLine();
+
+            // Namespace !
+            string theNamespace = "Default.Namespace";
+            if (metadata.ContainsKey("namespace"))
+                theNamespace = metadata["namespace"];
+            builder.AppendLine("namespace " + theNamespace + "\r\n{\r\n");
+            builder.Append("\t");
+
             string inheritance = declaration.InheritsFrom == null ? "" : " : " + declaration.InheritsFrom;
             if (declaration.Modifiers.Contains("public"))
                 builder.Append("public ");
@@ -63,16 +91,17 @@ namespace Clank.Core.Generation.Languages
                 builder.Append(">");
             }
             // Héritage
-            builder.AppendLine(inheritance + "\n{\n");
+            builder.AppendLine(inheritance + "\n\t{\n");
             
             // Instructions
             foreach(Instruction instruction in declaration.Instructions)
             {
-                builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 1));
-                builder.Append("\n");
+                builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 2));
+                builder.Append("\t\n");
             }
 
-            builder.Append("}");
+            builder.AppendLine("\t}");
+            builder.AppendLine("}");
             return builder.ToString();
         }
 
@@ -102,7 +131,7 @@ namespace Clank.Core.Generation.Languages
             }
             else if(instruction is ClassDeclaration)
             {
-                return comment + GenerateClass((ClassDeclaration)instruction);
+                return GenerateClass((ClassDeclaration)instruction);
             }
             else if(instruction is AffectationInstruction)
             {
@@ -140,6 +169,7 @@ namespace Clank.Core.Generation.Languages
             {
                 return comment + GenerateConditionalStatement((ConditionalStatement)instruction);
             }
+            else if (instruction is PlaceholderInstruction) { return ""; }
             throw new NotImplementedException();
         }
 
