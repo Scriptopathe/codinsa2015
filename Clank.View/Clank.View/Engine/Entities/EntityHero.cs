@@ -14,18 +14,19 @@ namespace Clank.View.Engine.Entities
         /// <summary>
         /// Liste de spells accessibles pour ce héros.
         /// </summary>
-        List<Spells.SpellBase> m_spells;
+        List<Spells.Spell> m_spells;
         #endregion
 
         #region Properties
         /// <summary>
         /// Obtient ou définit la liste des spells accessibles pour ce héros.
         /// </summary>
-        public List<Spells.SpellBase> Spells
+        public List<Spells.Spell> Spells
         {
             get { return m_spells; }
             set { m_spells = value; }
         }
+
         #endregion
 
         #region Methods

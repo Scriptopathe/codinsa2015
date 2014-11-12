@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Microsoft.Xna.Framework;
 namespace Clank.View.Engine.Shapes
 {
     /// <summary>
@@ -16,5 +16,9 @@ namespace Clank.View.Engine.Shapes
         /// <param name="shape">forme avec laquelle tester la collision.</param>
         /// <returns>True si il y a intersection, false sinon.</returns>
         public abstract bool Intersects(Shape shape);
+        /// <summary>
+        /// Obtient ou définit la position de cette forme.
+        /// </summary>
+        public abstract Vector2 Position { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Clank.View.Engine;
 namespace Clank.View
 {
     /// <summary>
@@ -15,13 +16,19 @@ namespace Clank.View
 
         #endregion
 
+        #region Properties
+        /// <summary>
+        /// Map sur laquelle se situe la scène.
+        /// </summary>
+        public Map Map { get; set; }
+        #endregion
         #region Methods
         /// <summary>
         /// Crée une nouvelle instance de Clank.View.Scene.
         /// </summary>
         public Scene()
         {
-
+            Map = new Map();
         }
 
         /// <summary>
@@ -29,7 +36,6 @@ namespace Clank.View
         /// </summary>
         public void LoadContent()
         {
-
         }
 
         /// <summary>
@@ -37,7 +43,8 @@ namespace Clank.View
         /// </summary>
         public void Update(GameTime time)
         {
-
+            Map.Update(time);
+            Input.Update();
         }
 
         /// <summary>
@@ -47,7 +54,7 @@ namespace Clank.View
         /// <param name="batch"></param>
         public void Draw(GameTime time, SpriteBatch batch)
         {
-
+            Map.Draw(time, batch);
         }
 
         /// <summary>

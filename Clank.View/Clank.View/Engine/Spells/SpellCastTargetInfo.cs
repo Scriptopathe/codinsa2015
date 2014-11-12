@@ -3,22 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+
 namespace Clank.View.Engine.Spells
 {
 
     /// <summary>
-    /// Représente les différents types de targettings posssible.
+    /// Contient des informations de ciblage d'un sort qui a été lancé.
+    /// 
+    /// ---
+    /// 
+    /// Différence avec SpellTargetInfo : 
+    /// 
+    /// SpellCastTargetInfo ne sert juste qu'à indiquer la direction / position / cible
+    /// que prend le spell une fois lancé.
+    /// 
+    /// SpellTargetInfo, lui, est une propriété des sorts qui détermine la manière dont il est lancé
+    /// (si c'est un sort ciblé, sa range, sa zone d'effet).
+    /// 
+    /// -----
+    /// 
+    /// Différence avec SpellDescription :
+    /// SpellDescription décrit la totalité du sort, et encapsule un objet de type SpellTargetInfo.
+    /// 
     /// </summary>
-    public enum TargettingType
-    {
-        Targetted,      // ciblé sur un allié / ennemi / monstre neutre
-        Position,       // ciblé sur une position
-        Direction       // ciblé sur une direction.
-    }
-    /// <summary>
-    /// Contient des informations de ciblage des sorts.
-    /// </summary>
-    public class TargetInfo
+    public class SpellCastTargetInfo
     {
         int m_targetId;
         Vector2 m_targetPosition;

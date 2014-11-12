@@ -10,7 +10,7 @@ namespace Clank.View
         /// </summary>
         static void Main(string[] args)
         {
-            using (ShipDemo game = new ShipDemo())
+            using (Mobattack game = new Mobattack())
             {
                 game.Run();
             }

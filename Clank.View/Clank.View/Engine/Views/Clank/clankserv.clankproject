@@ -10,6 +10,7 @@
     <string>SpellView.clank</string>
     <string>EntityTypeView.clank</string>
     <string>interface.clank</string>
+    <string>../SpellDescriptionView.clank</string>
   </SourceFiles>
   <MainFile>main.clank</MainFile>
   <Settings>

@@ -14,13 +14,34 @@ namespace Clank.View
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class ShipDemo : Microsoft.Xna.Framework.Game
+    public class Mobattack : Microsoft.Xna.Framework.Game
     {
+        public static Mobattack Instance;
         GraphicsDeviceManager m_graphics;
         SpriteBatch m_spriteBatch;
         Scene m_scene;
-        public ShipDemo()
+
+        /// <summary>
+        /// Retourne la scène associée à ce jeu.
+        /// </summary>
+        /// <returns></returns>
+        public static Scene GetScene()
         {
+            return Instance.m_scene;
+        }
+
+        /// <summary>
+        /// Retourne la map de la scène.
+        /// </summary>
+        /// <returns></returns>
+        public static Engine.Map GetMap()
+        {
+            return Instance.m_scene.Map;
+        }
+
+        public Mobattack()
+        {
+            Instance = this;
             m_graphics = new GraphicsDeviceManager(this);
             m_scene = new Scene();
             Content.RootDirectory = "Content";
@@ -35,7 +56,7 @@ namespace Clank.View
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            Engine.Input.ModuleInit();
             base.Initialize();
         }
 
@@ -47,6 +68,7 @@ namespace Clank.View
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             m_spriteBatch = new SpriteBatch(GraphicsDevice);
+            Engine.Ressources.LoadRessources(Content);
             m_scene.LoadContent();
             // TODO: use this.Content to load your game content here
         }
@@ -85,7 +107,9 @@ namespace Clank.View
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            m_spriteBatch.Begin();
             m_scene.Draw(gameTime, m_spriteBatch);
+            m_spriteBatch.End();
             base.Draw(gameTime);
         }
     }
