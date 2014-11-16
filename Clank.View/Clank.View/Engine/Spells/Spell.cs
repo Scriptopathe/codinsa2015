@@ -66,7 +66,8 @@ namespace Clank.View.Engine.Spells
         /// Utilise ce spell, si il n'est pas en cooldown et que la cible spécifiée est valide.
         /// </summary>
         /// <returns>Retourne true si le sort a pu être casté, false sinon. Le sort n'est pas casté si : la
-        /// cible </returns>
+        /// cible subit un silence, tente de cibler une entité invalide, le sort est en cooldown, 
+        /// le sort est ciblé sur une entité et l'entité n'est pas en range.</returns>
         public bool Use(SpellCastTargetInfo target)
         {
             // Vérifie que le type de ciblage est le bon.
@@ -77,6 +78,10 @@ namespace Clank.View.Engine.Spells
             if (CurrentCooldown > 0)
                 return false;
 
+            // Vérifie que la cible ne subit pas un silence
+            if (SourceCaster.IsSilenced)
+                return false;
+
             // Vérifie que la cible est dans le bon range.
             if ((target.Type & TargettingType.Targetted) == TargettingType.Targetted)
             {
@@ -85,12 +90,19 @@ namespace Clank.View.Engine.Spells
                     return false;
                 
             }
+            
 
-            // Appelle la fonction qui va lancer le spell.
-            DoUseSpell(target);
+            // Applique les effets du casting time.
+            SourceCaster.AddAlteration(new Entities.StateAlteration(SourceCaster, Description.CastingTimeAlteration, target.AlterationParameters));
+
+            // Appelle la fonction qui va lancer le spell avec un délai correspondant au casting time.
+            Mobattack.GetMap().EventSheduler.Schedule(new Scheduler.ActionDelegate(() => {
+                DoUseSpell(target);
+            }), Description.CastingTime);
+
 
             // Met le spell en cooldown.
-            CurrentCooldown = GetUseCooldown();
+            CurrentCooldown = GetUseCooldown() * (1 - Math.Min(0.40f, SourceCaster.GetCooldownReduction()));
             return true;
         }
 
@@ -100,7 +112,7 @@ namespace Clank.View.Engine.Spells
         /// <param name="target"></param>
         protected virtual void DoUseSpell(SpellCastTargetInfo target)
         {
-
+            
         }
 
         /// <summary>

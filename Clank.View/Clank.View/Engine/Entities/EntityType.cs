@@ -48,7 +48,7 @@ namespace Clank.View.Engine.Entities
         /// <returns></returns>
         public static EntityTypeRelative ToRelative(EntityType absolute, EntityType team)
         {
-            if (team != EntityType.Team1 || team != EntityType.Team2)
+            if (team != EntityType.Team1 && team != EntityType.Team2)
                 throw new InvalidOperationException();
 
             int absInt = (int)absolute;

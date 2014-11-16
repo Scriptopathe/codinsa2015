@@ -22,6 +22,7 @@ namespace Clank.View.Engine.Entities
             EntityCount = 0;
         }
         #endregion
+
         #region Variables
 
         #region Battle variables
@@ -44,6 +45,27 @@ namespace Clank.View.Engine.Entities
         /// Points d'attaque de base de cette unité.
         /// </summary>
         float m_baseAttackDamage;
+
+        /// <summary>
+        /// Point de résistance magique de base de cette entité.
+        /// </summary>
+        float m_baseMagicResist;
+
+        /// <summary>
+        /// Points d'AP de base de cette entité.
+        /// </summary>
+        float m_baseAbilityPower;
+
+        /// <summary>
+        /// Attack speed de base de cette entité.
+        /// </summary>
+        float m_baseAttackSpeed;
+
+        /// <summary>
+        /// Cooldown reduction de base de cette unité.
+        /// </summary>
+        float m_baseCooldownReduction;
+
         /// <summary>
         /// Représente le nombre de points de vie maximum de cette entité.
         /// </summary>
@@ -72,6 +94,10 @@ namespace Clank.View.Engine.Entities
         /// Retourne toutes les altérations d'état
         /// </summary>
         StateAlterationCollection m_stateAlterations;
+
+        #region Details
+
+        #endregion
         #endregion
 
         #endregion
@@ -178,12 +204,20 @@ namespace Clank.View.Engine.Entities
         /// Obtient ou définit une valeur indiquant si cette entité doit 
         /// être supprimée de la map.
         /// </summary>
-        public bool IsDisposed
+        public bool IsDisposing
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Obtient une valeur indiquant si l'entité a été supprimée.
+        /// </summary>
+        public bool IsDisposed
+        {
+            get;
+            protected set;
+        }
         /// <summary>
         /// Obtient ou définit les points d'attaque de base de cette unité.
         /// </summary>
@@ -191,6 +225,69 @@ namespace Clank.View.Engine.Entities
         {
             get { return m_baseAttackDamage; }
             set { m_baseAttackDamage = value; }
+        }
+
+
+        /// <summary>
+        /// Cooldown reduction de base de cette unité.
+        /// </summary>
+        public float BaseCooldownReduction
+        {
+            get { return m_baseCooldownReduction; }
+            set { m_baseCooldownReduction = value; }
+        }
+
+        /// <summary>
+        /// Attack speed de base de cette entité.
+        /// </summary>
+        public float BaseAttackSpeed
+        {
+            get { return m_baseAttackSpeed; }
+            set { m_baseAttackSpeed = value; }
+        }
+        /// <summary>
+        /// Points d'AP de base de cette entité.
+        /// </summary>
+        public float BaseAbilityPower
+        {
+            get { return m_baseAbilityPower; }
+            set { m_baseAbilityPower = value; }
+        }
+        /// <summary>
+        /// Point de résistance magique de base de cette entité.
+        /// </summary>
+        public float BaseMagicResist
+        {
+            get { return m_baseMagicResist; }
+            set { m_baseMagicResist = value; }
+        }
+
+        /// <summary>
+        /// Retourne la résistance magique effective de cette entité.
+        /// </summary>
+        /// <returns></returns>
+        public virtual float GetMagicResist()
+        {
+            return BaseMagicResist;
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Retourne la valeur d'AP effective de cette entité.
+        /// </summary>
+        public virtual float GetAbilityPower()
+        {
+            return BaseAbilityPower;
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Retourne la valeur de CDR effective de cette entité.
+        /// </summary>
+        public virtual float GetCooldownReduction()
+        {
+            return BaseCooldownReduction;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -336,6 +433,22 @@ namespace Clank.View.Engine.Entities
         {
             get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Root).Count != 0; }
         }
+
+        /// <summary>
+        /// Obtient une valeur indiquant si cette unité est Silenced (ne peut pas utiliser de sorts).
+        /// </summary>
+        public bool IsSilenced
+        {
+            get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Silence).Count != 0; }
+        }
+
+        /// <summary>
+        /// Obtient une valeur indiquant si cette unité est Stuned (ne peut pas bouger ni utiliser de sorts).
+        /// </summary>
+        public bool IsStuned
+        {
+            get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Stun).Count != 0; }
+        }
         #endregion
         #endregion
 
@@ -346,7 +459,13 @@ namespace Clank.View.Engine.Entities
         public EntityBase()
         {
             ID = EntityCount;
+            BaseMaxHP = 5000;
+            HP = BaseMaxHP;
+            BaseArmor = 450;
             EntityCount++;
+
+            // Initialisation
+            m_stateAlterations = new StateAlterationCollection();
 
             // TODO : supprimer ces lignes, seulement utiles pour le debug.
             m_shape = new RectangleShape(Vector2.Zero, new Vector2(0.5f, 0.5f));
@@ -359,6 +478,14 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         public void MoveForward(GameTime time)
         {
+            MoveTowards(Direction, (float)time.ElapsedGameTime.TotalSeconds, m_speed);
+        }
+        /// <summary>
+        /// Avance dans la direction donnée, à la vitesse du personnage,
+        /// pendant la durée donnée (en secondes).
+        /// </summary>
+        public void MoveTowards(Vector2 direction, float duration, float speed)
+        {
             // Si l'entité est rootée, le mouvement est impossible.
             if (IsRooted)
                 return;
@@ -366,11 +493,11 @@ namespace Clank.View.Engine.Entities
             // Stratégie :
             // on regarde si à vitesse * time.elapsed * direction + Position, on est dans une case invalide
             // si c'est le cas, on se place sur une extrémité de la case.
-            float length = m_speed * (float)time.ElapsedGameTime.TotalSeconds; 
-            Vector2 dst = length * Direction + Position;
+            float length = speed * duration; 
+            Vector2 dst = length * direction + Position;
 
             if (length < 1)
-                MoveForwardStep(dst);
+                MoveTowardsStep(dst);
             else
             {
                 // Ici, on gère les "grandes" vitesse, càd, celles supérieures à une unité métrique.
@@ -379,7 +506,7 @@ namespace Clank.View.Engine.Entities
                 while(true)
                 {
                     // On avance d'un pas de taille max d'une unité métrique.
-                    stop = !MoveForwardStep(step * Direction + Position);
+                    stop = !MoveTowardsStep(step * direction + Position);
 
                     if (stop)
                         break;
@@ -403,7 +530,7 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         /// <param name="dst">destination</param>
         /// <returns>True si le mouvement peut être continué, false si une limite a été atteinte (case non passable).</returns>
-        bool MoveForwardStep(Vector2 dst)
+        bool MoveTowardsStep(Vector2 dst)
         {
             Vector2 newDst;
             bool dstOK = Mobattack.GetMap().GetPassabilityAt(dst.X, dst.Y);
@@ -435,17 +562,22 @@ namespace Clank.View.Engine.Entities
         public void Update(GameTime time)
         {
             // Apply state alterations
-            ApplyStateAlterations();
+            ApplyStateAlterations(time);
 
             // Mets à jour les altérations d'état.
-            m_stateAlterations.UpdateStateAlterations(time);
+            m_stateAlterations.UpdateStateAlterations(time, this);
+
+            __UpdateDebug(time);
+
+            if (IsDead)
+                IsDisposing = true;
         }
 
         #region Alterations
         /// <summary>
         /// Applique les altérations d'état en cours.
         /// </summary>
-        protected virtual void ApplyStateAlterations()
+        protected virtual void ApplyStateAlterations(GameTime time)
         {
             // Applique les dégâts AD
             List<StateAlteration> attackDamageAlterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.AttackDamage);
@@ -470,9 +602,43 @@ namespace Clank.View.Engine.Entities
                 ApplyHeal(alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All));
             }
 
-            
+            // Applique les dash
+            List<StateAlteration> dashAlterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.Dash);
+            foreach(StateAlteration alteration in dashAlterations)
+            {
+                ApplyDash(alteration.Model.GetDashDirection(alteration.Source, this, alteration.Parameters), 
+                    alteration.Model.DashSpeed,
+                    alteration.RemainingTime,
+                    (float)time.ElapsedGameTime.TotalSeconds);
+            }
         }
 
+        /// <summary>
+        /// Applique l'altération de dash passée en paramètre.
+        /// </summary>
+        public void ApplyDash(Vector2 direction, float speed, float remainingDuration, float stepDuration)
+        {
+            // Détermine si la direction finale est praticable.
+            Vector2 finalPosition = direction * speed * remainingDuration;
+
+            // Dash : on ignore les murs tant que la destination est praticable, si elle ne l'est pas,
+            // on cogne.
+            if (Mobattack.GetMap().GetPassabilityAt(finalPosition.X, finalPosition.Y))
+            {
+                Position += direction * speed * stepDuration;
+            }
+            else
+            {
+                MoveTowards(direction, stepDuration, speed);
+            }
+        }
+        /// <summary>
+        /// Ajoute une altération d'état à cette entité.
+        /// </summary>
+        public void AddAlteration(StateAlteration alteration)
+        {
+            m_stateAlterations.Add(alteration);
+        }
         /// <summary>
         /// Applique le nombre de dégâts indiqué à cette entité.
         /// Cette fonction prend en compte l'armure de l'entité pour déterminer
@@ -540,8 +706,16 @@ namespace Clank.View.Engine.Entities
 
         #region Debug
         float __angle = 0; // DEBUG
+        Spells.FireballSpell __spell = null;
         void __UpdateDebug(GameTime time)
         {
+            if (ID != 0)
+                return;
+            
+            if (IsDead)
+                IsDisposing = true;
+
+
             // DEBUG
             if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Q))
                 __angle -= 0.05f;
@@ -553,6 +727,17 @@ namespace Clank.View.Engine.Entities
             if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Z))
                 MoveForward(time);
             // -----
+            if(__spell== null)
+                __spell = new Spells.FireballSpell(this);
+            __spell.UpdateCooldown((float)time.ElapsedGameTime.TotalSeconds);
+            if(Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Space))
+            {
+                __spell.Use(new Spells.SpellCastTargetInfo()
+                {
+                    Type = Spells.TargettingType.Direction,
+                    TargetDirection = Direction
+                });
+            }
         }
         #endregion
     }

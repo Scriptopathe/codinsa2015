@@ -13,17 +13,23 @@ namespace Clank.View.Engine.Entities
         Silence         = 0x0002,
         Interruption    = 0x0004,
         Stun            = Root | Silence | Interruption,
+
         // Stats
+        CDR             = 0x0008,
         MoveSpeed       = 0x0010,
         Armor           = 0x0020,
         Regen           = 0x0040,
         DamageBuff      = 0x0080,
         MaxHP           = 0x0100,
+        AP              = 0x0200,
+        RM              = 0x0400,
+        AttackSpeed     = 0x0800,
+
         // Autres
-        Dash = 0x0100,
-        AttackDamage    = 0x0200,     // indique que le sort inflige des dégâts ou soigne
-        TrueDamage      = 0x0400,
-        Heal            = 0x0800,
+        Dash            = 0x1000,
+        AttackDamage    = 0x2000,     // indique que le sort inflige des dégâts ou soigne
+        TrueDamage      = 0x4000,
+        Heal            = 0x8000,
     }
 
     public enum ScalingRatios
@@ -32,14 +38,23 @@ namespace Clank.View.Engine.Entities
         SrcArmor        = 0x0002,
         SrcHP           = 0x0004,
         SrcMaxHP        = 0x0008,
+        SrcAP           = 0x0010,
+        SrcMR           = 0x0020,
 
         DstAd           = 0x0100,
         DstArmor        = 0x0200,
         DstHP           = 0x0400,
         DstMaxHP        = 0x0800,
-
+        DstAP           = 0x1000,
+        DstMr           = 0x2000,
         All             = 0xFFFF,
         None            = 0x0000
+    }
+
+    public enum DashDirectionType
+    {
+        TowardsEntity,
+        Position,
     }
     /// <summary>
     /// Représente un modèle pour une altération d'état.
@@ -66,6 +81,40 @@ namespace Clank.View.Engine.Entities
         /// rétro-compatibilité.
         /// </summary>
         public float DashSpeed { get { return FlatValue; } set { FlatValue = value; } }
+
+        /// <summary>
+        /// Si Type contient Dash : type direction du dash.
+        /// </summary>
+        public DashDirectionType DashDirectionType { get; set; }
+
+
+        /// <summary>
+        /// Si Type contient Dash : obtient direction du dash.
+        /// </summary>
+        /// <param name="caster">Entité ayant lancé le sort qui provoque le dash.</param>
+        /// <param name="source">Entité subissant le dash.</param>
+        /// <param name="target">Si le dash est targetté, entité vers laquelle le dash doit se diriger</param>
+        public Vector2 GetDashDirection(EntityBase caster, EntityBase source, StateAlterationParameters parameters)
+        {
+            Vector2 direction;
+            switch(DashDirectionType)
+            {
+                case Entities.DashDirectionType.TowardsEntity:
+                    if (parameters.DashTargetEntity == null)
+                        throw new Exception("StateAlterationModel.GetDashDirection : target null & DashDirectionType == TowardsEntity");
+                    direction = parameters.DashTargetEntity.Position - source.Position; direction.Normalize();
+                    return direction;
+                case Entities.DashDirectionType.Position:
+                    if(parameters.DashTargetPosition== null)
+                        throw new Exception("StateAlterationModel.GetDashDirection : target null & DashDirectionType == Position");
+
+                    direction = parameters.DashTargetPosition - source.Position; direction.Normalize();
+                    return direction;
+            }
+
+            return Vector2.Zero;
+        }
+
         /// <summary>
         /// Valeur flat du buff / debuff (valeur positive : buff, valeur négative : debuff).
         /// La nature du buff dépend de Type.
@@ -88,6 +137,16 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         public float SourcePercentArmorValue { get; set; }
         /// <summary>
+        /// Même que FlatValue, mais en pourcentage de l'AP actuelle de l'entité source.
+        /// </summary>
+        public float SourcePercentAPValue { get; set; }
+        /// <summary>
+        /// Même que FlatValue mais en pourcentage de la RM actuelle de l'entité source.
+        /// </summary>
+        public float SourcePercentRMValue { get; set; }
+
+
+        /// <summary>
         /// Même que FlatValue, mais en pourcentage de dégâts d'attaque actuels de l'entité de destination.
         /// </summary>
         public float DestPercentADValue { get; set; }
@@ -103,7 +162,14 @@ namespace Clank.View.Engine.Entities
         /// Même que FlatValue mais en pourcentage de l'armure actuelle de l'entité de destination.
         /// </summary>
         public float DestPercentArmorValue { get; set; }
-
+        /// <summary>
+        /// Même que FlatValue, mais en pourcentage de l'AP actuelle de l'entité de destination.
+        /// </summary>
+        public float DestPercentAPValue { get; set; }
+        /// <summary>
+        /// Même que FlatValue mais en pourcentage de la RM actuelle de l'entité de destination.
+        /// </summary>
+        public float DestPercentRMValue { get; set; }
         /// <summary>
         /// Calcule la valeur totale de l'altération d'état en fonction des différents scalings passés en 
         /// paramètres au moyen de "ratios".
@@ -123,6 +189,12 @@ namespace Clank.View.Engine.Entities
                 totalValue += SourcePercentHPValue * source.GetHP();
             if ((ratios & ScalingRatios.SrcMaxHP) == ScalingRatios.SrcMaxHP)
                 totalValue += SourcePercentMaxHPValue * source.GetMaxHP();
+            if ((ratios & ScalingRatios.SrcAP) == ScalingRatios.SrcAP)
+                totalValue += SourcePercentAPValue * source.GetAbilityPower();
+            if ((ratios & ScalingRatios.SrcMR) == ScalingRatios.SrcMR)
+                totalValue += SourcePercentRMValue * source.GetMagicResist();
+
+
 
             if ((ratios & ScalingRatios.DstAd) == ScalingRatios.DstAd)
                 totalValue += DestPercentADValue * destination.GetAttackDamage();
@@ -132,6 +204,10 @@ namespace Clank.View.Engine.Entities
                 totalValue += DestPercentHPValue * destination.GetHP();
             if ((ratios & ScalingRatios.DstMaxHP) == ScalingRatios.DstMaxHP)
                 totalValue += DestPercentMaxHPValue * destination.GetMaxHP();
+            if ((ratios & ScalingRatios.DstAP) == ScalingRatios.DstAP)
+                totalValue += DestPercentAPValue * destination.GetAbilityPower();
+            if ((ratios & ScalingRatios.SrcMR) == ScalingRatios.SrcMR)
+                totalValue += DestPercentRMValue * destination.GetMagicResist();
 
             return totalValue;
             // Note : ceci n'est pas équivalent au code ci dessous.

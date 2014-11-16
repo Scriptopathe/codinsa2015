@@ -39,7 +39,7 @@ namespace Clank.View.Engine.Shapes
             if (shape is RectangleShape)
             {
                 RectangleShape rectShape = (RectangleShape)shape;
-                return rectShape.Intersects(shape);
+                return rectShape.Intersects(this);
             }
             else if(shape is CircleShape)
             {

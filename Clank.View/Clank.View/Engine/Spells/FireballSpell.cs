@@ -18,6 +18,10 @@ namespace Clank.View.Engine.Spells
         protected override void DoUseSpell(SpellCastTargetInfo target)
         {
             base.DoUseSpell(target);
+            target.AlterationParameters.DashTargetEntity = SourceCaster;
+            target.AlterationParameters.DashTargetPosition = SourceCaster.Position;
+            Spellcasts.SpellcastFireball fireball = new Spellcasts.SpellcastFireball(this, target);
+            Mobattack.GetMap().AddSpellcast(fireball);
         }
 
         /// <summary>
@@ -38,28 +42,39 @@ namespace Clank.View.Engine.Spells
             SourceCaster = caster;
             Description = new SpellDescription()
             {
+                
                 TargetType = new SpellTargetInfo()
                 {
                     AllowedTargetTypes = EntityTypeRelative.EnnemyPlayer,
-                    Radius = 0.3f,
-                    Range = 4f,
+                    AoeRadius = 0.3f,
+                    Range = 6f,
+                    Duration = 0.6f,
+                    DieOnCollision = true,
                     Type = TargettingType.Direction
                 },
-
-                BaseCooldown = 1.0f,
-                CastingTime = 0.1f,
+                BaseCooldown = 0.10f,
+                CastingTime = 0.05f,
                 CastingTimeAlteration = new StateAlterationModel() 
                 {
                     Type = StateAlterationType.Root,
-                    Duration = 0.1f,
+                    Duration = 0.05f,
                 },
-
-                OnHitEffects = new StateAlterationModel()
-                {
-                    Type = StateAlterationType.AttackDamage | StateAlterationType.Root,
-                    Duration = 1.0f,
-                    FlatValue = 100.0f,
-                    SourcePercentADValue = 100.0f
+                
+                OnHitEffects = new List<StateAlterationModel>() { 
+                    new StateAlterationModel()
+                    {
+                        Type = StateAlterationType.AttackDamage,
+                        Duration = 0.0f,
+                        FlatValue = 100.0f,
+                        SourcePercentADValue = 100.0f,
+                    },
+                    new StateAlterationModel()
+                    {
+                        Type = StateAlterationType.Dash,
+                        DashSpeed = 16.0f,
+                        DashDirectionType = DashDirectionType.TowardsEntity,
+                        Duration = 0.2f
+                    }
                 }
             };
             CurrentCooldown = 0.0f;

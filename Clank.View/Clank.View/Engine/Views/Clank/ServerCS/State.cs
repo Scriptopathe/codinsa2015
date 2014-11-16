@@ -15,7 +15,7 @@ namespace Clank.View.Engine.Views
 		public List<EntityView> getEntitiesOnSight(int clientId)
 		{
             return new List<EntityView>();
-			// return Interface.getEntitiesOnSight(clientId);
+			//return Interface.getEntitiesOnSight(clientId);
 		}	
 		/// <summary>
 		/// Génère le code pour la fonction de traitement des messages.

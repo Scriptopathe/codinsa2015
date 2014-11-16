@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-
+using Clank.View.Engine.Entities;
 namespace Clank.View.Engine.Spells
 {
 
@@ -61,6 +61,7 @@ namespace Clank.View.Engine.Spells
         }
         /// <summary>
         /// Retourne la direction de la cible, si le type de ciblage (Type) est TargettingType.Direction.
+        /// Ce vecteur est transformé automatiquement en vecteur unitaire.
         /// </summary>
         public Vector2 TargetDirection
         {
@@ -73,6 +74,7 @@ namespace Clank.View.Engine.Spells
             set
             {
                 m_targetDirection = value;
+                m_targetDirection.Normalize();
             }
         }
         /// <summary>
@@ -90,6 +92,19 @@ namespace Clank.View.Engine.Spells
             {
                 m_targetId = value;
             }
+        }
+
+        /// <summary>
+        /// Obtient ou définit les paramètres de l'altération d'état qui sera associée
+        /// à la cible.
+        /// 
+        /// A affecter dans Spell.DoUseSpell() (et ses sous-classes).
+        /// </summary>
+        public StateAlterationParameters AlterationParameters { get; set; }
+
+        public SpellCastTargetInfo()
+        {
+            AlterationParameters = new StateAlterationParameters();
         }
     }
 }
