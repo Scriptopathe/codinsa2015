@@ -20,7 +20,7 @@ namespace Clank.View.Engine.Spells
             base.DoUseSpell(target);
             target.AlterationParameters.DashTargetEntity = SourceCaster;
             target.AlterationParameters.DashTargetPosition = SourceCaster.Position;
-            Spellcasts.SpellcastFireball fireball = new Spellcasts.SpellcastFireball(this, target);
+            Spellcasts.SpellcastBase fireball = new Spellcasts.SpellcastBase(this, target);
             Mobattack.GetMap().AddSpellcast(fireball);
         }
 
@@ -45,15 +45,15 @@ namespace Clank.View.Engine.Spells
                 
                 TargetType = new SpellTargetInfo()
                 {
-                    AllowedTargetTypes = EntityTypeRelative.EnnemyPlayer,
+                    AllowedTargetTypes = EntityTypeRelative.AllEnnemy,
                     AoeRadius = 0.3f,
                     Range = 6f,
                     Duration = 0.6f,
                     DieOnCollision = true,
                     Type = TargettingType.Direction
                 },
-                BaseCooldown = 0.10f,
-                CastingTime = 0.05f,
+                BaseCooldown = 0.6f,
+                CastingTime = 0.5f,
                 CastingTimeAlteration = new StateAlterationModel() 
                 {
                     Type = StateAlterationType.Root,
@@ -66,15 +66,15 @@ namespace Clank.View.Engine.Spells
                         Type = StateAlterationType.AttackDamage,
                         Duration = 0.0f,
                         FlatValue = 100.0f,
-                        SourcePercentADValue = 100.0f,
+                        SourcePercentADValue = 0.0f,
                     },
-                    new StateAlterationModel()
+                    /*new StateAlterationModel()
                     {
                         Type = StateAlterationType.Dash,
-                        DashSpeed = 16.0f,
+                        DashSpeed = 2.0f,
                         DashDirectionType = DashDirectionType.TowardsEntity,
                         Duration = 0.2f
-                    }
+                    }*/
                 }
             };
             CurrentCooldown = 0.0f;

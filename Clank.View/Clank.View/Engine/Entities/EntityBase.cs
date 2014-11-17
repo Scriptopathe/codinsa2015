@@ -85,7 +85,7 @@ namespace Clank.View.Engine.Entities
         /// <summary>
         /// Représente la vitesse de cette entité, en unités de distance / seconde.
         /// </summary>
-        float m_speed;
+        float m_baseMoveSpeed;
         /// <summary>
         /// Représente le type de l'entité.
         /// </summary>
@@ -95,6 +95,18 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         StateAlterationCollection m_stateAlterations;
 
+
+        /// <summary>
+        /// Temps pendant lequel l'entité mémorise les entités lui ayant fait des dégâts.
+        /// </summary>
+        public const float DamageTimeMemory = 0.2f;
+
+        /// <summary>
+        /// Dictionnaire contenant les entités ayant encommagé cette unité récemment (limite de temps
+        /// DamageTimeMemory), et le temps restant à avant que les dites entités disparaissent du dictionnaire.
+        /// </summary>
+        EntityCollection m_recentlyAggressiveEntities;
+        Dictionary<int, float> m_recentlyAgressiveEntitiesMemoryTime;
         #region Details
 
         #endregion
@@ -103,6 +115,14 @@ namespace Clank.View.Engine.Entities
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Obtient la liste des altérations d'état affectées à cette entité.
+        /// </summary>
+        public StateAlterationCollection StateAlterations
+        {
+            get { return m_stateAlterations; }
+            protected set { m_stateAlterations = value; }
+        }
         /// <summary>
         /// Représente les points d'armure de base de cette entité.
         /// Les points d'armure réduisent les dégâts infligés à cette unité selon la formule :
@@ -119,7 +139,7 @@ namespace Clank.View.Engine.Entities
         public Vector2 Direction
         {
             get { return m_direction; }
-            set { m_direction = value; }
+            set { m_direction = value; m_direction.Normalize(); }
         }
 
         /// <summary>
@@ -172,6 +192,14 @@ namespace Clank.View.Engine.Entities
             set { m_baseMaxHP = value; }
         }
 
+        /// <summary>
+        /// Obtient ou définit la vitesse de déplacement de base de l'entité.
+        /// </summary>
+        public float BaseMoveSpeed
+        {
+            get { return m_baseMoveSpeed; }
+            set { m_baseMoveSpeed = value; }
+        }
         /// <summary>
         /// Retourne une valeur indiquant si l'entité est morte.
         /// </summary>
@@ -290,6 +318,14 @@ namespace Clank.View.Engine.Entities
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Obtient la vitesse de déplacement de l'entité.
+        /// </summary>
+        /// <returns></returns>
+        public virtual float GetMoveSpeed()
+        {
+            return m_baseMoveSpeed;
+        }
         /// <summary>
         /// Fonction utilisée pour obtenir les points d'attaque effectifs de cette entité.
         /// </summary>
@@ -425,6 +461,15 @@ namespace Clank.View.Engine.Entities
 
             return totalHP;
         }
+
+        /// <summary>
+        /// Retourne la liste des entités ayant récemment infligés des dégâts à cette entité.
+        /// </summary>
+        /// <returns></returns>
+        public virtual EntityCollection GetRecentlyAgressiveEntities()
+        {
+            return m_recentlyAggressiveEntities;
+        }
         #region State
         /// <summary>
         /// Obtient une valeur indiquant si cette entité est Rootée. (ne peut plus bouger).
@@ -466,19 +511,42 @@ namespace Clank.View.Engine.Entities
 
             // Initialisation
             m_stateAlterations = new StateAlterationCollection();
+            m_recentlyAggressiveEntities = new EntityCollection();
+            m_recentlyAgressiveEntitiesMemoryTime = new Dictionary<int, float>();
 
             // TODO : supprimer ces lignes, seulement utiles pour le debug.
             m_shape = new RectangleShape(Vector2.Zero, new Vector2(0.5f, 0.5f));
-            m_speed = 8.0f;
+            m_baseMoveSpeed = 8.0f;
         }
 
+        /// <summary>
+        /// Mets à jour les infos concernant les agressions des unités ennemies.
+        /// </summary>
+        public void UpdateAgressionInfo(GameTime time)
+        {
+            float elapsedSeconds = (float)time.ElapsedGameTime.TotalSeconds;
+            List<int> toDeleteIds = new List<int>();
+            foreach(var kvp in m_recentlyAggressiveEntities)
+            {
+                m_recentlyAgressiveEntitiesMemoryTime[kvp.Key] -= elapsedSeconds;
+                if (m_recentlyAgressiveEntitiesMemoryTime[kvp.Key] <= 0)
+                    toDeleteIds.Add(kvp.Key);
+            }
+
+            // Supprime les entités dont on n'a plus besoin de se souvenir.
+            foreach(int id in toDeleteIds)
+            {
+                m_recentlyAggressiveEntities.Remove(id);
+                m_recentlyAgressiveEntitiesMemoryTime.Remove(id);
+            }
+        }
         /// <summary>
         /// Avance dans la direction du personnage, à la vitesse du personnage,
         /// pendant le temps écoulé durant la frame précédente.
         /// </summary>
         public void MoveForward(GameTime time)
         {
-            MoveTowards(Direction, (float)time.ElapsedGameTime.TotalSeconds, m_speed);
+            MoveTowards(Direction, (float)time.ElapsedGameTime.TotalSeconds, GetMoveSpeed());
         }
         /// <summary>
         /// Avance dans la direction donnée, à la vitesse du personnage,
@@ -564,15 +632,28 @@ namespace Clank.View.Engine.Entities
             // Apply state alterations
             ApplyStateAlterations(time);
 
+            // Mets à jour les composantes spécifiques à l'entité
+            DoUpdate(time);
+
             // Mets à jour les altérations d'état.
             m_stateAlterations.UpdateStateAlterations(time, this);
-
+            UpdateAgressionInfo(time);
+            // DEBUG
             __UpdateDebug(time);
 
             if (IsDead)
                 IsDisposing = true;
         }
 
+        /// <summary>
+        /// Effectue la mise à jour de l'entité.
+        /// Cette méthode doit être réécrite dans les entités filles.
+        /// </summary>
+        /// <param name="time"></param>
+        protected virtual void DoUpdate(GameTime time)
+        {
+
+        }
         #region Alterations
         /// <summary>
         /// Applique les altérations d'état en cours.
@@ -583,6 +664,14 @@ namespace Clank.View.Engine.Entities
             List<StateAlteration> attackDamageAlterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.AttackDamage);
             foreach(StateAlteration alteration in attackDamageAlterations)
             {
+                // Ajoute l'entité à la liste des entités ayant récemment agressé cette entité.
+                if (m_recentlyAggressiveEntities.ContainsKey(alteration.Source.ID))
+                    m_recentlyAgressiveEntitiesMemoryTime[alteration.Source.ID] = DamageTimeMemory;
+                else
+                {
+                    m_recentlyAggressiveEntities.Add(alteration.Source.ID, alteration.Source);
+                    m_recentlyAgressiveEntitiesMemoryTime.Add(alteration.Source.ID, DamageTimeMemory);
+                }
                 // Applique les dégâts de base du sort + dégâts bonus fonction de l'attaque de la source.
                 ApplyDamage(alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All));
             }
@@ -591,6 +680,15 @@ namespace Clank.View.Engine.Entities
             List<StateAlteration> trueDamageAlterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.TrueDamage);
             foreach(StateAlteration alteration in trueDamageAlterations)
             {
+                // Ajoute l'entité à la liste des entités ayant récemment agressé cette entité.
+                if (m_recentlyAggressiveEntities.ContainsKey(alteration.Source.ID))
+                    m_recentlyAgressiveEntitiesMemoryTime[alteration.Source.ID] = DamageTimeMemory;
+                else
+                {
+                    m_recentlyAggressiveEntities.Add(alteration.Source.ID, alteration.Source);
+                    m_recentlyAgressiveEntitiesMemoryTime.Add(alteration.Source.ID, DamageTimeMemory);
+                }
+
                 // Applique les dégâts de base du sort + dégâts bonus fonction de l'attaque de la source.
                 ApplyTrueDamage(alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All));
             }
@@ -660,6 +758,8 @@ namespace Clank.View.Engine.Entities
 
             m_shieldPoints = remainingShield;
             HP -= remainingDamage;
+
+            
         }
 
         /// <summary>
@@ -692,7 +792,12 @@ namespace Clank.View.Engine.Entities
         /// <param name="position">Position à laquelle dessiner l'unité.</param>
         public virtual void Draw(GameTime time, SpriteBatch batch, Point position)
         {
-            batch.Draw(Ressources.DummyTexture, new Rectangle(position.X, position.Y, 16, 16), null, Color.White, __angle, new Vector2(16, 16), SpriteEffects.None, 0.0f);
+            Color col;
+            if(Type.HasFlag(EntityType.Team1))
+                col = Color.Blue;
+            else
+                col = Color.Red;
+            batch.Draw(Ressources.DummyTexture, new Rectangle(position.X, position.Y, 16, 16), null, col, __angle, new Vector2(16, 16), SpriteEffects.None, 0.0f);
         }
 
         /// <summary>
@@ -718,9 +823,9 @@ namespace Clank.View.Engine.Entities
 
             // DEBUG
             if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Q))
-                __angle -= 0.05f;
+                __angle -= 0.1f;
             else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.D))
-                __angle += 0.05f;
+                __angle += 0.1f;
 
             Direction = new Vector2((float)Math.Cos(__angle), (float)Math.Sin(__angle));
 

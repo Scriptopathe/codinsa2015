@@ -19,6 +19,16 @@ namespace Clank.View.Engine.Entities
         Spawner         = 0x40 | Struture,
         Idol            = 0x80 | Struture,
 
+        // Neutral
+        Boss        = 0x0100,
+        Miniboss    = 0x0200,
+        Creep       = 0x0400,
+        Player      = 0x8000,
+
+        // Macros
+        AllTeam1    = Team1 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
+        AllTeam2    = Team2 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
+
         // Team
         Team1Tower      = Team1 | Tower,
         Team2Tower      = Team2 | Tower,
@@ -30,13 +40,49 @@ namespace Clank.View.Engine.Entities
         Team2Idol       = Team2 | Idol,
         Team1Player     = Player | Team1,
         Team2Player     = Player | Team2,
-
-        // Neutral
-        Boss            = 0x100,
-        Miniboss        = 0x200,
-        Player          = 0x1000,
+        Team1Creep      = Team1 | Creep,
+        Team2Creep      = Team2 | Creep
     }
 
+    /// <summary>
+    /// Représente le type d'entité, relatif à une équipe.
+    /// </summary>
+    public enum EntityTypeRelative
+    {
+        Neutral         = 0x01,
+        Ally            = 0x02,
+        Ennemy          = 0x04,
+        Structure       = 0x08,
+        Tower           = 0x10 | Structure,
+        Inhibitor       = 0x20 | Structure,
+        Spawner         = 0x40 | Structure,
+        Idol            = 0x80 | Structure,
+
+        // Neutral
+        Boss            = 0x0100,
+        Miniboss        = 0x0200,
+        Creep           = 0x0400,
+        Player          = 0x8000,
+
+        // Macros
+        AllEnnemy       = Ennemy | Tower | Inhibitor | Spawner | Idol | Player | Creep,
+        AllAlly         = Ally | Tower | Inhibitor | Spawner | Idol | Player | Creep,
+
+        // Team
+        AllyTower       = Ally | Tower,
+        EnnemyTower     = Ennemy | Tower,
+        AllyInhibitor   = Ally | Inhibitor,
+        EnnemyInhibitor = Ennemy | Inhibitor,
+        AllySpawner     = Ally | Spawner,
+        EnnemySpawner   = Ennemy | Spawner,
+        AllyIdol        = Ally | Idol,
+        EnnemyIdol      = Ennemy | Idol,
+        AllyPlayer      = Player | Ally,
+        EnnemyPlayer    = Player | Ennemy,
+        AllyCreep       = Ally | Creep,
+        EnnemyCreep     = Ennemy | Creep,
+
+    }
     public static class EntityTypeConverter
     {
         /// <summary>
@@ -48,6 +94,7 @@ namespace Clank.View.Engine.Entities
         /// <returns></returns>
         public static EntityTypeRelative ToRelative(EntityType absolute, EntityType team)
         {
+            team = team & (EntityType.Team1 | EntityType.Team2);
             if (team != EntityType.Team1 && team != EntityType.Team2)
                 throw new InvalidOperationException();
 
@@ -93,7 +140,8 @@ namespace Clank.View.Engine.Entities
 
         public static EntityType ToAbsolute(EntityTypeRelative relative, EntityType team)
         {
-            if (team != EntityType.Team1 || team != EntityType.Team2)
+            team = team & (EntityType.Team1 | EntityType.Team2);
+            if (team != EntityType.Team1 && team != EntityType.Team2)
                 throw new InvalidOperationException();
 
             int absInt = (int)relative;
@@ -125,35 +173,5 @@ namespace Clank.View.Engine.Entities
             return (EntityType)absInt;
         }
     }
-    /// <summary>
-    /// Représente le type d'entité, relatif à une équipe.
-    /// </summary>
-    public enum EntityTypeRelative
-    {
-        Neutral         = 0x01,
-        Ally            = 0x02,
-        Ennemy          = 0x04,
-        Structure       = 0x08,
-        Tower           = 0x10 | Structure,
-        Inhibitor       = 0x20 | Structure,
-        Spawner         = 0x40 | Structure,
-        Idol            = 0x80 | Structure,
 
-        // Team
-        AllyTower       = Ally   | Tower,
-        EnnemyTower     = Ennemy | Tower,
-        AllyInhibitor   = Ally   | Inhibitor,
-        EnnemyInhibitor = Ennemy | Inhibitor,
-        AllySpawner     = Ally   | Spawner,
-        EnnemySpawner   = Ennemy | Spawner,
-        AllyIdol        = Ally   | Idol,
-        EnnemyIdol      = Ennemy | Idol,
-        AllyPlayer      = Player | Ally,
-        EnnemyPlayer    = Player | Ennemy,
-
-        // Neutral
-        Boss            = 0x100,
-        Miniboss        = 0x200,
-        Player          = 0x1000,
-    }
 }

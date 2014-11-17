@@ -8,9 +8,10 @@ using Clank.View.Engine.Entities;
 namespace Clank.View.Engine.Spellcasts
 {
     /// <summary>
-    /// Boule de feu.
+    /// Représent un sort de base, dont l'effet s'adapte à la description
+    /// passée en paramètre.
     /// </summary>
-    public class SpellcastFireball : Spellcast
+    public class SpellcastBase : Spellcast
     {
         /// <summary>
         /// Forme du sort.
@@ -41,7 +42,7 @@ namespace Clank.View.Engine.Spellcasts
         /// <summary>
         /// Crée une nouvelle instance de SpellcastFireball.
         /// </summary>
-        public SpellcastFireball(Spells.Spell sourceSpell, Spells.SpellCastTargetInfo castInfo) : base()
+        public SpellcastBase(Spells.Spell sourceSpell, Spells.SpellCastTargetInfo castInfo) : base()
         {
             SourceSpell = sourceSpell;
             m_time = 0;

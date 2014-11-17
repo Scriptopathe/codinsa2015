@@ -76,7 +76,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engine\Entities\EntityBase.cs" />
+    <Compile Include="Engine\Entities\EntityCollection.cs" />
+    <Compile Include="Engine\Entities\EntitySpawner.cs" />
     <Compile Include="Engine\Entities\EntityHero.cs" />
+    <Compile Include="Engine\Entities\EntityCreep.cs" />
+    <Compile Include="Engine\Entities\EntityTower.cs" />
     <Compile Include="Engine\Entities\EntityType.cs" />
     <Compile Include="Engine\Entities\StateAlteration.cs" />
     <Compile Include="Engine\Entities\StateAlterationCollection.cs" />
@@ -88,11 +92,12 @@
     <Compile Include="Engine\Scheduler.cs" />
     <Compile Include="Engine\Shapes\CircleShape.cs" />
     <Compile Include="Engine\Shapes\RectangleShape.cs" />
-    <Compile Include="Engine\Spellcasts\SpellcastFireball.cs" />
+    <Compile Include="Engine\Spellcasts\SpellcastBase.cs" />
     <Compile Include="Engine\Spellcasts\Spellcast.cs" />
     <Compile Include="Engine\Spells\FireballSpell.cs" />
     <Compile Include="Engine\Spells\SpellCastTargetInfo.cs" />
     <Compile Include="Engine\Spells\SpellDescription.cs" />
+    <Compile Include="Engine\Trajectory.cs" />
     <Compile Include="Engine\Views\Clank\ServerCS\Double.cs" />
     <Compile Include="Engine\Views\Clank\ServerCS\EntityView.cs" />
     <Compile Include="Engine\Views\Clank\ServerCS\Integer.cs" />
@@ -103,6 +108,7 @@
     <Compile Include="Engine\Shapes\Shape.cs" />
     <Compile Include="Engine\Spells\Spell.cs" />
     <Compile Include="Engine\Spells\SpellTargetInfo.cs" />
+    <Compile Include="PathFinding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />

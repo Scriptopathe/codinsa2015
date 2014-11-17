@@ -17,9 +17,17 @@
     }
     access
     {
+        ########################################################################
+        #
+        ########################################################################
         public List<EntityView> getEntitiesOnSight()
         {
             return serv_getEntitiesOnSight(clientId);
+        }
+        
+        public List<EntityView> lolol(int id, string bla, List<EntityView> carotte)
+        {
+            return carotte;
         }
     }
 }
