@@ -19,7 +19,7 @@ namespace Clank.View.Engine
         static KeyboardState s_thisState;
         static MouseState s_lastFrameMouseState;
         static MouseState s_thisMouseState;
-
+        static List<Keys> s_triggeredKeys;
         public static MouseState GetMouseState()
         {
             return s_thisMouseState;
@@ -50,6 +50,36 @@ namespace Clank.View.Engine
 
             s_lastFrameMouseState = s_thisMouseState;
             s_thisMouseState = Mouse.GetState();
+
+            s_triggeredKeys = ComputeTriggerKeys();
+
+        }
+        /// <summary>
+        /// Obtient la liste des touches qui ont été appuyées durant cette frame. 
+        /// </summary>
+        /// <returns></returns>
+        public static List<Keys> GetTriggerKeys()
+        {
+            return s_triggeredKeys;
+        }
+        /// <summary>
+        /// Calcule et obtient la liste des touches qui ont été appuyées durant cette frame.
+        /// </summary>
+        /// <returns></returns>
+        static List<Keys> ComputeTriggerKeys()
+        {
+            Keys[] thisKeys = s_thisState.GetPressedKeys();
+            Keys[] oldKeys = s_lastFrameState.GetPressedKeys();
+            List<Keys> triggerKey = new List<Keys>();
+            foreach (Keys key in thisKeys)
+            {
+                if (!oldKeys.Contains(key))
+                {
+                    triggerKey.Add(key);
+                }
+            }
+
+            return triggerKey;
         }
         /// <summary>
         /// Checks for a trigger.
@@ -89,7 +119,14 @@ namespace Clank.View.Engine
         {
             return s_thisGamepadState.ThumbSticks.Right;
         }
-
+        public static bool IsLeftClickPressed()
+        {
+            return (s_thisMouseState.LeftButton == ButtonState.Pressed);
+        }
+        public static bool IsRightClickPressed()
+        {
+            return (s_thisMouseState.RightButton == ButtonState.Pressed);
+        }
         public static bool IsLeftClickTrigger()
         {
             return (s_thisMouseState.LeftButton == ButtonState.Pressed) && (s_lastFrameMouseState.LeftButton == ButtonState.Released);

@@ -20,14 +20,15 @@ namespace Clank.View.Engine.Entities
         Idol            = 0x80 | Struture,
 
         // Neutral
-        Boss        = 0x0100,
-        Miniboss    = 0x0200,
-        Creep       = 0x0400,
-        Player      = 0x8000,
+        Boss            = 0x0100,
+        Miniboss        = 0x0200,
+        Creep           = 0x0400,
+        Player          = 0x8000,
 
         // Macros
         AllTeam1    = Team1 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
         AllTeam2    = Team2 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
+        AllObjectives   = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss,
 
         // Team
         Team1Tower      = Team1 | Tower,

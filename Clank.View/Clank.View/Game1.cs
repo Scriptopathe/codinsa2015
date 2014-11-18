@@ -21,6 +21,10 @@ namespace Clank.View
         SpriteBatch m_spriteBatch;
         Scene m_scene;
 
+        public static Vector2 GetScreenSize()
+        {
+            return new Vector2(800, 600);
+        }
         /// <summary>
         /// Retourne la scène associée à ce jeu.
         /// </summary>

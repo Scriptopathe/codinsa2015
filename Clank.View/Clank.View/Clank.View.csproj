@@ -69,12 +69,14 @@
       <HintPath>..\..\Clank.Server\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\Editor\MapEditorControler.cs" />
     <Compile Include="Engine\Entities\EntityBase.cs" />
     <Compile Include="Engine\Entities\EntityCollection.cs" />
     <Compile Include="Engine\Entities\EntitySpawner.cs" />
@@ -86,6 +88,27 @@
     <Compile Include="Engine\Entities\StateAlterationCollection.cs" />
     <Compile Include="Engine\Entities\StateAlterationModel.cs" />
     <Compile Include="Engine\Graphics\Z.cs" />
+    <Compile Include="Engine\Gui\Drawing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Engine\Gui\GuiButton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Engine\Gui\GuiManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Engine\Gui\GuiMenu.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Engine\Gui\GuiMultilineTextDisplay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Engine\Gui\GuiTextInput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Engine\Gui\GuiWidget.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Engine\Input.cs" />
     <Compile Include="Engine\Map.cs" />
     <Compile Include="Engine\Ressources.cs" />

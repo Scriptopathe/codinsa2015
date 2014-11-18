@@ -96,7 +96,7 @@ namespace Clank.View.Engine.Spells
             SourceCaster.AddAlteration(new Entities.StateAlteration(SourceCaster, Description.CastingTimeAlteration, target.AlterationParameters));
 
             // Appelle la fonction qui va lancer le spell avec un délai correspondant au casting time.
-            Mobattack.GetMap().EventSheduler.Schedule(new Scheduler.ActionDelegate(() => {
+            Mobattack.GetScene().EventSheduler.Schedule(new Scheduler.ActionDelegate(() => {
                 DoUseSpell(target);
             }), Description.CastingTime);
 

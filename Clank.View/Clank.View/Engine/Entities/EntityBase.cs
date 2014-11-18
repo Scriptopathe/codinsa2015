@@ -797,7 +797,15 @@ namespace Clank.View.Engine.Entities
                 col = Color.Blue;
             else
                 col = Color.Red;
-            batch.Draw(Ressources.DummyTexture, new Rectangle(position.X, position.Y, 16, 16), null, col, __angle, new Vector2(16, 16), SpriteEffects.None, 0.0f);
+
+            Texture2D tex = Ressources.DummyTexture;
+            if (Type.HasFlag(EntityType.Tower))
+                tex = Ressources.SelectMark;
+            else if (Type.HasFlag(EntityType.Spawner))
+                tex = Ressources.TextBox;
+
+            int s = Map.UnitSize / 2;
+            batch.Draw(tex, new Rectangle(position.X, position.Y, s, s), null, col, __angle, new Vector2(s, s), SpriteEffects.None, 0.0f);
         }
 
         /// <summary>
@@ -814,7 +822,7 @@ namespace Clank.View.Engine.Entities
         Spells.FireballSpell __spell = null;
         void __UpdateDebug(GameTime time)
         {
-            if (ID != 0)
+            if (!Type.HasFlag(EntityType.Team1Player))
                 return;
             
             if (IsDead)
@@ -831,6 +839,7 @@ namespace Clank.View.Engine.Entities
 
             if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Z))
                 MoveForward(time);
+
             // -----
             if(__spell== null)
                 __spell = new Spells.FireballSpell(this);
