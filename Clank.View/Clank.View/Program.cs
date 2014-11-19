@@ -14,6 +14,9 @@ namespace Clank.View
             {
                 game.Run();
             }
+
+            // todo :
+            // - creeps : meilleur path finding avec check points.
         }
     }
 #endif

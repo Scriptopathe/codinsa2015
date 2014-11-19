@@ -13,7 +13,14 @@ namespace Clank.View.Engine
     public static class Ressources
     {
         public static Texture2D DummyTexture;
+        public static string MapFilename = "Content/map.txt";
 
+        #region Effects
+        public static Effect MapEffect { get; set; }
+        public static Texture2D WallTexture { get; set; }
+        public static Texture2D WallBorderTexture { get; set; }
+        public static Texture2D GrassTexture { get; set; }
+        #endregion
         #region Imported
         /// <summary>
         /// Obtient une police de caractère utilisable pour l'affichage de texte.
@@ -105,8 +112,9 @@ namespace Clank.View.Engine
         /// <param name="content"></param>
         public static void LoadRessources(ContentManager content)
         {
+            
             DummyTexture = content.Load<Texture2D>("textures/dummy");
-            Font = content.Load<SpriteFont>("segoe_ui_16");
+            Font = content.Load<SpriteFont>("segoe_ui_16");// content.Load<SpriteFont>("segoe_ui_16");
             NumbersFont = content.Load<SpriteFont>("numbers_font");
             SelectMark = content.Load<Texture2D>("textures/select_mark");
             MenuItem = content.Load<Texture2D>("textures/gui/menu_item");
@@ -119,6 +127,15 @@ namespace Clank.View.Engine
             CourrierFont = content.Load<SpriteFont>("courrier-16pt");
             LifebarEmpty = content.Load<Texture2D>("textures/gui/lifebar_empty");
             LifebarFull = content.Load<Texture2D>("textures/gui/lifebar_full");
+
+            // Effet de la map
+            WallTexture = content.Load<Texture2D>("textures/wall");
+            WallBorderTexture = content.Load<Texture2D>("textures/border");
+            GrassTexture = content.Load<Texture2D>("textures/grass");
+            MapEffect = content.Load<Effect>("shaders/mapshader");
+            MapEffect.Parameters["xBorderTexture"].SetValue(WallBorderTexture);
+            MapEffect.Parameters["xWallTexture"].SetValue(WallTexture);
+            MapEffect.Parameters["xGrassTexture"].SetValue(GrassTexture);
         }
     }
 }

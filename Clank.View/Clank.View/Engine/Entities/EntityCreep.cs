@@ -11,6 +11,11 @@ namespace Clank.View.Engine.Entities
     /// </summary>
     public class EntityCreep : EntityBase
     {
+        /// <summary>
+        /// Distance max en % du range max à laquelle le creep va s'approcher de l'unité
+        /// qu'il veut attaquer.
+        /// </summary>
+        const float MaxRangeApproach = 0.75f;
         #region Variables
         /// <summary>
         /// Référence vers l'entité ayant l'aggro de la tour.
@@ -27,8 +32,18 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         float Range { get; set; }
 
+        /// <summary>
+        /// Obtient la rangée de checkpoints que devra suivre ce creep.
+        /// </summary>
+        public int Row { get; set; }
         
         Trajectory m_path;
+
+        /// <summary>
+        /// Checkpoint actuel de la trajectoire prévue du creep.
+        /// </summary>
+        int m_currentCheckpointId;
+        EntityCheckpoint m_lastCheckpoint;
         #endregion
 
         #region Properties
@@ -46,8 +61,9 @@ namespace Clank.View.Engine.Entities
             BaseMagicResist = 40;
             BaseMaxHP = 100;
             HP = BaseMaxHP;
-            Range = 3.0f;
+            Range = 4.0f;
             BaseMoveSpeed = 5f;
+            m_currentCheckpointId = -1;
             m_attackSpell = new Spells.FireballSpell(this);
         }
 
@@ -57,7 +73,7 @@ namespace Clank.View.Engine.Entities
         protected override void DoUpdate(GameTime time)
         {
             base.DoUpdate(time);
-            UpdateAggro();
+            UpdateAggro(time);
             Attack(time);
             Travel(time);
         }
@@ -67,13 +83,18 @@ namespace Clank.View.Engine.Entities
         void Attack(GameTime time)
         {
             m_attackSpell.UpdateCooldown((float)time.ElapsedGameTime.TotalSeconds);
-            if (m_currentAgro != null && Vector2.DistanceSquared(m_currentAgro.Position, Position) <= Range * Range)
+            if (m_currentAgro != null && !m_currentAgro.Type.HasFlag(EntityType.Checkpoint))
             {
-                m_attackSpell.Use(new Spells.SpellCastTargetInfo()
+                float dstSqr = Vector2.DistanceSquared(m_currentAgro.Position, Position);
+                if(dstSqr <= Range * Range )
                 {
-                    TargetDirection = m_currentAgro.Position - Position,
-                    Type = Spells.TargettingType.Direction,
-                });
+                    m_attackSpell.Use(new Spells.SpellCastTargetInfo()
+                    {
+                        TargetDirection = m_currentAgro.Position - Position,
+                        Type = Spells.TargettingType.Direction,
+                    });
+                }
+
             }
         }
 
@@ -85,7 +106,7 @@ namespace Clank.View.Engine.Entities
             if(m_currentAgro != null)
             {
                 m_path = new Trajectory(PathFinder.Astar(this.Position, m_currentAgro.Position));
-                if(m_path.TrajectoryUnits.Count <= 1)
+                if(m_path.TrajectoryUnits.Count <= 0)
                 {
                     string ah = "5";
                 }
@@ -112,23 +133,21 @@ namespace Clank.View.Engine.Entities
             foreach(var kvp in allyCreeps)
             {
                 EntityCreep entity = (EntityCreep)kvp.Value;
-                if (entity == this)
+                if (entity == this || entity.Row != this.Row)
                     continue;
 
                 // Ce creep est trop près, on s'arrête s'il a le même aggro et est plus proche.
-                if(Vector2.DistanceSquared(entity.Position, Position) <= 1)
+                if(Vector2.DistanceSquared(entity.Position, Position) <= 4.0f)
                 {
-                    if(entity.m_currentAgro == m_currentAgro)
-                    {
-                        // Si l'autre entité est + proche, on s'arrête.
-                        if (Vector2.DistanceSquared(m_currentAgro.Position, Position) > Vector2.DistanceSquared(entity.m_currentAgro.Position, entity.Position))
-                            return;
-                    }
+                    if (entity.ID < this.ID)
+                        return;
+                    
                 }
             }
 
-            // on s'arrête quand on est en range d'une tour
-            if (Vector2.DistanceSquared(m_path.LastPosition(), Position) >= Range * Range)
+            // on s'arrête quand on est en range d'une tour / creep.
+            float dstSqr = Vector2.DistanceSquared(m_path.LastPosition(), Position);
+            if (m_currentAgro.Type.HasFlag(EntityType.Checkpoint) || dstSqr > Range * Range * MaxRangeApproach)
             {
                 Direction = nextPosition - Position;
                 MoveForward(time);
@@ -137,12 +156,66 @@ namespace Clank.View.Engine.Entities
         /// <summary>
         /// Mets à jour l'aggro de la tour.
         /// </summary>
-        void UpdateAggro()
+        void UpdateAggro(GameTime time)
         {
             EntityCollection entitiesInRange = Mobattack.GetMap().Entities.GetAliveEntitiesInRange(this.Position, Range);
             EntityBase oldAggro = m_currentAgro;
 
-            // Si l'entité qui avait l'aggro meurt, on la remplace
+            if (m_currentAgro != null && m_currentAgro.IsDead)
+                m_currentAgro = null;
+
+            // Si la creep n'a pas d'aggro : on cherche la première unité creep en range
+            EntityType ennemyCreepType = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyCreep, this.Type & (EntityType.Team1 | EntityType.Team2));
+            EntityBase nearestEnnemyCreep = entitiesInRange.GetEntitiesByType(ennemyCreepType).NearestFrom(this.Position);
+            if(nearestEnnemyCreep != null)
+                m_currentAgro = nearestEnnemyCreep;
+            
+            // S'il n'y a pas de creep ennemi en range, on regarde si il y a une tour en range.
+            EntityType ennemyTower = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyTower, this.Type & (EntityType.Team1 | EntityType.Team2));
+            EntityBase nearestTower = entitiesInRange.GetEntitiesByType(ennemyTower).NearestFrom(this.Position);
+            if(nearestTower != null)
+                m_currentAgro = nearestTower;
+
+            // Si on n'en trouve pas : on cherche le premier héros en range.
+            EntityType ennemyHero = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyPlayer, this.Type & (EntityType.Team1 | EntityType.Team2));
+            EntityBase nearestEnnemyHero = entitiesInRange.GetEntitiesByType(ennemyHero).NearestFrom(this.Position);
+            if(nearestEnnemyHero != null)
+                m_currentAgro = nearestEnnemyHero;
+
+            // Avance au checkpoint suivant si on a atteint le précédent ou qu'on a rien trouvé à aggro.
+            if (m_currentAgro == null || (m_currentAgro.Type.HasFlag(EntityType.Checkpoint) && HasReachedPosition(m_currentAgro.Position, time, GetMoveSpeed())))
+            {
+                //bool __debugPositionReached = HasReachedPosition(m_currentAgro.Position, time, GetMoveSpeed());
+                EntityType allycp = EntityTypeConverter.ToAbsolute(EntityTypeRelative.AllyCheckpoint, this.Type);
+                EntityCollection checkpoints = Mobattack.GetMap().Entities.GetEntitiesByType(allycp);
+
+                // Obtient le checkpoint suivant le plus proche.
+                float minDistanceSqr = float.MaxValue;
+                EntityBase next = m_currentAgro;
+                foreach (var kvp in checkpoints)
+                {
+                    EntityCheckpoint cp = (EntityCheckpoint)kvp.Value;
+
+                    // On ne considère pas les checkpoints qui ne sont pas dans notre rangée.
+                    if (cp.CheckpointRow != Row)
+                        continue;
+
+                    // On prend le + proche des checkpoints suivants.
+                    float dstSqr = Vector2.DistanceSquared(cp.Position, Position);
+                    if ( (cp.CheckpointID > m_currentCheckpointId  ||
+                        (m_currentAgro == null && cp.CheckpointID >= m_currentCheckpointId)) &&
+                        dstSqr < minDistanceSqr)
+                    {
+                        minDistanceSqr = dstSqr;
+                        next = cp;
+                    }
+                }
+                if (next != null)
+                    m_currentCheckpointId = ((EntityCheckpoint)next).CheckpointID;
+                m_currentAgro = next;
+            }
+            // Si il y a des creeps en range.
+            /*// Si l'entité qui avait l'aggro meurt, on la remplace
             if (m_currentAgro != null && m_currentAgro.IsDead)
                 m_currentAgro = null;
 
@@ -212,7 +285,7 @@ namespace Clank.View.Engine.Entities
                         }
                     }
                 }
-            }
+            }*/
 
             // Si on change d'aggro, retourne le chemin vers la tour la plus proche.
             if (m_currentAgro != oldAggro)

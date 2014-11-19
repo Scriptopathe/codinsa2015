@@ -23,13 +23,14 @@ namespace Clank.View.Engine.Entities
         Boss            = 0x0100,
         Miniboss        = 0x0200,
         Creep           = 0x0400,
+        Checkpoint      = 0x4000,
         Player          = 0x8000,
 
         // Macros
         AllTeam1    = Team1 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
         AllTeam2    = Team2 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
         AllObjectives   = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss,
-
+        AllSaved        = AllObjectives | Checkpoint,
         // Team
         Team1Tower      = Team1 | Tower,
         Team2Tower      = Team2 | Tower,
@@ -42,7 +43,9 @@ namespace Clank.View.Engine.Entities
         Team1Player     = Player | Team1,
         Team2Player     = Player | Team2,
         Team1Creep      = Team1 | Creep,
-        Team2Creep      = Team2 | Creep
+        Team2Creep      = Team2 | Creep,
+        Team1Checkpoint = Team1 | Checkpoint,
+        Team2CheckPoint = Team2 | Checkpoint
     }
 
     /// <summary>
@@ -63,6 +66,7 @@ namespace Clank.View.Engine.Entities
         Boss            = 0x0100,
         Miniboss        = 0x0200,
         Creep           = 0x0400,
+        Checkpoint      = 0x4000,
         Player          = 0x8000,
 
         // Macros
@@ -82,6 +86,8 @@ namespace Clank.View.Engine.Entities
         EnnemyPlayer    = Player | Ennemy,
         AllyCreep       = Ally | Creep,
         EnnemyCreep     = Ennemy | Creep,
+        AllyCheckpoint  = Ally | Checkpoint,
+        EnnemyCheckpoint = Ennemy | Checkpoint,
 
     }
     public static class EntityTypeConverter

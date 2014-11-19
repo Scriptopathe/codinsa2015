@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Clank.View.Engine;
+using Clank.View.Engine.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Clank.View.Engine.Editor
@@ -15,6 +17,10 @@ namespace Clank.View.Engine.Editor
         #region Variables
         bool m_isEnabled = false;
         Map m_map;
+        bool m_terraFormingMode = true;
+
+
+        private Gui.GuiButton m_modeButton;
         #endregion
 
         #region Properties
@@ -36,6 +42,7 @@ namespace Clank.View.Engine.Editor
             get;
             set;
         }
+
         #endregion
 
         #region Methods
@@ -46,7 +53,34 @@ namespace Clank.View.Engine.Editor
         {
             m_map = map;
             m_isEnabled = true;
+
+            CreateGui();
         }
+
+        /// <summary>
+        /// Initialise les composants de l'interface graphique.
+        /// </summary>
+        void CreateGui()
+        {
+            m_modeButton = new Gui.GuiButton()
+            {
+                Position = new Vector2(5, 5),
+                Title = "Land",
+                Width = 150, 
+                Height = 15
+            };
+            m_modeButton.Clicked += OnChangeMode;
+            Mobattack.GetScene().GuiManager.AddWidget(m_modeButton);
+        }
+        /// <summary>
+        /// Change le mode du contrôleur.
+        /// </summary>
+        void OnChangeMode()
+        {
+            m_terraFormingMode = !m_terraFormingMode;
+            m_modeButton.Title = m_terraFormingMode ? "Land" : "Entities";
+        }
+
         /// <summary>
         /// Mets à jour le contrôleur en prenant en compte les entrées utilisateurs.
         /// </summary>
@@ -57,38 +91,78 @@ namespace Clank.View.Engine.Editor
 
             if (!IsEnabled)
                 return;
-            Vector2 mousePosUnits = (new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y) + m_map.ScrollingVector2) / Map.UnitSize;
-            // Ajout de matière
-            if (Input.IsLeftClickPressed())
-            {
-                
-                m_map.SetPassabilityAt(mousePosUnits, false);
-            }
-            else if(Input.IsRightClickPressed())
-            {
-                m_map.SetPassabilityAt(mousePosUnits, true);
-            }
 
-            // Ajout d'éléments de jeu.
-            Entities.EntityType team = Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Q) ? Entities.EntityType.Team2 : Entities.EntityType.Team1;
-            if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.T))
-            {
-                Entities.EntityBase entity = new Entities.EntityTower()
+            Vector2 mousePosPx = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
+            Vector2 mousePosUnits = ((mousePosPx + m_map.ScrollingVector2) - new Vector2(m_map.Viewport.X, m_map.Viewport.Y)) / Map.UnitSize;
+
+            if (m_terraFormingMode && mousePosPx.Y > 25)
+            { 
+                // Ajout de matière
+                if (Input.IsLeftClickPressed())
                 {
-                    Position = mousePosUnits,
-                    Type = Entities.EntityType.Tower | team,
-                };
-                m_map.Entities.Add(entity.ID, entity);
+                    m_map.SetPassabilityAt(mousePosUnits, false);
+                }
+                else if (Input.IsRightClickPressed())
+                {
+                    m_map.SetPassabilityAt(mousePosUnits, true);
+                }
             }
-            else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.R))
+            else
             {
-                Entities.EntityBase entity = new Entities.EntitySpawner()
+                if (Input.IsRightClickTrigger())
                 {
-                    Position = mousePosUnits,
-                    SpawnPosition = mousePosUnits,
-                    Type = Entities.EntityType.Spawner | team,
-                };
-                m_map.Entities.Add(entity.ID, entity);
+
+                    Entities.EntityCollection entitiesInRange = m_map.Entities.GetAliveEntitiesInRange(mousePosUnits, 1f);
+
+                    Gui.GuiMenu menu = new Gui.GuiMenu();
+                    menu.Position = mousePosPx;
+                    menu.Title = "Menu";
+                    foreach (EntityBase entity in entitiesInRange.Values)
+                    {
+                        Gui.GuiMenu.GuiMenuItem item = new Gui.GuiMenu.GuiMenuItem("Remove " + entity.Type.ToString());
+                        item.ItemSelected += new Gui.GuiMenu.ItemSelectedDelegate(() =>
+                        {
+                            m_map.Entities.Remove(entity.ID);
+                            entity.Dispose();
+                        });
+                        item.IsEnabled = true;
+                        menu.AddItem(item);
+                        Mobattack.GetScene().GuiManager.AddWidget(menu);
+                    }
+                }
+
+                // Ajout d'éléments de jeu.
+                Entities.EntityType team = Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Q) ? Entities.EntityType.Team2 : Entities.EntityType.Team1;
+                if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.T))
+                {
+                    Entities.EntityBase entity = new Entities.EntityTower()
+                    {
+                        Position = mousePosUnits,
+                        Type = Entities.EntityType.Tower | team,
+                    };
+                    m_map.Entities.Add(entity.ID, entity);
+                }
+                else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.R))
+                {
+                    Entities.EntityBase entity = new Entities.EntitySpawner()
+                    {
+                        Position = mousePosUnits,
+                        SpawnPosition = mousePosUnits,
+                        Type = Entities.EntityType.Spawner | team,
+                    };
+                    m_map.Entities.Add(entity.ID, entity);
+                }
+                else if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Y))
+                {
+                    Entities.EntityBase entity = new Entities.EntityCheckpoint()
+                    {
+                        Position = mousePosUnits,
+                        Type = Entities.EntityType.Checkpoint | team,
+                        CheckpointID = 0,
+                        CheckpointRow = 1,
+                    };
+                    m_map.Entities.Add(entity.ID, entity);
+                }
             }
 
             // Sauvegarde
@@ -100,11 +174,11 @@ namespace Clank.View.Engine.Editor
             // Chargement
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.L))
             {
-                if(System.IO.File.Exists("Content/map.txt"))
+                if(System.IO.File.Exists(Ressources.MapFilename))
                 {
                     try
                     {
-                        Map loaded = Map.FromFile("Content/map.txt");
+                        Map loaded = Map.FromFile(Ressources.MapFilename);
                         m_map = loaded;
 
                         Mobattack.GetScene().Map = m_map;
@@ -144,13 +218,60 @@ namespace Clank.View.Engine.Editor
         public void Draw(SpriteBatch batch)
         {
             if (!IsEnabled)
+            {
+                m_modeButton.Visible = false;
                 return;
+            }
+            else
+                m_modeButton.Visible = true;
 
             // Récupère la position de la souris, et la garde sur le bord.
             Vector2 position = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
-            batch.Draw(Ressources.Cursor, new Rectangle((int)position.X, (int)position.Y, 32, 32), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
+            batch.Draw(Ressources.DummyTexture, new Rectangle(0, 0, (int)Mobattack.GetScreenSize().X, 25),
+                null, new Color(255, 255, 255, 200), 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI + 5 * Graphics.Z.BackStep);
+
+            batch.Draw(Ressources.Cursor, new Rectangle((int)position.X, (int)position.Y, 32, 32), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.Front);
+            DrawMinimap(batch, new Rectangle((int)Mobattack.GetScreenSize().X - 200, (int)Mobattack.GetScreenSize().Y - 100, 200, 100), Graphics.Z.GUI + 2 * Graphics.Z.BackStep);
+
 
             UpdateScrolling();
+        }
+
+        /// <summary>
+        /// Dessine la minimap à l'emplacement donné.
+        /// </summary>
+        void DrawMinimap(SpriteBatch batch, Rectangle rect, float z)
+        {
+            int w = m_map.Passability.GetLength(0);
+            int h = m_map.Passability.GetLength(1);
+            int unitX = Math.Max(1, rect.Width / w);
+            int unitY = Math.Max(1, rect.Height / h);
+            for(int x = 0; x < w; x++)
+            {
+                for(int y = 0; y < h; y++)
+                {
+                    Color col = m_map.Passability[x, y] ? Color.White : Color.Red;
+                    batch.Draw(Ressources.DummyTexture,
+                        new Rectangle((int)(rect.X + (x / (float)w) * rect.Width),
+                                      (int)(rect.Y + (y / (float)h) * rect.Height),
+                                      unitX,
+                                      unitY), null,
+                                      col,
+                                      0.0f,
+                                      Vector2.Zero, SpriteEffects.None,
+                                      z);
+                }
+            }
+
+            batch.Draw(Ressources.DummyTexture,
+                new Rectangle((int)(rect.X + (m_map.ScrollingVector2.X / Map.UnitSize / (float)w) * rect.Width),
+                              (int)(rect.Y + (m_map.ScrollingVector2.Y / Map.UnitSize / (float)h) * rect.Height),
+                              (int)((m_map.Viewport.Width / (float)(w * Map.UnitSize)) * rect.Width),
+                              (int)((m_map.Viewport.Height / (float)(h * Map.UnitSize)) * rect.Height)), null,
+                              new Color(255, 255, 255, 60),
+                              0.0f,
+                              Vector2.Zero, SpriteEffects.None,
+                              z + Graphics.Z.FrontStep);
         }
         #endregion
     }

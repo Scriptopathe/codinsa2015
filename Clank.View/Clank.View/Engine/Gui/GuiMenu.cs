@@ -373,7 +373,7 @@ namespace Clank.View.Engine.Gui
                     Items[m_hoverItemId].DispatchItemSelectedEvent();
                 }
 
-                Input.Update();
+                Input.CancelClick();
 
                 if (CloseOnClick)
                 {
@@ -399,7 +399,7 @@ namespace Clank.View.Engine.Gui
             Drawing.DrawRectBox(batch, MenuBoxTexture,
                 menuBox,
                 Color.White,
-                Graphics.Z.GUI+0.05f);
+                Graphics.Z.GUI);
 
             Vector2 tSize = Ressources.Font.MeasureString(Title);
             pos = (new Vector2(menuBox.X, menuBox.Y) 
@@ -414,7 +414,7 @@ namespace Clank.View.Engine.Gui
                 Vector2.Zero, 
                 1.0f,
                 SpriteEffects.None,
-                Graphics.Z.GUI);
+                Graphics.Z.GUI + Graphics.Z.FrontStep);
 
             for (int y = 0; y < Items.Count; y++)
             {
@@ -425,20 +425,20 @@ namespace Clank.View.Engine.Gui
                 // Dessin de la box
                 Rectangle pxRect = new Rectangle((int)pos.X, (int)pos.Y, m_itemWidth, m_itemHeight);
                 Texture2D t = isHover && Items[y].IsEnabled ? ItemHoverBoxTexture : ItemBoxTexture;
-                Drawing.DrawRectBox(batch, t, pxRect, Color.White, Graphics.Z.GUI+0.01f);
+                Drawing.DrawRectBox(batch, t, pxRect, Color.White, Graphics.Z.GUI + Graphics.Z.FrontStep / 2);
 
                 // Dessin de l'icone
                 if(Items[y].Icon != null)
                 {
                     Rectangle dstRect = new Rectangle(pxRect.X + m_itemMarginSize, pxRect.Y + (pxRect.Height - m_iconSize) / 2, m_iconSize, m_iconSize);
                     Color color = Items[y].IsEnabled ? Color.White : new Color(125, 125, 125, 125);
-                    batch.Draw(Items[y].Icon, dstRect, null, color, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
+                    batch.Draw(Items[y].Icon, dstRect, null, color, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI + Graphics.Z.FrontStep);
                 }
 
                 // Dessin du texte
                 pos = new Vector2(pxRect.X + 2*m_itemMarginSize + m_iconSize, pxRect.Y + pxRect.Height/2 - tSize.Y/2);
                 Color textColor = Items[y].IsEnabled ? (isHover ? HoverTextColor : EnabledTextColor ) : DisabledTextColor;
-                batch.DrawString(Ressources.Font, Items[y].Text, pos, textColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.GUI);
+                batch.DrawString(Ressources.Font, Items[y].Text, pos, textColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.GUI + Graphics.Z.FrontStep);
             }
         }
         #endregion

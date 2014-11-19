@@ -20,8 +20,10 @@ namespace Clank.View.Engine
         static MouseState s_lastFrameMouseState;
         static MouseState s_thisMouseState;
         static List<Keys> s_triggeredKeys;
+        static bool s_clickCanceled;
         public static MouseState GetMouseState()
         {
+
             return s_thisMouseState;
         }
 
@@ -52,7 +54,7 @@ namespace Clank.View.Engine
             s_thisMouseState = Mouse.GetState();
 
             s_triggeredKeys = ComputeTriggerKeys();
-
+            s_clickCanceled = false;
         }
         /// <summary>
         /// Obtient la liste des touches qui ont été appuyées durant cette frame. 
@@ -62,6 +64,15 @@ namespace Clank.View.Engine
         {
             return s_triggeredKeys;
         }
+
+        /// <summary>
+        /// Les prochains clicks après cet appels seront annulés.
+        /// </summary>
+        public static void CancelClick()
+        {
+            s_clickCanceled = true;   
+        }
+
         /// <summary>
         /// Calcule et obtient la liste des touches qui ont été appuyées durant cette frame.
         /// </summary>
@@ -121,19 +132,19 @@ namespace Clank.View.Engine
         }
         public static bool IsLeftClickPressed()
         {
-            return (s_thisMouseState.LeftButton == ButtonState.Pressed);
+            return (s_thisMouseState.LeftButton == ButtonState.Pressed) && !s_clickCanceled;
         }
         public static bool IsRightClickPressed()
         {
-            return (s_thisMouseState.RightButton == ButtonState.Pressed);
+            return (s_thisMouseState.RightButton == ButtonState.Pressed) && !s_clickCanceled;
         }
         public static bool IsLeftClickTrigger()
         {
-            return (s_thisMouseState.LeftButton == ButtonState.Pressed) && (s_lastFrameMouseState.LeftButton == ButtonState.Released);
+            return (s_thisMouseState.LeftButton == ButtonState.Pressed) && (s_lastFrameMouseState.LeftButton == ButtonState.Released) && !s_clickCanceled;
         }
         public static bool IsRightClickTrigger()
         {
-            return (s_thisMouseState.RightButton == ButtonState.Pressed) && (s_lastFrameMouseState.RightButton == ButtonState.Released);
+            return (s_thisMouseState.RightButton == ButtonState.Pressed) && (s_lastFrameMouseState.RightButton == ButtonState.Released) && !s_clickCanceled;
         }
     }
 }

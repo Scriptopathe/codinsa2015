@@ -189,7 +189,7 @@ namespace Clank.View.Engine.Gui
             if (Input.IsLeftClickTrigger() && hover)
             {
                 // Envoie un signal indiquant que la sélection a changé si le menu est cliqué.
-                Input.Update();
+                Input.CancelClick();
                 if(Clicked != null)
                     Clicked();
                 
@@ -223,20 +223,20 @@ namespace Clank.View.Engine.Gui
             // Dessin de la box
             pxRect = new Rectangle((int)Position.X, (int)Position.Y, m_width, m_height);
             Texture2D t = hover && IsEnabled ? ButtonHoverBoxTexture : ButtonBoxTexture;
-            Drawing.DrawRectBox(batch, t, pxRect, Color.White, Graphics.Z.GUI + 0.01f);
+            Drawing.DrawRectBox(batch, t, pxRect, Color.White, Graphics.Z.GUI);
 
             // Dessin de l'icone
             if (Icon != null)
             {
                 Rectangle dstRect = new Rectangle(pxRect.X+MainMarginSize, pxRect.Y + (pxRect.Height - m_iconSize) / 2, m_iconSize, m_iconSize);
                 Color color = IsEnabled ? Color.White : new Color(125, 125, 125, 125);
-                batch.Draw(Icon, dstRect, null, color, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
+                batch.Draw(Icon, dstRect, null, color, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI + Graphics.Z.FrontStep);
             }
 
             // Dessin du texte
             pos = new Vector2(pxRect.X + 2 * MainMarginSize + m_iconSize, pxRect.Y + pxRect.Height / 2 - tSize.Y / 2);
             Color textColor = IsEnabled ? (hover ? HoverTextColor : EnabledTextColor) : DisabledTextColor;
-            batch.DrawString(Ressources.Font, Title, pos, textColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.GUI);
+            batch.DrawString(Ressources.Font, Title, pos, textColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.GUI + Graphics.Z.FrontStep);
 
         }
         #endregion

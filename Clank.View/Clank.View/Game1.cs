@@ -23,7 +23,7 @@ namespace Clank.View
 
         public static Vector2 GetScreenSize()
         {
-            return new Vector2(800, 600);
+            return new Vector2(840, 680);
         }
         /// <summary>
         /// Retourne la scène associée à ce jeu.
@@ -49,6 +49,9 @@ namespace Clank.View
             m_graphics = new GraphicsDeviceManager(this);
             m_scene = new Scene();
             Content.RootDirectory = "Content";
+
+            m_graphics.PreferredBackBufferWidth = (int)GetScreenSize().X;
+            m_graphics.PreferredBackBufferHeight = (int)GetScreenSize().Y;
         }
 
         /// <summary>
@@ -74,6 +77,7 @@ namespace Clank.View
             m_spriteBatch = new SpriteBatch(GraphicsDevice);
             Engine.Ressources.LoadRessources(Content);
             m_scene.LoadContent();
+            m_scene.Initialize();
             // TODO: use this.Content to load your game content here
         }
 
@@ -108,12 +112,10 @@ namespace Clank.View
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            
 
             // TODO: Add your drawing code here
-            m_spriteBatch.Begin();
             m_scene.Draw(gameTime, m_spriteBatch);
-            m_spriteBatch.End();
             base.Draw(gameTime);
         }
     }

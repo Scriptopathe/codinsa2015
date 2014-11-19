@@ -17,7 +17,7 @@ namespace Clank.View.Engine
         /// <summary>
         /// Taille d'une unité métrique (= un case) en pixels.
         /// </summary>
-        public const int UnitSize = 16;
+        public static int UnitSize = 32;
 
         #region Variables
         /// <summary>
@@ -43,6 +43,15 @@ namespace Clank.View.Engine
         /// </summary>
         Point m_scrolling;
 
+
+        /// <summary>
+        /// Render Target des tiles
+        /// </summary>
+        RenderTarget2D m_tilesRenderTarget;
+        /// <summary>
+        /// Render target des entities.
+        /// </summary>
+        RenderTarget2D m_entitiesRenderTarget;
         #endregion
 
         #region Properties
@@ -72,7 +81,7 @@ namespace Clank.View.Engine
         public Rectangle Viewport
         {
             get { return m_viewport; }
-            set { m_viewport = value; }
+            set { m_viewport = value; SetupRenderTargets(); }
         }
 
         /// <summary>
@@ -119,6 +128,74 @@ namespace Clank.View.Engine
             get { return new Vector2(m_scrolling.X, m_scrolling.Y); }
             set { m_scrolling = new Point((int)value.X, (int)value.Y); }
         }
+
+        
+        #endregion
+
+        #region Graphics
+        /// <summary>
+        /// Crée les render targets.
+        /// </summary>
+        void SetupRenderTargets()
+        {
+            if(m_entitiesRenderTarget != null)
+            {
+                m_entitiesRenderTarget.Dispose();
+                m_tilesRenderTarget.Dispose();
+            }
+
+            m_entitiesRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
+            m_tilesRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
+        }
+
+        /// <summary>
+        /// Dessine la map ainsi que les entités qu'elle contient.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="batch"></param>
+        public void Draw(GameTime time, SpriteBatch batch)
+        {
+            Mobattack.Instance.GraphicsDevice.SetRenderTarget(m_tilesRenderTarget);
+            batch.GraphicsDevice.Clear(Color.Transparent);
+            batch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied);
+            // Dessin de debug de la map.
+            int beginX = m_scrolling.X / UnitSize;
+            int beginY = m_scrolling.Y / UnitSize;
+            int endX = Math.Min(beginX + (Viewport.Width / UnitSize + 1), m_passability.GetLength(0));
+            int endY = Math.Min(beginY + (Viewport.Height / UnitSize + 1), m_passability.GetLength(1));
+            for (int x = beginX; x < endX; x++)
+            {
+                for (int y = beginY; y < endY; y++)
+                {
+                    Point drawPos = new Point(x * UnitSize - Scrolling.X, y * UnitSize - Scrolling.Y);
+                    if (!m_passability[x, y])
+                    {
+                        batch.Draw(Ressources.DummyTexture, new Rectangle(drawPos.X, drawPos.Y, UnitSize, UnitSize), Color.Red);
+                    }
+                }
+            }
+            batch.End();
+
+            // Dessin des entités
+            Mobattack.Instance.GraphicsDevice.SetRenderTarget(m_entitiesRenderTarget);
+            batch.GraphicsDevice.Clear(Color.Transparent);
+            batch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied);
+            foreach (var kvp in m_entities) { kvp.Value.Draw(time, batch); }
+            foreach (Spellcast cast in m_spellcasts) { cast.Draw(time, batch); }
+            batch.End();
+
+            // Dessin du tout
+            Mobattack.Instance.GraphicsDevice.SetRenderTarget(null);
+            batch.GraphicsDevice.Clear(Color.LightBlue);
+            Ressources.MapEffect.Parameters["xSourceTexture"].SetValue(m_tilesRenderTarget);
+            Ressources.MapEffect.Parameters["scrolling"].SetValue(new Vector2(Scrolling.X / (float)Viewport.Width, Scrolling.Y / (float)Viewport.Height));
+            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, Ressources.MapEffect);
+            batch.Draw(m_tilesRenderTarget, Viewport, Color.White);
+            batch.End();
+            batch.Begin();
+            batch.Draw(m_entitiesRenderTarget, Viewport, Color.White);
+            batch.End();
+        }
         #endregion
 
         #region Methods
@@ -129,7 +206,7 @@ namespace Clank.View.Engine
         {
             m_entities = new EntityCollection();
             m_spellcasts = new List<Spellcast>();
-            m_viewport = new Rectangle(0, 0, 640, 480);
+            Viewport = new Rectangle(0, 25, (int)Mobattack.GetScreenSize().X, (int)Mobattack.GetScreenSize().Y - 125);
             m_scrolling = new Point();
 
 
@@ -227,34 +304,7 @@ namespace Clank.View.Engine
                 m_scrolling.Y += speed;
 
             m_scrolling.X = Math.Max(0, Math.Min(m_passability.GetLength(0) * UnitSize - m_viewport.Width, m_scrolling.X));
-            m_scrolling.Y = Math.Max(0, Math.Min(m_passability.GetLength(1) * UnitSize - m_viewport.Width, m_scrolling.Y));
-        }
-        /// <summary>
-        /// Dessine la map ainsi que les entités qu'elle contient.
-        /// </summary>
-        /// <param name="time"></param>
-        /// <param name="batch"></param>
-        public void Draw(GameTime time, SpriteBatch batch)
-        {
-
-
-            // Dessin de debug de la map.
-            // TODO ne dessiner que ce qu'il faut !
-            for(int x = 0; x < m_passability.GetLength(0); x++)
-            {
-                for(int y = 0; y < m_passability.GetLength(1); y++)
-                {
-                    Point drawPos = new Point(m_viewport.X + x * UnitSize - Scrolling.X, m_viewport.Y + y * UnitSize - Scrolling.Y);
-                    if(!m_passability[x, y])
-                    {
-                        batch.Draw(Ressources.DummyTexture, new Rectangle(drawPos.X, drawPos.Y, UnitSize, UnitSize), Color.Red);
-                    }
-                }
-            }
-
-            // Dessin des entités
-            foreach (var kvp in m_entities) { kvp.Value.Draw(time, batch); }
-            foreach (Spellcast cast in m_spellcasts) { cast.Draw(time, batch); }
+            m_scrolling.Y = Math.Max(0, Math.Min(m_passability.GetLength(1) * UnitSize - m_viewport.Height, m_scrolling.Y));
         }
         #endregion
 
@@ -333,7 +383,7 @@ namespace Clank.View.Engine
         /// </summary>
         public void Save()
         {
-            FileStream fs = new System.IO.FileStream("Content/map.txt", System.IO.FileMode.Create);
+            FileStream fs = new System.IO.FileStream(Ressources.MapFilename, System.IO.FileMode.Create);
             StreamWriter writer = new StreamWriter(fs);
             writer.WriteLine("size " + Size.X.ToString() + " " + Size.Y.ToString());
             writer.WriteLine("map ");
@@ -349,8 +399,17 @@ namespace Clank.View.Engine
             // Ecrit les entités
             foreach(EntityBase entity in m_entities.Values)
             {
+                string x = entity.Position.X.ToString();
+                string y = entity.Position.Y.ToString();
                 if(entity.Type.HasFlag(EntityType.Struture))
-                    writer.WriteLine(entity.Type.ToString() + " " + ((int)entity.Position.X).ToString() + " " + ((int)entity.Position.Y).ToString());
+                    writer.WriteLine(entity.Type.ToString() + " " + x.ToString() + " " + y.ToString());
+                else if(entity.Type.HasFlag(EntityType.Checkpoint))
+                {
+                    EntityCheckpoint cp = (EntityCheckpoint)entity;
+                    writer.WriteLine(entity.Type.ToString() + " " + x.ToString() + " " + y.ToString() + " " + 
+                        cp.CheckpointRow + " " + cp.CheckpointID);
+                }
+                    
             }
 
             writer.Flush();
@@ -402,10 +461,10 @@ namespace Clank.View.Engine
                     {
                         // Entitié
                         EntityType type = (EntityType)Enum.Parse(typeof(EntityType), word);
-                        int sX = int.Parse(words[i + 1]);
-                        int sY = int.Parse(words[i + 2]);
+                        float sX = float.Parse(words[i + 1]);
+                        float sY = float.Parse(words[i + 2]);
                         EntityBase newEntity = null;
-                        switch (type & (EntityType.AllObjectives))
+                        switch (type & (EntityType.AllSaved))
                         {
                             case EntityType.Tower:
                                 newEntity = new EntityTower()
@@ -421,6 +480,18 @@ namespace Clank.View.Engine
                                     Position = new Vector2(sX, sY),
                                     SpawnPosition = new Vector2(sX, sY),
                                     Type = type
+                                };
+                                break;
+                            case EntityType.Checkpoint:
+                                int row = int.Parse(words[i + 3]);
+                                int id = int.Parse(words[i + 4]);
+                                i += 2;
+                                newEntity = new EntityCheckpoint()
+                                {
+                                    Position = new Vector2(sX, sY),
+                                    Type = type,
+                                    CheckpointRow = row,
+                                    CheckpointID = id
                                 };
                                 break;
                             case EntityType.Inhibitor:

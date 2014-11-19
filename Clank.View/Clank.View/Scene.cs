@@ -62,14 +62,18 @@ namespace Clank.View
         /// <summary>
         /// Crée une nouvelle instance de Clank.View.Scene.
         /// </summary>
-        public Scene()
+        public Scene() { }
+
+        /// <summary>
+        /// Initialise les composants de la scène.
+        /// </summary>
+        public void Initialize()
         {
             Map = new Map();
             EventSheduler = new Scheduler();
             GuiManager = new GuiManager();
             MapEditControler = new MapEditorControler(Map);
         }
-
         /// <summary>
         /// Charge le contenu de la scène.
         /// </summary>
@@ -108,8 +112,11 @@ namespace Clank.View
         public void Draw(GameTime time, SpriteBatch batch)
         {
             Map.Draw(time, batch);
+
+            batch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied);
             GuiManager.Draw(batch);
             MapEditControler.Draw(batch);
+            batch.End();
         }
 
         /// <summary>

@@ -51,8 +51,6 @@ namespace Clank.View.Engine.Gui
             foreach(GuiWidget widget in toDelete)
             {
                 m_widgets.Remove(widget);
-                if (!widget.IsDisposed)
-                    widget.Dispose();
             }
 
         }

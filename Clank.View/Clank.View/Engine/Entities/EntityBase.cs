@@ -770,6 +770,18 @@ namespace Clank.View.Engine.Entities
         {
             HP += heal;
         }
+
+        /// <summary>
+        /// Obtient une valeur indiquant si cette entité a atteint la position donnée.
+        /// (la tolérance est calculée à partir du temps écoulé entre la dernière
+        /// frame et de la vitesse de l'entité).
+        /// </summary>
+        public bool HasReachedPosition(Vector2 position, GameTime time, float speed)
+        {
+            float dst = 1;// (float)time.ElapsedGameTime.TotalSeconds * speed;
+            float dstSquare = Vector2.DistanceSquared(position, Position);
+            return dstSquare <= dst * dst;
+        }
         #endregion
         /// <summary>
         /// Dessine l'entitié.
@@ -778,6 +790,11 @@ namespace Clank.View.Engine.Entities
         {
             Point scroll = Mobattack.GetMap().Scrolling;
             Point drawPos = new Point((int)(m_position.X * Map.UnitSize) - scroll.X, (int)(m_position.Y * Map.UnitSize) - scroll.Y);
+
+            if (drawPos.X > Mobattack.GetMap().Viewport.Right || drawPos.Y > Mobattack.GetMap().Viewport.Bottom 
+                || drawPos.X < Mobattack.GetMap().Viewport.Left - Map.UnitSize || drawPos.Y < Mobattack.GetMap().Viewport.Top - Map.UnitSize)
+                return;
+
 
             Draw(time, batch, drawPos);
         }
@@ -805,7 +822,11 @@ namespace Clank.View.Engine.Entities
                 tex = Ressources.TextBox;
 
             int s = Map.UnitSize / 2;
-            batch.Draw(tex, new Rectangle(position.X, position.Y, s, s), null, col, __angle, new Vector2(s, s), SpriteEffects.None, 0.0f);
+            if (Type.HasFlag(EntityType.Checkpoint))
+                s /= 4;
+
+            batch.Draw(tex, 
+                new Rectangle(position.X, position.Y, s, s), null, col, __angle, new Vector2(s, s), SpriteEffects.None, 0.0f);
         }
 
         /// <summary>

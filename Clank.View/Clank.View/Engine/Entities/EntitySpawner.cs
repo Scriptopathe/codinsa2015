@@ -30,6 +30,11 @@ namespace Clank.View.Engine.Entities
         /// Délai entre le spawn de 2 creeps.
         /// </summary>
         public float SpawnDecay { get; set; }
+
+        /// <summary>
+        /// Nombre de colonnes de creeps.
+        /// </summary>
+        public int RowCount { get; set; }
         #endregion
 
         #region Properties
@@ -48,9 +53,10 @@ namespace Clank.View.Engine.Entities
             BaseMaxHP = 1200;
             HP = BaseMaxHP;
             BaseMoveSpeed = 0f;
-            SpawnInterval = 90;
+            SpawnInterval = 30;
             CreepsPerWave = 6;
             SpawnDecay = 0.1f;
+            RowCount = 2;
         }
 
         /// <summary>
@@ -65,12 +71,14 @@ namespace Clank.View.Engine.Entities
                 float decay = 0;
                 for(int i = 0; i < CreepsPerWave; i++)
                 {
+                    int iref = i;
                     Mobattack.GetScene().EventSheduler.Schedule(new Scheduler.ActionDelegate(() =>
                     {
                         EntityCreep creep = new EntityCreep()
                         {
                             Position = SpawnPosition,
-                            Type = EntityType.Creep | (this.Type & (EntityType.Team1 | EntityType.Team2))
+                            Type = EntityType.Creep | (this.Type & (EntityType.Team1 | EntityType.Team2)),
+                            Row = iref % RowCount,
                         };
                         Mobattack.GetMap().Entities.Add(creep.ID, creep);
                     }), decay);
