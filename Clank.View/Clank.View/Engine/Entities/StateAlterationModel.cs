@@ -30,6 +30,7 @@ namespace Clank.View.Engine.Entities
         AttackDamage    = 0x2000,     // indique que le sort inflige des dégâts ou soigne
         TrueDamage      = 0x4000,
         Heal            = 0x8000,
+        Stealth         = 0x10000,
     }
 
     public enum ScalingRatios

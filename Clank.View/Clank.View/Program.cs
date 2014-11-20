@@ -16,7 +16,8 @@ namespace Clank.View
             }
 
             // todo :
-            // - creeps : meilleur path finding avec check points.
+            // - dash : projection en arriere etc... (direction -> mais blocage)
+            // - aggro des creeps
         }
     }
 #endif

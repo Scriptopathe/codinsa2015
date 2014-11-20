@@ -21,6 +21,10 @@ namespace Clank.View.Engine.Entities
             return;
         }
 
+        public EntityCheckpoint() : base()
+        {
+            VisionRange = 0;
+        }
         
     }
 }

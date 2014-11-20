@@ -11,15 +11,15 @@ namespace Clank.View.Engine.Spells
     /// </summary>
     public enum TargettingType
     {
-        Targetted   = 0x01,      // ciblé sur un allié / ennemi / monstre neutre
-        Position    = 0x02,               // ciblé sur une position   (projectile venant du ciel)
-        Direction   = 0x04            // ciblé sur une direction. (projectile)
+        Targetted   = 0x01,                 // ciblé sur un allié / ennemi / monstre neutre
+        Position    = 0x02,                 // ciblé sur une position   (projectile venant du ciel)
+        Direction   = 0x04                  // ciblé sur une direction. (projectile)
     }
 
     /// <summary>
     /// Représente la manière dont un sort est ciblé.
     /// Il contient des informations sur le type de targetting (TargettingType), 
-    /// et sur la range du sort.
+    /// et sur la range du sort, sa durée, etc...
     /// </summary>
     public class SpellTargetInfo
     {
@@ -40,7 +40,7 @@ namespace Clank.View.Engine.Spells
         /// Durée en secondes que met le sort à atteindre la position donnée.
         /// Targetted : durée pour atteindre la cible à max range.
         /// Direction : durée pour atteindre la limite de range.
-        /// Position  : durée pour de l'AOE.
+        /// Position  : durée de l'AOE.
         /// </summary>
         public float Duration { get; set; }
 

@@ -7,6 +7,8 @@ namespace Clank.View.Engine.Entities
 {
     /// <summary>
     /// Représente le type d'entité.
+    /// /!\ Les types d'entités dans cet enum doivent correspondre aux types
+    ///     dans l'enum EntityTypeRelative !!
     /// </summary>
     public enum EntityType
     {

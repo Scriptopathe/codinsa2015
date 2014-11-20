@@ -18,7 +18,8 @@ namespace Clank.View.Engine.Editor
         bool m_isEnabled = false;
         Map m_map;
         bool m_terraFormingMode = true;
-
+        int m_rowId = 0;
+        int m_checkpointId = 0;
 
         private Gui.GuiButton m_modeButton;
         #endregion
@@ -107,7 +108,7 @@ namespace Clank.View.Engine.Editor
                     m_map.SetPassabilityAt(mousePosUnits, true);
                 }
             }
-            else
+            else if(!m_terraFormingMode)
             {
                 if (Input.IsRightClickTrigger())
                 {
@@ -158,10 +159,31 @@ namespace Clank.View.Engine.Editor
                     {
                         Position = mousePosUnits,
                         Type = Entities.EntityType.Checkpoint | team,
-                        CheckpointID = 0,
-                        CheckpointRow = 1,
+                        CheckpointID = m_checkpointId,
+                        CheckpointRow = m_rowId,
                     };
                     m_map.Entities.Add(entity.ID, entity);
+                    m_checkpointId++;
+                }
+                if(Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad1))
+                {
+                    m_checkpointId = 0;
+                    m_rowId = 0;
+                }
+                else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad2))
+                {
+                    m_checkpointId = 0;
+                    m_rowId = 1;
+                }
+                else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad3))
+                {
+                    m_checkpointId = 0;
+                    m_rowId = 2;
+                }
+                else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad4))
+                {
+                    m_checkpointId = 0;
+                    m_rowId = 3;
                 }
             }
 
@@ -231,8 +253,10 @@ namespace Clank.View.Engine.Editor
                 null, new Color(255, 255, 255, 200), 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI + 5 * Graphics.Z.BackStep);
 
             batch.Draw(Ressources.Cursor, new Rectangle((int)position.X, (int)position.Y, 32, 32), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.Front);
+            
+            
             DrawMinimap(batch, new Rectangle((int)Mobattack.GetScreenSize().X - 200, (int)Mobattack.GetScreenSize().Y - 100, 200, 100), Graphics.Z.GUI + 2 * Graphics.Z.BackStep);
-
+            batch.DrawString(Ressources.Font, "RowId = " + m_rowId + " | CheckpointId = " + m_checkpointId, new Vector2(5, Mobattack.GetScreenSize().Y - 50), Color.Black);
 
             UpdateScrolling();
         }
@@ -251,6 +275,10 @@ namespace Clank.View.Engine.Editor
                 for(int y = 0; y < h; y++)
                 {
                     Color col = m_map.Passability[x, y] ? Color.White : Color.Red;
+                    if (!m_map.Vision.HasVision(EntityType.Team1, new Vector2(x, y)))
+                    {
+                        col = new Color(col.R / 2, col.G / 2, col.B / 2);
+                    }
                     batch.Draw(Ressources.DummyTexture,
                         new Rectangle((int)(rect.X + (x / (float)w) * rect.Width),
                                       (int)(rect.Y + (y / (float)h) * rect.Height),

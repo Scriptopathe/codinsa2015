@@ -494,6 +494,32 @@ namespace Clank.View.Engine.Entities
         {
             get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Stun).Count != 0; }
         }
+
+        /// <summary>
+        /// Obtient une valeur indiquant si cette unité est invisible.
+        /// </summary>
+        public bool IsStealthed
+        {
+            get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Stealth).Count != 0; }
+        }
+
+        /// <summary>
+        /// Obtient une valeur indiquant si cette entité possède la vision pure.
+        /// </summary>
+        public bool HasTrueVision
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Retourne la range à laquelle cette entité donne la vision.
+        /// </summary>
+        public float VisionRange
+        {
+            get;
+            set;
+        }
         #endregion
         #endregion
 
@@ -508,6 +534,8 @@ namespace Clank.View.Engine.Entities
             HP = BaseMaxHP;
             BaseArmor = 450;
             EntityCount++;
+            VisionRange = 5.0f;
+            HasTrueVision = false;
 
             // Initialisation
             m_stateAlterations = new StateAlterationCollection();

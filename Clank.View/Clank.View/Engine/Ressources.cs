@@ -20,6 +20,10 @@ namespace Clank.View.Engine
         public static Texture2D WallTexture { get; set; }
         public static Texture2D WallBorderTexture { get; set; }
         public static Texture2D GrassTexture { get; set; }
+        /// <summary>
+        /// Matrice de transformation pour les dessins 2D.
+        /// </summary>
+        public static Matrix PlaneTransform2D { get;set; }
         #endregion
         #region Imported
         /// <summary>
@@ -136,6 +140,13 @@ namespace Clank.View.Engine
             MapEffect.Parameters["xBorderTexture"].SetValue(WallBorderTexture);
             MapEffect.Parameters["xWallTexture"].SetValue(WallTexture);
             MapEffect.Parameters["xGrassTexture"].SetValue(GrassTexture);
+
+
+            /* Matrice
+            Matrix projection = Matrix.CreateOrthographicOffCenter(0, Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight, 0, 0, 1);
+            Matrix halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
+            PlaneTransform2D = halfPixelOffset * projection;*/
         }
+
     }
 }

@@ -56,7 +56,7 @@ namespace Clank.View.Engine.Entities
             SpawnInterval = 30;
             CreepsPerWave = 6;
             SpawnDecay = 0.1f;
-            RowCount = 2;
+            RowCount = 3;
         }
 
         /// <summary>

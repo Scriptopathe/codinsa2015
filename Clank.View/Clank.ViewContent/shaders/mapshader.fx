@@ -43,41 +43,53 @@ sampler source = sampler_state {
 
 float4 PixelShaderFunction(float2 coords: TEXCOORD0) : COLOR0
 {
-	float src = tex2D(source, coords).r;
+	float4 val = tex2D(source, coords);
+
+	float src = val.r;
+	float4 col;
 	if (src < 0.1)
 	{
-		return tex2D(grass, (coords + scrolling) * 5);
+		col = tex2D(grass, (coords + scrolling) * 5);
 	}
 	else
 	{
 		float2 pos = (coords + scrolling);
-		float step = 0.01f;
+		float step = 0.008f;
 		float interpfactor = 0.0f;
-		const int nb = 2;
+		const int nb = 3;
+		const int nb2 = 2;
 		int i;
+		float steps[4];
 		for (i = 0; i < nb; i++)
-			interpfactor += abs(tex2D(source, coords + float2(0, step * i)).r - src);
-		for (i = 0; i < nb; i++)
-			interpfactor += abs(tex2D(source, coords + float2(0, -step * i)).r - src);
-		for (i = 0; i < nb; i++)
-			interpfactor += abs(tex2D(source, coords + float2(step * i, 0)).r - src);
-		for (i = 0; i < nb; i++)
-			interpfactor += abs(tex2D(source, coords + float2(-step * i, 0)).r - src);
-		for (i = 0; i < nb; i++)
-			interpfactor += abs(tex2D(source, coords + float2(step * i, step * i)).r - src);
-		for (i = 0; i < nb; i++)
-			interpfactor += abs(tex2D(source, coords + float2(step * i, -step * i)).r - src);
-		for (i = 0; i < nb; i++)
-			interpfactor += abs(tex2D(source, coords + float2(step * i, -step * i)).r - src);
-		for (i = 0; i < nb; i++)
-			interpfactor += abs(tex2D(source, coords + float2(-step * i, -step * i)).r - src);
-		interpfactor *= 2;
+			steps[i] = step * i;
 
-		return lerp(tex2D(wall, pos  * 5),
+		for (i = 0; i < nb; i++)
+			interpfactor += abs(tex2D(source, coords + float2(0, steps[i])).r - src);
+		for (i = 0; i < nb; i++)
+			interpfactor += abs(tex2D(source, coords + float2(0, -steps[i])).r - src);
+		for (i = 0; i < nb; i++)
+			interpfactor += abs(tex2D(source, coords + float2(steps[i], 0)).r - src);
+		for (i = 0; i < nb; i++)
+			interpfactor += abs(tex2D(source, coords + float2(-steps[i], 0)).r - src);
+		interpfactor *= 0.35;
+		
+		for (i = 0; i < nb2; i++)
+			interpfactor += abs(tex2D(source, coords + float2(steps[i], steps[i])).r - src);
+		for (i = 0; i < nb2; i++)
+			interpfactor += abs(tex2D(source, coords + float2(steps[i], -steps[i])).r - src);
+		for (i = 0; i < nb2; i++)
+			interpfactor += abs(tex2D(source, coords + float2(-steps[i], -steps[i])).r - src);
+		for (i = 0; i < nb2; i++)
+			interpfactor += abs(tex2D(source, coords + float2(-steps[i], steps[i])).r - src);
+		
+		
+
+		col = lerp(tex2D(wall, pos  * 5),
 					tex2D(border, pos * 5),
 					saturate(interpfactor));
 	}
-	return 0;
+	float lightning = 0.5 + val.b/2;
+	return float4(col.rgb * lightning, 1);
 }
 
 technique Technique1

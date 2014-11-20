@@ -52,6 +52,12 @@ namespace Clank.View.Engine
         /// Render target des entities.
         /// </summary>
         RenderTarget2D m_entitiesRenderTarget;
+        RenderTarget2D m_tmpRenderTarget;
+        RenderTarget2D m_tmpRenderTarget2;
+        /// <summary>
+        /// Effet de flou gaussien.
+        /// </summary>
+        Graphics.GaussianBlur m_blur;
         #endregion
 
         #region Properties
@@ -109,7 +115,7 @@ namespace Clank.View.Engine
         public bool[,] Passability
         {
             get { return m_passability; }
-            set { m_passability = value; }
+            set { m_passability = value; Vision.TheMap = this; }
         }
         /// <summary>
         /// Scrolling de la map (en px).
@@ -129,6 +135,14 @@ namespace Clank.View.Engine
             set { m_scrolling = new Point((int)value.X, (int)value.Y); }
         }
 
+        /// <summary>
+        /// Obtient ou définit la carte de vision de cette map.
+        /// </summary>
+        public VisionMap Vision
+        {
+            get;
+            set;
+        }
         
         #endregion
 
@@ -146,6 +160,10 @@ namespace Clank.View.Engine
 
             m_entitiesRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
             m_tilesRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
+            m_tmpRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
+            m_tmpRenderTarget2 = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
+
+            m_blur.ComputeOffsets(Viewport.Width, Viewport.Height);
         }
 
         /// <summary>
@@ -168,10 +186,11 @@ namespace Clank.View.Engine
                 for (int y = beginY; y < endY; y++)
                 {
                     Point drawPos = new Point(x * UnitSize - Scrolling.X, y * UnitSize - Scrolling.Y);
-                    if (!m_passability[x, y])
-                    {
-                        batch.Draw(Ressources.DummyTexture, new Rectangle(drawPos.X, drawPos.Y, UnitSize, UnitSize), Color.Red);
-                    }
+                    int r = m_passability[x, y] ? 0 : 255;
+                    int b = Vision.HasVision(EntityType.Team1, new Vector2(x, y)) ? 255 : 0;
+
+                    batch.Draw(Ressources.DummyTexture, new Rectangle(drawPos.X, drawPos.Y, UnitSize, UnitSize), new Color(r, 0, b));
+                    
                 }
             }
             batch.End();
@@ -184,14 +203,23 @@ namespace Clank.View.Engine
             foreach (Spellcast cast in m_spellcasts) { cast.Draw(time, batch); }
             batch.End();
 
+
+            // Blur
+            const int passes = 1;
+            for (int i = 0; i < passes; i++)
+            {
+                m_blur.PerformGaussianBlur(m_tilesRenderTarget, m_tmpRenderTarget, m_tmpRenderTarget2, batch);
+                m_blur.PerformGaussianBlur(m_tmpRenderTarget2, m_tmpRenderTarget, m_tilesRenderTarget, batch);
+            }
             // Dessin du tout
             Mobattack.Instance.GraphicsDevice.SetRenderTarget(null);
             batch.GraphicsDevice.Clear(Color.LightBlue);
             Ressources.MapEffect.Parameters["xSourceTexture"].SetValue(m_tilesRenderTarget);
             Ressources.MapEffect.Parameters["scrolling"].SetValue(new Vector2(Scrolling.X / (float)Viewport.Width, Scrolling.Y / (float)Viewport.Height));
             batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, Ressources.MapEffect);
-            batch.Draw(m_tilesRenderTarget, Viewport, Color.White);
+            batch.Draw(m_tmpRenderTarget2, Viewport, Color.White);
             batch.End();
+
             batch.Begin();
             batch.Draw(m_entitiesRenderTarget, Viewport, Color.White);
             batch.End();
@@ -206,9 +234,16 @@ namespace Clank.View.Engine
         {
             m_entities = new EntityCollection();
             m_spellcasts = new List<Spellcast>();
+
+
+            // Initialise l'effet de blur.
+            m_blur = new Graphics.GaussianBlur(Mobattack.Instance);
+            m_blur.ComputeKernel(4, 2);
+
+            // Création du viewport
             Viewport = new Rectangle(0, 25, (int)Mobattack.GetScreenSize().X, (int)Mobattack.GetScreenSize().Y - 125);
             m_scrolling = new Point();
-
+            
 
             
             // DEBUG CODE
@@ -229,6 +264,8 @@ namespace Clank.View.Engine
             m_entities.Add(8, new EntitySpawner() { Position = new Vector2(13, 2), SpawnPosition = new Vector2(14, 2),  Type = EntityType.Team1Spawner });
             // ----
 
+            Vision = new VisionMap(this);
+
         }
         /// <summary>
         /// Mets à jour la map ainsi que les entités qu'elle contient.
@@ -236,6 +273,9 @@ namespace Clank.View.Engine
         /// <param name="time"></param>
         public void Update(GameTime time)
         {
+            // Mise à jour de la vision.
+            Vision.Update(time);
+
             // Mise à jour des entités
             List<int> entitiesToDelete = new List<int>();
             List<Spellcast> spellcastsToDelete = new List<Spellcast>();
@@ -524,4 +564,6 @@ namespace Clank.View.Engine
         #endregion
 
     }
+
+
 }
