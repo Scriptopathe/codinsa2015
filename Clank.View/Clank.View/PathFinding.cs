@@ -240,7 +240,7 @@ namespace Clank.View.Engine
             {
                 current = LowestFScore(openset);
                 // Si on a trouvé la fin, on s'arrête.
-                if (Vector2.DistanceSquared(new Vector2(current.Position.X, current.Position.Y), fin) < 1f)
+                if (Vector2.DistanceSquared(new Vector2(current.Position.X, current.Position.Y), new Vector2(end.X, end.Y)) < 0.1f)
                 {
                     var lst =  ReconstructPath(nodemap[end.X, end.Y], cameFrom);
                     return lst;
@@ -249,10 +249,6 @@ namespace Clank.View.Engine
                 // On marque le noeud actuel comme évalué.
                 openset.Remove(current);
                 closedset.Add(current);
-
-                /*// Si le GScore courant est supérieur au nombre max de coups joués, on n'évalue même pas ses voisins.
-                if (current.GScore > maxAllowedMoves)
-                    continue;*/
 
                 // Récupération des positions des noeuds dans l'open set.
                 IEnumerable<Point> closedsetPosition = closedset.Select(delegate(Node node) { return node.Position; });
@@ -270,8 +266,6 @@ namespace Clank.View.Engine
                         
                     // On calcule le cout de ce voisin par rapport au noeud du début.
                     float cost = GetCost(neighbour);
-
-
                     tentativeGScore = current.GScore + cost;
 
                     // Si ce voisin n'est pas dans l'openset, ou qu'on a trouvé un chemin plus court pour aller à ce voisin qu'un éventuel
