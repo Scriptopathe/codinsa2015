@@ -96,6 +96,10 @@ namespace Clank.View.Engine.Editor
             Vector2 mousePosPx = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
             Vector2 mousePosUnits = ((mousePosPx + m_map.ScrollingVector2) - new Vector2(m_map.Viewport.X, m_map.Viewport.Y)) / Map.UnitSize;
 
+            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Add))
+                Map.UnitSize *= 2;
+            else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Subtract))
+                Map.UnitSize /= 2;
             if (m_terraFormingMode && mousePosPx.Y > 25)
             { 
                 // Ajout de matière

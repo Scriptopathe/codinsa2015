@@ -28,9 +28,9 @@ namespace Clank.View.Engine.Spells
         /// </summary>
         public SpellDescription Description
         {
-            get;
-            set;
+            get { return Levels[Level]; }
         }
+
         /// <summary>
         /// Cooldown actuel de ce sort, en secondes.
         /// </summary>
@@ -47,6 +47,40 @@ namespace Clank.View.Engine.Spells
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Représente les descriptions du spell pour les différents niveaux.
+        /// </summary>
+        public List<SpellDescription> Levels
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Obtient le actuel du spell.
+        /// </summary>
+        public int Level
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Obtient le niveau maximum du spell.
+        /// </summary>
+        public int MaxLevel
+        {
+            get { return Levels.Count; }
+        }
+
+        /// <summary>
+        /// Obtient une valeur indiquant si ce spell peut être amélioré.
+        /// </summary>
+        public bool CanUpgrade
+        {
+            get { return Level < Levels.Count - 1; }
         }
         #endregion
 
@@ -90,10 +124,9 @@ namespace Clank.View.Engine.Spells
                     return false;
                 
             }
-            
 
             // Applique les effets du casting time.
-            SourceCaster.AddAlteration(new Entities.StateAlteration(SourceCaster, Description.CastingTimeAlteration, target.AlterationParameters));
+            SourceCaster.AddAlteration(new Entities.StateAlteration(SourceCaster, Description.CastingTimeAlteration, target.AlterationParameters, Entities.StateAlterationSource.Spell));
 
             // Appelle la fonction qui va lancer le spell avec un délai correspondant au casting time.
             Mobattack.GetScene().EventSheduler.Schedule(new Scheduler.ActionDelegate(() => {

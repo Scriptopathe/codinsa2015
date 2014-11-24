@@ -23,7 +23,7 @@ namespace Clank.View
 
         public static Vector2 GetScreenSize()
         {
-            return new Vector2(840, 680);
+            return new Vector2(1366, 768);
         }
         /// <summary>
         /// Retourne la scène associée à ce jeu.

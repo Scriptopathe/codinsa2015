@@ -37,12 +37,14 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         public int Row { get; set; }
         
+
         Trajectory m_path;
 
         /// <summary>
         /// Checkpoint actuel de la trajectoire prévue du creep.
         /// </summary>
         int m_currentCheckpointId;
+
         EntityCheckpoint m_lastCheckpoint;
         #endregion
 
@@ -56,7 +58,7 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         public EntityCreep() : base()
         {
-            BaseArmor = 40;
+            BaseArmor = Mobattack.GetScene().Constants.Creeps.Armor;
             BaseAttackDamage = 60;
             BaseMagicResist = 40;
             BaseMaxHP = 100;

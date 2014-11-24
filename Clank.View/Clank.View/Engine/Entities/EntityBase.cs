@@ -15,7 +15,9 @@ namespace Clank.View.Engine.Entities
     /// </summary>
     public class EntityBase
     {
-        #region Static 
+        #region Constants
+        #endregion
+        #region Static
         public static int EntityCount = 0;
         public static void ResetEntityCount()
         {
@@ -99,7 +101,11 @@ namespace Clank.View.Engine.Entities
         /// <summary>
         /// Temps pendant lequel l'entité mémorise les entités lui ayant fait des dégâts.
         /// </summary>
-        public const float DamageTimeMemory = 0.2f;
+        public float DamageTimeMemory
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Dictionnaire contenant les entités ayant encommagé cette unité récemment (limite de temps
@@ -346,9 +352,9 @@ namespace Clank.View.Engine.Entities
             foreach(StateAlteration alteration in alterations)
             {
                 if (alteration.Source != this)
-                    totalDamage += alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstAd);
+                    totalDamage += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstAd);
                 else
-                    totalDamage += alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.DstAd | ScalingRatios.SrcAd));
+                    totalDamage += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.DstAd | ScalingRatios.SrcAd));
             }
 
 
@@ -388,9 +394,9 @@ namespace Clank.View.Engine.Entities
             foreach (StateAlteration alteration in alterations)
             {
                 if (alteration.Source != this)
-                    totalArmor += alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstArmor);
+                    totalArmor += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstArmor);
                 else
-                    totalArmor += alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.SrcArmor | ScalingRatios.DstArmor));
+                    totalArmor += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.SrcArmor | ScalingRatios.DstArmor));
             }
 
 
@@ -440,9 +446,9 @@ namespace Clank.View.Engine.Entities
             foreach (StateAlteration alteration in alterations)
             {
                 if (alteration.Source != this)
-                    totalHP += alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstMaxHP);
+                    totalHP += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstMaxHP);
                 else
-                    totalHP += alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.SrcMaxHP | ScalingRatios.DstMaxHP));
+                    totalHP += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.SrcMaxHP | ScalingRatios.DstMaxHP));
             }
 
 
@@ -469,6 +475,22 @@ namespace Clank.View.Engine.Entities
         public virtual EntityCollection GetRecentlyAgressiveEntities()
         {
             return m_recentlyAggressiveEntities;
+        }
+
+        /// <summary>
+        /// Retourne la liste des entités ayant récemment infligés des dégâts à cette unité
+        /// durant la période de temps en secondes indiquée par time.
+        /// </summary>
+        public virtual EntityCollection GetRecentlyAgressiveEntities(float time)
+        {
+            EntityCollection coll = new EntityCollection();
+            foreach(var kvp in m_recentlyAgressiveEntitiesMemoryTime)
+            {
+                float elapsed = DamageTimeMemory - kvp.Value;
+                if (elapsed < time)
+                    coll.Add(kvp.Key, m_recentlyAggressiveEntities[kvp.Key]);
+            }
+            return coll;
         }
         #region State
         /// <summary>
@@ -530,12 +552,14 @@ namespace Clank.View.Engine.Entities
         public EntityBase()
         {
             ID = EntityCount;
+            EntityCount++;
+
+            // Code de debug
             BaseMaxHP = 5000;
             HP = BaseMaxHP;
             BaseArmor = 450;
-            EntityCount++;
             VisionRange = 5.0f;
-            HasTrueVision = false;
+            DamageTimeMemory = 30f;
 
             // Initialisation
             m_stateAlterations = new StateAlterationCollection();
@@ -545,6 +569,23 @@ namespace Clank.View.Engine.Entities
             // TODO : supprimer ces lignes, seulement utiles pour le debug.
             m_shape = new RectangleShape(Vector2.Zero, new Vector2(0.5f, 0.5f));
             m_baseMoveSpeed = 8.0f;
+        }
+
+        /// <summary>
+        /// Chage les constantes d'entité passées en paramètres.
+        /// </summary>
+        public void LoadEntityConstants(EntityConstants constants)
+        {
+            BaseMaxHP = constants.HP;
+            BaseAttackDamage = constants.AttackDamage;
+            BaseAttackSpeed = constants.AttackSpeed;
+            BaseAbilityPower = constants.AbilityPower;
+            BaseMagicResist = constants.MagicResist;
+            BaseCooldownReduction = constants.CooldownReduction;
+            BaseArmor = constants.Armor;
+            BaseMoveSpeed = constants.MoveSpeed;
+            VisionRange = constants.VisionRange;
+            HP = BaseMaxHP;
         }
 
         /// <summary>
@@ -666,8 +707,6 @@ namespace Clank.View.Engine.Entities
             // Mets à jour les altérations d'état.
             m_stateAlterations.UpdateStateAlterations(time, this);
             UpdateAgressionInfo(time);
-            // DEBUG
-            __UpdateDebug(time);
 
             if (IsDead)
                 IsDisposing = true;
@@ -701,7 +740,7 @@ namespace Clank.View.Engine.Entities
                     m_recentlyAgressiveEntitiesMemoryTime.Add(alteration.Source.ID, DamageTimeMemory);
                 }
                 // Applique les dégâts de base du sort + dégâts bonus fonction de l'attaque de la source.
-                ApplyDamage(alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All));
+                ApplyDamage(alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All));
             }
 
             // Applique les dégâts bruts.
@@ -718,14 +757,14 @@ namespace Clank.View.Engine.Entities
                 }
 
                 // Applique les dégâts de base du sort + dégâts bonus fonction de l'attaque de la source.
-                ApplyTrueDamage(alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All));
+                ApplyTrueDamage(alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All));
             }
 
             // Applique les soins
             List<StateAlteration> healAlterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.Heal);
             foreach(StateAlteration alteration in healAlterations)
             {
-                ApplyHeal(alteration.Model.CalculateValue(alteration.Source, this, ScalingRatios.All));
+                ApplyHeal(alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All));
             }
 
             // Applique les dash
@@ -827,6 +866,7 @@ namespace Clank.View.Engine.Entities
             Draw(time, batch, drawPos);
         }
 
+        protected float __angle;
         /// <summary>
         /// Dessine l'entité à la position donnée.
         /// 
@@ -866,42 +906,6 @@ namespace Clank.View.Engine.Entities
         }
         #endregion
 
-        #region Debug
-        float __angle = 0; // DEBUG
-        Spells.FireballSpell __spell = null;
-        void __UpdateDebug(GameTime time)
-        {
-            if (!Type.HasFlag(EntityType.Team1Player))
-                return;
-            
-            if (IsDead)
-                IsDisposing = true;
 
-
-            // DEBUG
-            if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Q))
-                __angle -= 0.1f;
-            else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.D))
-                __angle += 0.1f;
-
-            Direction = new Vector2((float)Math.Cos(__angle), (float)Math.Sin(__angle));
-
-            if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Z))
-                MoveForward(time);
-
-            // -----
-            if(__spell== null)
-                __spell = new Spells.FireballSpell(this);
-            __spell.UpdateCooldown((float)time.ElapsedGameTime.TotalSeconds);
-            if(Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Space))
-            {
-                __spell.Use(new Spells.SpellCastTargetInfo()
-                {
-                    Type = Spells.TargettingType.Direction,
-                    TargetDirection = Direction
-                });
-            }
-        }
-        #endregion
     }
 }

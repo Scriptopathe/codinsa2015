@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Engine\Editor\MapEditorControler.cs" />
     <Compile Include="Engine\Entities\EntityBase.cs" />
+    <Compile Include="Engine\Entities\EntityWardPlacement.cs" />
     <Compile Include="Engine\Entities\EntityCheckpoint.cs" />
     <Compile Include="Engine\Entities\EntityCollection.cs" />
     <Compile Include="Engine\Entities\EntitySpawner.cs" />
@@ -88,6 +89,9 @@
     <Compile Include="Engine\Entities\StateAlteration.cs" />
     <Compile Include="Engine\Entities\StateAlterationCollection.cs" />
     <Compile Include="Engine\Entities\StateAlterationModel.cs" />
+    <Compile Include="Engine\Equip\Armor.cs" />
+    <Compile Include="Engine\Equip\Shop.cs" />
+    <Compile Include="Engine\GameConstants.cs" />
     <Compile Include="Engine\Graphics\GaussianBlur.cs" />
     <Compile Include="Engine\Graphics\Z.cs" />
     <Compile Include="Engine\Gui\Drawing.cs">
@@ -139,6 +143,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Scene.cs" />
+    <Compile Include="Tools\Serializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

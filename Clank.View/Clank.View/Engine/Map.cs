@@ -158,14 +158,15 @@ namespace Clank.View.Engine
                 m_tilesRenderTarget.Dispose();
             }
 
-            m_entitiesRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
-            m_tilesRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
+            m_entitiesRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+            m_tilesRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
             m_tmpRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
             m_tmpRenderTarget2 = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
 
             m_blur.ComputeOffsets(Viewport.Width, Viewport.Height);
         }
 
+        public const bool SMOOTH_LIGHT = true;
         /// <summary>
         /// Dessine la map ainsi que les entités qu'elle contient.
         /// </summary>
@@ -174,8 +175,8 @@ namespace Clank.View.Engine
         public void Draw(GameTime time, SpriteBatch batch)
         {
             Mobattack.Instance.GraphicsDevice.SetRenderTarget(m_tilesRenderTarget);
-            batch.GraphicsDevice.Clear(Color.Transparent);
-            batch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied);
+            // batch.GraphicsDevice.Clear(Color.Transparent);
+            batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
             // Dessin de debug de la map.
             int beginX = m_scrolling.X / UnitSize;
             int beginY = m_scrolling.Y / UnitSize;
@@ -188,8 +189,8 @@ namespace Clank.View.Engine
                     Point drawPos = new Point(x * UnitSize - Scrolling.X, y * UnitSize - Scrolling.Y);
                     int r = m_passability[x, y] ? 0 : 255;
                     int b = Vision.HasVision(EntityType.Team1, new Vector2(x, y)) ? 255 : 0;
-
-                    batch.Draw(Ressources.DummyTexture, new Rectangle(drawPos.X, drawPos.Y, UnitSize, UnitSize), new Color(r, 0, b));
+                    int a = SMOOTH_LIGHT ? 100 : 255;
+                    batch.Draw(Ressources.DummyTexture, new Rectangle(drawPos.X, drawPos.Y, UnitSize, UnitSize), new Color(r, 0, b, a));
                     
                 }
             }
@@ -211,13 +212,14 @@ namespace Clank.View.Engine
                 m_blur.PerformGaussianBlur(m_tilesRenderTarget, m_tmpRenderTarget, m_tmpRenderTarget2, batch);
                 m_blur.PerformGaussianBlur(m_tmpRenderTarget2, m_tmpRenderTarget, m_tilesRenderTarget, batch);
             }
+
             // Dessin du tout
             Mobattack.Instance.GraphicsDevice.SetRenderTarget(null);
             batch.GraphicsDevice.Clear(Color.LightBlue);
             Ressources.MapEffect.Parameters["xSourceTexture"].SetValue(m_tilesRenderTarget);
             Ressources.MapEffect.Parameters["scrolling"].SetValue(new Vector2(Scrolling.X / (float)Viewport.Width, Scrolling.Y / (float)Viewport.Height));
             batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, Ressources.MapEffect);
-            batch.Draw(m_tmpRenderTarget2, Viewport, Color.White);
+            batch.Draw(m_tilesRenderTarget, Viewport, Color.White);
             batch.End();
 
             batch.Begin();
@@ -252,7 +254,7 @@ namespace Clank.View.Engine
             __passabilityDrawRect(new Rectangle(3, 4, 20, 2), false);
 
             
-            m_entities.Add(0, new EntityBase() { Position = new Vector2(2, 2), Type = EntityType.Team1Player });
+            m_entities.Add(0, new EntityHero() { Position = new Vector2(2, 2), Type = EntityType.Team1Player });
             m_entities.Add(1, new EntityBase() { Position = new Vector2(15, 10), Type = EntityType.Team2Player });
             m_entities.Add(2, new EntityTower() { Position = new Vector2(14, 20), Type = EntityType.Team2Tower });
             m_entities.Add(3, new EntityTower() { Position = new Vector2(21, 20), Type = EntityType.Team2Tower });
@@ -551,7 +553,7 @@ namespace Clank.View.Engine
                         i += 2;
                         newEntities.Add(newEntity.ID, newEntity);
                     }
-                    catch (System.ArgumentException e) { }
+                    catch (System.ArgumentException) { }
                 }
             }
 

@@ -133,7 +133,7 @@ namespace Clank.View.Engine.Spellcasts
             // Ajoute les altérations d'état au héros.
             foreach(StateAlterationModel alteration in SourceSpell.Description.OnHitEffects)
             {
-                entity.AddAlteration(new StateAlteration(SourceSpell.SourceCaster, alteration, m_castInfo.AlterationParameters));
+                entity.AddAlteration(new StateAlteration(SourceSpell.SourceCaster, alteration, m_castInfo.AlterationParameters, StateAlterationSource.Spell));
             }
             
         }

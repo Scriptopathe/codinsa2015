@@ -96,7 +96,8 @@ namespace Clank.View.Engine
             {
                 // On choisit la prochaine étape 
                 float dst = Vector2.DistanceSquared(position, CurrentStep);
-                if (dst <= speed * (float)time.ElapsedGameTime.TotalSeconds)
+                float error = speed * (float)time.ElapsedGameTime.TotalSeconds;
+                if (dst <= error * error)
                     m_currentPosition++;
             }
 
@@ -109,7 +110,9 @@ namespace Clank.View.Engine
         /// <returns></returns>
         public bool IsEnded(Vector2 position, float speed, GameTime time)
         {
-            return Vector2.DistanceSquared(position, TrajectoryUnits.Last()) <= speed * (float)time.ElapsedGameTime.TotalSeconds;
+            float dstError = speed * (float)time.ElapsedGameTime.TotalSeconds;
+            float dstSqr = Vector2.DistanceSquared(position, TrajectoryUnits.Last()  + new Vector2(0.5f, 0.5f));
+            return dstSqr <= dstError * dstError;
         }
 
         /// <summary>

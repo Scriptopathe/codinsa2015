@@ -44,20 +44,24 @@ sampler source = sampler_state {
 float4 PixelShaderFunction(float2 coords: TEXCOORD0) : COLOR0
 {
 	float4 val = tex2D(source, coords);
-
+	
 	float src = val.r;
 	float4 col;
-	if (src < 0.1)
+	if (src < 0.5)
 	{
 		col = tex2D(grass, (coords + scrolling) * 5);
 	}
 	else
 	{
 		float2 pos = (coords + scrolling);
-		float step = 0.008f;
+		float step = 0.004f;
 		float interpfactor = 0.0f;
-		const int nb = 3;
+
+
+		const int nb = 2;
 		const int nb2 = 2;
+
+		// Précalcule 
 		int i;
 		float steps[4];
 		for (i = 0; i < nb; i++)
@@ -83,7 +87,8 @@ float4 PixelShaderFunction(float2 coords: TEXCOORD0) : COLOR0
 			interpfactor += abs(tex2D(source, coords + float2(-steps[i], steps[i])).r - src);
 		
 		
-
+		// Effectue le mélange entre la texture de bordure du mur
+		// et la texture intérieure.
 		col = lerp(tex2D(wall, pos  * 5),
 					tex2D(border, pos * 5),
 					saturate(interpfactor));

@@ -36,9 +36,9 @@ namespace Clank.View.Engine.Entities
         /// <summary>
         /// Retourne la liste des altérations d'état ayant le type donné.
         /// </summary>
-        public List<StateAlteration> GetInteractionsByType(StateAlterationType type)
+        public StateAlterationCollection GetInteractionsByType(StateAlterationType type)
         {
-            List<StateAlteration> alterations = new List<StateAlteration>();
+            StateAlterationCollection alterations = new StateAlterationCollection();
             foreach(StateAlteration alteration in this)
             {
                 if ((alteration.Model.Type & type) == type)
@@ -46,5 +46,21 @@ namespace Clank.View.Engine.Entities
             }
             return alterations;
         }
+
+        /// <summary>
+        /// Termine toutes les altérations dont le type de source correspond au type
+        /// donné.
+        /// </summary>
+        /// <param name="type"></param>
+        public void EndAlterations(StateAlterationSource type)
+        {
+            foreach(StateAlteration alt in this)
+            {
+                if (alt.SourceType == type)
+                    alt.EndNow();
+            }
+        }
+
+
     }
 }

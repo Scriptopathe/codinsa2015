@@ -12,7 +12,7 @@ namespace Clank.View.Engine.Entities
     /// </summary>
     public enum EntityType
     {
-        Neutral         = 0x01,
+        Monster         = 0x01,
         Team1           = 0x02,
         Team2           = 0x04,
         Struture        = 0x08,
@@ -22,10 +22,16 @@ namespace Clank.View.Engine.Entities
         Idol            = 0x80 | Struture,
 
         // Neutral
-        Boss            = 0x0100,
-        Miniboss        = 0x0200,
+        Boss            = 0x0100 | Monster,
+        Miniboss        = 0x0200 | Monster,
+        WardPlacement   = 0x00010000,
+        Ward            = 0x00020000,
+
+        // Creeps
         Creep           = 0x0400,
         Checkpoint      = 0x4000,
+
+        // Player
         Player          = 0x8000,
 
         // Macros
@@ -33,6 +39,7 @@ namespace Clank.View.Engine.Entities
         AllTeam2    = Team2 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
         AllObjectives   = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss,
         AllSaved        = AllObjectives | Checkpoint,
+        
         // Team
         Team1Tower      = Team1 | Tower,
         Team2Tower      = Team2 | Tower,
@@ -55,7 +62,7 @@ namespace Clank.View.Engine.Entities
     /// </summary>
     public enum EntityTypeRelative
     {
-        Neutral         = 0x01,
+        Monster         = 0x01,
         Ally            = 0x02,
         Ennemy          = 0x04,
         Structure       = 0x08,
@@ -65,11 +72,17 @@ namespace Clank.View.Engine.Entities
         Idol            = 0x80 | Structure,
 
         // Neutral
-        Boss            = 0x0100,
-        Miniboss        = 0x0200,
+        Boss            = 0x0100 | Monster,
+        Miniboss        = 0x0200 | Monster,
+        
+        // Creeps
         Creep           = 0x0400,
         Checkpoint      = 0x4000,
         Player          = 0x8000,
+
+        // Wards
+        WardPlacement   = 0x00010000,
+        Ward            = 0x00020000,
 
         // Macros
         AllEnnemy       = Ennemy | Tower | Inhibitor | Spawner | Idol | Player | Creep,

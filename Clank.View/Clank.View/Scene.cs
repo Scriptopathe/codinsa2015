@@ -56,6 +56,15 @@ namespace Clank.View
             get;
             set;
         }
+
+        /// <summary>
+        /// Obtient une référence vers le conteneur de constantes du jeu.
+        /// </summary>
+        public GameConstants Constants
+        {
+            get;
+            set;
+        }
         #endregion
 
         #region Methods
@@ -69,6 +78,16 @@ namespace Clank.View
         /// </summary>
         public void Initialize()
         {
+            if(System.IO.File.Exists("constants.xml"))
+            {
+                Constants = GameConstants.LoadFromFile("constants.xml");
+            }
+            else
+            {
+                Constants = new GameConstants();
+                Constants.Save("constants.xml");
+            }
+
             Map = new Map();
             EventSheduler = new Scheduler();
             GuiManager = new GuiManager();

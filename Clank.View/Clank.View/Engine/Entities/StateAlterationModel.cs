@@ -31,6 +31,9 @@ namespace Clank.View.Engine.Entities
         TrueDamage      = 0x4000,
         Heal            = 0x8000,
         Stealth         = 0x10000,
+        Shield          = 0x20000,
+        Sight           = 0x40000,
+        TrueSight       = 0x80000,
     }
 
     public enum ScalingRatios
@@ -52,10 +55,14 @@ namespace Clank.View.Engine.Entities
         None            = 0x0000
     }
 
+    /// <summary>
+    /// Représente une direction de dash.
+    /// </summary>
     public enum DashDirectionType
     {
         TowardsEntity,
         Position,
+        BackwardsCaster,
     }
     /// <summary>
     /// Représente un modèle pour une altération d'état.
@@ -69,9 +76,11 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         public StateAlterationType Type { get; set; }
         /// <summary>
-        /// Durée de l'altération d'état en secondes.
+        /// Durée de base de l'altération d'état en secondes.
+        /// 
+        /// Cette durée peut être modifiée par les multiplicateurs 
         /// </summary>
-        public float Duration { get; set; }
+        public float BaseDuration { get; set; }
         /// <summary>
         /// Si Type contient Dash : vitesse du dash.
         /// 
@@ -110,6 +119,10 @@ namespace Clank.View.Engine.Entities
                         throw new Exception("StateAlterationModel.GetDashDirection : target null & DashDirectionType == Position");
 
                     direction = parameters.DashTargetPosition - source.Position; direction.Normalize();
+                    return direction;
+                case Entities.DashDirectionType.BackwardsCaster:
+                    direction = source.Position - caster.Position;
+                    direction.Normalize();
                     return direction;
             }
 
@@ -171,6 +184,20 @@ namespace Clank.View.Engine.Entities
         /// Même que FlatValue mais en pourcentage de la RM actuelle de l'entité de destination.
         /// </summary>
         public float DestPercentRMValue { get; set; }
+
+        /// <summary>
+        /// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée à une structure.
+        /// </summary>
+        public float StructureBonus { get; set; }
+        /// <summary>
+        /// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un monstre neute.
+        /// </summary>
+        public float MonsterBonus { get; set; }
+        /// <summary>
+        /// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.
+        /// </summary>
+        public float CreepBonus { get; set; }
+
         /// <summary>
         /// Calcule la valeur totale de l'altération d'état en fonction des différents scalings passés en 
         /// paramètres au moyen de "ratios".
@@ -179,7 +206,7 @@ namespace Clank.View.Engine.Entities
         /// 
         /// Par exemple, si scaling ratios ne contient pas SrcAd, source.GetAttackDamage() ne sera pas appelé.
         /// </summary>
-        public float CalculateValue(EntityBase source, EntityBase destination, ScalingRatios ratios)
+        public float CalculateDamageValue(EntityBase source, EntityBase destination, ScalingRatios ratios)
         {
             float totalValue = FlatValue;
             if ((ratios & ScalingRatios.SrcAd) == ScalingRatios.SrcAd)
@@ -210,6 +237,51 @@ namespace Clank.View.Engine.Entities
             if ((ratios & ScalingRatios.SrcMR) == ScalingRatios.SrcMR)
                 totalValue += DestPercentRMValue * destination.GetMagicResist();
 
+            // Application des bonus.
+            if(destination.Type.HasFlag(EntityType.Struture))
+                totalValue *= StructureBonus;
+            if(destination.Type.HasFlag(EntityType.Monster))
+                totalValue *= MonsterBonus;
+            if(destination.Type.HasFlag(EntityType.Creep))
+                totalValue *= CreepBonus;
+
+            // Application des bonus de rôles.
+            if(source is EntityHero)
+            {
+                RoleConstants constants = Mobattack.GetScene().Constants.Roles;
+                EntityHero hero = (EntityHero)source;
+                switch(hero.Role)
+                {
+                    case EntityHeroRole.Fighter:
+                        if (Type.HasFlag(StateAlterationType.AttackSpeed))
+                            totalValue *= constants.FighterAttackSpeedMultiplier;
+                        else if (Type.HasFlag(StateAlterationType.AttackDamage))
+                            totalValue *= constants.FighterAttackDamageMultiplier;
+                        else if (Type.HasFlag(StateAlterationType.AP))
+                            totalValue *= constants.FighterMagicDamageMultiplier;
+                        else if (Type.HasFlag(StateAlterationType.TrueDamage))
+                            totalValue *= constants.FighterTrueDamageMultiplier;
+
+                        break;
+                    case EntityHeroRole.Mage:
+                        if (Type.HasFlag(StateAlterationType.Heal))
+                            totalValue *= constants.MageHealValueMultiplier;
+                        else if (Type.HasFlag(StateAlterationType.Shield))
+                            totalValue *= constants.MageShieldValueMultiplier;
+
+                        break;
+                    case EntityHeroRole.Tank:
+                        if (Type.HasFlag(StateAlterationType.MoveSpeed))
+                            totalValue *= constants.TankMoveSpeedBonusMultiplier;
+                        else if(Type.HasFlag(StateAlterationType.Armor)
+                            totalValue *= constants.TankArmorBonusMultiplier;
+                        else if(Type.HasFlag(StateAlterationType.RM))
+                            totalValue *= constants.TankRMBonusMultiplier;
+
+                        break;
+                }
+            }
+
             return totalValue;
             // Note : ceci n'est pas équivalent au code ci dessous.
             // Dans cette version les fonctions source.GetAttackDamage(), etc... sont toujours appelées.
@@ -225,70 +297,46 @@ namespace Clank.View.Engine.Entities
                    DestPercentHPValue * destination.HP * (int)(ratios & ScalingRatios.DstHP) +
                    DestPercentMaxHPValue * destination.MaxHP * (int)(ratios & ScalingRatios.DstMaxHP);*/
         }
-        /*
-        /// <summary>
-        /// Si type contient AttackDamage : dégâts de base du sort.
-        /// Si positif : dégâts
-        /// Si négatif : exception dans ta face.
-        /// </summary>
-        public float FlatValue { get; set; }
-        /// <summary>
-        /// Même que AttackDamageFlatValue, mais en pourcentage des dégâts d'attaque actuel.
-        /// </summary>
-        public float ScalingValue { get; set; }
-        /// <summary>
-        /// Si type contient TrueDamage : dégâts de base du sort (dégâts bruts).
-        /// Si positif : dégâts
-        /// Si négatif : exception dans ta face.
-        /// </summary>
-        public float FlatValue { get; set; }
-        /// <summary>
-        /// Même que TrueDamageFlatValue, mais en pourcentage des dégâts d'attaque actuel.
-        /// </summary>
-        public float ScalingValue { get; set; }
-        /// <summary>
-        /// Si type contient Heal : soins de base du sort.
-        /// Si positif : soin.
-        /// Si négatif : exception dans ta face.
-        /// </summary>
-        public float FlatValue { get; set; }
-        /// <summary>
-        /// Même que HealFlatValue, mais en pourcentage des dégâts d'attaque actuel.
-        /// </summary>
-        public float ScalingValue { get; set; }
-        /// <summary>
-        /// Si type contient Regen : valeur de la modification de la régen. (pv / seconde)
-        /// Si négatif : damage over time
-        /// Si positif : buff de regen.
-        /// </summary>
-        public float FlatValue { get; set; }
-        /// <summary>
-        /// Même que RegenPercentValue, mais valeur en pourcentage de la regen actuelle.
-        /// </summary>
-        public float PercentValue { get; set; }
-        /// <summary>
-        /// Si Type contient Armor : valeur de la modification de l'armure.
-        /// valeur positive : buff d'armure
-        /// valeur négative : debuff d'armure.
-        /// </summary>
-        public float FlatValue { get; set; }
-        /// <summary>
-        /// Même que ArmorFlatValue, mais valeur en pourcentage de l'armure actuelle.
-        /// </summary>
-        public float PercentValue { get; set; }
-        /// <summary>
-        /// Si Type contient MoveSpeed : valeur de la modification de vitesse
-        /// valeur positive : buff de vitesse
-        /// valeur négative : slow
-        /// </summary>
-        public float FlatValue { get; set; }
-        /// <summary>
-        /// Même que MoveSpeedFlatValue, mais valeur en pourcentage de la move speed actuelle.
-        /// </summary>
-        public float PercentValue { get; set; }*/
 
+        /// <summary>
+        /// Retourne la durée effective de l'altération d'état en prenant en compte les différents
+        /// bonus des altérations.
+        /// </summary>
+        public float CalculateDurationValue(EntityBase source)
+        {
+            float duration = BaseDuration;
+            // Application des bonus de rôles.
+            if (source is EntityHero)
+            {
+                RoleConstants constants = Mobattack.GetScene().Constants.Roles;
+                EntityHero hero = (EntityHero)source;
+                switch (hero.Role)
+                {
+                    case EntityHeroRole.Fighter:
+                        if (Type.HasFlag(StateAlterationType.Stealth))
+                            duration *= constants.FighterStealthDurationMultiplier;
+                        break;
+                    case EntityHeroRole.Mage:
+                        if (Type.HasFlag(StateAlterationType.Silence))
+                            duration *= constants.MageSilenceDurationMultiplier;
+                        else if(Type.HasFlag(StateAlterationType.Sight) | Type.HasFlag(StateAlterationType.TrueSight))
+                            duration *= constants.MageSightDurationMultiplier;
+                        break;
+                    case EntityHeroRole.Tank:
+                        if (Type.HasFlag(StateAlterationType.Stun))
+                            duration *= constants.TankStunDurationMultiplier;
+                        break;
+                }
+            }
+            return duration;
+        }
 
-
+        public StateAlterationModel()
+        {
+            CreepBonus = 1.0f;
+            MonsterBonus = 1.0f;
+            StructureBonus = 1.0f;
+        }
         #region Constructors
         public static StateAlterationModel None() { return new StateAlterationModel(); }
         public static StateAlterationModel Root(float duration)
@@ -296,7 +344,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.Root,
-                Duration = duration,
+                BaseDuration = duration,
             };
         }
         public static StateAlterationModel Silence(float duration)
@@ -304,7 +352,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.Silence,
-                Duration = duration,
+                BaseDuration = duration,
             };
         }
         public static StateAlterationModel Stun(float duration)
@@ -312,7 +360,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.Stun,
-                Duration = duration,
+                BaseDuration = duration,
             };
         }
         public static StateAlterationModel DamageFlatBuff(float duration, float buff)
@@ -320,7 +368,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.DamageBuff,
-                Duration = duration,
+                BaseDuration = duration,
                 FlatValue = buff
             };
         }
@@ -329,7 +377,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.DamageBuff,
-                Duration = duration,
+                BaseDuration = duration,
                 SourcePercentADValue = buff
             };
         }
@@ -339,7 +387,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.Regen,
-                Duration = duration,
+                BaseDuration = duration,
                 FlatValue = buff
             };
         }
@@ -348,7 +396,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.Regen,
-                Duration = duration,
+                BaseDuration = duration,
                 SourcePercentADValue = buff
             };
         }
@@ -358,7 +406,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.Armor,
-                Duration = duration,
+                BaseDuration = duration,
                 FlatValue = buff
             };
         }
@@ -367,7 +415,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.Armor,
-                Duration = duration,
+                BaseDuration = duration,
                 SourcePercentADValue = buff
             };
         }
@@ -376,7 +424,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.MoveSpeed,
-                Duration = duration,
+                BaseDuration = duration,
                 FlatValue = buff
             };
         }
@@ -385,7 +433,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.MoveSpeed,
-                Duration = duration,
+                BaseDuration = duration,
                 SourcePercentADValue = buff
             };
         }
@@ -395,7 +443,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.AttackDamage,
-                Duration = 0.0f,
+                BaseDuration = 0.0f,
                 FlatValue = Math.Abs(amount)
             };
         }
@@ -404,7 +452,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.Heal,
-                Duration = 0.0f,
+                BaseDuration = 0.0f,
                 SourcePercentADValue = Math.Abs(amount)
             };
         }
@@ -413,7 +461,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.AttackDamage,
-                Duration = 0.0f,
+                BaseDuration = 0.0f,
                 SourcePercentADValue = Math.Abs(amount)
             };
         }
@@ -422,7 +470,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.Heal,
-                Duration = 0.0f,
+                BaseDuration = 0.0f,
                 SourcePercentADValue = Math.Abs(amount)
             };
         }
@@ -432,7 +480,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.TrueDamage,
-                Duration = 0.0f,
+                BaseDuration = 0.0f,
                 FlatValue = Math.Abs(amount)
             };
         }
@@ -442,7 +490,7 @@ namespace Clank.View.Engine.Entities
             return new StateAlterationModel()
             {
                 Type = StateAlterationType.TrueDamage,
-                Duration = 0.0f,
+                BaseDuration = 0.0f,
                 FlatValue = Math.Abs(amount)
             };
         }

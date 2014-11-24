@@ -119,7 +119,7 @@ namespace Clank.View.Engine.Entities
                 foreach(var kvp in allyHeroes)
                 {
                     EntityBase allyHero = kvp.Value;
-                    EntityCollection aggressiveHeros = allyHero.GetRecentlyAgressiveEntities().GetEntitiesByType(ennemyHeroType);
+                    EntityCollection aggressiveHeros = allyHero.GetRecentlyAgressiveEntities(1.0f).GetEntitiesByType(ennemyHeroType);
                     if (aggressiveHeros.Count != 0)
                     {
                         EntityBase aggressiveHero = aggressiveHeros.First().Value;

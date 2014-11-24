@@ -40,7 +40,7 @@ namespace Clank.View.Engine.Spells
         public FireballSpell(EntityBase caster)
         {
             SourceCaster = caster;
-            Description = new SpellDescription()
+            Levels = new List<SpellDescription>() { new SpellDescription()
             {
                 
                 TargetType = new SpellTargetInfo()
@@ -57,14 +57,14 @@ namespace Clank.View.Engine.Spells
                 CastingTimeAlteration = new StateAlterationModel() 
                 {
                     Type = StateAlterationType.Root,
-                    Duration = 0.05f,
+                    BaseDuration = 0.05f,
                 },
                 
                 OnHitEffects = new List<StateAlterationModel>() { 
                     new StateAlterationModel()
                     {
                         Type = StateAlterationType.AttackDamage,
-                        Duration = 0.0f,
+                        BaseDuration = 0.0f,
                         FlatValue = 100.0f,
                         SourcePercentADValue = 0.0f,
                     },
@@ -76,7 +76,7 @@ namespace Clank.View.Engine.Spells
                         Duration = 0.2f
                     }*/
                 }
-            };
+            }};
             CurrentCooldown = 0.0f;
         }
     }

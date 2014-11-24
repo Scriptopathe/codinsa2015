@@ -23,20 +23,35 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         public EntityBase DashTargetEntity { get; set; }
     }
+
+    public enum StateAlterationSource
+    {
+        Consumable,
+        Armor,
+        Weapon,
+        Boots,
+        Spell
+    }
     /// <summary>
     /// Représente une altération d'état en cours.
     /// </summary>
     public class StateAlteration
     {
+        public const float DURATION_INFINITY = 50000;
         /// <summary>
         /// Représente la source de l'altération d'état.
         /// </summary>
         public EntityBase Source { get; set; }
         /// <summary>
+        /// Représente le type de source de l'altération d'état.
+        /// Les altérations d'état peuvent provenir de Consommables,
+        /// Armes, Armures, Bottes, et Spells.
+        /// </summary>
+        public StateAlterationSource SourceType { get; set; }
+        /// <summary>
         /// Représente le modèle d'altération d'état appliquée sur une entité.
         /// </summary>
         public StateAlterationModel Model { get; set; }
-
         /// <summary>
         /// Représente les paramètres de l'altération d'état.
         /// </summary>
@@ -76,13 +91,13 @@ namespace Clank.View.Engine.Entities
         /// La durée restante de l'altération d'état est déterminée à partir
         /// de la durée contenue dans le modèle d'altération d'état donné.
         /// </summary>
-        public StateAlteration(EntityBase source, StateAlterationModel model, StateAlterationParameters parameters)
+        public StateAlteration(EntityBase source, StateAlterationModel model, StateAlterationParameters parameters, StateAlterationSource sourceType)
         {
             Parameters = parameters;
             Source = source;
             Model = model;
-            RemainingTime = model.Duration;
-
+            SourceType = sourceType;
+            RemainingTime = model.CalculateDurationValue(source);
         }
 
         /// <summary>
@@ -92,7 +107,16 @@ namespace Clank.View.Engine.Entities
         /// <param name="time"></param>
         public void Update(GameTime time)
         {
-            RemainingTime -= (float)time.ElapsedGameTime.TotalSeconds;
+            if(RemainingTime < DURATION_INFINITY)
+                RemainingTime -= (float)time.ElapsedGameTime.TotalSeconds;
+        }
+
+        /// <summary>
+        /// Fait arrêter l'intéraction de manière prématurée.
+        /// </summary>
+        public void EndNow()
+        {
+            RemainingTime = 0;
         }
     }
 }
