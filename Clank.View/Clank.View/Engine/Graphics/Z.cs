@@ -22,6 +22,7 @@ namespace Clank.View.Engine.Graphics
         public const float Background   = 0.0f;
         public const float Map          = 0.01f;
         public const float GUI          = 0.8f;
+        public const float Particles    = 0.7f;
         #endregion
 
     }

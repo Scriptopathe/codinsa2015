@@ -92,6 +92,7 @@
     <Compile Include="Engine\Equip\Armor.cs" />
     <Compile Include="Engine\Equip\Shop.cs" />
     <Compile Include="Engine\GameConstants.cs" />
+    <Compile Include="Engine\Graphics\Charset.cs" />
     <Compile Include="Engine\Graphics\GaussianBlur.cs" />
     <Compile Include="Engine\Graphics\Z.cs" />
     <Compile Include="Engine\Gui\Drawing.cs">
@@ -117,6 +118,12 @@
     </Compile>
     <Compile Include="Engine\Input.cs" />
     <Compile Include="Engine\Map.cs" />
+    <Compile Include="Engine\Particles\Particle.cs" />
+    <Compile Include="Engine\Particles\ParticleAnimation.cs" />
+    <Compile Include="Engine\Particles\ParticleBase.cs" />
+    <Compile Include="Engine\Particles\ParticleManager.cs" />
+    <Compile Include="Engine\Particles\ParticleText.cs" />
+    <Compile Include="Engine\Particles\ParticleTexture.cs" />
     <Compile Include="Engine\Ressources.cs" />
     <Compile Include="Engine\RewardSystem.cs" />
     <Compile Include="Engine\Scheduler.cs" />
@@ -190,9 +197,7 @@
     <None Include="Engine\Views\Clank\stdtypes.clank" />
     <None Include="Engine\Views\Clank\XNAMacros.clank" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Engine\Particles\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--
