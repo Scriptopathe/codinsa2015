@@ -40,8 +40,8 @@ namespace Clank.View.Engine.Particles
         /// <summary>
         /// Crée une nouvelle instance de ParticleText.
         /// </summary>
-        public ParticleText(GameTime time)
-            : base(time)
+        public ParticleText()
+            : base()
         {
             Font = Ressources.Font;
             Text = "";
@@ -57,9 +57,9 @@ namespace Clank.View.Engine.Particles
         /// Dessine la particule à l'écran.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(SpriteBatch batch)
+        public override void Draw(SpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset)
         {
-            batch.DrawString(Font, Text, CurrentPosition, CurrentColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.Particles);
+            batch.DrawString(Font, Text, CurrentPosition * Map.UnitSize - viewportOffset - scrollingOffset, CurrentColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.Particles);
         }
         /// <summary>
         /// Libère la mémoire utilisée par cette particule.

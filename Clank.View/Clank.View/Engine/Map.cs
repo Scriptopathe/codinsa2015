@@ -262,8 +262,8 @@ namespace Clank.View.Engine
             __passabilityDrawRect(new Rectangle(3, 4, 20, 2), false);
 
             
-            m_entities.Add(0, new EntityHero() { Position = new Vector2(2, 2), Type = EntityType.Team1Player });
-            m_entities.Add(1, new EntityBase() { Position = new Vector2(15, 10), Type = EntityType.Team2Player });
+            m_entities.Add(0, new EntityHero() { Position = new Vector2(2, 2), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter , BaseMaxHP = 50000, HP = 50000});
+            m_entities.Add(1, new EntityHero() { Position = new Vector2(15, 10), Type = EntityType.Team2Player });
             m_entities.Add(2, new EntityTower() { Position = new Vector2(14, 20), Type = EntityType.Team2Tower });
             m_entities.Add(3, new EntityTower() { Position = new Vector2(21, 20), Type = EntityType.Team2Tower });
             m_entities.Add(4, new EntityTower() { Position = new Vector2(18, 32), Type = EntityType.Team2Tower });

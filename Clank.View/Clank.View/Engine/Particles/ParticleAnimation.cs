@@ -39,7 +39,7 @@ namespace Clank.View.Engine.Particles
         /// Crée une nouvelle instance de ParticleText.
         /// </summary>
         public ParticleAnimation(GameTime time, Vector2 startPos, Vector2 endPos)
-            : base(time)
+            : base()
         {
             StartPosition = startPos;
             CurrentPosition = startPos;
@@ -74,7 +74,7 @@ namespace Clank.View.Engine.Particles
         /// Dessine la particule à l'écran.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(SpriteBatch batch)
+        public override void Draw(SpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset)
         {
             Rectangle srcTile = Charset.GetWalkSrcRect(m_counter / 8);
             batch.Draw(Charset.Texture, this.CurrentPosition, srcTile, CurrentColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.Particles);

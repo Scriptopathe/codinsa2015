@@ -8,6 +8,7 @@ using Clank.View.Engine;
 using Clank.View.Engine.Entities;
 using Clank.View.Engine.Gui;
 using Clank.View.Engine.Editor;
+using Clank.View.Engine.Particles;
 namespace Clank.View
 {
     /// <summary>
@@ -76,6 +77,14 @@ namespace Clank.View
             set;
         }
 
+        /// <summary>
+        /// Obtient une référence vers le gestionnaire de particules de la scène.
+        /// </summary>
+        public ParticleManager Particles
+        {
+            get;
+            set;
+        }
 
         #endregion
 
@@ -105,6 +114,7 @@ namespace Clank.View
             GuiManager = new GuiManager();
             MapEditControler = new MapEditorControler(Map);
             RewardSystem = new RewardSystem(Map.Heroes);
+            Particles = new ParticleManager();
         }
         /// <summary>
         /// Charge le contenu de la scène.
@@ -134,6 +144,9 @@ namespace Clank.View
             // Mets à jour la gui
             GuiManager.Update(time);
 
+            // Mets à jour les particules.
+            Particles.Update(time);
+
             // Mets à jour l'input
             Input.Update();
         }
@@ -149,6 +162,7 @@ namespace Clank.View
             batch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied);
             GuiManager.Draw(batch);
             MapEditControler.Draw(batch);
+            Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
             batch.End();
         }
 

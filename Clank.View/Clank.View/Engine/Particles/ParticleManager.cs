@@ -68,12 +68,12 @@ namespace Clank.View.Engine.Particles
         /// Dessine les particules gérées par ce Manager.
         /// </summary>
         /// <param name="batch"></param>
-        public void Draw(SpriteBatch batch)
+        public void Draw(SpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset)
         {
             foreach (Particle particle in m_particles)
             {
                 if (!particle.IsDisposed)
-                    particle.Draw(batch);
+                    particle.Draw(batch, viewportOffset, scrollingOffset);
             }
         }
         /// <summary>

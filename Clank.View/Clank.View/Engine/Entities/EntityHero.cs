@@ -54,12 +54,21 @@ namespace Clank.View.Engine.Entities
         }
 
         /// <summary>
+        /// Différence de PA entre la frame précédente et cette frame.
+        /// </summary>
+        float __paDiff;
+        /// <summary>
         /// Obtient les points d'amélioration obtenus par ce héros.
         /// </summary>
         public float PA
         {
             get { return m_pa; }
-            set { m_pa = value; }
+            set 
+            {
+                float diff = value - m_pa;
+                m_pa = value;
+                __paDiff += diff;
+            }
         }
 
         /// <summary>
@@ -114,11 +123,27 @@ namespace Clank.View.Engine.Entities
             base.DoUpdate(time);
             __UpdateDebug(time);
             UpdateMoveTo(time);
+            UpdatePAParticle();
         }
         #endregion
 
         #region API
-
+        /// <summary>
+        /// Mets à jour les particules des PA.
+        /// </summary>
+        void UpdatePAParticle()
+        {
+            if (__paDiff > 10)
+                Mobattack.GetScene().Particles.Add(new Particles.ParticleText()
+                {
+                    CurrentColor = Color.White,
+                    MoveFunction = Particles.ParticleBase.MoveLine((this.Position + new Vector2(0, -1))),
+                    DurationSeconds = 2f,
+                    StartPosition = this.Position,
+                    Text = (__paDiff < 0 ? "" : "+") + ((int)__paDiff).ToString()
+                });
+            __paDiff = 0;
+        }
         /// <summary>
         /// Mets à jour le suivi de la trajectoire créée par A*.
         /// </summary>
@@ -202,10 +227,11 @@ namespace Clank.View.Engine.Entities
             __spell.UpdateCooldown((float)time.ElapsedGameTime.TotalSeconds);
             if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Space))
             {
+                Vector2 dir = pos - Position; dir.Normalize();
                 __spell.Use(new Spells.SpellCastTargetInfo()
                 {
                     Type = TargettingType.Direction,
-                    TargetDirection = Direction
+                    TargetDirection = dir
                 });
             }
         }

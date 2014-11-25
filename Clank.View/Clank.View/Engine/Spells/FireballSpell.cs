@@ -52,12 +52,12 @@ namespace Clank.View.Engine.Spells
                     DieOnCollision = true,
                     Type = TargettingType.Direction
                 },
-                BaseCooldown = 0.6f,
-                CastingTime = 0.5f,
+                BaseCooldown = 0.5f,
+                CastingTime = 0.01f,
                 CastingTimeAlteration = new StateAlterationModel() 
                 {
                     Type = StateAlterationType.Root,
-                    BaseDuration = 0.05f,
+                    BaseDuration = 0.01f,
                 },
                 
                 OnHitEffects = new List<StateAlterationModel>() { 

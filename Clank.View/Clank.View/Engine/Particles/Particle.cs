@@ -19,7 +19,7 @@ namespace Clank.View.Engine.Particles
         /// Dessine la particule à l'écran.
         /// </summary>
         /// <param name="batch"></param>
-        public abstract void Draw(SpriteBatch batch);
+        public abstract void Draw(SpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset);
         /// <summary>
         /// Libère la mémoire utilisée par cette particule.
         /// </summary>

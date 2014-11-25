@@ -20,7 +20,11 @@ namespace Clank.View
         GraphicsDeviceManager m_graphics;
         SpriteBatch m_spriteBatch;
         Scene m_scene;
-
+        GameTime m_time;
+        public static GameTime GetTime()
+        {
+            return Instance.m_time;
+        }
         public static Vector2 GetScreenSize()
         {
             return new Vector2(1366, 768);
@@ -97,6 +101,7 @@ namespace Clank.View
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            m_time = gameTime;
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();

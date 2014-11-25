@@ -251,8 +251,9 @@ namespace Clank.View.Engine.Particles
         /// <summary>
         /// Crée une nouvelle instance de ParticleText.
         /// </summary>
-        public ParticleBase(GameTime time)
+        public ParticleBase()
         {
+            GameTime time = Mobattack.GetTime();
             CreationTime = new GameTime(time.TotalGameTime, time.ElapsedGameTime, time.IsRunningSlowly);
             DurationSeconds = 2.0f;
             FadeBaseColor = new Color(255, 255, 255, 255);
@@ -326,7 +327,7 @@ namespace Clank.View.Engine.Particles
         /// Dessine la particule à l'écran.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(SpriteBatch batch)
+        public override void Draw(SpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset)
         {
 
         }

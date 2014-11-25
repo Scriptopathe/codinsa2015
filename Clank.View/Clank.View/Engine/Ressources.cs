@@ -118,7 +118,7 @@ namespace Clank.View.Engine
         {
             
             DummyTexture = content.Load<Texture2D>("textures/dummy");
-            Font = content.Load<SpriteFont>("segoe_ui_16");// content.Load<SpriteFont>("segoe_ui_16");
+            Font = content.Load<SpriteFont>("textfont");// content.Load<SpriteFont>("segoe_ui_16");
             NumbersFont = content.Load<SpriteFont>("numbers_font");
             SelectMark = content.Load<Texture2D>("textures/select_mark");
             MenuItem = content.Load<Texture2D>("textures/gui/menu_item");

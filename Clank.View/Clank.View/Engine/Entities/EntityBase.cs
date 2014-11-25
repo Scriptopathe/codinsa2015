@@ -555,9 +555,9 @@ namespace Clank.View.Engine.Entities
             EntityCount++;
 
             // Code de debug
-            BaseMaxHP = 5000;
+            BaseMaxHP = 50;
             HP = BaseMaxHP;
-            BaseArmor = 450;
+            BaseArmor = 50;
             VisionRange = 3.0f;
             DamageTimeMemory = 30f;
 
