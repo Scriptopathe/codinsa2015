@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Clank.View.Engine;
+using Clank.View.Engine.Entities;
 using Clank.View.Engine.Gui;
 using Clank.View.Engine.Editor;
 namespace Clank.View
@@ -65,6 +66,17 @@ namespace Clank.View
             get;
             set;
         }
+
+        /// <summary>
+        /// Obtient une référence vers le système de récompenses.
+        /// </summary>
+        public RewardSystem RewardSystem
+        {
+            get;
+            set;
+        }
+
+
         #endregion
 
         #region Methods
@@ -92,6 +104,7 @@ namespace Clank.View
             EventSheduler = new Scheduler();
             GuiManager = new GuiManager();
             MapEditControler = new MapEditorControler(Map);
+            RewardSystem = new RewardSystem(Map.Heroes);
         }
         /// <summary>
         /// Charge le contenu de la scène.
@@ -112,12 +125,14 @@ namespace Clank.View
             // Mets à jour la map
             Map.Update(time);
 
+            // Mets à jour les récompenses.
+            RewardSystem.Update(time);
+
             // Mets à jour le contrôleur
             MapEditControler.Update(time);
 
             // Mets à jour la gui
             GuiManager.Update(time);
-
 
             // Mets à jour l'input
             Input.Update();
@@ -131,7 +146,6 @@ namespace Clank.View
         public void Draw(GameTime time, SpriteBatch batch)
         {
             Map.Draw(time, batch);
-
             batch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied);
             GuiManager.Draw(batch);
             MapEditControler.Draw(batch);

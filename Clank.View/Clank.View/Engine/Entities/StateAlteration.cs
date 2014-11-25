@@ -97,7 +97,7 @@ namespace Clank.View.Engine.Entities
             Source = source;
             Model = model;
             SourceType = sourceType;
-            RemainingTime = model.CalculateDurationValue(source);
+            RemainingTime = model.GetDuration(source);
         }
 
         /// <summary>

@@ -54,7 +54,8 @@ namespace Clank.View.Engine.Entities
         Team1Creep      = Team1 | Creep,
         Team2Creep      = Team2 | Creep,
         Team1Checkpoint = Team1 | Checkpoint,
-        Team2CheckPoint = Team2 | Checkpoint
+        Team2CheckPoint = Team2 | Checkpoint,
+        Teams           = Team1 | Team2
     }
 
     /// <summary>

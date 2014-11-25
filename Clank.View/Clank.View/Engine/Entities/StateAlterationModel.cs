@@ -28,12 +28,13 @@ namespace Clank.View.Engine.Entities
         // Autres
         Dash            = 0x1000,
         AttackDamage    = 0x2000,     // indique que le sort inflige des dégâts ou soigne
-        TrueDamage      = 0x4000,
-        Heal            = 0x8000,
-        Stealth         = 0x10000,
-        Shield          = 0x20000,
-        Sight           = 0x40000,
-        TrueSight       = 0x80000,
+        MagicDamage     = 0x4000,
+        TrueDamage      = 0x8000,
+        Heal            = 0x10000,
+        Stealth         = 0x20000,
+        Shield          = 0x40000,
+        Sight           = 0x80000,
+        TrueSight       = 0x100000,
     }
 
     public enum ScalingRatios
@@ -206,7 +207,7 @@ namespace Clank.View.Engine.Entities
         /// 
         /// Par exemple, si scaling ratios ne contient pas SrcAd, source.GetAttackDamage() ne sera pas appelé.
         /// </summary>
-        public float CalculateDamageValue(EntityBase source, EntityBase destination, ScalingRatios ratios)
+        public float GetValue(EntityBase source, EntityBase destination, ScalingRatios ratios)
         {
             float totalValue = FlatValue;
             if ((ratios & ScalingRatios.SrcAd) == ScalingRatios.SrcAd)
@@ -273,7 +274,7 @@ namespace Clank.View.Engine.Entities
                     case EntityHeroRole.Tank:
                         if (Type.HasFlag(StateAlterationType.MoveSpeed))
                             totalValue *= constants.TankMoveSpeedBonusMultiplier;
-                        else if(Type.HasFlag(StateAlterationType.Armor)
+                        else if(Type.HasFlag(StateAlterationType.Armor))
                             totalValue *= constants.TankArmorBonusMultiplier;
                         else if(Type.HasFlag(StateAlterationType.RM))
                             totalValue *= constants.TankRMBonusMultiplier;
@@ -302,7 +303,7 @@ namespace Clank.View.Engine.Entities
         /// Retourne la durée effective de l'altération d'état en prenant en compte les différents
         /// bonus des altérations.
         /// </summary>
-        public float CalculateDurationValue(EntityBase source)
+        public float GetDuration(EntityBase source)
         {
             float duration = BaseDuration;
             // Application des bonus de rôles.

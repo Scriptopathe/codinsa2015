@@ -62,6 +62,14 @@ namespace Clank.View.Engine
 
         #region Properties
         /// <summary>
+        /// Retourne la liste des héros.
+        /// </summary>
+        public List<EntityHero> Heroes
+        {
+            get;
+            set;
+        }
+        /// <summary>
         /// Obtient la taille de la map en cases.
         /// </summary>
         public Point Size
@@ -268,6 +276,9 @@ namespace Clank.View.Engine
 
             Vision = new VisionMap(this);
 
+            // Ajout des héros
+            Heroes = new List<EntityHero>();
+            Heroes.Add((EntityHero)m_entities[0]);
         }
         /// <summary>
         /// Mets à jour la map ainsi que les entités qu'elle contient.

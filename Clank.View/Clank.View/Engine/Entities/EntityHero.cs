@@ -27,7 +27,7 @@ namespace Clank.View.Engine.Entities
         /// <summary>
         /// Points d'amélioration obtenus par ce héros.
         /// </summary>
-        float m_xp;
+        float m_pa;
         
         /// <summary>
         /// Représente l'armure possédée par ce héros.
@@ -56,10 +56,10 @@ namespace Clank.View.Engine.Entities
         /// <summary>
         /// Obtient les points d'amélioration obtenus par ce héros.
         /// </summary>
-        public float XP
+        public float PA
         {
-            get { return m_xp; }
-            set { m_xp = value; }
+            get { return m_pa; }
+            set { m_pa = value; }
         }
 
         /// <summary>

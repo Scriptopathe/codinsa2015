@@ -118,6 +118,7 @@
     <Compile Include="Engine\Input.cs" />
     <Compile Include="Engine\Map.cs" />
     <Compile Include="Engine\Ressources.cs" />
+    <Compile Include="Engine\RewardSystem.cs" />
     <Compile Include="Engine\Scheduler.cs" />
     <Compile Include="Engine\Shapes\CircleShape.cs" />
     <Compile Include="Engine\Shapes\RectangleShape.cs" />

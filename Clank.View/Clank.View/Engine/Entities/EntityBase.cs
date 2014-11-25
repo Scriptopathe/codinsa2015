@@ -352,9 +352,9 @@ namespace Clank.View.Engine.Entities
             foreach(StateAlteration alteration in alterations)
             {
                 if (alteration.Source != this)
-                    totalDamage += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstAd);
+                    totalDamage += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstAd);
                 else
-                    totalDamage += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.DstAd | ScalingRatios.SrcAd));
+                    totalDamage += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.DstAd | ScalingRatios.SrcAd));
             }
 
 
@@ -394,9 +394,9 @@ namespace Clank.View.Engine.Entities
             foreach (StateAlteration alteration in alterations)
             {
                 if (alteration.Source != this)
-                    totalArmor += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstArmor);
+                    totalArmor += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstArmor);
                 else
-                    totalArmor += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.SrcArmor | ScalingRatios.DstArmor));
+                    totalArmor += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.SrcArmor | ScalingRatios.DstArmor));
             }
 
 
@@ -446,9 +446,9 @@ namespace Clank.View.Engine.Entities
             foreach (StateAlteration alteration in alterations)
             {
                 if (alteration.Source != this)
-                    totalHP += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstMaxHP);
+                    totalHP += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstMaxHP);
                 else
-                    totalHP += alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.SrcMaxHP | ScalingRatios.DstMaxHP));
+                    totalHP += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.SrcMaxHP | ScalingRatios.DstMaxHP));
             }
 
 
@@ -558,7 +558,7 @@ namespace Clank.View.Engine.Entities
             BaseMaxHP = 5000;
             HP = BaseMaxHP;
             BaseArmor = 450;
-            VisionRange = 5.0f;
+            VisionRange = 3.0f;
             DamageTimeMemory = 30f;
 
             // Initialisation
@@ -698,6 +698,9 @@ namespace Clank.View.Engine.Entities
         /// <param name="time"></param>
         public void Update(GameTime time)
         {
+            if (IsDisposing)
+                return;
+
             // Apply state alterations
             ApplyStateAlterations(time);
 
@@ -709,7 +712,10 @@ namespace Clank.View.Engine.Entities
             UpdateAgressionInfo(time);
 
             if (IsDead)
+            {
+                OnDeath();
                 IsDisposing = true;
+            }
         }
 
         /// <summary>
@@ -720,6 +726,39 @@ namespace Clank.View.Engine.Entities
         protected virtual void DoUpdate(GameTime time)
         {
 
+        }
+
+        /// <summary>
+        /// Fonction appelée lorsque l'entité meurt.
+        /// </summary>
+        protected virtual void OnDeath()
+        {
+            // Recherche le tueur de l'entité.
+            float maxTime = float.MinValue;
+            EntityHero killer = null;
+            foreach (var kvp in m_recentlyAgressiveEntitiesMemoryTime)
+            {
+                EntityHero entity = Mobattack.GetMap().GetEntityById(kvp.Key) as EntityHero;
+                if (entity != null)
+                {
+                    if (kvp.Value > maxTime)
+                    {
+                        maxTime = kvp.Value;
+                        killer = entity;
+                    }
+                }
+            }
+
+            // Notifie la mort de l'entité au système de récompenses.
+            if (this is EntityHero)
+            {
+                Mobattack.GetScene().RewardSystem.NotityHeroDeath((EntityHero)this, killer);
+            }
+            else
+            {
+                Mobattack.GetScene().RewardSystem.NotifyUnitDeath(this, killer);
+            }
+            
         }
         #region Alterations
         /// <summary>
@@ -740,7 +779,37 @@ namespace Clank.View.Engine.Entities
                     m_recentlyAgressiveEntitiesMemoryTime.Add(alteration.Source.ID, DamageTimeMemory);
                 }
                 // Applique les dégâts de base du sort + dégâts bonus fonction de l'attaque de la source.
-                ApplyDamage(alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All));
+                float trueDamageDealt = ApplyAttackDamage(alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
+
+
+                // Notifie le système de récompenses.
+                if(this is EntityHero && alteration.Source is EntityHero)
+                {
+                    Mobattack.GetScene().RewardSystem.NotifyDamageDealt(alteration.Source, this, trueDamageDealt);
+                }
+            }
+
+            // Applique les dégâts AP
+            List<StateAlteration> magicDamageAlterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.MagicDamage);
+            foreach (StateAlteration alteration in magicDamageAlterations)
+            {
+                // Ajoute l'entité à la liste des entités ayant récemment agressé cette entité.
+                if (m_recentlyAggressiveEntities.ContainsKey(alteration.Source.ID))
+                    m_recentlyAgressiveEntitiesMemoryTime[alteration.Source.ID] = DamageTimeMemory;
+                else
+                {
+                    m_recentlyAggressiveEntities.Add(alteration.Source.ID, alteration.Source);
+                    m_recentlyAgressiveEntitiesMemoryTime.Add(alteration.Source.ID, DamageTimeMemory);
+                }
+                // Applique les dégâts de base du sort + dégâts bonus fonction de l'attaque de la source.
+                float trueDamageDealt = ApplyMagicDamage(alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
+
+
+                // Notifie le système de récompenses.
+                if (this is EntityHero && alteration.Source is EntityHero)
+                {
+                    Mobattack.GetScene().RewardSystem.NotifyDamageDealt(alteration.Source, this, trueDamageDealt);
+                }
             }
 
             // Applique les dégâts bruts.
@@ -757,14 +826,14 @@ namespace Clank.View.Engine.Entities
                 }
 
                 // Applique les dégâts de base du sort + dégâts bonus fonction de l'attaque de la source.
-                ApplyTrueDamage(alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All));
+                ApplyTrueDamage(alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
             }
 
             // Applique les soins
             List<StateAlteration> healAlterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.Heal);
             foreach(StateAlteration alteration in healAlterations)
             {
-                ApplyHeal(alteration.Model.CalculateDamageValue(alteration.Source, this, ScalingRatios.All));
+                ApplyHeal(alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
             }
 
             // Applique les dash
@@ -802,31 +871,71 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         public void AddAlteration(StateAlteration alteration)
         {
+            // Notifications au système de récompenses.
+            switch(alteration.Model.Type)
+            {
+                case StateAlterationType.DamageBuff:
+                case StateAlterationType.AP:
+                case StateAlterationType.AttackSpeed:
+                case StateAlterationType.Armor:
+                case StateAlterationType.CDR:
+                case StateAlterationType.MaxHP:
+                case StateAlterationType.Regen:
+                case StateAlterationType.RM:
+                    Mobattack.GetScene().RewardSystem.NotifyBuffOrDebuffReception(alteration.Source,
+                        this, alteration.Model, 
+                        alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
+                    break;
+            }
             m_stateAlterations.Add(alteration);
         }
+
         /// <summary>
         /// Applique le nombre de dégâts indiqué à cette entité.
         /// Cette fonction prend en compte l'armure de l'entité pour déterminer
         /// les dégâts réellement infligés.
         /// </summary>
-        /// <param name="damage"></param>
-        protected virtual void ApplyDamage(float damage)
+        /// <returns>Retourne le nombre de dégâts bruts infligés.</returns>
+        protected virtual float ApplyAttackDamage(float damage)
         {
             float trueDamages = (damage * 100 / (100 + GetArmor()));
             ApplyTrueDamage(trueDamages);
+            return trueDamages;
+        }
+        /// <summary>
+        /// Applique le nombre de dégâts magiques indiqué à cette entité.
+        /// Cette fonction prend en compte la résistance magique de l'entité pour déterminer
+        /// les dégâts réellement infligés.
+        /// </summary>
+        /// <returns>Retourne le nombre de dégâts bruts infligés.</returns>
+        protected virtual float ApplyMagicDamage(float damage)
+        {
+            float trueDamages = (damage * 100 / (100 + GetMagicResist()));
+            ApplyTrueDamage(trueDamages);
+            return trueDamages;
         }
         /// <summary>
         /// Applique le nombre de dégâts bruts indiqué à cette entité.
         /// </summary>
         protected virtual void ApplyTrueDamage(float damage)
         {
+            // Notification au système de récompenses pour les shields.
+            if(this is EntityHero)
+            {
+                // Notif de la consommation de shields.
+                StateAlterationCollection shields = m_stateAlterations.GetInteractionsByType(StateAlterationType.Shield);
+                foreach (var shield in shields)
+                {
+                    if(shield.Source is EntityHero)
+                        Mobattack.GetScene().RewardSystem.NotifyShieldConsumption((EntityHero)this, (EntityHero)shield.Source, Math.Min(ShieldPoints, damage));
+                }
+            }
+
             float remainingDamage = Math.Max(0, damage - ShieldPoints);
             float remainingShield = Math.Max(0, ShieldPoints - damage);
 
             m_shieldPoints = remainingShield;
-            HP -= remainingDamage;
-
-            
+            HP -= remainingDamage;            
         }
 
         /// <summary>
