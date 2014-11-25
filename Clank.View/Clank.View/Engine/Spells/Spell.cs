@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Clank.View.Engine.Entities;
+using Clank.View.Engine;
 namespace Clank.View.Engine.Spells
 {
     /// <summary>
@@ -84,6 +86,16 @@ namespace Clank.View.Engine.Spells
         }
         #endregion
 
+        #region Indicateurs textuels
+        /// <summary>
+        /// Obtient le nom du spell.
+        /// </summary>
+        public string Name
+        {
+            get;
+            set;
+        }
+        #endregion
         #region Methods
         /// <summary>
         /// Obtient le temps de récupération de ce spell après l'utilisation d'un
@@ -96,6 +108,24 @@ namespace Clank.View.Engine.Spells
             return Description.BaseCooldown;
         }
 
+        /// <summary>
+        /// Indique si oui ou non ce sort a un effet sur l'entité donné.
+        /// </summary>
+        public bool HasEffectOn(EntityBase entity, SpellCastTargetInfo info)
+        {
+            // Vérifie que le sort peut toucher cette entité.
+            EntityTypeRelative flag = EntityTypeConverter.ToRelative(entity.Type, SourceCaster.Type & (EntityType.Team1 | EntityType.Team2));
+            if (!(Description.TargetType.AllowedTargetTypes.HasFlag(flag) ||
+                 (Description.TargetType.AllowedTargetTypes.HasFlag(EntityTypeRelative.Me) && entity.ID == SourceCaster.ID)))
+                return false;
+
+            // Vérifie que si le sort est targetté, il on est bien sur la bonne cible.
+            if (Description.TargetType.Type == Spells.TargettingType.Targetted &&
+                entity.ID != info.TargetId)
+                return false;
+
+            return true;
+        }
         /// <summary>
         /// Utilise ce spell, si il n'est pas en cooldown et que la cible spécifiée est valide.
         /// </summary>
@@ -145,7 +175,7 @@ namespace Clank.View.Engine.Spells
         /// <param name="target"></param>
         protected virtual void DoUseSpell(SpellCastTargetInfo target)
         {
-            
+
         }
 
         /// <summary>

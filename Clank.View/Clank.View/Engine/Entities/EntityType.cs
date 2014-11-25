@@ -12,23 +12,23 @@ namespace Clank.View.Engine.Entities
     /// </summary>
     public enum EntityType
     {
-        Monster         = 0x01,
         Team1           = 0x02,
         Team2           = 0x04,
-        Struture        = 0x08,
-        Tower           = 0x10 | Struture,
-        Inhibitor       = 0x20 | Struture,
-        Spawner         = 0x40 | Struture,
-        Idol            = 0x80 | Struture,
+        Structure       = 0x08,
+        Tower           = 0x10 | Structure,
+        Inhibitor       = 0x20 | Structure,
+        Spawner         = 0x40 | Structure,
+        Idol            = 0x80 | Structure,
 
         // Neutral
-        Boss            = 0x0100 | Monster,
-        Miniboss        = 0x0200 | Monster,
+        Monster         = 0x0100,
+        Creep           = 0x0200,
         WardPlacement   = 0x00010000,
         Ward            = 0x00020000,
 
         // Creeps
-        Creep           = 0x0400,
+        Boss            = 0x0400 | Monster,
+        Miniboss        = 0x0800 | Monster,
         Checkpoint      = 0x4000,
 
         // Player
@@ -63,7 +63,7 @@ namespace Clank.View.Engine.Entities
     /// </summary>
     public enum EntityTypeRelative
     {
-        Monster         = 0x01,
+        Me              = 0x01,
         Ally            = 0x02,
         Ennemy          = 0x04,
         Structure       = 0x08,
@@ -73,17 +73,18 @@ namespace Clank.View.Engine.Entities
         Idol            = 0x80 | Structure,
 
         // Neutral
-        Boss            = 0x0100 | Monster,
-        Miniboss        = 0x0200 | Monster,
-        
-        // Creeps
-        Creep           = 0x0400,
-        Checkpoint      = 0x4000,
-        Player          = 0x8000,
-
-        // Wards
+        Monster         = 0x0100,
+        Creep           = 0x0200,
         WardPlacement   = 0x00010000,
         Ward            = 0x00020000,
+
+        // Creeps
+        Boss            = 0x0400 | Monster,
+        Miniboss        = 0x0800 | Monster,
+        Checkpoint      = 0x4000,
+
+        // Player
+        Player          = 0x8000,
 
         // Macros
         AllEnnemy       = Ennemy | Tower | Inhibitor | Spawner | Idol | Player | Creep,

@@ -45,7 +45,6 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         int m_currentCheckpointId;
 
-        EntityCheckpoint m_lastCheckpoint;
         #endregion
 
         #region Properties
@@ -79,6 +78,7 @@ namespace Clank.View.Engine.Entities
             Attack(time);
             Travel(time);
         }
+
         /// <summary>
         /// Attaque l'ennemi ayant l'agro.
         /// </summary>

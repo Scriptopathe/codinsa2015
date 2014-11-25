@@ -20,7 +20,7 @@ namespace Clank.View.Engine.Editor
         bool m_terraFormingMode = true;
         int m_rowId = 0;
         int m_checkpointId = 0;
-
+        bool m_captureMouse = true;
         private Gui.GuiButton m_modeButton;
         #endregion
 
@@ -90,6 +90,9 @@ namespace Clank.View.Engine.Editor
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.LeftShift))
                 IsEnabled = !IsEnabled;
 
+            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightControl))
+                m_captureMouse = !m_captureMouse;
+
             if (!IsEnabled)
                 return;
 
@@ -100,6 +103,8 @@ namespace Clank.View.Engine.Editor
                 Map.UnitSize *= 2;
             else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Subtract))
                 Map.UnitSize /= 2;
+
+
             if (m_terraFormingMode && mousePosPx.Y > 25)
             { 
                 // Ajout de matière
@@ -220,7 +225,7 @@ namespace Clank.View.Engine.Editor
         /// <summary>
         /// Mets à jour le scrolling en fonction de la position de la souris.
         /// </summary>
-        void UpdateScrolling()
+        void UpdateMouseScrolling()
         {
             // Récupère la position de la souris, et la garde sur le bord.
             Vector2 position = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
@@ -242,27 +247,35 @@ namespace Clank.View.Engine.Editor
         /// Dessine les éléments graphiques du contrôleur.
         /// </summary>
         public void Draw(SpriteBatch batch)
-        {
+        {            
+            // Récupère la position de la souris
+            Vector2 position = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
+            // Dessine le cursor
+            batch.Draw(Ressources.Cursor, new Rectangle((int)position.X, (int)position.Y, 32, 32), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.Front);
+
+            if(m_captureMouse)
+                UpdateMouseScrolling();
+
+            
             if (!IsEnabled)
             {
                 m_modeButton.Visible = false;
                 return;
             }
-            else
-                m_modeButton.Visible = true;
+            
+            m_modeButton.Visible = true;
 
-            // Récupère la position de la souris, et la garde sur le bord.
-            Vector2 position = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
+            // Dessine le bandeau supérieur
             batch.Draw(Ressources.DummyTexture, new Rectangle(0, 0, (int)Mobattack.GetScreenSize().X, 25),
                 null, new Color(255, 255, 255, 200), 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI + 5 * Graphics.Z.BackStep);
-
-            batch.Draw(Ressources.Cursor, new Rectangle((int)position.X, (int)position.Y, 32, 32), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.Front);
             
-            
+            // Dessine la minimap
             DrawMinimap(batch, new Rectangle((int)Mobattack.GetScreenSize().X - 200, (int)Mobattack.GetScreenSize().Y - 100, 200, 100), Graphics.Z.GUI + 2 * Graphics.Z.BackStep);
+            
+            // Dessine des infos de debug.
             batch.DrawString(Ressources.Font, "RowId = " + m_rowId + " | CheckpointId = " + m_checkpointId, new Vector2(5, Mobattack.GetScreenSize().Y - 50), Color.Black);
 
-            UpdateScrolling();
+
         }
 
         /// <summary>

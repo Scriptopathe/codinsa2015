@@ -7,17 +7,21 @@ using Clank.View.Engine.Entities;
 namespace Clank.View.Engine.Spells
 {
     /// <summary>
-    /// Représente spell "boule de feu". (test).
+    /// Représente un coup de tour.
     /// </summary>
-    public class FireballSpell : Spell
+    public class DashForwardSpell : Spell
     {
         /// <summary>
-        /// Utilise le spell "Fireball".
+        /// Utilise le spell
         /// </summary>
         /// <param name="target"></param>
         protected override void DoUseSpell(SpellCastTargetInfo target)
         {
             base.DoUseSpell(target);
+
+            // Vérification de range
+
+
             Spellcasts.SpellcastBase fireball = new Spellcasts.SpellcastBase(this, target);
             Mobattack.GetMap().AddSpellcast(fireball);
         }
@@ -32,39 +36,35 @@ namespace Clank.View.Engine.Spells
         }
 
         /// <summary>
-        /// Crée une nouvelle instance de FireballSpell.
+        /// Crée une nouvelle instance de ce spell.
         /// </summary>
         /// <param name="caster"></param>
-        public FireballSpell(EntityBase caster)
+        public DashForwardSpell(EntityBase caster)
         {
             SourceCaster = caster;
             Levels = new List<SpellDescription>() { new SpellDescription()
             {
-                
                 TargetType = new SpellTargetInfo()
                 {
-                    AllowedTargetTypes = EntityTypeRelative.AllEnnemy,
-                    AoeRadius = 0.3f,
-                    Range = 6f,
-                    Duration = 0.6f,
-                    DieOnCollision = true,
-                    Type = TargettingType.Direction
+                    AllowedTargetTypes = EntityTypeRelative.Me,
+                    Type = TargettingType.Targetted,
                 },
                 BaseCooldown = 0.5f,
-                CastingTime = 0.01f,
+                CastingTime = 0.05f,
                 CastingTimeAlteration = new StateAlterationModel() 
                 {
                     Type = StateAlterationType.Root,
-                    BaseDuration = 0.01f,
+                    BaseDuration = 0.05f,
                 },
                 
                 OnHitEffects = new List<StateAlterationModel>() { 
                     new StateAlterationModel()
                     {
-                        Type = StateAlterationType.AttackDamage,
-                        BaseDuration = 0.0f,
-                        FlatValue = 100.0f,
-                        SourcePercentADValue = 0.0f,
+                        Type = StateAlterationType.Dash,
+                        DashSpeed = 60,
+                        DashGoThroughWall = true,
+                        DashDirectionType = Entities.DashDirectionType.Direction,
+                        BaseDuration = 0.0750f,
                     },
                 }
             }};

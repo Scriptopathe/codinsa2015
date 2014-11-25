@@ -76,6 +76,8 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\Controlers\HumanControler.cs" />
+    <Compile Include="Engine\Controlers\ControlerBase.cs" />
     <Compile Include="Engine\Editor\MapEditorControler.cs" />
     <Compile Include="Engine\Entities\EntityBase.cs" />
     <Compile Include="Engine\Entities\EntityWardPlacement.cs" />
@@ -131,6 +133,9 @@
     <Compile Include="Engine\Shapes\RectangleShape.cs" />
     <Compile Include="Engine\Spellcasts\SpellcastBase.cs" />
     <Compile Include="Engine\Spellcasts\Spellcast.cs" />
+    <Compile Include="Engine\Spells\DashForwardSpell.cs" />
+    <Compile Include="Engine\Spells\MovementSpeedBuffSpell.cs" />
+    <Compile Include="Engine\Spells\TargettedTowerSpell.cs" />
     <Compile Include="Engine\Spells\FireballSpell.cs" />
     <Compile Include="Engine\Spells\SpellCastTargetInfo.cs" />
     <Compile Include="Engine\Spells\SpellDescription.cs" />

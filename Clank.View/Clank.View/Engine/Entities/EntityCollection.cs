@@ -60,7 +60,19 @@ namespace Clank.View.Engine.Entities
             }
             return entitiesIn;
         }
-
+        /// <summary>
+        /// Obtient les entités vivantes se trouvant dans la forme passée en paramètre.
+        /// </summary>
+        public EntityCollection GetAliveEntitiesIn(Shapes.Shape shape, EntityType type)
+        {
+            EntityCollection entitiesIn = new EntityCollection();
+            foreach (var kvp in this)
+            {
+                if (shape.Intersects(kvp.Value.Shape) && !kvp.Value.IsDead && kvp.Value.Type.HasFlag(type))
+                    entitiesIn.Add(kvp.Key, kvp.Value);
+            }
+            return entitiesIn;
+        }
         /// <summary>
         /// Retourne les entités vivantes se trouvant dans le rayon donné autour de
         /// la position donnée.
@@ -71,15 +83,41 @@ namespace Clank.View.Engine.Entities
         }
 
         /// <summary>
+        /// Retourne les entités vivantes se trouvant dans le rayon donné autour de
+        /// la position donnée.
+        /// </summary>
+        public EntityCollection GetAliveEntitiesInRange(Vector2 position, float radius, EntityType type)
+        {
+            return GetAliveEntitiesIn(new Shapes.CircleShape(position, radius), type);
+        }
+        /// <summary>
         /// Retourne les entités en à portée de vue de la team donnée.
         /// </summary>
         public EntityCollection GetEntitiesInSight(EntityType team)
         {
             team = team & (EntityType.Team1 | EntityType.Team2);
+            int teamId = (int)team;
+            EntityCollection entitiesIn = new EntityCollection();
+            foreach(var kvp in this)
+            {
+                // Si l'unité est masquée, il faut la vision pure
+                if(kvp.Value.IsStealthed)
+                {
+                    if (Mobattack.GetMap().Vision.HasTrueVision(team, kvp.Value.Position))
+                    {
+                        entitiesIn.Add(kvp.Key, kvp.Value);
+                    }
+                }
+                else
+                {
+                    if (Mobattack.GetMap().Vision.HasVision(team, kvp.Value.Position))
+                    {
+                        entitiesIn.Add(kvp.Key, kvp.Value);
+                    }
+                }
+            }
 
-
-            // 
-            throw new NotImplementedException("TROOLOLOLOLOLOLOLO");
+            return entitiesIn;
         }
     }
 }

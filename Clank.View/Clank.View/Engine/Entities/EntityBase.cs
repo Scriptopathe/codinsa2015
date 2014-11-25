@@ -26,7 +26,13 @@ namespace Clank.View.Engine.Entities
         #endregion
 
         #region Variables
-
+        #region Misc
+        /// <summary>
+        /// Indique si le mouvement de l'entité a été bloqué pendant cette frame, si 
+        /// ce compteur est supérieur à 0.
+        /// </summary>
+        int m_movementBlockedCounter;
+        #endregion
         #region Battle variables
         /// <summary>
         /// Représente les points de vie actuels de l'entité.
@@ -47,27 +53,22 @@ namespace Clank.View.Engine.Entities
         /// Points d'attaque de base de cette unité.
         /// </summary>
         float m_baseAttackDamage;
-
         /// <summary>
         /// Point de résistance magique de base de cette entité.
         /// </summary>
         float m_baseMagicResist;
-
         /// <summary>
         /// Points d'AP de base de cette entité.
         /// </summary>
         float m_baseAbilityPower;
-
         /// <summary>
         /// Attack speed de base de cette entité.
         /// </summary>
         float m_baseAttackSpeed;
-
         /// <summary>
         /// Cooldown reduction de base de cette unité.
         /// </summary>
         float m_baseCooldownReduction;
-
         /// <summary>
         /// Représente le nombre de points de vie maximum de cette entité.
         /// </summary>
@@ -96,7 +97,10 @@ namespace Clank.View.Engine.Entities
         /// Retourne toutes les altérations d'état
         /// </summary>
         StateAlterationCollection m_stateAlterations;
-
+        /// <summary>
+        /// Trajectoire de l'entité lorsqu'il doit se déplacer vers un point donné.
+        /// </summary>
+        Trajectory m_path;
 
         /// <summary>
         /// Temps pendant lequel l'entité mémorise les entités lui ayant fait des dégâts.
@@ -106,7 +110,16 @@ namespace Clank.View.Engine.Entities
             get;
             set;
         }
-
+        /// <summary>
+        /// Obtient ou définit la trajectoire de l'entité :
+        /// Si non nulle : le héros se dirige automatiquement vers le prochain point de la trajectoire.
+        /// Si nulle : le héros ne bouge pas, sauf si on lui en donne l'ordre.
+        /// </summary>
+        public Trajectory Path
+        {
+            get { return m_path; }
+            set { m_path = value; }
+        }
         /// <summary>
         /// Dictionnaire contenant les entités ayant encommagé cette unité récemment (limite de temps
         /// DamageTimeMemory), et le temps restant à avant que les dites entités disparaissent du dictionnaire.
@@ -492,6 +505,16 @@ namespace Clank.View.Engine.Entities
             }
             return coll;
         }
+
+        /// <summary>
+        /// Retourne vrai si cette unité a été bloquée sur un mur récemment.
+        /// Ordre de grandeur de mémoire : 2 frames.
+        /// </summary>
+        public bool IsBlockedByWall
+        {
+            get { return m_movementBlockedCounter > 0; }
+        }
+
         #region State
         /// <summary>
         /// Obtient une valeur indiquant si cette entité est Rootée. (ne peut plus bouger).
@@ -609,6 +632,51 @@ namespace Clank.View.Engine.Entities
                 m_recentlyAgressiveEntitiesMemoryTime.Remove(id);
             }
         }
+
+        /// <summary>
+        /// Mets à jour le suivi de la trajectoire créée par A*.
+        /// </summary>
+        void UpdateMoveTo(GameTime time)
+        {
+            if (m_path != null)
+            {
+                m_path.UpdateStep(Position, GetMoveSpeed(), time);
+                Vector2 oldDir = Direction;
+                Direction = m_path.CurrentStep - Position;
+
+                // Si on se met subitement à changer de direction vers l'arrière, c'est
+                // qu'on a fini.
+                if (m_path.IsEnded(Position, GetMoveSpeed(), time))//Vector2.Dot(Direction, oldDir) <-0.9f)
+                    m_path = null;
+                else
+                    MoveForward(time);
+
+
+            }
+        }
+
+        /// <summary>
+        /// Arrête le déplacement automatique du héros selon l'A*.
+        /// </summary>
+        public void EndMoveTo()
+        {
+            m_path = null;
+        }
+
+        /// <summary>
+        /// Utilise l'A* pour calculer la trajectoire du héros jusqu'à la position
+        /// donnée, et ordonne au héros de suivre cette trajectoire jusqu'à ce que
+        /// EndMoveTo() soit appelé, ou que le héros atteigne la position désirée.
+        /// </summary>
+        /// <param name="position"></param>
+        public void StartMoveTo(Vector2 position)
+        {
+            m_path = new Trajectory(PathFinder.Astar(Position, position));
+            Direction = Vector2.Zero;
+            if (m_path.TrajectoryUnits.Count <= 1)
+                m_path = null;
+        }
+
         /// <summary>
         /// Avance dans la direction du personnage, à la vitesse du personnage,
         /// pendant le temps écoulé durant la frame précédente.
@@ -684,13 +752,13 @@ namespace Clank.View.Engine.Entities
                 // On limite le mouvement au bord de la case.
                 newDst.X = Math.Min(right - 0.02f, Math.Max(left+0.02f, dst.X));
                 newDst.Y = Math.Min(bottom - 0.02f, Math.Max(top+0.02f, dst.Y));
+
+                m_movementBlockedCounter = 3;
             }
 
             Position = newDst;
             return dstOK;
         }
-
-
 
         /// <summary>
         /// Mets à jour l'entité.
@@ -700,9 +768,14 @@ namespace Clank.View.Engine.Entities
         {
             if (IsDisposing)
                 return;
+            // Compteur de blocage
+            m_movementBlockedCounter--;
 
             // Apply state alterations
             ApplyStateAlterations(time);
+
+            // Mise à jour du mouvement
+            UpdateMoveTo(time);
 
             // Mets à jour les composantes spécifiques à l'entité
             DoUpdate(time);
@@ -843,21 +916,22 @@ namespace Clank.View.Engine.Entities
                 ApplyDash(alteration.Model.GetDashDirection(alteration.Source, this, alteration.Parameters), 
                     alteration.Model.DashSpeed,
                     alteration.RemainingTime,
-                    (float)time.ElapsedGameTime.TotalSeconds);
+                    (float)time.ElapsedGameTime.TotalSeconds,
+                    alteration.Model.DashGoThroughWall);
             }
         }
 
         /// <summary>
         /// Applique l'altération de dash passée en paramètre.
         /// </summary>
-        public void ApplyDash(Vector2 direction, float speed, float remainingDuration, float stepDuration)
+        public void ApplyDash(Vector2 direction, float speed, float remainingDuration, float stepDuration, bool goThroughWalls)
         {
             // Détermine si la direction finale est praticable.
-            Vector2 finalPosition = direction * speed * remainingDuration;
+            Vector2 finalPosition = Position + direction * speed * remainingDuration;
 
             // Dash : on ignore les murs tant que la destination est praticable, si elle ne l'est pas,
             // on cogne.
-            if (Mobattack.GetMap().GetPassabilityAt(finalPosition.X, finalPosition.Y))
+            if (goThroughWalls && Mobattack.GetMap().GetPassabilityAt(finalPosition.X, finalPosition.Y))
             {
                 Position += direction * speed * stepDuration;
             }
@@ -865,6 +939,9 @@ namespace Clank.View.Engine.Entities
             {
                 MoveTowards(direction, stepDuration, speed);
             }
+
+            // Arrête le déplacement en cours après le dash.
+            EndMoveTo();
         }
         /// <summary>
         /// Ajoute une altération d'état à cette entité.

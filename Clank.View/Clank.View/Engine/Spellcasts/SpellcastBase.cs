@@ -59,6 +59,14 @@ namespace Clank.View.Engine.Spellcasts
         /// </summary>
         public override void Update(GameTime time)
         {
+            // Supprime le spell une fois que sa durée est terminée.
+            if (m_time > SourceSpell.Description.TargetType.Duration)
+            {
+                IsDisposing = true;
+                m_canTouch = false;
+                return;
+            }
+
             m_time += (float)time.ElapsedGameTime.TotalSeconds;
             float speed = (float)time.ElapsedGameTime.TotalSeconds * SourceSpell.Description.TargetType.Range / SourceSpell.Description.TargetType.Duration; // distance / temps
             // Mouvement du sort.
@@ -75,19 +83,27 @@ namespace Clank.View.Engine.Spellcasts
                     break;
                 // Targetted : on avance vers la cible.
                 case Spells.TargettingType.Targetted:
-                    Vector2 dir = Mobattack.GetMap().GetEntityById(m_castInfo.TargetId).Position - m_shape.Position;
-                    dir.Normalize();
-                    m_shape.Position += dir * speed;
-                    m_canTouch = true;
+                    if(SourceSpell.Description.TargetType.Duration == 0)
+                    {
+                        // Duration 0 : sort instant.
+                        Entities.EntityBase dst = Mobattack.GetMap().GetEntityById(m_castInfo.TargetId);
+                        m_shape.Position = dst.Position;
+                        m_canTouch = true;
+                        OnCollide(dst);
+                    }
+                    else
+                    {
+                        Vector2 dir = Mobattack.GetMap().GetEntityById(m_castInfo.TargetId).Position - m_shape.Position;
+                        dir.Normalize();
+                        m_shape.Position += dir * speed;
+                        m_canTouch = true;
+
+                    }
+                    
                     break;
             }
 
-            // Supprime le spell une fois que sa durée est terminée.
-            if (m_time >= SourceSpell.Description.TargetType.Duration)
-            {
-                IsDisposing = true;
-                m_canTouch = false;
-            }
+
         }
 
         /// <summary>
@@ -121,10 +137,10 @@ namespace Clank.View.Engine.Spellcasts
             if (!m_canTouch)
                 return;
 
-            // Vérifie que le sort peut toucher cette entité.
-            EntityTypeRelative flag = EntityTypeConverter.ToRelative(entity.Type, SourceSpell.SourceCaster.Type & (EntityType.Team1 | EntityType.Team2));
-            if (!SourceSpell.Description.TargetType.AllowedTargetTypes.HasFlag(flag))
+            // Vérifie que le sort fonctionne sur l'entité
+            if (!SourceSpell.HasEffectOn(entity, m_castInfo))
                 return;
+
 
             // Détruit le sort si il doit être détruit.
             if (SourceSpell.Description.TargetType.DieOnCollision)

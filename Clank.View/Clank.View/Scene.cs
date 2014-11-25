@@ -86,6 +86,15 @@ namespace Clank.View
             set;
         }
 
+        /// <summary>
+        /// Obtient un dictionnaire des contrôleurs des différents héros, indexés 
+        /// par l'id du client qui les contrôle.
+        /// </summary>
+        public Dictionary<int, Engine.Controlers.ControlerBase> Controlers
+        {
+            get;
+            set;
+        }
         #endregion
 
         #region Methods
@@ -109,12 +118,16 @@ namespace Clank.View
                 Constants.Save("constants.xml");
             }
 
+            Controlers = new Dictionary<int, Engine.Controlers.ControlerBase>();
             Map = new Map();
             EventSheduler = new Scheduler();
             GuiManager = new GuiManager();
             MapEditControler = new MapEditorControler(Map);
             RewardSystem = new RewardSystem(Map.Heroes);
             Particles = new ParticleManager();
+
+            // DEBUG
+            Controlers.Add(0, new Engine.Controlers.HumanControler(Map.Heroes[0]));
         }
         /// <summary>
         /// Charge le contenu de la scène.
@@ -135,6 +148,9 @@ namespace Clank.View
             // Mets à jour la map
             Map.Update(time);
 
+            // Mets à jour les contrôleurs
+            foreach (var kvp in Controlers) { kvp.Value.Update(time); }
+
             // Mets à jour les récompenses.
             RewardSystem.Update(time);
 
@@ -147,6 +163,7 @@ namespace Clank.View
             // Mets à jour les particules.
             Particles.Update(time);
 
+            
             // Mets à jour l'input
             Input.Update();
         }

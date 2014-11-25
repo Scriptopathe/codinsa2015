@@ -13,9 +13,9 @@ namespace Clank.View.Engine.Entities
     {
         /// <summary>
         /// Position finale que le dash doit atteindre.
-        /// (si le targetting est Position)
+        /// (si le targetting est Direction)
         /// </summary>
-        public Vector2 DashTargetPosition { get; set; }
+        public Vector2 DashTargetDirection { get; set; }
 
         /// <summary>
         /// Entité vers laquelle le dash doit se diriger.
@@ -74,16 +74,14 @@ namespace Clank.View.Engine.Entities
             else
             {
                 Vector2 dstPosition = Vector2.Zero;
-                if(Model.DashDirectionType == DashDirectionType.Position)
-                {
-                    dstPosition = Parameters.DashTargetPosition;
-                }
-                else if(Model.DashDirectionType == DashDirectionType.TowardsEntity)
+                if (Model.DashDirectionType == DashDirectionType.TowardsEntity)
                 {
                     dstPosition = Parameters.DashTargetEntity.Position;
+                    return Vector2.Distance(dstPosition, dstEntity.Position) <= Model.DashSpeed * (float)(time.ElapsedGameTime.TotalSeconds);
                 }
-
-                return Vector2.Distance(dstPosition, dstEntity.Position) <= Model.DashSpeed * (float)(time.ElapsedGameTime.TotalSeconds);
+                else
+                    return RemainingTime <= 0;
+                
             }
         }
         /// <summary>

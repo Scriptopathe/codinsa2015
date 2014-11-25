@@ -62,7 +62,7 @@ namespace Clank.View.Engine.Entities
     public enum DashDirectionType
     {
         TowardsEntity,
-        Position,
+        Direction,
         BackwardsCaster,
     }
     /// <summary>
@@ -80,6 +80,12 @@ namespace Clank.View.Engine.Entities
         /// Durée de base de l'altération d'état en secondes.
         /// 
         /// Cette durée peut être modifiée par les multiplicateurs 
+        /// 
+        /// Cette durée représente :
+        ///     - la durée d'un dash
+        ///     - la durée d'une altération d'état (buff etc...)
+        /// 
+        /// Elle doit être nulle pour les sorts infligeant des dégâts.
         /// </summary>
         public float BaseDuration { get; set; }
         /// <summary>
@@ -92,7 +98,11 @@ namespace Clank.View.Engine.Entities
         /// rétro-compatibilité.
         /// </summary>
         public float DashSpeed { get { return FlatValue; } set { FlatValue = value; } }
-
+        /// <summary>
+        /// Si Type contient Dash :
+        /// Obtient ou définit une valeur indiquant si le dash permet traverser les murs.
+        /// </summary>
+        public bool DashGoThroughWall { get; set; }
         /// <summary>
         /// Si Type contient Dash : type direction du dash.
         /// </summary>
@@ -115,11 +125,10 @@ namespace Clank.View.Engine.Entities
                         throw new Exception("StateAlterationModel.GetDashDirection : target null & DashDirectionType == TowardsEntity");
                     direction = parameters.DashTargetEntity.Position - source.Position; direction.Normalize();
                     return direction;
-                case Entities.DashDirectionType.Position:
-                    if(parameters.DashTargetPosition== null)
+                case Entities.DashDirectionType.Direction:
+                    if(parameters.DashTargetDirection== null)
                         throw new Exception("StateAlterationModel.GetDashDirection : target null & DashDirectionType == Position");
-
-                    direction = parameters.DashTargetPosition - source.Position; direction.Normalize();
+                    direction = parameters.DashTargetDirection; direction.Normalize();
                     return direction;
                 case Entities.DashDirectionType.BackwardsCaster:
                     direction = source.Position - caster.Position;
@@ -239,7 +248,7 @@ namespace Clank.View.Engine.Entities
                 totalValue += DestPercentRMValue * destination.GetMagicResist();
 
             // Application des bonus.
-            if(destination.Type.HasFlag(EntityType.Struture))
+            if(destination.Type.HasFlag(EntityType.Structure))
                 totalValue *= StructureBonus;
             if(destination.Type.HasFlag(EntityType.Monster))
                 totalValue *= MonsterBonus;

@@ -360,7 +360,30 @@ namespace Clank.View.Engine
             m_scrolling.Y = Math.Max(0, Math.Min(m_passability.GetLength(1) * UnitSize - m_viewport.Height, m_scrolling.Y));
         }
         #endregion
+        #region Positions
+        /// <summary>
+        /// Obtient la position dans l'espace de l'écran à partir d'une position
+        /// en unités métriques. 
+        /// (prends en compte viewport, scrolling, scaling).
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 ToScreenSpace(Vector2 mapPos)
+        {
+            // screenSpacePos = 
+            return mapPos * UnitSize - ScrollingVector2 + new Vector2(Viewport.X, Viewport.Y);
+        }
 
+        /// <summary>
+        /// Obtient la position dans l'espace de la map (unités métriques) à
+        /// partir d'une position à l'écran.
+        /// </summary>
+        /// <param name="screenSpacePos"></param>
+        /// <returns></returns>
+        public Vector2 ToMapSpace(Vector2 screenSpacePos)
+        {
+            return (screenSpacePos + ScrollingVector2 - new Vector2(Viewport.X, Viewport.Y)) / UnitSize;
+        }
+        #endregion
         #region API
         /// <summary>
         /// Retourne la passabilité de la map à la position donnée en unités métriques.
@@ -454,7 +477,7 @@ namespace Clank.View.Engine
             {
                 string x = entity.Position.X.ToString();
                 string y = entity.Position.Y.ToString();
-                if(entity.Type.HasFlag(EntityType.Struture))
+                if(entity.Type.HasFlag(EntityType.Structure))
                     writer.WriteLine(entity.Type.ToString() + " " + x.ToString() + " " + y.ToString());
                 else if(entity.Type.HasFlag(EntityType.Checkpoint))
                 {

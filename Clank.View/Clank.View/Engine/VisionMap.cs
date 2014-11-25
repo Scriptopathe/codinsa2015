@@ -73,7 +73,14 @@ namespace Clank.View.Engine
             team &= (EntityType.Team1 | EntityType.Team2);
             return (m_vision[(int)position.X, (int)position.Y] & (VisionFlags)team) != 0;
         }
-
+        /// <summary>
+        /// Obtient une variable indiquant si la team donnée possède pure la vision à l'endroit donné.
+        /// </summary>
+        public bool HasTrueVision(EntityType team, Vector2 position)
+        {
+            team &= (EntityType.Team1 | EntityType.Team2);
+            return (m_vision[(int)position.X, (int)position.Y] & (VisionFlags)((int)team << 2)) != 0;
+        }
         /// <summary>
         /// Rempli la carte à la position donnée et avec le rayon donnée, avec les informations
         /// contenues dans flags.
