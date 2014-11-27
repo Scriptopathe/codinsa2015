@@ -343,7 +343,23 @@ namespace Clank.View.Engine.Entities
         /// <returns></returns>
         public virtual float GetMoveSpeed()
         {
-            return m_baseMoveSpeed;
+            float totalMs = BaseMoveSpeed;
+
+            // Récupère tous les buffs d'attaque.
+            List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.MoveSpeed);
+    
+
+            // Applique les buffs / debuffs ne prenant pas en compte les dégâts d'attaque de
+            // cette entité.
+            foreach (StateAlteration alteration in alterations)
+            {
+                totalMs += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All);
+            }
+
+
+
+
+            return Math.Max(0, totalMs);
         }
         /// <summary>
         /// Fonction utilisée pour obtenir les points d'attaque effectifs de cette entité.

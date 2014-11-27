@@ -48,8 +48,8 @@ namespace Clank.View.Engine.Spells
                 {
                     AllowedTargetTypes = EntityTypeRelative.AllEnnemy,
                     AoeRadius = 0.3f,
-                    Range = 6f,
-                    Duration = 0.6f,
+                    Range = 10f,
+                    Duration = 2f,
                     DieOnCollision = true,
                     Type = TargettingType.Targetted
                 },

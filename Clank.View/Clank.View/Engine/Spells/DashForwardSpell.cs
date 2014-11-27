@@ -61,10 +61,10 @@ namespace Clank.View.Engine.Spells
                     new StateAlterationModel()
                     {
                         Type = StateAlterationType.Dash,
-                        DashSpeed = 60,
+                        DashSpeed = 40,
                         DashGoThroughWall = true,
                         DashDirectionType = Entities.DashDirectionType.Direction,
-                        BaseDuration = 0.0750f,
+                        BaseDuration = 0.075f,
                     },
                 }
             }};

@@ -27,7 +27,7 @@ namespace Clank.View
         }
         public static Vector2 GetScreenSize()
         {
-            return new Vector2(1366, 768);
+            return new Vector2(1366, 768 + 100);
         }
         /// <summary>
         /// Retourne la scène associée à ce jeu.
@@ -56,6 +56,7 @@ namespace Clank.View
 
             m_graphics.PreferredBackBufferWidth = (int)GetScreenSize().X;
             m_graphics.PreferredBackBufferHeight = (int)GetScreenSize().Y;
+            m_graphics.SynchronizeWithVerticalRetrace = false;
         }
 
         /// <summary>

@@ -176,7 +176,7 @@ namespace Clank.View
         public void Draw(GameTime time, SpriteBatch batch)
         {
             Map.Draw(time, batch);
-            batch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied);
+            batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied);
             GuiManager.Draw(batch);
             MapEditControler.Draw(batch);
             Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);

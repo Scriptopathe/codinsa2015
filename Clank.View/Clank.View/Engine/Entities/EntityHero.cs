@@ -113,6 +113,7 @@ namespace Clank.View.Engine.Entities
             Spells.Add(new Spells.DashForwardSpell(this));
             Spells.Add(new Spells.MovementSpeedBuffSpell(this));
             Spells.Add(new Spells.TargettedTowerSpell(this));
+            VisionRange = 20.0f;
         }
 
         /// <summary>

@@ -47,7 +47,7 @@ namespace Clank.View.Engine.Spells
                     AllowedTargetTypes = EntityTypeRelative.AllAlly,
                     AoeRadius = 0.1f,
                     Range = 6f,
-                    Duration = 0.6f,
+                    Duration = 0.0f,
                     DieOnCollision = true,
                     Type = TargettingType.Targetted
                 },
@@ -63,7 +63,7 @@ namespace Clank.View.Engine.Spells
                     new StateAlterationModel()
                     {
                         Type = StateAlterationType.MoveSpeed,
-                        BaseDuration = 5.0f,
+                        BaseDuration = 10.0f,
                         FlatValue = 10.0f,
                         SourcePercentADValue = 0.80f,
                     },

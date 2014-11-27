@@ -25,7 +25,14 @@ namespace Clank.View.Engine.Controlers
         #endregion
 
         #region Properties
-        
+        /// <summary>
+        /// Obtient ou définit le héros contrôlé.
+        /// </summary>
+        public override EntityHero Hero
+        {
+            get { return m_hero; }
+            set { m_hero = value; }
+        }
         #endregion
 
         #region Methods

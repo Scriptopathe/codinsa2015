@@ -20,6 +20,7 @@ namespace Clank.View.Engine
         public static Texture2D WallTexture { get; set; }
         public static Texture2D WallBorderTexture { get; set; }
         public static Texture2D GrassTexture { get; set; }
+        public static Texture2D LavaTexture { get; set; }
         /// <summary>
         /// Matrice de transformation pour les dessins 2D.
         /// </summary>
@@ -131,7 +132,7 @@ namespace Clank.View.Engine
             CourrierFont = content.Load<SpriteFont>("courrier-16pt");
             LifebarEmpty = content.Load<Texture2D>("textures/gui/lifebar_empty");
             LifebarFull = content.Load<Texture2D>("textures/gui/lifebar_full");
-
+            LavaTexture = content.Load<Texture2D>("textures/lava");
             // Effet de la map
             WallTexture = content.Load<Texture2D>("textures/wall");
             WallBorderTexture = content.Load<Texture2D>("textures/border");
@@ -140,7 +141,7 @@ namespace Clank.View.Engine
             MapEffect.Parameters["xBorderTexture"].SetValue(WallBorderTexture);
             MapEffect.Parameters["xWallTexture"].SetValue(WallTexture);
             MapEffect.Parameters["xGrassTexture"].SetValue(GrassTexture);
-
+            MapEffect.Parameters["xLavaTexture"].SetValue(LavaTexture);
 
             /* Matrice
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight, 0, 0, 1);

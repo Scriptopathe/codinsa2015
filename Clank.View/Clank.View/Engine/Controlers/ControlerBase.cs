@@ -14,6 +14,10 @@ namespace Clank.View.Engine.Controlers
     public abstract class ControlerBase
     {
         /// <summary>
+        /// Obtient ou définit le héros contrôlé par ce contrôleur.
+        /// </summary>
+        public abstract Entities.EntityHero Hero { get; set; }
+        /// <summary>
         /// Crée un nouveau contrôleur ayant le contrôle sur le héros donné.
         /// </summary>
         /// <param name="hero"></param>

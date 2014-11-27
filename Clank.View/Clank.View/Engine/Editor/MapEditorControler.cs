@@ -21,7 +21,9 @@ namespace Clank.View.Engine.Editor
         int m_rowId = 0;
         int m_checkpointId = 0;
         bool m_captureMouse = true;
+        bool m_displayMinimap = false;
         private Gui.GuiButton m_modeButton;
+        int m_brushSize = 2;
         #endregion
 
         #region Properties
@@ -93,8 +95,12 @@ namespace Clank.View.Engine.Editor
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightControl))
                 m_captureMouse = !m_captureMouse;
 
+            
             if (!IsEnabled)
                 return;
+
+            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M))
+                m_displayMinimap = !m_displayMinimap;
 
             Vector2 mousePosPx = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
             Vector2 mousePosUnits = ((mousePosPx + m_map.ScrollingVector2) - new Vector2(m_map.Viewport.X, m_map.Viewport.Y)) / Map.UnitSize;
@@ -110,12 +116,20 @@ namespace Clank.View.Engine.Editor
                 // Ajout de matière
                 if (Input.IsLeftClickPressed())
                 {
-                    m_map.SetPassabilityAt(mousePosUnits, false);
+                    for (int i = 0; i < m_brushSize; i++)
+                        for (int j = 0; j < m_brushSize; j++)
+                            m_map.SetPassabilityAt(mousePosUnits + new Vector2(i, j), false);
                 }
                 else if (Input.IsRightClickPressed())
                 {
-                    m_map.SetPassabilityAt(mousePosUnits, true);
+                    for (int i = 0; i < m_brushSize; i++)
+                        for (int j = 0; j < m_brushSize; j++ )
+                            m_map.SetPassabilityAt(mousePosUnits + new Vector2(i, j), true);
                 }
+                else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.O))
+                    m_brushSize++;
+                else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.I))
+                    m_brushSize--;
             }
             else if(!m_terraFormingMode)
             {
@@ -233,13 +247,13 @@ namespace Clank.View.Engine.Editor
             Microsoft.Xna.Framework.Input.Mouse.SetPosition((int)position.X, (int)position.Y);
 
             // Fait bouger l'écran quand on est au bord.
-            if (position.X <= 5)
+            if (position.X <= 10)
                 m_map.ScrollingVector2 = new Vector2(m_map.ScrollingVector2.X - ScrollSpeed, m_map.ScrollingVector2.Y);
-            else if (position.X >= Mobattack.GetScreenSize().X - 5)
+            else if (position.X >= Mobattack.GetScreenSize().X - 10)
                 m_map.ScrollingVector2 = new Vector2(m_map.ScrollingVector2.X + ScrollSpeed, m_map.ScrollingVector2.Y);
-            if (position.Y <= 5)
+            if (position.Y <= 10)
                 m_map.ScrollingVector2 = new Vector2(m_map.ScrollingVector2.X, m_map.ScrollingVector2.Y - ScrollSpeed);
-            else if (position.Y >= Mobattack.GetScreenSize().Y - 5)
+            else if (position.Y >= Mobattack.GetScreenSize().Y - 10)
                 m_map.ScrollingVector2 = new Vector2(m_map.ScrollingVector2.X, m_map.ScrollingVector2.Y + ScrollSpeed);
         }
 
@@ -283,6 +297,8 @@ namespace Clank.View.Engine.Editor
         /// </summary>
         void DrawMinimap(SpriteBatch batch, Rectangle rect, float z)
         {
+            if (!m_displayMinimap)
+                return;
             int w = m_map.Passability.GetLength(0);
             int h = m_map.Passability.GetLength(1);
             int unitX = Math.Max(1, rect.Width / w);

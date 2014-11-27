@@ -13,8 +13,8 @@ namespace Clank.View.Engine.Graphics
         #region Steps
         public const float Front = 0.0f;
         public const float Back = 1.0f;
-        public const float BackStep = (Front - Back) * 0.001f;
-        public const float FrontStep = (Back - Front) * 0.001f;
+        public const float FrontStep = (Front - Back) * 0.001f;
+        public const float BackStep = (Back - Front) * 0.001f;
         #endregion
 
         #region Entities

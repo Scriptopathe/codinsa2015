@@ -81,12 +81,16 @@ namespace Clank.View.Engine
             team &= (EntityType.Team1 | EntityType.Team2);
             return (m_vision[(int)position.X, (int)position.Y] & (VisionFlags)((int)team << 2)) != 0;
         }
+
+
+        float __debug2 = 0;
         /// <summary>
         /// Rempli la carte à la position donnée et avec le rayon donnée, avec les informations
         /// contenues dans flags.
         /// </summary>
-        public void FloodWith(Vector2 position, float radius, VisionFlags flags)
+        public void FloodWith0(Vector2 position, float radius, VisionFlags flags)
         {
+
             Queue<Node> positions = new Queue<Node>();
             Dictionary<Point, float> minDist = new Dictionary<Point, float>();
             positions.Enqueue(new Node(new Point((int)position.X, (int)position.Y), 0));
@@ -97,9 +101,9 @@ namespace Clank.View.Engine
             Node n = new Node(new Point(0, 0), 0);
             Point p = new Point();
             float distance;
-
             while(positions.Count != 0)
             {
+
                 Node current = positions.Dequeue();
 
                 // Mets à jour la distance minimale vers le point courant.
@@ -150,7 +154,41 @@ namespace Clank.View.Engine
                         }
                     }
             }
+
         }
+        
+        public void FloodWith(Vector2 position, float radius, VisionFlags flags)
+        {
+            Vector2 startPos = new Vector2((int)position.X, (int)position.Y);
+            for(float x = -radius; x <= radius; x+=0.5f)
+            {   
+                float y1 = -radius;
+                float y2 = radius;
+                DrawRay(startPos, startPos + new Vector2(x, y1), flags, radius);
+                DrawRay(startPos, startPos + new Vector2(x, y2), flags, radius);
+
+                DrawRay(startPos, startPos + new Vector2(y1, x), flags, radius);
+                DrawRay(startPos, startPos + new Vector2(y2, x), flags, radius);
+            }
+        }
+
+        public void DrawRay(Vector2 startPos, Vector2 endPos, VisionFlags flags, float radius)
+        {
+            Vector2 dir = endPos - startPos; dir.Normalize();
+            for(int i = 0; i < radius + 2; i++)
+            {
+                Vector2 currentStep = startPos + dir * i;
+                currentStep.X = (int)Math.Round(currentStep.X);
+                currentStep.Y = (int)Math.Round(currentStep.Y);
+                if (m_map.GetPassabilityAt(currentStep) && Vector2.DistanceSquared(startPos, currentStep) < radius * radius)
+                {
+                    m_vision[(int)currentStep.X, (int)currentStep.Y] |= flags;
+                }
+                else
+                    break;
+            }
+        }
+
         /// <summary>
         /// Mets à jour la carte de vision.
         /// </summary>
@@ -160,9 +198,9 @@ namespace Clank.View.Engine
                 for (int y = 0; y < m_vision.GetLength(1); y++)
                     m_vision[x, y] = VisionFlags.None;
 
+            
 
-            // Mets à jour la vision de toute les entités.
-            foreach(EntityBase entity in m_map.Entities.Values)
+            foreach (EntityBase entity in m_map.Entities.Values)
             {
                 int team = (int)(entity.Type & (EntityType.Team1 | EntityType.Team2));
 
@@ -172,9 +210,12 @@ namespace Clank.View.Engine
 
                 VisionFlags flag = (VisionFlags)team;
 
-                if(entity.VisionRange > 0.5f)
+                if (entity.VisionRange > 0.5f)
                     FloodWith(entity.Position, entity.VisionRange, flag);
+                        
             }
+
+
         }
         #endregion
     }
