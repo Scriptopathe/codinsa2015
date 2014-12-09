@@ -56,7 +56,6 @@ namespace Clank.View
 
             m_graphics.PreferredBackBufferWidth = (int)GetScreenSize().X;
             m_graphics.PreferredBackBufferHeight = (int)GetScreenSize().Y;
-            
             m_graphics.SynchronizeWithVerticalRetrace = false;
         }
 
@@ -70,6 +69,7 @@ namespace Clank.View
         {
             // TODO: Add your initialization logic here
             Engine.Input.ModuleInit();
+            m_graphics.GraphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
             base.Initialize();
         }
 

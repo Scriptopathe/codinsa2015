@@ -349,7 +349,7 @@ namespace Clank.View.Engine.Editor
                     }
                 }
                 m_minimapBatch.End();
-                m_minimapBatch.GraphicsDevice.SetRenderTarget(null);
+                m_minimapBatch.GraphicsDevice.SetRenderTarget(Mobattack.GetScene().MainRenderTarget);
                 // Supprime le dirty bit.
                 m_minimapDirty = false;
             }

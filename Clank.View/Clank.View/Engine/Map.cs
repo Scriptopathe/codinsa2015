@@ -74,6 +74,10 @@ namespace Clank.View.Engine
         public event MapModifiedDelegate OnMapModified;
         #endregion
 
+        #region Graphics Properties
+
+        #endregion
+
         #region Properties
         /// <summary>
         /// Taille d'une unité métrique en pixels.
@@ -223,7 +227,7 @@ namespace Clank.View.Engine
             int endX = Math.Min(beginX + (Viewport.Width / UnitSize + 1), m_passability.GetLength(0));
             int endY = Math.Min(beginY + (Viewport.Height / UnitSize + 1), m_passability.GetLength(1));
 
-            int smoothAlpha = (__oldScroll == ScrollingVector2  && UnitSize == __oldUnitSize) ? 25 : 100;
+            int smoothAlpha = (__oldScroll == ScrollingVector2  && UnitSize == __oldUnitSize) ? 25 : 255;
             for (int x = beginX; x < endX; x++)
             {
                 for (int y = beginY; y < endY; y++)
@@ -255,7 +259,7 @@ namespace Clank.View.Engine
             }
 
             // Dessin du tout
-            Mobattack.Instance.GraphicsDevice.SetRenderTarget(null);
+            Mobattack.Instance.GraphicsDevice.SetRenderTarget(Mobattack.GetScene().MainRenderTarget);
             batch.GraphicsDevice.Clear(Color.Black);
             Ressources.MapEffect.Parameters["xSourceTexture"].SetValue(m_tilesRenderTarget);
             Ressources.MapEffect.Parameters["scrolling"].SetValue(new Vector2(Scrolling.X / (float)Viewport.Width, Scrolling.Y / (float)Viewport.Height));
@@ -263,13 +267,18 @@ namespace Clank.View.Engine
             Ressources.MapEffect.Parameters["xUnitSize"].SetValue(UnitSize);
             __xShaderTime += 0.0005f;
             Ressources.MapEffect.Parameters["xTime"].SetValue(__xShaderTime);
+
+            // Dessine les tiles avec le shader
             batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, Ressources.MapEffect);
             batch.Draw(m_tilesRenderTarget, Viewport, Color.White);
             batch.End();
 
+            // Dessine les entités.
             batch.Begin();
             batch.Draw(m_entitiesRenderTarget, Viewport, Color.White);
             batch.End();
+
+
 
             __oldScroll = ScrollingVector2;
             __oldUnitSize = UnitSize;

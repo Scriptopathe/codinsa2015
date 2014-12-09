@@ -17,7 +17,7 @@ namespace Clank.View
     public class Scene
     {
         #region Variables
-
+        RenderTarget2D m_mainRenderTarget;
         #endregion
 
         #region Properties
@@ -95,6 +95,15 @@ namespace Clank.View
             get;
             set;
         }
+
+        /// <summary>
+        /// Render target principal.
+        /// </summary>
+        public RenderTarget2D MainRenderTarget
+        {
+            get { return m_mainRenderTarget; }
+            private set { m_mainRenderTarget = value; }
+        }
         #endregion
 
         #region Methods
@@ -135,6 +144,7 @@ namespace Clank.View
         public void LoadContent()
         {
 
+            m_mainRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, (int)Mobattack.GetScreenSize().X, (int)Mobattack.GetScreenSize().Y, false, SurfaceFormat.Color, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
         }
 
         /// <summary>
@@ -175,12 +185,23 @@ namespace Clank.View
         /// <param name="batch"></param>
         public void Draw(GameTime time, SpriteBatch batch)
         {
+            // Dessine la map sur le main render target.
             Map.Draw(time, batch);
+
+
+            // Dessine les GUI, particules etc...
             batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied);
             GuiManager.Draw(batch);
             MapEditControler.Draw(batch);
             Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
             foreach (var kvp in Controlers) { kvp.Value.Draw(batch, time); }
+            batch.End();
+
+
+            // Dessine le render target principal sur le back buffer.
+            batch.GraphicsDevice.SetRenderTarget(null);
+            batch.Begin();
+            batch.Draw(MainRenderTarget, Vector2.Zero, Color.White);
             batch.End();
         }
 

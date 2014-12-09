@@ -190,9 +190,16 @@ namespace Clank.View.Engine
                 Vector2 currentStep = startPos + dir * i;
                 currentStep.X = (int)Math.Round(currentStep.X);
                 currentStep.Y = (int)Math.Round(currentStep.Y);
-                if (m_map.GetPassabilityAt(currentStep) && Vector2.DistanceSquared(startPos, currentStep) < radiusSqr)
+                bool distanceOK = Vector2.DistanceSquared(startPos, currentStep) < radiusSqr;
+                if (m_map.GetPassabilityAt(currentStep) && distanceOK)
                 {
                     m_vision[(int)currentStep.X, (int)currentStep.Y] |= flags;
+                }
+                else if (dir.Y < -0.1f && distanceOK)
+                {
+                    // Effet graphique pour éclairer les murs.
+                    m_vision[(int)currentStep.X, (int)currentStep.Y] |= flags;
+                    break;
                 }
                 else
                     break;
