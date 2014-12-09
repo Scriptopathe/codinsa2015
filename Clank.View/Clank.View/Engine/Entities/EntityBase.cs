@@ -769,7 +769,7 @@ namespace Clank.View.Engine.Entities
                 newDst.X = Math.Min(right - 0.02f, Math.Max(left+0.02f, dst.X));
                 newDst.Y = Math.Min(bottom - 0.02f, Math.Max(top+0.02f, dst.Y));
 
-                m_movementBlockedCounter = 3;
+                m_movementBlockedCounter = 5;
             }
 
             Position = newDst;
@@ -1058,10 +1058,10 @@ namespace Clank.View.Engine.Entities
         public void Draw(GameTime time, SpriteBatch batch)
         {
             Point scroll = Mobattack.GetMap().Scrolling;
-            Point drawPos = new Point((int)(m_position.X * Map.UnitSize) - scroll.X, (int)(m_position.Y * Map.UnitSize) - scroll.Y);
+            Point drawPos = new Point((int)(m_position.X * Mobattack.GetMap().UnitSize) - scroll.X, (int)(m_position.Y * Mobattack.GetMap().UnitSize) - scroll.Y);
 
             if (drawPos.X > Mobattack.GetMap().Viewport.Right || drawPos.Y > Mobattack.GetMap().Viewport.Bottom 
-                || drawPos.X < Mobattack.GetMap().Viewport.Left - Map.UnitSize || drawPos.Y < Mobattack.GetMap().Viewport.Top - Map.UnitSize)
+                || drawPos.X < Mobattack.GetMap().Viewport.Left - Mobattack.GetMap().UnitSize || drawPos.Y < Mobattack.GetMap().Viewport.Top - Mobattack.GetMap().UnitSize)
                 return;
 
 
@@ -1091,7 +1091,7 @@ namespace Clank.View.Engine.Entities
             else if (Type.HasFlag(EntityType.Spawner))
                 tex = Ressources.TextBox;
 
-            int s = Map.UnitSize / 2;
+            int s = Mobattack.GetMap().UnitSize / 2;
             if (Type.HasFlag(EntityType.Checkpoint))
                 s /= 4;
 

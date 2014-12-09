@@ -25,7 +25,7 @@ namespace Clank.View.Engine.Entities
         Creep           = 0x0200,
         WardPlacement   = 0x00010000,
         Ward            = 0x00020000,
-
+        Shop            = 0x00040000,
         // Creeps
         Boss            = 0x0400 | Monster,
         Miniboss        = 0x0800 | Monster,
@@ -77,6 +77,7 @@ namespace Clank.View.Engine.Entities
         Creep           = 0x0200,
         WardPlacement   = 0x00010000,
         Ward            = 0x00020000,
+        Shop            = 0x00040000,
 
         // Creeps
         Boss            = 0x0400 | Monster,
