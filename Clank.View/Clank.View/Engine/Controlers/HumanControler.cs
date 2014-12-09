@@ -45,7 +45,8 @@ namespace Clank.View.Engine.Controlers
             m_hero = hero;
         }
 
-        Spells.Spell __spell;
+        int __oldScroll;
+        Point __oldPos;
         /// <summary>
         /// Mets à jour l'état de ce contrôleur, et lui permet d'envoyer des commandes au héros.
         /// </summary>
@@ -55,37 +56,27 @@ namespace Clank.View.Engine.Controlers
             // Mouvement du héros.
             var ms = Input.GetMouseState();
             Vector2 pos = Mobattack.GetMap().ToMapSpace(new Vector2(ms.X, ms.Y));
-            if(Input.IsRightClickTrigger() && Mobattack.GetMap().GetPassabilityAt(pos))
+            if(Input.IsRightClickPressed() && Mobattack.GetMap().GetPassabilityAt(pos))
             {
                 m_hero.Path = new Trajectory(new List<Vector2>() { pos });
             }
 
             if (m_hero.Path != null && m_hero.IsBlockedByWall)
             {
-                m_hero.StartMoveTo(pos);
+                m_hero.StartMoveTo(m_hero.Path.LastPosition());
             }
+
+            if (ms.ScrollWheelValue - __oldScroll < 0)
+                m_hero.VisionRange--;
+            else if (ms.ScrollWheelValue - __oldScroll> 0)
+                m_hero.VisionRange++;
 
             // Mise à jour des spells.
             UpdateSpells();
 
-            // -----
-            if (__spell == null)
-                __spell = new Spells.FireballSpell(m_hero);
-
-            __spell.UpdateCooldown((float)time.ElapsedGameTime.TotalSeconds);
-
-            if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Space))
-            {
-                Vector2 dir = pos - m_hero.Position; dir.Normalize();
-                __spell.Use(new Spells.SpellCastTargetInfo()
-                {
-                    Type = TargettingType.Direction,
-                    TargetDirection = dir
-                });
-            }
 
 
-
+            __oldScroll = ms.ScrollWheelValue;
         }
         
         /// <summary>
@@ -150,7 +141,40 @@ namespace Clank.View.Engine.Controlers
         /// </summary>
         public override void Draw(SpriteBatch batch, GameTime time)
         {
+            int spellCount = m_hero.Spells.Count;
+            const int spellIconSize = 64;
+            const int padding = 4;
 
+            int y = (int)Mobattack.GetScreenSize().Y - spellIconSize - 5;
+            int xBase = ((int)Mobattack.GetScreenSize().X - ((spellIconSize+padding) * spellCount))/2;
+            for(int i = 0; i < spellCount; i++)
+            {
+                bool isOnCooldown = m_hero.Spells[i].CurrentCooldown > 0;
+                int x = xBase + i * (spellIconSize + padding);
+
+                // Dessine l'icone du sort
+                Color col = isOnCooldown ? Color.Gray : Color.White;
+                batch.Draw(Ressources.GetSpellTexture(m_hero.Spells[i].Name),
+                           new Rectangle(x, y, spellIconSize, spellIconSize), null, col, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
+
+                // Dessine le cooldown du sort.
+                if(isOnCooldown)
+                {
+                    string cooldown;
+                    if(m_hero.Spells[i].CurrentCooldown <= 1)
+                        cooldown = (m_hero.Spells[i].CurrentCooldown).ToString("f1");
+                    else
+                        cooldown = (m_hero.Spells[i].CurrentCooldown).ToString("f0");
+
+                    Vector2 stringW = Ressources.Font.MeasureString(cooldown);
+
+                    int offsetX = (spellIconSize - (int)stringW.X) / 2;
+                    int offsetY = (spellIconSize - (int)stringW.Y) / 2;
+
+                    batch.DrawString(Ressources.Font, cooldown, new Vector2(x + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.GUI + Graphics.Z.FrontStep);
+                }
+
+            }
         }
         #endregion
     }

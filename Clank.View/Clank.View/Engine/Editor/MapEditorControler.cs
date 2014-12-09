@@ -14,6 +14,7 @@ namespace Clank.View.Engine.Editor
     public class MapEditorControler
     {
         public int ScrollSpeed = 16;
+        
         #region Variables
         bool m_isEnabled = false;
         Map m_map;
@@ -24,6 +25,12 @@ namespace Clank.View.Engine.Editor
         bool m_displayMinimap = false;
         private Gui.GuiButton m_modeButton;
         int m_brushSize = 2;
+        bool m_minimapDirty = true;
+
+        #region Graphics
+        SpriteBatch m_minimapBatch;
+        RenderTarget2D m_minimapTexture;
+        #endregion
         #endregion
 
         #region Properties
@@ -38,14 +45,25 @@ namespace Clank.View.Engine.Editor
         }
 
         /// <summary>
-        /// Map en cours d'édition.
+        /// Obtient ou définit la map en cours.
         /// </summary>
         public Map CurrentMap
         {
-            get;
-            set;
-        }
+            get
+            {
+                return m_map;
+            }
+            set
+            {
+                m_map = value;
 
+                if (m_minimapTexture != null)
+                    m_minimapTexture.Dispose();
+
+                m_minimapTexture = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, value.Size.X, value.Size.Y, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                m_map.OnMapModified += m_map_OnMapModified;
+            }
+        }
         #endregion
 
         #region Methods
@@ -54,11 +72,14 @@ namespace Clank.View.Engine.Editor
         /// </summary>
         public MapEditorControler(Map map)
         {
-            m_map = map;
+            CurrentMap = map;
             m_isEnabled = true;
-
+            CurrentMap.OnMapModified += m_map_OnMapModified;
+            m_minimapBatch = new SpriteBatch(Mobattack.Instance.GraphicsDevice);
             CreateGui();
         }
+
+
 
         /// <summary>
         /// Initialise les composants de l'interface graphique.
@@ -67,10 +88,10 @@ namespace Clank.View.Engine.Editor
         {
             m_modeButton = new Gui.GuiButton()
             {
-                Position = new Vector2(5, 5),
+                Position = new Vector2(0, 0),
                 Title = "Land",
                 Width = 150, 
-                Height = 15
+                Height = 25
             };
             m_modeButton.Clicked += OnChangeMode;
             Mobattack.GetScene().GuiManager.AddWidget(m_modeButton);
@@ -103,12 +124,12 @@ namespace Clank.View.Engine.Editor
                 m_displayMinimap = !m_displayMinimap;
 
             Vector2 mousePosPx = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
-            Vector2 mousePosUnits = ((mousePosPx + m_map.ScrollingVector2) - new Vector2(m_map.Viewport.X, m_map.Viewport.Y)) / Map.UnitSize;
+            Vector2 mousePosUnits = ((mousePosPx + CurrentMap.ScrollingVector2) - new Vector2(CurrentMap.Viewport.X, CurrentMap.Viewport.Y)) / Mobattack.GetMap().UnitSize;
 
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Add))
-                Map.UnitSize *= 2;
+                Mobattack.GetMap().UnitSize *= 2;
             else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Subtract))
-                Map.UnitSize /= 2;
+                Mobattack.GetMap().UnitSize /= 2;
 
 
             if (m_terraFormingMode && mousePosPx.Y > 25)
@@ -118,13 +139,13 @@ namespace Clank.View.Engine.Editor
                 {
                     for (int i = 0; i < m_brushSize; i++)
                         for (int j = 0; j < m_brushSize; j++)
-                            m_map.SetPassabilityAt(mousePosUnits + new Vector2(i, j), false);
+                            CurrentMap.SetPassabilityAt(mousePosUnits + new Vector2(i, j), false);
                 }
                 else if (Input.IsRightClickPressed())
                 {
                     for (int i = 0; i < m_brushSize; i++)
                         for (int j = 0; j < m_brushSize; j++ )
-                            m_map.SetPassabilityAt(mousePosUnits + new Vector2(i, j), true);
+                            CurrentMap.SetPassabilityAt(mousePosUnits + new Vector2(i, j), true);
                 }
                 else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.O))
                     m_brushSize++;
@@ -136,7 +157,7 @@ namespace Clank.View.Engine.Editor
                 if (Input.IsRightClickTrigger())
                 {
 
-                    Entities.EntityCollection entitiesInRange = m_map.Entities.GetAliveEntitiesInRange(mousePosUnits, 1f);
+                    Entities.EntityCollection entitiesInRange = CurrentMap.Entities.GetAliveEntitiesInRange(mousePosUnits, 1f);
 
                     Gui.GuiMenu menu = new Gui.GuiMenu();
                     menu.Position = mousePosPx;
@@ -146,7 +167,7 @@ namespace Clank.View.Engine.Editor
                         Gui.GuiMenu.GuiMenuItem item = new Gui.GuiMenu.GuiMenuItem("Remove " + entity.Type.ToString());
                         item.ItemSelected += new Gui.GuiMenu.ItemSelectedDelegate(() =>
                         {
-                            m_map.Entities.Remove(entity.ID);
+                            CurrentMap.Entities.Remove(entity.ID);
                             entity.Dispose();
                         });
                         item.IsEnabled = true;
@@ -164,7 +185,7 @@ namespace Clank.View.Engine.Editor
                         Position = mousePosUnits,
                         Type = Entities.EntityType.Tower | team,
                     };
-                    m_map.Entities.Add(entity.ID, entity);
+                    CurrentMap.Entities.Add(entity.ID, entity);
                 }
                 else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.R))
                 {
@@ -174,7 +195,7 @@ namespace Clank.View.Engine.Editor
                         SpawnPosition = mousePosUnits,
                         Type = Entities.EntityType.Spawner | team,
                     };
-                    m_map.Entities.Add(entity.ID, entity);
+                    CurrentMap.Entities.Add(entity.ID, entity);
                 }
                 else if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Y))
                 {
@@ -185,7 +206,7 @@ namespace Clank.View.Engine.Editor
                         CheckpointID = m_checkpointId,
                         CheckpointRow = m_rowId,
                     };
-                    m_map.Entities.Add(entity.ID, entity);
+                    CurrentMap.Entities.Add(entity.ID, entity);
                     m_checkpointId++;
                 }
                 if(Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad1))
@@ -213,7 +234,7 @@ namespace Clank.View.Engine.Editor
             // Sauvegarde
             if( Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.S))
             {
-                m_map.Save();
+                CurrentMap.Save();
             }
 
             // Chargement
@@ -224,9 +245,9 @@ namespace Clank.View.Engine.Editor
                     try
                     {
                         Map loaded = Map.FromFile(Ressources.MapFilename);
-                        m_map = loaded;
+                        CurrentMap = loaded;
 
-                        Mobattack.GetScene().Map = m_map;
+                        Mobattack.GetScene().Map = CurrentMap;
                     }
                     /*catch { }*/
                     finally { }
@@ -248,13 +269,13 @@ namespace Clank.View.Engine.Editor
 
             // Fait bouger l'écran quand on est au bord.
             if (position.X <= 10)
-                m_map.ScrollingVector2 = new Vector2(m_map.ScrollingVector2.X - ScrollSpeed, m_map.ScrollingVector2.Y);
+                CurrentMap.ScrollingVector2 = new Vector2(CurrentMap.ScrollingVector2.X - ScrollSpeed, CurrentMap.ScrollingVector2.Y);
             else if (position.X >= Mobattack.GetScreenSize().X - 10)
-                m_map.ScrollingVector2 = new Vector2(m_map.ScrollingVector2.X + ScrollSpeed, m_map.ScrollingVector2.Y);
+                CurrentMap.ScrollingVector2 = new Vector2(CurrentMap.ScrollingVector2.X + ScrollSpeed, CurrentMap.ScrollingVector2.Y);
             if (position.Y <= 10)
-                m_map.ScrollingVector2 = new Vector2(m_map.ScrollingVector2.X, m_map.ScrollingVector2.Y - ScrollSpeed);
+                CurrentMap.ScrollingVector2 = new Vector2(CurrentMap.ScrollingVector2.X, CurrentMap.ScrollingVector2.Y - ScrollSpeed);
             else if (position.Y >= Mobattack.GetScreenSize().Y - 10)
-                m_map.ScrollingVector2 = new Vector2(m_map.ScrollingVector2.X, m_map.ScrollingVector2.Y + ScrollSpeed);
+                CurrentMap.ScrollingVector2 = new Vector2(CurrentMap.ScrollingVector2.X, CurrentMap.ScrollingVector2.Y + ScrollSpeed);
         }
 
         /// <summary>
@@ -281,13 +302,13 @@ namespace Clank.View.Engine.Editor
 
             // Dessine le bandeau supérieur
             batch.Draw(Ressources.DummyTexture, new Rectangle(0, 0, (int)Mobattack.GetScreenSize().X, 25),
-                null, new Color(255, 255, 255, 200), 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI + 5 * Graphics.Z.BackStep);
+                null, new Color(0, 0, 0, 200), 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI + 5 * Graphics.Z.BackStep);
             
             // Dessine la minimap
             DrawMinimap(batch, new Rectangle((int)Mobattack.GetScreenSize().X - 200, (int)Mobattack.GetScreenSize().Y - 100, 200, 100), Graphics.Z.GUI + 2 * Graphics.Z.BackStep);
             
             // Dessine des infos de debug.
-            batch.DrawString(Ressources.Font, "RowId = " + m_rowId + " | CheckpointId = " + m_checkpointId, new Vector2(5, Mobattack.GetScreenSize().Y - 50), Color.Black);
+            batch.DrawString(Ressources.Font, "RowId = " + m_rowId + " | CheckpointId = " + m_checkpointId, new Vector2(5, Mobattack.GetScreenSize().Y - 50), Color.White);
 
 
         }
@@ -299,41 +320,89 @@ namespace Clank.View.Engine.Editor
         {
             if (!m_displayMinimap)
                 return;
-            int w = m_map.Passability.GetLength(0);
-            int h = m_map.Passability.GetLength(1);
+
+            int w = CurrentMap.Passability.GetLength(0);
+            int h = CurrentMap.Passability.GetLength(1);
             int unitX = Math.Max(1, rect.Width / w);
             int unitY = Math.Max(1, rect.Height / h);
-            for(int x = 0; x < w; x++)
+
+            if(m_displayMinimap && m_minimapDirty)
             {
-                for(int y = 0; y < h; y++)
+                m_minimapBatch.GraphicsDevice.SetRenderTarget(m_minimapTexture);
+                m_minimapBatch.Begin(SpriteSortMode.BackToFront, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
+                m_minimapBatch.GraphicsDevice.Clear(Color.White);
+                // Dessine la minimap sur la texture temporaire.
+                for (int x = 0; x < w; x++)
                 {
-                    Color col = m_map.Passability[x, y] ? Color.White : Color.Red;
-                    if (!m_map.Vision.HasVision(EntityType.Team1, new Vector2(x, y)))
+                    for (int y = 0; y < h; y++)
                     {
+                        Color col = CurrentMap.Passability[x, y] ? Color.White : Color.Red;
                         col = new Color(col.R / 2, col.G / 2, col.B / 2);
+                        
+                        m_minimapBatch.Draw(Ressources.DummyTexture,
+                            new Rectangle(x, y, 1, 1),
+                            null,
+                            col,
+                            0.0f,
+                            Vector2.Zero, SpriteEffects.None,
+                            z);
                     }
-                    batch.Draw(Ressources.DummyTexture,
-                        new Rectangle((int)(rect.X + (x / (float)w) * rect.Width),
-                                      (int)(rect.Y + (y / (float)h) * rect.Height),
-                                      unitX,
-                                      unitY), null,
-                                      col,
-                                      0.0f,
-                                      Vector2.Zero, SpriteEffects.None,
-                                      z);
+                }
+                m_minimapBatch.End();
+                m_minimapBatch.GraphicsDevice.SetRenderTarget(null);
+                // Supprime le dirty bit.
+                m_minimapDirty = false;
+            }
+
+
+
+
+            // Dessine la minimap
+            batch.Draw(m_minimapTexture, rect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, z);
+            
+            // Dessine la vision sur la minimap
+            for (int x = 0; x < w; x++)
+            {
+                for (int y = 0; y < h; y++)
+                {
+                    if (m_map.Vision.HasVision(EntityType.Team1, new Vector2(x, y)))
+                    {
+                        Color col = new Color(255, 255, 255, 255);
+                        batch.Draw(Ressources.DummyTexture,
+                            new Rectangle((int)(rect.X + (x / (float)w) * rect.Width),
+                            (int)(rect.Y + (y / (float)h) * rect.Height),
+                            unitX,
+                            unitY), null,
+                            col,
+                            0.0f,
+                            Vector2.Zero, SpriteEffects.None,
+                            z + Graphics.Z.FrontStep);
+                    }
+
                 }
             }
 
+            // Dessine le rectangle indiquant quelle partie de la map est actuellement affichée à l'écran.
             batch.Draw(Ressources.DummyTexture,
-                new Rectangle((int)(rect.X + (m_map.ScrollingVector2.X / Map.UnitSize / (float)w) * rect.Width),
-                              (int)(rect.Y + (m_map.ScrollingVector2.Y / Map.UnitSize / (float)h) * rect.Height),
-                              (int)((m_map.Viewport.Width / (float)(w * Map.UnitSize)) * rect.Width),
-                              (int)((m_map.Viewport.Height / (float)(h * Map.UnitSize)) * rect.Height)), null,
+                new Rectangle((int)(rect.X + (CurrentMap.ScrollingVector2.X / Mobattack.GetMap().UnitSize / (float)w) * rect.Width),
+                              (int)(rect.Y + (CurrentMap.ScrollingVector2.Y / Mobattack.GetMap().UnitSize / (float)h) * rect.Height),
+                              (int)((CurrentMap.Viewport.Width / (float)(w * Mobattack.GetMap().UnitSize)) * rect.Width),
+                              (int)((CurrentMap.Viewport.Height / (float)(h * Mobattack.GetMap().UnitSize)) * rect.Height)), null,
                               new Color(255, 255, 255, 60),
                               0.0f,
                               Vector2.Zero, SpriteEffects.None,
-                              z + Graphics.Z.FrontStep);
+                              z + Graphics.Z.FrontStep * 2);
         }
+
+        #region External event handlers
+        /// <summary>
+        /// Dessine 
+        /// </summary>
+        void m_map_OnMapModified()
+        {
+            m_minimapDirty = true;
+        }
+        #endregion
         #endregion
     }
 }

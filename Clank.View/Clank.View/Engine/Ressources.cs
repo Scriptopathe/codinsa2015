@@ -15,12 +15,38 @@ namespace Clank.View.Engine
         public static Texture2D DummyTexture;
         public static string MapFilename = "Content/map.txt";
 
+        #region ByName
+        static Dictionary<string, Texture2D> s_textureCache = new Dictionary<string,Texture2D>();
+        public static Texture2D GetSpellTexture(string spellname)
+        {
+            Texture2D tex;
+            try
+            {
+                if (s_textureCache.ContainsKey(spellname))
+                    return s_textureCache[spellname];
+                else
+                {
+                    tex = Mobattack.Instance.Content.Load<Texture2D>("textures/spells/" + spellname);
+                    s_textureCache.Add(spellname, tex);
+                }
+            }
+            catch
+            {
+                tex = DummyTexture;
+                s_textureCache.Add(spellname, tex);
+            }
+
+            return tex;
+        }
+        #endregion
+
         #region Effects
         public static Effect MapEffect { get; set; }
         public static Texture2D WallTexture { get; set; }
         public static Texture2D WallBorderTexture { get; set; }
         public static Texture2D GrassTexture { get; set; }
         public static Texture2D LavaTexture { get; set; }
+        
         /// <summary>
         /// Matrice de transformation pour les dessins 2D.
         /// </summary>

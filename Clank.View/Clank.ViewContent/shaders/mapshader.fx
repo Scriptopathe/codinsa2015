@@ -82,7 +82,7 @@ float4 PixelShaderFunctionSAVE(float2 coords: TEXCOORD0) : COLOR0
 		// et la texture intérieure.
 		float sinVal = sin(texCoords.x + xTime * 4) * 0.7;
 		col = lerp(tex2D(wall, texCoords + float2(0, sinVal)) * exp(sinVal * 1.4),//float2(0, sin(texCoords.x + xTime * 4) * 0.7)),//float2(0, sin(texCoords.x*16 + xTime * 32) * 0.025)),
-					tex2D(border, texCoords  + xTime),//tex2D(border, pos * 5),
+					tex2D(border, texCoords  + xTime), //tex2D(border, pos * 5),
 					saturate(interpfactor));
 	}
 	float lightning = 0.5 + val.b/2;
@@ -125,7 +125,7 @@ float4 PixelShaderFunction(float2 coords: TEXCOORD0) : COLOR0
 			tex2D(border, texCoords + xTime),//tex2D(border, pos * 5),
 			saturate(grad.r));
 	}
-	float lightning = lerp(0.1 + val.b / 2, 0.6, grad.g);
+	float lightning = lerp(0.3 + val.b / 2, 1.0, grad.g);
 	return float4(col.rgb * lightning, 1);
 }
 technique Technique1
