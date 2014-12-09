@@ -44,7 +44,8 @@ namespace Clank.View.Engine.Entities
             BaseMagicResist = 40;
             BaseMaxHP = 400;
             HP = BaseMaxHP;
-            TowerRange = 6.0f;
+            VisionRange = 6.0f;
+            TowerRange = VisionRange;
 
             m_attackSpell = new Spells.FireballSpell(this);
         }

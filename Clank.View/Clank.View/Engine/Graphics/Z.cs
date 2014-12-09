@@ -18,11 +18,11 @@ namespace Clank.View.Engine.Graphics
         #endregion
 
         #region Entities
-        public const float Entities     = 0.5f;
-        public const float Background   = 0.0f;
-        public const float Map          = 0.01f;
-        public const float GUI          = 0.8f;
-        public const float Particles    = 0.7f;
+        public const float Entities     = 0.9f;
+        public const float Background   = 1.0f;
+        public const float Map          = 1.0f;
+        public const float GUI          = 0.1f;
+        public const float Particles    = 0.2f;
         #endregion
 
     }

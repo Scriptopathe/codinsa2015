@@ -35,7 +35,7 @@ namespace Clank.View.Engine.Spells
         /// Crée une nouvelle instance de FireballSpell.
         /// </summary>
         /// <param name="caster"></param>
-        public FireballSpell(EntityBase caster)
+        public FireballSpell(EntityBase caster, float cooldownBase=1.7f)
         {
             SourceCaster = caster;
             Name = "Fireball";
@@ -51,7 +51,7 @@ namespace Clank.View.Engine.Spells
                     DieOnCollision = true,
                     Type = TargettingType.Direction
                 },
-                BaseCooldown = 5f,
+                BaseCooldown = cooldownBase,
                 CastingTime = 0.01f,
                 CastingTimeAlteration = new StateAlterationModel() 
                 {

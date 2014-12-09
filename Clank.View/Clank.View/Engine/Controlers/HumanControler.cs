@@ -74,11 +74,23 @@ namespace Clank.View.Engine.Controlers
             // Mise à jour des spells.
             UpdateSpells();
 
-
+            // Utilisation des consommables.
+            UpdateConsummable();
 
             __oldScroll = ms.ScrollWheelValue;
         }
         
+        /// <summary>
+        /// Détermine si le joueur a appuyé sur une touche pour warder, et effectue l'action
+        /// dans ce cas.
+        /// </summary>
+        void UpdateConsummable()
+        {
+            if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.D1))
+            {
+                m_hero.UseConsummable();
+            }
+        }
         /// <summary>
         /// Détermine si le joueur a appuyé sur des touches pour lancer des sorts.
         /// </summary>
@@ -136,18 +148,19 @@ namespace Clank.View.Engine.Controlers
                 }
             }
         }
+
+        #region Draw
+        const int spellIconSize = 64;
+        const int padding = 4;
         /// <summary>
-        /// Dessine les éléments graphique du contrôleur à l'écran.
+        /// Dessine les icones des spells.
         /// </summary>
-        public override void Draw(SpriteBatch batch, GameTime time)
+        void DrawSpellIcons(SpriteBatch batch, GameTime time)
         {
             int spellCount = m_hero.Spells.Count;
-            const int spellIconSize = 64;
-            const int padding = 4;
-
             int y = (int)Mobattack.GetScreenSize().Y - spellIconSize - 5;
-            int xBase = ((int)Mobattack.GetScreenSize().X - ((spellIconSize+padding) * spellCount))/2;
-            for(int i = 0; i < spellCount; i++)
+            int xBase = ((int)Mobattack.GetScreenSize().X - ((spellIconSize + padding) * spellCount)) / 2;
+            for (int i = 0; i < spellCount; i++)
             {
                 bool isOnCooldown = m_hero.Spells[i].CurrentCooldown > 0;
                 int x = xBase + i * (spellIconSize + padding);
@@ -158,10 +171,10 @@ namespace Clank.View.Engine.Controlers
                            new Rectangle(x, y, spellIconSize, spellIconSize), null, col, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
 
                 // Dessine le cooldown du sort.
-                if(isOnCooldown)
+                if (isOnCooldown)
                 {
                     string cooldown;
-                    if(m_hero.Spells[i].CurrentCooldown <= 1)
+                    if (m_hero.Spells[i].CurrentCooldown <= 1)
                         cooldown = (m_hero.Spells[i].CurrentCooldown).ToString("f1");
                     else
                         cooldown = (m_hero.Spells[i].CurrentCooldown).ToString("f0");
@@ -176,6 +189,35 @@ namespace Clank.View.Engine.Controlers
 
             }
         }
+        
+        /// <summary>
+        /// Dessine le slots de consommables.
+        /// </summary>
+        /// <param name="batch"></param>
+        /// <param name="time"></param>
+        void DrawConsummableSlots(SpriteBatch batch, GameTime time)
+        {
+            int spellCount = m_hero.Spells.Count;
+            int y = (int)Mobattack.GetScreenSize().Y - spellIconSize - 5;
+            int xBase = ((int)Mobattack.GetScreenSize().X - ((spellIconSize + padding) * spellCount)) / 2;
+            xBase -= spellIconSize + padding;
+            
+            batch.Draw(Ressources.GetSpellTexture(m_hero.Conssmmable1.Type.ToString()),
+                new Rectangle(xBase, y, spellIconSize/2, spellIconSize/2), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
+        }
+        /// <summary>
+        /// Dessine les éléments graphiques du contrôleur à l'écran.
+        /// </summary>
+        public override void Draw(SpriteBatch batch, GameTime time)
+        {
+            DrawSpellIcons(batch, time);
+            DrawConsummableSlots(batch, time);
+        }
+
+
+        #endregion
+
+        
         #endregion
     }
 }

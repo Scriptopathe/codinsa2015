@@ -21,7 +21,7 @@ namespace Clank.View.Engine.Entities
         /// Référence vers l'entité ayant l'aggro de la tour.
         /// </summary>
         EntityBase m_currentAgro;
-
+        Vector2 m_currentAggroOldPos;
         /// <summary>
         /// Sort d'attaque de la tour.
         /// </summary>
@@ -30,7 +30,7 @@ namespace Clank.View.Engine.Entities
         /// <summary>
         /// Range du creep, en unités métriques.
         /// </summary>
-        float Range { get; set; }
+        float AttackRange { get; set; }
 
         /// <summary>
         /// Obtient la rangée de checkpoints que devra suivre ce creep.
@@ -58,12 +58,13 @@ namespace Clank.View.Engine.Entities
         public EntityCreep() : base()
         {
             BaseArmor = Mobattack.GetScene().Constants.Creeps.Armor;
+            VisionRange = Mobattack.GetScene().Constants.Creeps.VisionRange;
+            AttackRange = VisionRange - 2;
             BaseAttackDamage = 60;
             BaseMagicResist = 40;
             BaseMaxHP = 100;
             HP = BaseMaxHP;
-            Range = 4.0f;
-            BaseMoveSpeed = 5f;
+            BaseMoveSpeed = 2f;
             m_currentCheckpointId = -1;
             m_attackSpell = new Spells.FireballSpell(this);
         }
@@ -88,7 +89,7 @@ namespace Clank.View.Engine.Entities
             if (m_currentAgro != null && !m_currentAgro.Type.HasFlag(EntityType.Checkpoint))
             {
                 float dstSqr = Vector2.DistanceSquared(m_currentAgro.Position, Position);
-                if(dstSqr <= Range * Range )
+                if(dstSqr <= AttackRange * AttackRange )
                 {
                     m_attackSpell.Use(new Spells.SpellCastTargetInfo()
                     {
@@ -126,7 +127,7 @@ namespace Clank.View.Engine.Entities
 
             // On mets à jour la trajectoire.
             m_path.UpdateStep(Position, GetMoveSpeed(), time);
-
+            m_path.Offset = (Row - 1) * new Vector2(0.25f, 0.25f);
             Vector2 nextPosition = m_path.CurrentStep;
 
             // Si on est trop près d'un sbire, on s'arrête
@@ -149,7 +150,7 @@ namespace Clank.View.Engine.Entities
 
             // on s'arrête quand on est en range d'une tour / creep.
             float dstSqr = Vector2.DistanceSquared(m_path.LastPosition(), Position);
-            if (m_currentAgro.Type.HasFlag(EntityType.Checkpoint) || dstSqr > Range * Range * MaxRangeApproach)
+            if (m_currentAgro.Type.HasFlag(EntityType.Checkpoint) || dstSqr > AttackRange * AttackRange * MaxRangeApproach)
             {
                 Direction = nextPosition - Position;
                 MoveForward(time);
@@ -160,10 +161,10 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         void UpdateAggro(GameTime time)
         {
-            EntityCollection entitiesInRange = Mobattack.GetMap().Entities.GetAliveEntitiesInRange(this.Position, Range);
+            EntityCollection entitiesInRange = Mobattack.GetMap().Entities.GetAliveEntitiesInRange(this.Position, AttackRange);
             EntityBase oldAggro = m_currentAgro;
 
-            if (m_currentAgro != null && m_currentAgro.IsDead)
+            if (m_currentAgro != null && (m_currentAgro.IsDead || !Sees(m_currentAgro)))
                 m_currentAgro = null;
 
             // Si la creep n'a pas d'aggro : on cherche la première unité creep en range
@@ -289,9 +290,18 @@ namespace Clank.View.Engine.Entities
                 }
             }*/
 
+            // Si l'aggro bouge, on recalcule l'A*.
+            if (m_currentAgro != null && Vector2.DistanceSquared(m_currentAgro.Position, m_currentAggroOldPos) > 1)
+            {
+                m_currentAggroOldPos = m_currentAgro.Position;
+                ComputePath();
+            }
+
             // Si on change d'aggro, retourne le chemin vers la tour la plus proche.
             if (m_currentAgro != oldAggro)
                 ComputePath();
+
+
         }
         #endregion
 

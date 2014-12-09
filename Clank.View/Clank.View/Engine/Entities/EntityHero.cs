@@ -33,9 +33,32 @@ namespace Clank.View.Engine.Entities
         /// Représente l'armure possédée par ce héros.
         /// </summary>
         Armor m_armor;
+
+        /// <summary>
+        /// Représente le consommable dans le slot1 de consommable du héros.
+        /// </summary>
+        Consummable m_consummable1 = new EmptyConsummable();
+
+    
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Obtient le consommable contenu dans le slot 1.
+        /// </summary>
+        public Consummable Conssmmable1
+        {
+            get { return m_consummable1; }
+            protected set { m_consummable1 = value; }
+        }
+        /// <summary>
+        /// Obtient ou définit le nombre de wards que ce héros a posé sur la map.
+        /// </summary>
+        public int WardCount
+        {
+            get;
+            set;
+        }
         /// <summary>
         /// Obtient ou définit le rôle de ce héros.
         /// </summary>
@@ -109,12 +132,14 @@ namespace Clank.View.Engine.Entities
         public EntityHero()
         {
             Spells = new List<Spell>();
-            Spells.Add(new Spells.FireballSpell(this));
+            Spells.Add(new Spells.FireballSpell(this, 4));
             Spells.Add(new Spells.DashForwardSpell(this));
             Spells.Add(new Spells.MovementSpeedBuffSpell(this));
             Spells.Add(new Spells.TargettedTowerSpell(this));
             VisionRange = 8;
-            BaseMoveSpeed = 4;
+            BaseMoveSpeed = 2;
+
+            m_consummable1 = new WardConsummable();
         }
 
         /// <summary>
@@ -130,11 +155,22 @@ namespace Clank.View.Engine.Entities
 
         #region API
         /// <summary>
+        /// Utilise le consommable dans le slot 1.
+        /// </summary>
+        public void UseConsummable()
+        {
+            if(m_consummable1.Use(this))
+                m_consummable1 = new EmptyConsummable();
+        }
+        #endregion
+
+        #region DEBUG
+        /// <summary>
         /// Mets à jour les particules des PA.
         /// </summary>
         void UpdatePAParticle()
         {
-            if (__paDiff > 10)
+            if (__paDiff > 2)
                 Mobattack.GetScene().Particles.Add(new Particles.ParticleText()
                 {
                     CurrentColor = Color.White,

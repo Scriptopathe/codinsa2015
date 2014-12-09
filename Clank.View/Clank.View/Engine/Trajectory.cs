@@ -25,7 +25,12 @@ namespace Clank.View.Engine
         /// </summary>
         private int m_currentPosition;
 
+
         #region Properties
+        /// <summary>
+        /// Décalage entre la position stockée dans la trajectoire et la position à atteindre réellement.
+        /// </summary>
+        public Vector2 Offset { get; set; }
         /// <summary>
         /// Obtient ou définit la liste des points de passage de la trajectoire.
         /// Deux points consécutifs doivent être séparés d'une distance de 1 !
@@ -75,7 +80,7 @@ namespace Clank.View.Engine
         /// <returns></returns>
         public Vector2 LastPosition()
         {
-            return TrajectoryUnits.Last();
+            return TrajectoryUnits.Last() + Offset;
         }
         /// <summary>
         /// Crée une nouvelle instance de Trajectory avec la trajectoire passée en paramètre.
@@ -102,7 +107,7 @@ namespace Clank.View.Engine
             }
 
 
-            return CurrentStep;
+            return CurrentStep + Offset;
         }
         /// <summary>
         /// Retourne vrai si la position du dernier élément de la trajectoire est atteint.
@@ -111,7 +116,7 @@ namespace Clank.View.Engine
         public bool IsEnded(Vector2 position, float speed, GameTime time)
         {
             float dstError = speed * (float)time.ElapsedGameTime.TotalSeconds;
-            float dstSqr = Vector2.DistanceSquared(position, TrajectoryUnits.Last());
+            float dstSqr = Vector2.DistanceSquared(position, LastPosition());
             return dstSqr <= dstError * dstError;
         }
 
@@ -122,7 +127,7 @@ namespace Clank.View.Engine
         {
             get
             {
-                return TrajectoryUnits[m_currentPosition];
+                return TrajectoryUnits[m_currentPosition] + Offset;
             }
         }
         #endregion

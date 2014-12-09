@@ -90,7 +90,7 @@ float4 PixelShaderFunction(float2 coords: TEXCOORD0) : COLOR0
 		// et la texture intérieure.
 		float sinVal = sin(texCoords.x + xTime * 4) * 0.7;
 		col = lerp(tex2D(wall, texCoords + float2(0, sinVal)) * exp(sinVal * 1.4),//float2(0, sin(texCoords.x + xTime * 4) * 0.7)),//float2(0, sin(texCoords.x*16 + xTime * 32) * 0.025)),
-			tex2D(border, texCoords + xTime),//tex2D(border, pos * 5),
+			tex2D(border, texCoords),//tex2D(border, pos * 5),
 			saturate(grad.r));
 
 		val.b += (0.5+grad2.r)/2;

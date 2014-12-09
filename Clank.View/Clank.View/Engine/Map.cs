@@ -47,7 +47,10 @@ namespace Clank.View.Engine
         /// Scrolling de la map (en px).
         /// </summary>
         Point m_scrolling;
-
+        /// <summary>
+        /// Liste des entités à ajouter à la prochaine frame.
+        /// </summary>
+        EntityCollection m_entitiesAddList;
 
         /// <summary>
         /// Render Target des tiles
@@ -270,12 +273,12 @@ namespace Clank.View.Engine
 
             // Dessine les tiles avec le shader
             batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, Ressources.MapEffect);
-            batch.Draw(m_tilesRenderTarget, Viewport, Color.White);
+            batch.Draw(m_tilesRenderTarget, Viewport, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.Map);
             batch.End();
 
             // Dessine les entités.
             batch.Begin();
-            batch.Draw(m_entitiesRenderTarget, Viewport, Color.White);
+            batch.Draw(m_entitiesRenderTarget, Viewport, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.Entities);
             batch.End();
 
 
@@ -292,6 +295,7 @@ namespace Clank.View.Engine
         public Map()
         {
             m_entities = new EntityCollection();
+            m_entitiesAddList = new EntityCollection();
             m_spellcasts = new List<Spellcast>();
             m_unitSize = 32;
 
@@ -352,6 +356,15 @@ namespace Clank.View.Engine
                 }
             }
 
+            // Ajoute les entités en attente.
+            while(m_entitiesAddList.Count != 0)
+            {
+                var first = m_entitiesAddList.First();
+                m_entities.Add(first.Key, first.Value);
+                m_entitiesAddList.Remove(first.Key);
+            }
+
+            // Mets à jour les entités.
             foreach (var kvp in m_entities) 
             { 
                 if (kvp.Value.IsDisposing) 
@@ -443,6 +456,13 @@ namespace Clank.View.Engine
         #endregion
         
         #region API
+        /// <summary>
+        /// Ajoute une entité à la map.
+        /// </summary>
+        public void AddEntity(EntityBase entity)
+        {
+            m_entitiesAddList.Add(entity.ID, entity);
+        }
         /// <summary>
         /// Retourne la passabilité de la map à la position donnée en unités métriques.
         /// </summary>
@@ -540,7 +560,7 @@ namespace Clank.View.Engine
             {
                 string x = entity.Position.X.ToString();
                 string y = entity.Position.Y.ToString();
-                if(entity.Type.HasFlag(EntityType.Structure))
+                if(entity.Type.HasFlag(EntityType.Structure) | entity.Type.HasFlag(EntityType.WardPlacement))
                     writer.WriteLine(entity.Type.ToString() + " " + x.ToString() + " " + y.ToString());
                 else if(entity.Type.HasFlag(EntityType.Checkpoint))
                 {
@@ -621,6 +641,14 @@ namespace Clank.View.Engine
                                     Type = type
                                 };
                                 break;
+
+                            case EntityType.WardPlacement:
+                                newEntity = new EntityWardPlacement()
+                                {
+                                    Position = new Vector2(sX, sY),
+                                    Type = type,
+                                };
+                                break;
                             case EntityType.Checkpoint:
                                 int row = int.Parse(words[i + 3]);
                                 int id = int.Parse(words[i + 4]);
@@ -633,6 +661,7 @@ namespace Clank.View.Engine
                                     CheckpointID = id
                                 };
                                 break;
+
                             case EntityType.Inhibitor:
                                 throw new NotImplementedException();
                                 break;
@@ -656,9 +685,10 @@ namespace Clank.View.Engine
 
             Map map = new Map() { Entities = newEntities, Passability = pass };
 
-            EntityHero dummyPlayer = new EntityHero() { Position = new Vector2(25, 50), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter };
-            Mobattack.GetScene().Controlers[0].Hero = dummyPlayer;
+            EntityHero dummyPlayer = new EntityHero() { Position = new Vector2(25, 40), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
             map.Entities.Add(dummyPlayer.ID, dummyPlayer);
+            map.Heroes.Clear();
+            map.Heroes.Add(dummyPlayer);
             return map;
         }
         #endregion

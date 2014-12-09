@@ -12,12 +12,16 @@ namespace Clank.View.Engine
     public class VisionConstants
     {
         public float WardRange;
+        public float WardPutRange;
         public float WardDuration;
-
+        public float WardRevealDuration;
+        public int MaxWardsPerHero;
         public VisionConstants()
         {
             WardRange = 5.0f;
             WardDuration = 30.0f;
+            MaxWardsPerHero = 5;
+            WardRevealDuration = 10;
         }
     }
     /// <summary>

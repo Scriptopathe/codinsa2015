@@ -30,7 +30,9 @@ namespace Clank.View.Engine.Entities
         Armor,
         Weapon,
         Boots,
+        Self,
         Spell
+
     }
     /// <summary>
     /// Représente une altération d'état en cours.

@@ -33,6 +33,11 @@ namespace Clank.View.Engine.Editor
         #endregion
         #endregion
 
+        #region Events
+        public delegate void MapLoadedDelegate(Map map);
+        public event MapLoadedDelegate OnMapLoaded;
+        #endregion
+
         #region Properties
         /// <summary>
         /// Obtient ou définit une valeur indiquant si ce contrôleur est activé / désactivé.
@@ -209,6 +214,15 @@ namespace Clank.View.Engine.Editor
                     CurrentMap.Entities.Add(entity.ID, entity);
                     m_checkpointId++;
                 }
+                else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.U))
+                {
+                    Entities.EntityBase entity = new EntityWardPlacement()
+                    {
+                        Position = mousePosUnits,
+                        Type = EntityType.WardPlacement | team,
+                    };
+                    CurrentMap.Entities.Add(entity.ID, entity);
+                }
                 if(Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad1))
                 {
                     m_checkpointId = 0;
@@ -246,8 +260,8 @@ namespace Clank.View.Engine.Editor
                     {
                         Map loaded = Map.FromFile(Ressources.MapFilename);
                         CurrentMap = loaded;
-
-                        Mobattack.GetScene().Map = CurrentMap;
+                        if (OnMapLoaded != null)
+                            OnMapLoaded(CurrentMap);
                     }
                     /*catch { }*/
                     finally { }

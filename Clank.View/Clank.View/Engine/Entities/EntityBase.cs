@@ -802,8 +802,7 @@ namespace Clank.View.Engine.Entities
 
             if (IsDead)
             {
-                OnDeath();
-                IsDisposing = true;
+                Die();
             }
         }
 
@@ -820,8 +819,11 @@ namespace Clank.View.Engine.Entities
         /// <summary>
         /// Fonction appelée lorsque l'entité meurt.
         /// </summary>
-        protected virtual void OnDeath()
+        public virtual void Die()
         {
+            if (IsDisposing)
+                return;
+
             // Recherche le tueur de l'entité.
             float maxTime = float.MinValue;
             EntityHero killer = null;
@@ -847,7 +849,8 @@ namespace Clank.View.Engine.Entities
             {
                 Mobattack.GetScene().RewardSystem.NotifyUnitDeath(this, killer);
             }
-            
+
+            IsDisposing = true;
         }
         #region Alterations
         /// <summary>
@@ -1095,12 +1098,14 @@ namespace Clank.View.Engine.Entities
             if (Type.HasFlag(EntityType.Checkpoint))
                 s /= 4;
 
+            col.A = (byte)((Mobattack.GetMap().Vision.HasVision((Type & EntityType.Teams) ^ EntityType.Teams, Position)) ? 255 : 100);
             batch.Draw(tex, 
                 new Rectangle(position.X, position.Y, s, s), null, col, __angle, new Vector2(s, s), SpriteEffects.None, 0.0f);
         }
 
         /// <summary>
         /// Supprime cette entité de la map.
+        /// /!\ Cette fonction est à appeler par la map, pour supprimer cette entité, utiliser Die().
         /// </summary>
         public void Dispose()
         {
@@ -1108,6 +1113,20 @@ namespace Clank.View.Engine.Entities
         }
         #endregion
 
+        #region Vision
+        /// <summary>
+        /// Indique si cette entité voit l'autre entité.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Sees(EntityBase other)
+        {
+            if (other.IsStealthed)
+                return Mobattack.GetMap().Vision.HasTrueVision(Type, other.Position);
+            else
+                return Mobattack.GetMap().Vision.HasVision(Type, other.Position);
+        }
+        #endregion
 
     }
 }

@@ -137,7 +137,20 @@ namespace Clank.View
 
             // DEBUG
             Controlers.Add(0, new Engine.Controlers.HumanControler(Map.Heroes[0]));
+            MapEditControler.OnMapLoaded += MapEditControler_OnMapLoaded;
         }
+
+        /// <summary>
+        /// Se produit lorsqu'une nouvelle map est chargée.
+        /// </summary>
+        void MapEditControler_OnMapLoaded(Map map)
+        {
+            Map = map;
+            Controlers.Clear();
+            Controlers.Add(0, new Engine.Controlers.HumanControler(Map.Heroes[0]));
+            RewardSystem = new RewardSystem(Map.Heroes);
+        }
+
         /// <summary>
         /// Charge le contenu de la scène.
         /// </summary>
@@ -190,7 +203,7 @@ namespace Clank.View
 
 
             // Dessine les GUI, particules etc...
-            batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied);
+            batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
             GuiManager.Draw(batch);
             MapEditControler.Draw(batch);
             Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);

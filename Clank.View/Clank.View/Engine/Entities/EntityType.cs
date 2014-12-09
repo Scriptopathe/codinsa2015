@@ -38,7 +38,7 @@ namespace Clank.View.Engine.Entities
         AllTeam1    = Team1 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
         AllTeam2    = Team2 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
         AllObjectives   = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss,
-        AllSaved        = AllObjectives | Checkpoint,
+        AllSaved        = AllObjectives | Checkpoint | EntityType.WardPlacement,
         
         // Team
         Team1Tower      = Team1 | Tower,
