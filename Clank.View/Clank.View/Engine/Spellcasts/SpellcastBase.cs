@@ -113,11 +113,11 @@ namespace Clank.View.Engine.Spellcasts
         {
             Point scroll = Mobattack.GetMap().Scrolling;
             batch.Draw(Ressources.DummyTexture,
-                new Rectangle((int)(m_shape.Position.X * Map.UnitSize) - scroll.X, (int)(m_shape.Position.Y * Map.UnitSize) - scroll.Y, (int)(m_shape.Radius * 2 * Map.UnitSize), (int)(m_shape.Radius * 2 * Map.UnitSize)),
+                new Rectangle((int)(m_shape.Position.X * Mobattack.GetMap().UnitSize) - scroll.X, (int)(m_shape.Position.Y * Mobattack.GetMap().UnitSize) - scroll.Y, (int)(m_shape.Radius * 2 * Mobattack.GetMap().UnitSize), (int)(m_shape.Radius * 2 * Mobattack.GetMap().UnitSize)),
                 null, 
                 Color.Violet,
                 0.0f,
-                new Vector2(m_shape.Radius * Map.UnitSize, m_shape.Radius * Map.UnitSize),
+                new Vector2(m_shape.Radius * Mobattack.GetMap().UnitSize, m_shape.Radius * Mobattack.GetMap().UnitSize),
                 SpriteEffects.None, 0.0f);
         }
 

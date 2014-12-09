@@ -41,6 +41,7 @@ namespace Clank.View.Engine.Spells
         public TargettedTowerSpell(EntityBase caster)
         {
             SourceCaster = caster;
+            Name = "TowerSpell";
             Levels = new List<SpellDescription>() { new SpellDescription()
             {
                 

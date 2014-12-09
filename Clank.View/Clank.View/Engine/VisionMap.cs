@@ -157,30 +157,40 @@ namespace Clank.View.Engine
 
         }
         
-        public void FloodWith(Vector2 position, float radius, VisionFlags flags)
+        /// <summary>
+        /// Utilise un algorithme de raycasting pour appliquer les [flags] de visions données sur une zone
+        /// de [radius] unités autour de la [position] donnée.
+        /// </summary>
+        public void RaycastVision(Vector2 position, float radius, VisionFlags flags)
         {
             Vector2 startPos = new Vector2((int)position.X, (int)position.Y);
-            for(float x = -radius; x <= radius; x+=0.5f)
+            float radiusSqr = radius * radius;
+            for(float x = -radius - 1; x <= radius + 1; x+=0.5f)
             {   
                 float y1 = -radius;
                 float y2 = radius;
-                DrawRay(startPos, startPos + new Vector2(x, y1), flags, radius);
-                DrawRay(startPos, startPos + new Vector2(x, y2), flags, radius);
+                DrawRay(startPos, new Vector2(x, y1), flags, radius, radiusSqr);
+                DrawRay(startPos, new Vector2(x, y2), flags, radius, radiusSqr);
 
-                DrawRay(startPos, startPos + new Vector2(y1, x), flags, radius);
-                DrawRay(startPos, startPos + new Vector2(y2, x), flags, radius);
+                DrawRay(startPos, new Vector2(y1, x), flags, radius, radiusSqr);
+                DrawRay(startPos, new Vector2(y2, x), flags, radius, radiusSqr);
             }
         }
 
-        public void DrawRay(Vector2 startPos, Vector2 endPos, VisionFlags flags, float radius)
+        /// <summary>
+        /// Dessine un rayon de vision, appliquant les [flags] passés en paramètres, 
+        /// de la position de départ [startPos] vers la direction [dir] donnée.
+        /// Le rayon s'arrête à la rencontre d'un obstacle ou après avoir traversé [radius] unités.
+        /// </summary>
+        public void DrawRay(Vector2 startPos, Vector2 dir, VisionFlags flags, float radius, float radiusSqr)
         {
-            Vector2 dir = endPos - startPos; dir.Normalize();
-            for(int i = 0; i < radius + 2; i++)
+            dir.Normalize();
+            for(int i = 0; i < radius; i++)
             {
                 Vector2 currentStep = startPos + dir * i;
                 currentStep.X = (int)Math.Round(currentStep.X);
                 currentStep.Y = (int)Math.Round(currentStep.Y);
-                if (m_map.GetPassabilityAt(currentStep) && Vector2.DistanceSquared(startPos, currentStep) < radius * radius)
+                if (m_map.GetPassabilityAt(currentStep) && Vector2.DistanceSquared(startPos, currentStep) < radiusSqr)
                 {
                     m_vision[(int)currentStep.X, (int)currentStep.Y] |= flags;
                 }
@@ -211,7 +221,7 @@ namespace Clank.View.Engine
                 VisionFlags flag = (VisionFlags)team;
 
                 if (entity.VisionRange > 0.5f)
-                    FloodWith(entity.Position, entity.VisionRange, flag);
+                    RaycastVision(entity.Position, entity.VisionRange, flag);
                         
             }
 

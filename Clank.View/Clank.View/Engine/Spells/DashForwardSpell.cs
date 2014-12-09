@@ -42,6 +42,7 @@ namespace Clank.View.Engine.Spells
         public DashForwardSpell(EntityBase caster)
         {
             SourceCaster = caster;
+            Name = "Dash";
             Levels = new List<SpellDescription>() { new SpellDescription()
             {
                 TargetType = new SpellTargetInfo()
@@ -61,7 +62,7 @@ namespace Clank.View.Engine.Spells
                     new StateAlterationModel()
                     {
                         Type = StateAlterationType.Dash,
-                        DashSpeed = 40,
+                        DashSpeed = 60,
                         DashGoThroughWall = true,
                         DashDirectionType = Entities.DashDirectionType.Direction,
                         BaseDuration = 0.075f,

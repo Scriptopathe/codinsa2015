@@ -40,6 +40,7 @@ namespace Clank.View.Engine.Spells
         public MovementSpeedBuffSpell(EntityBase caster)
         {
             SourceCaster = caster;
+            Name = "Run";
             Levels = new List<SpellDescription>() { new SpellDescription()
             {
                 TargetType = new SpellTargetInfo()
@@ -51,7 +52,7 @@ namespace Clank.View.Engine.Spells
                     DieOnCollision = true,
                     Type = TargettingType.Targetted
                 },
-                BaseCooldown = 0.5f,
+                BaseCooldown = 15f,
                 CastingTime = 0.01f,
                 CastingTimeAlteration = new StateAlterationModel() 
                 {

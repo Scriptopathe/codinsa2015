@@ -56,6 +56,7 @@ namespace Clank.View
 
             m_graphics.PreferredBackBufferWidth = (int)GetScreenSize().X;
             m_graphics.PreferredBackBufferHeight = (int)GetScreenSize().Y;
+            
             m_graphics.SynchronizeWithVerticalRetrace = false;
         }
 
@@ -118,8 +119,8 @@ namespace Clank.View
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            
 
+            GraphicsDevice.Clear(Color.Black);
             // TODO: Add your drawing code here
             m_scene.Draw(gameTime, m_spriteBatch);
             base.Draw(gameTime);

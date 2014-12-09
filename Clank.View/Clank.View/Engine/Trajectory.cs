@@ -111,7 +111,7 @@ namespace Clank.View.Engine
         public bool IsEnded(Vector2 position, float speed, GameTime time)
         {
             float dstError = speed * (float)time.ElapsedGameTime.TotalSeconds;
-            float dstSqr = Vector2.DistanceSquared(position, TrajectoryUnits.Last()  + new Vector2(0.5f, 0.5f));
+            float dstSqr = Vector2.DistanceSquared(position, TrajectoryUnits.Last());
             return dstSqr <= dstError * dstError;
         }
 
@@ -122,7 +122,7 @@ namespace Clank.View.Engine
         {
             get
             {
-                return TrajectoryUnits[m_currentPosition] + new Vector2(0.5f, 0.5f);
+                return TrajectoryUnits[m_currentPosition];
             }
         }
         #endregion

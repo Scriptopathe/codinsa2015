@@ -38,6 +38,7 @@ namespace Clank.View.Engine.Spells
         public FireballSpell(EntityBase caster)
         {
             SourceCaster = caster;
+            Name = "Fireball";
             Levels = new List<SpellDescription>() { new SpellDescription()
             {
                 
@@ -50,7 +51,7 @@ namespace Clank.View.Engine.Spells
                     DieOnCollision = true,
                     Type = TargettingType.Direction
                 },
-                BaseCooldown = 0.5f,
+                BaseCooldown = 5f,
                 CastingTime = 0.01f,
                 CastingTimeAlteration = new StateAlterationModel() 
                 {

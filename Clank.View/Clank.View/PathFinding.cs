@@ -164,7 +164,7 @@ namespace Clank.View.Engine
                 trajectory = new List<Vector2>();
             }
 
-            trajectory.Add(new Vector2(current.Position.X, current.Position.Y));
+            trajectory.Add(new Vector2(current.Position.X+0.5f, current.Position.Y+0.5f));
             return trajectory;
         }
 

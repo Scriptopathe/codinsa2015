@@ -180,6 +180,7 @@ namespace Clank.View
             GuiManager.Draw(batch);
             MapEditControler.Draw(batch);
             Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
+            foreach (var kvp in Controlers) { kvp.Value.Draw(batch, time); }
             batch.End();
         }
 
