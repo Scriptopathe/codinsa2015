@@ -17,12 +17,12 @@ namespace Clank.View.Engine.Entities
         // Stats
         CDR             = 0x0008,
         MoveSpeed       = 0x0010,
-        Armor           = 0x0020,
+        ArmorBuff       = 0x0020,
         Regen           = 0x0040,
-        DamageBuff      = 0x0080,
+        AttackDamageBuff= 0x0080,
         MaxHP           = 0x0100,
-        AP              = 0x0200,
-        RM              = 0x0400,
+        MagicDamageBuff = 0x0200,
+        MagicResistBuff = 0x0400,
         AttackSpeed     = 0x0800,
 
         // Autres
@@ -30,11 +30,12 @@ namespace Clank.View.Engine.Entities
         AttackDamage    = 0x2000,     // indique que le sort inflige des dégâts ou soigne
         MagicDamage     = 0x4000,
         TrueDamage      = 0x8000,
-        Heal            = 0x10000,
-        Stealth         = 0x20000,
-        Shield          = 0x40000,
-        Sight           = 0x80000,
-        TrueSight       = 0x100000,
+        Heal            = 0x00010000,
+        Stealth         = 0x00020000,
+        Shield          = 0x00080000,
+        Sight           = 0x00100000,
+        WardSight       = 0x00100000, // révèle les wards.
+        TrueSight       = 0x00200000, // révèle les unités stealth.
     }
 
     public enum ScalingRatios
@@ -267,7 +268,7 @@ namespace Clank.View.Engine.Entities
                             totalValue *= constants.FighterAttackSpeedMultiplier;
                         else if (Type.HasFlag(StateAlterationType.AttackDamage))
                             totalValue *= constants.FighterAttackDamageMultiplier;
-                        else if (Type.HasFlag(StateAlterationType.AP))
+                        else if (Type.HasFlag(StateAlterationType.MagicDamageBuff))
                             totalValue *= constants.FighterMagicDamageMultiplier;
                         else if (Type.HasFlag(StateAlterationType.TrueDamage))
                             totalValue *= constants.FighterTrueDamageMultiplier;
@@ -283,9 +284,9 @@ namespace Clank.View.Engine.Entities
                     case EntityHeroRole.Tank:
                         if (Type.HasFlag(StateAlterationType.MoveSpeed))
                             totalValue *= constants.TankMoveSpeedBonusMultiplier;
-                        else if(Type.HasFlag(StateAlterationType.Armor))
+                        else if(Type.HasFlag(StateAlterationType.ArmorBuff))
                             totalValue *= constants.TankArmorBonusMultiplier;
-                        else if(Type.HasFlag(StateAlterationType.RM))
+                        else if(Type.HasFlag(StateAlterationType.MagicResistBuff))
                             totalValue *= constants.TankRMBonusMultiplier;
 
                         break;
@@ -377,7 +378,7 @@ namespace Clank.View.Engine.Entities
         {
             return new StateAlterationModel()
             {
-                Type = StateAlterationType.DamageBuff,
+                Type = StateAlterationType.AttackDamageBuff,
                 BaseDuration = duration,
                 FlatValue = buff
             };
@@ -386,7 +387,7 @@ namespace Clank.View.Engine.Entities
         {
             return new StateAlterationModel()
             {
-                Type = StateAlterationType.DamageBuff,
+                Type = StateAlterationType.AttackDamageBuff,
                 BaseDuration = duration,
                 SourcePercentADValue = buff
             };
@@ -415,7 +416,7 @@ namespace Clank.View.Engine.Entities
         {
             return new StateAlterationModel()
             {
-                Type = StateAlterationType.Armor,
+                Type = StateAlterationType.ArmorBuff,
                 BaseDuration = duration,
                 FlatValue = buff
             };
@@ -424,7 +425,7 @@ namespace Clank.View.Engine.Entities
         {
             return new StateAlterationModel()
             {
-                Type = StateAlterationType.Armor,
+                Type = StateAlterationType.ArmorBuff,
                 BaseDuration = duration,
                 SourcePercentADValue = buff
             };

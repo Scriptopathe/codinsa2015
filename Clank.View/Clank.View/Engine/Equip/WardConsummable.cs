@@ -25,13 +25,14 @@ namespace Clank.View.Engine.Equip
         {
             EntityWardPlacement nearest = Mobattack.GetMap().Entities.
                                 GetEntitiesByType(EntityType.WardPlacement).
-                                GetAliveEntitiesInRange(owner.Position, Mobattack.GetScene().Constants.Vision.WardPutRange, owner.Type & EntityType.Teams).
+                                GetAliveEntitiesInRange(owner.Position, Mobattack.GetScene().Constants.Vision.WardPutRange, 0).
                                 NearestFrom(owner.Position) as EntityWardPlacement;
 
             // Pose la ward.
             if(nearest != null )
             {
                 nearest.PutWard(owner);
+                UsingStarted = true;
                 return true;
             }
             return false;

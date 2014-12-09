@@ -16,12 +16,16 @@ namespace Clank.View.Engine
     {
         None              = 0x0000,
         // NE PAS MODIFIER LES VALEURS
-        Team1Vision       = 0x0002,
-        Team2Vision       = 0x0004,
+        Team1Vision       = 0x0001,
+        Team2Vision       = 0x0002,
 
         // NE PAS MODIFIER LES VALEURS
-        Team1TrueVision   = 0x0020 | Team1Vision,
-        Team2TrueVision   = 0x0040 | Team2Vision
+        Team1TrueVision   = (Team1Vision << 2) | Team1Vision,
+        Team2TrueVision   = (Team2Vision << 2) | Team2Vision,
+
+        // Ward Sight
+        Team1WardSight    = (Team1Vision << 4) | Team1Vision,
+        Team2WardSight    = (Team1Vision << 4) | Team2Vision,
 
     }
 
@@ -74,7 +78,7 @@ namespace Clank.View.Engine
             return (m_vision[(int)position.X, (int)position.Y] & (VisionFlags)team) != 0;
         }
         /// <summary>
-        /// Obtient une variable indiquant si la team donnée possède pure la vision à l'endroit donné.
+        /// Obtient une variable indiquant si la team donnée possède la vision pure à l'endroit donné.
         /// </summary>
         public bool HasTrueVision(EntityType team, Vector2 position)
         {
@@ -82,7 +86,40 @@ namespace Clank.View.Engine
             return (m_vision[(int)position.X, (int)position.Y] & (VisionFlags)((int)team << 2)) != 0;
         }
 
+        /// <summary>
+        /// Obtient une variable indiquant si la team donnée peut révèler les wards à l'endroit donné.
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public bool HasWardVision(EntityType team, Vector2 position)
+        {
+            team &= (EntityType.Team1 | EntityType.Team2);
+            return (m_vision[(int)position.X, (int)position.Y] & (VisionFlags)((int)team << 4)) != 0;
+        }
 
+        /// <summary>
+        /// Retourne une valeur indiquant si l'entité 1 a la vision sur l'entité 2.
+        /// </summary>
+        /// <param name="entity1"></param>
+        /// <param name="entity2"></param>
+        /// <returns></returns>
+        public bool HasSightOn(EntityType team1, EntityBase entity2)
+        {
+            team1 &= EntityType.Teams;
+            EntityType team2 = entity2.Type & EntityType.Teams;
+            if(team1 == team2)
+                return true;
+
+            if(entity2 is EntityWard)
+                return HasWardVision(team1, entity2.Position);
+            else
+                if (entity2.IsStealthed)
+                    return HasTrueVision(team1, entity2.Position);
+                else
+                    return HasVision(team1, entity2.Position);
+
+        }
         float __debug2 = 0;
         /// <summary>
         /// Rempli la carte à la position donnée et avec le rayon donnée, avec les informations
@@ -223,8 +260,9 @@ namespace Clank.View.Engine
 
                 // Si l'entité a la vision pure, on l'ajoute au flags.
                 if (entity.HasTrueVision)
+                    team += team << 2;
+                if (entity.HasWardVision)
                     team += team << 4;
-
                 VisionFlags flag = (VisionFlags)team;
 
                 if (entity.VisionRange > 0.5f)

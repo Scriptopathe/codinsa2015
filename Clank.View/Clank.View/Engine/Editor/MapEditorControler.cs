@@ -219,9 +219,20 @@ namespace Clank.View.Engine.Editor
                     Entities.EntityBase entity = new EntityWardPlacement()
                     {
                         Position = mousePosUnits,
-                        Type = EntityType.WardPlacement | team,
+                        Type = EntityType.WardPlacement,
                     };
                     CurrentMap.Entities.Add(entity.ID, entity);
+                }
+                else if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.W))
+                {
+                    EntityWardPlacement p = m_map.Entities.GetEntitiesByType(EntityType.WardPlacement).
+                                            GetAliveEntitiesInRange(mousePosUnits, 1).
+                                            NearestFrom(mousePosUnits) as EntityWardPlacement;
+                    if(p != null)
+                    {
+                        p.PutWard(new EntityHero() { Type = team });
+                    }
+
                 }
                 if(Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad1))
                 {

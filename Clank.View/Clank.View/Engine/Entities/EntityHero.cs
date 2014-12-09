@@ -35,21 +35,35 @@ namespace Clank.View.Engine.Entities
         Armor m_armor;
 
         /// <summary>
-        /// Représente le consommable dans le slot1 de consommable du héros.
+        /// Représente les consommables possédés par le héros.
         /// </summary>
-        Consummable m_consummable1 = new EmptyConsummable();
-
+        Consummable[] m_consummables;
     
         #endregion
 
         #region Properties
         /// <summary>
+        /// Obtient les consommables possédés par ce héros.
+        /// </summary>
+        public Consummable[] Consummables
+        {
+            get { return m_consummables; }
+        }
+        /// <summary>
         /// Obtient le consommable contenu dans le slot 1.
         /// </summary>
-        public Consummable Conssmmable1
+        public Consummable Consummable1
         {
-            get { return m_consummable1; }
-            protected set { m_consummable1 = value; }
+            get { return m_consummables[0]; }
+            protected set { m_consummables[0] = value; }
+        }
+        /// <summary>
+        /// Obtient le consommable contenu dans le slot 1.
+        /// </summary>
+        public Consummable Consummable2
+        {
+            get { return m_consummables[1]; }
+            protected set { m_consummables[1] = value; }
         }
         /// <summary>
         /// Obtient ou définit le nombre de wards que ce héros a posé sur la map.
@@ -138,8 +152,10 @@ namespace Clank.View.Engine.Entities
             Spells.Add(new Spells.TargettedTowerSpell(this));
             VisionRange = 8;
             BaseMoveSpeed = 2;
-
-            m_consummable1 = new WardConsummable();
+            m_consummables = new Consummable[2] {
+                new WardConsummable(),
+                new UnwardConsummable()
+            };
         }
 
         /// <summary>
@@ -149,18 +165,32 @@ namespace Clank.View.Engine.Entities
         {
             base.DoUpdate(time);
             UpdatePAParticle();
+            UpdateConsummables(time);
             foreach (Spell spell in Spells) { spell.UpdateCooldown((float)time.ElapsedGameTime.TotalSeconds); }
+        }
+
+        /// <summary>
+        /// Mets à jour les consommables.
+        /// </summary>
+        void UpdateConsummables(GameTime time)
+        {
+            for(int i = 0; i < m_consummables.Length; i++)
+            {
+                if (m_consummables[i].Update(time, this))
+                    m_consummables[i] = new EmptyConsummable();
+            }
         }
         #endregion
 
         #region API
+
         /// <summary>
-        /// Utilise le consommable dans le slot 1.
+        /// Utilise le consommable dans le slot donné.
         /// </summary>
-        public void UseConsummable()
+        public void UseConsummable(int id)
         {
-            if(m_consummable1.Use(this))
-                m_consummable1 = new EmptyConsummable();
+            if(m_consummables[id].Use(this))
+                m_consummables[id] = new EmptyConsummable();
         }
         #endregion
 

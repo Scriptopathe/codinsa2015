@@ -96,6 +96,7 @@
     <Compile Include="Engine\Equip\Armor.cs" />
     <Compile Include="Engine\Equip\Consummable.cs" />
     <Compile Include="Engine\Equip\Shop.cs" />
+    <Compile Include="Engine\Equip\UnwardConsummable.cs" />
     <Compile Include="Engine\Equip\WardConsummable.cs" />
     <Compile Include="Engine\GameConstants.cs" />
     <Compile Include="Engine\Graphics\Charset.cs" />

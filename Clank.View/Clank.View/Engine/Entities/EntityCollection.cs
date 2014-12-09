@@ -100,21 +100,8 @@ namespace Clank.View.Engine.Entities
             EntityCollection entitiesIn = new EntityCollection();
             foreach(var kvp in this)
             {
-                // Si l'unité est masquée, il faut la vision pure
-                if(kvp.Value.IsStealthed)
-                {
-                    if (Mobattack.GetMap().Vision.HasTrueVision(team, kvp.Value.Position))
-                    {
-                        entitiesIn.Add(kvp.Key, kvp.Value);
-                    }
-                }
-                else
-                {
-                    if (Mobattack.GetMap().Vision.HasVision(team, kvp.Value.Position))
-                    {
-                        entitiesIn.Add(kvp.Key, kvp.Value);
-                    }
-                }
+                if (Mobattack.GetMap().Vision.HasSightOn(team, kvp.Value))
+                    entitiesIn.Add(kvp.Key, kvp.Value);
             }
 
             return entitiesIn;

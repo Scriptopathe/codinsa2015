@@ -369,7 +369,7 @@ namespace Clank.View.Engine.Entities
             float totalDamage = BaseAttackDamage;
 
             // Récupère tous les buffs d'attaque.
-            List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.DamageBuff);
+            List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.AttackDamageBuff);
             // Les buffs sont ajoutés de celui au plus gros scaling vers le plus petit.
             alterations.Sort(new Comparison<StateAlteration>((StateAlteration a, StateAlteration b) =>
             {
@@ -411,7 +411,7 @@ namespace Clank.View.Engine.Entities
             float totalArmor = BaseArmor;
 
             // Récupère tous les buffs d'armure.
-            List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.Armor);
+            List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.ArmorBuff);
             // Les buffs sont ajoutés de celui au plus gros scaling vers le plus petit.
             alterations.Sort(new Comparison<StateAlteration>((StateAlteration a, StateAlteration b) =>
             {
@@ -569,8 +569,15 @@ namespace Clank.View.Engine.Entities
         /// </summary>
         public bool HasTrueVision
         {
-            get;
-            set;
+            get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.TrueSight).Count != 0; }
+        }
+
+        /// <summary>
+        /// Obtient une valeur indiquant si cette unité peut voir les wards.
+        /// </summary>
+        public bool HasWardVision
+        {
+            get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.WardSight).Count != 0; }
         }
 
         /// <summary>
@@ -970,14 +977,14 @@ namespace Clank.View.Engine.Entities
             // Notifications au système de récompenses.
             switch(alteration.Model.Type)
             {
-                case StateAlterationType.DamageBuff:
-                case StateAlterationType.AP:
+                case StateAlterationType.AttackDamageBuff:
+                case StateAlterationType.MagicDamageBuff:
                 case StateAlterationType.AttackSpeed:
-                case StateAlterationType.Armor:
+                case StateAlterationType.ArmorBuff:
                 case StateAlterationType.CDR:
                 case StateAlterationType.MaxHP:
                 case StateAlterationType.Regen:
-                case StateAlterationType.RM:
+                case StateAlterationType.MagicResistBuff:
                     Mobattack.GetScene().RewardSystem.NotifyBuffOrDebuffReception(alteration.Source,
                         this, alteration.Model, 
                         alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
@@ -1083,16 +1090,20 @@ namespace Clank.View.Engine.Entities
         public virtual void Draw(GameTime time, SpriteBatch batch, Point position)
         {
             Color col;
-            if(Type.HasFlag(EntityType.Team1))
+            if (Type.HasFlag(EntityType.Team1))
                 col = Color.Blue;
-            else
+            else if (Type.HasFlag(EntityType.Team2))
                 col = Color.Red;
+            else
+                col = Color.White;
 
             Texture2D tex = Ressources.DummyTexture;
             if (Type.HasFlag(EntityType.Tower))
                 tex = Ressources.SelectMark;
             else if (Type.HasFlag(EntityType.Spawner))
                 tex = Ressources.TextBox;
+            else if (Type.HasFlag(EntityType.WardPlacement))
+                tex = Ressources.SelectMark;
 
             int s = Mobattack.GetMap().UnitSize / 2;
             if (Type.HasFlag(EntityType.Checkpoint))
@@ -1121,10 +1132,7 @@ namespace Clank.View.Engine.Entities
         /// <returns></returns>
         public bool Sees(EntityBase other)
         {
-            if (other.IsStealthed)
-                return Mobattack.GetMap().Vision.HasTrueVision(Type, other.Position);
-            else
-                return Mobattack.GetMap().Vision.HasVision(Type, other.Position);
+            return Mobattack.GetMap().Vision.HasSightOn(Type, other);
         }
         #endregion
 

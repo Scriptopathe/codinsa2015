@@ -88,7 +88,11 @@ namespace Clank.View.Engine.Controlers
         {
             if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.D1))
             {
-                m_hero.UseConsummable();
+                m_hero.UseConsummable(0);
+            }
+            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.D2))
+            {
+                m_hero.UseConsummable(1);
             }
         }
         /// <summary>
@@ -200,10 +204,39 @@ namespace Clank.View.Engine.Controlers
             int spellCount = m_hero.Spells.Count;
             int y = (int)Mobattack.GetScreenSize().Y - spellIconSize - 5;
             int xBase = ((int)Mobattack.GetScreenSize().X - ((spellIconSize + padding) * spellCount)) / 2;
-            xBase -= spellIconSize + padding;
-            
-            batch.Draw(Ressources.GetSpellTexture(m_hero.Conssmmable1.Type.ToString()),
-                new Rectangle(xBase, y, spellIconSize/2, spellIconSize/2), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
+            int size = spellIconSize / 2;
+            xBase -= (size + padding) * m_hero.Consummables.Length;
+            for (int i = 0; i < m_hero.Consummables.Length;i++)
+            {
+                Color col = m_hero.Consummables[i].UsingStarted ? Color.Gray : Color.White;
+
+                // Dessine le slot du consommable.
+                batch.Draw(Ressources.GetSpellTexture(m_hero.Consummables[i].Type.ToString()),
+                    new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
+
+                // Dessine le cooldown.
+                if(m_hero.Consummables[i].UsingStarted)
+                {
+                    string cooldown;
+                    if (m_hero.Consummables[i].RemainingTime <= 1)
+                        cooldown = (m_hero.Consummables[i].RemainingTime).ToString("f1");
+                    else
+                        cooldown = (m_hero.Consummables[i].RemainingTime).ToString("f0");
+
+                    Vector2 stringW = Ressources.Font.MeasureString(cooldown);
+
+                    int offsetX = (size - (int)stringW.X) / 2;
+                    int offsetY = (size - (int)stringW.Y) / 2;
+
+                    batch.DrawString(Ressources.Font, cooldown, new Vector2(xBase + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.GUI + Graphics.Z.FrontStep);
+                }
+
+
+                xBase += size + padding;
+            }
+
+
+
         }
         /// <summary>
         /// Dessine les éléments graphiques du contrôleur à l'écran.

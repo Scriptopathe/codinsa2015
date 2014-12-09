@@ -13,6 +13,7 @@ namespace Clank.View.Engine
     {
         public float WardRange;
         public float WardPutRange;
+        
         public float WardDuration;
         public float WardRevealDuration;
         public int MaxWardsPerHero;
@@ -22,6 +23,7 @@ namespace Clank.View.Engine
             WardDuration = 30.0f;
             MaxWardsPerHero = 5;
             WardRevealDuration = 10;
+            WardPutRange = 5.0f;
         }
     }
     /// <summary>

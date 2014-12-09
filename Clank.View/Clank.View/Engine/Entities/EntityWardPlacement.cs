@@ -28,7 +28,7 @@ namespace Clank.View.Engine.Entities
         public EntityWardPlacement() : base()
         {
             VisionRange = 0;
-            Type |= EntityType.WardPlacement;
+            Type = EntityType.WardPlacement;
             Shape = new Shapes.CircleShape(Vector2.Zero, 2);
         }
 
@@ -60,29 +60,7 @@ namespace Clank.View.Engine.Entities
 
             return true;
         }
-        /// <summary>
-        /// Révèle la ward de la team adverse au héros passé en paramètre sur cet emplacement.
-        /// Retourne vrai si la ward a pu être détruite, false si aucune ward de la team
-        /// n'a été trouvée.
-        /// </summary>
-        public bool RevealWard(EntityHero owner)
-        {
-            EntityType team = owner.Type;
-            if (team.HasFlag(EntityType.Team2))
-            {
-                if (m_team1Ward == null)
-                    return false;
-                m_team1Ward.Reveal(Mobattack.GetScene().Constants.Vision.WardRevealDuration);
-            }
-            else
-            {
-                if (m_team2Ward == null)
-                    return false;
-                m_team2Ward.Reveal(Mobattack.GetScene().Constants.Vision.WardRevealDuration);
-            }
 
-            return true;
-        }
 
         /// <summary>
         /// Pose une ward sur cet emplacement.
