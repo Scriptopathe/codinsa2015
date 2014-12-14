@@ -34,7 +34,7 @@ namespace Clank.View.Engine.Entities
             : base()
         {
             Type = EntityType.Shop;
-            Shop = new Equip.Shop();
+            Shop = new Equip.Shop(new List<Equip.Equipment>(), new List<Equip.Consummable>());
         }
 
         /// <summary>

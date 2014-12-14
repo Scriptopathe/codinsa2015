@@ -685,7 +685,7 @@ namespace Clank.View.Engine
 
             Map map = new Map() { Entities = newEntities, Passability = pass };
 
-            EntityHero dummyPlayer = new EntityHero() { Position = new Vector2(25, 40), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
+            EntityHero dummyPlayer = new EntityHero() { Position = new Vector2(14, 20), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
             map.Entities.Add(dummyPlayer.ID, dummyPlayer);
             map.Heroes.Clear();
             map.Heroes.Add(dummyPlayer);

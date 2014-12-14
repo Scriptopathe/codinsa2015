@@ -51,6 +51,9 @@ namespace Clank.View.Engine.Equip
 
     }
 
+    /// <summary>
+    /// Représente un slot de consommable vide.
+    /// </summary>
     public class EmptyConsummable : Consummable
     {
         public override ConsummableType Type

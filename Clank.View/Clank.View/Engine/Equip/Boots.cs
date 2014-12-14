@@ -6,13 +6,13 @@ using System.Text;
 namespace Clank.View.Engine.Equip
 {
     /// <summary>
-    /// Classe de base pour représenter une armure.
+    /// Représente une paire de bottes.
     /// </summary>
-    public class Armor : Equipment
+    public class Boots : Equipment
     {
         public override EquipmentType Type
         {
-            get { return EquipmentType.Armor; }
+            get { return EquipmentType.Boots; }
         }
     }
 }

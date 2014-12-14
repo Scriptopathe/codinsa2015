@@ -5,11 +5,89 @@ using System.Text;
 using Microsoft.Xna.Framework;
 namespace Clank.View.Engine
 {
+
     /// <summary>
     /// Contient tous les algorithmes permettant la recherche de chemins.
     /// </summary>
     public class PathFinder
     {
+        public class SortedNodeStack
+        {
+            SNode m_first;
+            public SortedNodeStack()
+            {
+                m_first = null;
+            }
+            
+            public bool Contains(Point p)
+            {
+                SNode current = m_first;
+                while(current != null)
+                {
+                    if (current.Item.Position == p)
+                        return true;
+
+                    current = current.N;
+                }
+
+                return false;
+            }
+
+            public void Push(Node n)
+            {
+                if(m_first == null)
+                    m_first = new SNode(n, null);
+                else
+                {
+                    SNode current = m_first.N;
+                    SNode father = m_first;
+                    while(father != null)
+                    {
+                        if (current == null)
+                        {
+                            father.N = new SNode(n, null);
+                            break;
+                        }
+                        else if(n.FScore < current.Item.FScore)
+                        {
+                            father.N = new SNode(n, current);
+                            break;
+                        }
+
+                        father = father.N;
+                        current = current.N;
+                    }
+                }
+            }
+
+            public bool IsEmpty()
+            {
+                return m_first == null;
+            }
+
+            public Node Pop()
+            {
+                if(m_first == null)
+                    throw new Exception();
+
+                SNode first = m_first;
+                m_first = m_first.N;
+                return first.Item;
+            }
+            /// <summary>
+            /// Représente un noeud dans la pile triée.
+            /// </summary>
+            class SNode
+            {
+                public Node Item;
+                public SNode N;
+                public SNode(Node item, SNode n)
+                {
+                    Item = item;
+                    N = n;
+                }
+            }
+        }
         /// <summary>
         /// Exception levée lorsque le point de destination ne peut pas être atteint.
         /// </summary>
@@ -68,7 +146,7 @@ namespace Clank.View.Engine
 
             public override string ToString()
             {
-                return "(X: " + Position.X.ToString() + ", Y: " + Position.Y.ToString() + ")";
+                return "(X: " + Position.X.ToString() + ", Y: " + Position.Y.ToString() + ", F: " + FScore.ToString() + ")";
             }
             #endregion
         }
@@ -149,7 +227,6 @@ namespace Clank.View.Engine
         /// <param name="goal">Position finale</param>z
         /// <param name="cameFrom">Liste des cases parrcourues par l'astar</param>
         /// <returns>Chemin optimisé entre start et goal</returns>
-
         public static List<Vector2> ReconstructPath(Node current, Dictionary<Node, Node> cameFrom)
         {
             List<Vector2> trajectory;
@@ -196,6 +273,7 @@ namespace Clank.View.Engine
 
         }
 
+        
         /// <summary>
         /// Cache de la nodemap permettant d'éviter de grosses allocs de mémoires à chaque calcul d'AStar.
         /// </summary>
@@ -222,10 +300,11 @@ namespace Clank.View.Engine
             nodemap = CreerGraphe();
 
             // Contient les noeuds qui ont déjà été évalués.
-            List<Node> closedset = new List<Node>();
+            HashSet<Point> closedset = new HashSet<Point>();
+
 
             // Contient les noeuds qui doivent être évalués.
-            List<Node> openset = new List<Node>();
+            // List<Node> openset = new List<Node>();
             Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>();
 
             // Initialisation du premier noeud.
@@ -233,12 +312,14 @@ namespace Clank.View.Engine
             nodemap[start.X, start.Y] = current;
 
             // Ajout du noeud dans l'openset.
-            openset.Add(nodemap[start.X, start.Y]);
+            SortedNodeStack openset = new SortedNodeStack();
+            openset.Push(nodemap[start.X, start.Y]);
 
             float tentativeGScore = 0;
-            while (openset.Count != 0)
+            while (!openset.IsEmpty())
             {
-                current = LowestFScore(openset);
+                current = openset.Pop();
+                
                 // Si on a trouvé la fin, on s'arrête.
                 if (Vector2.DistanceSquared(new Vector2(current.Position.X, current.Position.Y), new Vector2(end.X, end.Y)) < 0.1f)
                 {
@@ -247,19 +328,15 @@ namespace Clank.View.Engine
                 }
 
                 // On marque le noeud actuel comme évalué.
-                openset.Remove(current);
-                closedset.Add(current);
-
-                // Récupération des positions des noeuds dans l'open set.
-                IEnumerable<Point> closedsetPosition = closedset.Select(delegate(Node node) { return node.Position; });
-                IEnumerable<Point> opensetPosition = openset.Select(delegate(Node node) { return node.Position; });
+                closedset.Add(current.Position);
+                
 
                 // Récupère les voisins du "graphe"
                 List<Point> neighbours = GetNeighbours(current.Position);
                 foreach (Point neighbour in neighbours)
                 {
                     // Si le voisin en question a déja été évalué, on passe au suivant.
-                    if (closedsetPosition.Contains(neighbour))
+                    if (closedset.Contains(neighbour))
                     {
                         continue;
                     }
@@ -270,7 +347,7 @@ namespace Clank.View.Engine
 
                     // Si ce voisin n'est pas dans l'openset, ou qu'on a trouvé un chemin plus court pour aller à ce voisin qu'un éventuel
                     // précédent chemin.
-                    if (!opensetPosition.Contains(neighbour) | tentativeGScore < nodemap[neighbour.X, neighbour.Y].GScore)
+                    if (!openset.Contains(neighbour) | tentativeGScore < nodemap[neighbour.X, neighbour.Y].GScore)
                     {
                         // On indique d'où on est venu à ce voisin.
                         cameFrom[nodemap[neighbour.X, neighbour.Y]] = current;
@@ -280,9 +357,9 @@ namespace Clank.View.Engine
                         nodemap[neighbour.X, neighbour.Y].FScore = tentativeGScore + EstimateHeuristicCost(neighbour, end);
 
                         // Si l'openset ne contient pas notre noeud, on le rajoute.
-                        if (!openset.Contains(nodemap[neighbour.X, neighbour.Y]))
+                        if (!openset.Contains(nodemap[neighbour.X, neighbour.Y].Position))
                         {
-                            openset.Add(nodemap[neighbour.X, neighbour.Y]);
+                            openset.Push(nodemap[neighbour.X, neighbour.Y]);
                         }
 
                     }

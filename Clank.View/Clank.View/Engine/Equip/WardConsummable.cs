@@ -29,7 +29,7 @@ namespace Clank.View.Engine.Equip
                                 NearestFrom(owner.Position) as EntityWardPlacement;
 
             // Pose la ward.
-            if(nearest != null )
+            if(nearest != null)
             {
                 nearest.PutWard(owner);
                 UsingStarted = true;

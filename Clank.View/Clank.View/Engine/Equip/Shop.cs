@@ -12,26 +12,65 @@ namespace Clank.View.Engine.Equip
     /// </summary>
     public class Shop
     {
+        #region Variables
+        List<Equipment> m_availableEquip;
+        List<Consummable> m_availableConsummables;
+        #endregion
 
+        /// <summary>
+        /// Crée une nouvelle instance de shop, avec la liste des équipements donnée.
+        /// </summary>
+        public Shop(List<Equipment> equip, List<Consummable> consummables)
+        {
+            m_availableEquip = equip;
+            m_availableConsummables = consummables;
+        }
 
         /// <summary>
         /// Retourne une liste d'elixirs disponibles pour le héros donné.
         /// </summary>
         /// <param name="hero"></param>
         /// <returns></returns>
-        public List<Armor> GetElixirs(EntityHero hero)
+        public List<Consummable> GetElixirs(EntityHero hero)
         {
-            return new List<Armor>();
+            return m_availableConsummables;
         }
 
+        /// <summary>
+        /// Retourne une liste d'armes disponibles pour le héros donné.
+        /// </summary>
+        public List<Equipment> GetWeapons(EntityHero hero)
+        {
+            return m_availableEquip.Where(new Func<Equipment, bool>((Equipment e) =>
+            {
+                return e.Type == EquipmentType.Weapon;
+            })).ToList();
+        }
         /// <summary>
         /// Retourne une liste d'armures disponibles pour le héros donné.
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public List<Armor> GetArmors(EntityHero hero)
+        public List<Equipment> GetArmors(EntityHero hero)
         {
-            return new List<Armor>();
+
+            return m_availableEquip.Where(new Func<Equipment, bool>((Equipment e) =>
+            {
+                return e.Type == EquipmentType.Armor;
+            })).ToList();
         }
+
+        /// <summary>
+        /// Retourne une liste de bottes disponibles pour le héros donné.
+        /// </summary>
+        public List<Equipment> GetBoots(EntityHero hero)
+        {
+            return m_availableEquip.Where(new Func<Equipment, bool>((Equipment e) =>
+            {
+                return e.Type == EquipmentType.Boots;
+            })).ToList();
+        }
+        
+
     }
 }

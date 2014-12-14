@@ -195,6 +195,31 @@ namespace Clank.View.Engine.Controlers
         }
         
         /// <summary>
+        /// Dessine les slots des équipements (armures, armes, bottes).
+        /// </summary>
+        /// <param name="batch"></param>
+        /// <param name="time"></param>
+        void DrawEquipmentSlots(SpriteBatch batch, GameTime time)
+        {
+            Equip.Equipment[] equip = new Equip.Equipment[] { m_hero.Weapon, m_hero.Armor };
+            int y = (int)Mobattack.GetScreenSize().Y - spellIconSize/2 - 5;
+            int xBase = ((int)Mobattack.GetScreenSize().X - ((spellIconSize + padding) * m_hero.Spells.Count)) / 2;
+            int size = spellIconSize / 2;
+            xBase -= (size + padding) * m_hero.Consummables.Length;
+            for (int i = 0; i < m_hero.Consummables.Length; i++)
+            {
+                Color col = m_hero.Consummables[i].UsingStarted ? Color.Gray : Color.White;
+
+                // Dessine le slot du consommable.
+                batch.Draw(Ressources.GetSpellTexture(equip[i].Name),
+                    new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
+
+                xBase += size + padding;
+            }
+
+
+        }
+        /// <summary>
         /// Dessine le slots de consommables.
         /// </summary>
         /// <param name="batch"></param>
@@ -245,6 +270,7 @@ namespace Clank.View.Engine.Controlers
         {
             DrawSpellIcons(batch, time);
             DrawConsummableSlots(batch, time);
+            DrawEquipmentSlots(batch, time);
         }
 
 

@@ -32,8 +32,13 @@ namespace Clank.View.Engine.Entities
         /// <summary>
         /// Représente l'armure possédée par ce héros.
         /// </summary>
-        Armor m_armor;
+        Equipment m_armor;
 
+
+        /// <summary>
+        /// Représente l'arme possédée par le héros.
+        /// </summary>
+        Weapon m_weapon;
         /// <summary>
         /// Représente les consommables possédés par le héros.
         /// </summary>
@@ -65,6 +70,7 @@ namespace Clank.View.Engine.Entities
             get { return m_consummables[1]; }
             protected set { m_consummables[1] = value; }
         }
+
         /// <summary>
         /// Obtient ou définit le nombre de wards que ce héros a posé sur la map.
         /// </summary>
@@ -109,9 +115,33 @@ namespace Clank.View.Engine.Entities
         }
 
         /// <summary>
+        /// Obtient l'arme équipée par le héros.
+        /// </summary>
+        public Equip.Weapon Weapon
+        {
+            get { return m_weapon; }
+            set
+            {
+                // Si on remplace l'arme précédente.
+                if(m_weapon != null)
+                {
+                    StateAlterations.EndAlterations(StateAlterationSource.Weapon);
+                }
+
+                m_weapon = value;
+
+                if(value != null)
+                    foreach(StateAlterationModel model in m_weapon.Alterations)
+                    {
+                        model.BaseDuration = StateAlteration.DURATION_INFINITY;
+                        AddAlteration(new StateAlteration(this, model, new StateAlterationParameters(), StateAlterationSource.Armor));
+                    }
+            }
+        }
+        /// <summary>
         /// Obtient l'armure équippée par ce héros.
         /// </summary>
-        public Equip.Armor Armor
+        public Equip.Equipment Armor
         {
             get { return m_armor; }
             set
@@ -152,6 +182,8 @@ namespace Clank.View.Engine.Entities
             Spells.Add(new Spells.TargettedTowerSpell(this));
             VisionRange = 8;
             BaseMoveSpeed = 2;
+            Weapon = new Equip.Weapon();
+            Armor = new Armor();
             m_consummables = new Consummable[2] {
                 new WardConsummable(),
                 new UnwardConsummable()

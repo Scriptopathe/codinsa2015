@@ -15,7 +15,6 @@ namespace Clank.View.Engine.Views
 		public List<EntityView> getEntitiesOnSight(int clientId)
 		{
             return new List<EntityView>();
-			// return Interface.getEntitiesOnSight(clientId);
 		}	
 		public List<EntityView> lolol(int id, string bla, List<EntityView> carotte, int clientId)
 		{
