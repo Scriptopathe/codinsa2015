@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clank.IDE", "Clank.IDE\Clan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.TextEditor", "Editor\ICSharpCode.TextEditor.csproj", "{2D18BE89-D210-49EB-A9DD-2246FBB3DF6D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PonyCarpetExtractor", "PonyCarpetExtractor\PonyCarpetExtractor.csproj", "{F0CE7CAD-DE71-4EED-9490-AEEB7C1BAFE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,16 @@ Global
 		{2D18BE89-D210-49EB-A9DD-2246FBB3DF6D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2D18BE89-D210-49EB-A9DD-2246FBB3DF6D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2D18BE89-D210-49EB-A9DD-2246FBB3DF6D}.Release|x86.ActiveCfg = Release|Any CPU
+		{F0CE7CAD-DE71-4EED-9490-AEEB7C1BAFE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0CE7CAD-DE71-4EED-9490-AEEB7C1BAFE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0CE7CAD-DE71-4EED-9490-AEEB7C1BAFE1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F0CE7CAD-DE71-4EED-9490-AEEB7C1BAFE1}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F0CE7CAD-DE71-4EED-9490-AEEB7C1BAFE1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F0CE7CAD-DE71-4EED-9490-AEEB7C1BAFE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0CE7CAD-DE71-4EED-9490-AEEB7C1BAFE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0CE7CAD-DE71-4EED-9490-AEEB7C1BAFE1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F0CE7CAD-DE71-4EED-9490-AEEB7C1BAFE1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F0CE7CAD-DE71-4EED-9490-AEEB7C1BAFE1}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
