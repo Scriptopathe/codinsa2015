@@ -172,7 +172,7 @@ namespace Clank.View.Engine.Controlers
                 // Dessine l'icone du sort
                 Color col = isOnCooldown ? Color.Gray : Color.White;
                 batch.Draw(Ressources.GetSpellTexture(m_hero.Spells[i].Name),
-                           new Rectangle(x, y, spellIconSize, spellIconSize), null, col, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
+                           new Rectangle(x, y, spellIconSize, spellIconSize), null, col, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.HeroControler);
 
                 // Dessine le cooldown du sort.
                 if (isOnCooldown)
@@ -188,7 +188,7 @@ namespace Clank.View.Engine.Controlers
                     int offsetX = (spellIconSize - (int)stringW.X) / 2;
                     int offsetY = (spellIconSize - (int)stringW.Y) / 2;
 
-                    batch.DrawString(Ressources.Font, cooldown, new Vector2(x + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.GUI + Graphics.Z.FrontStep);
+                    batch.DrawString(Ressources.Font, cooldown, new Vector2(x + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.HeroControler + Graphics.Z.FrontStep);
                 }
 
             }
@@ -212,7 +212,7 @@ namespace Clank.View.Engine.Controlers
 
                 // Dessine le slot du consommable.
                 batch.Draw(Ressources.GetSpellTexture(equip[i].Name),
-                    new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
+                    new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.HeroControler);
 
                 xBase += size + padding;
             }
@@ -237,7 +237,7 @@ namespace Clank.View.Engine.Controlers
 
                 // Dessine le slot du consommable.
                 batch.Draw(Ressources.GetSpellTexture(m_hero.Consummables[i].Type.ToString()),
-                    new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.GUI);
+                    new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.HeroControler);
 
                 // Dessine le cooldown.
                 if(m_hero.Consummables[i].UsingStarted)
@@ -253,7 +253,7 @@ namespace Clank.View.Engine.Controlers
                     int offsetX = (size - (int)stringW.X) / 2;
                     int offsetY = (size - (int)stringW.Y) / 2;
 
-                    batch.DrawString(Ressources.Font, cooldown, new Vector2(xBase + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.GUI + Graphics.Z.FrontStep);
+                    batch.DrawString(Ressources.Font, cooldown, new Vector2(xBase + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.HeroControler + Graphics.Z.FrontStep);
                 }
 
 

@@ -181,6 +181,27 @@ namespace Clank.View.Engine.Gui
                     case Keys.NumPad9:
                         InsertToCursor(key.ToString().Remove(0, 6));
                         break;
+                    case Keys.D6:
+                        InsertToCursor(isLeftControl ? "|" : "-");
+                        break;
+                    case Keys.D1:
+                        InsertToCursor("&");
+                        break;
+                    case Keys.D3:
+                        InsertToCursor(isLeftControl ? "#" : "\"");
+                        break;
+                    case Keys.OemComma:
+                        InsertToCursor(majUp ? "?" : ",");
+                        break;
+                    case Keys.OemPeriod:
+                        InsertToCursor(majUp ? "." : ";");
+                        break;
+                    case Keys.D5:
+                        InsertToCursor(isLeftControl ? "[" : "(");
+                        break;
+                    case Keys.OemOpenBrackets:
+                        InsertToCursor(isLeftControl ? "]" : ")");
+                        break;
                     case Keys.Space:
                         InsertToCursor(" ");
                         break;
@@ -195,9 +216,6 @@ namespace Clank.View.Engine.Gui
                         break;
                     case Keys.Divide:
                         InsertToCursor("/");
-                        break;
-                    case Keys.OemComma:
-                        InsertToCursor(",");
                         break;
                     case Keys.OemQuestion:
                         InsertToCursor("?");
@@ -318,17 +336,17 @@ namespace Clank.View.Engine.Gui
             Drawing.DrawRectBox(batch, Ressources.TextBox,
                 menuBox,
                 Color.White,
-                Graphics.Z.GUI+0.05f);
+                Graphics.Z.GUI);
 
             // Dessine le titre du menu.
             batch.DrawString(font, Text, 
                 pos + new Vector2(Margins, Margins),
-                Color.White,
+                Color.Black,
                 0.0f,
                 Vector2.Zero, 
                 1.0f,
                 SpriteEffects.None,
-                Graphics.Z.GUI+0.03f);
+                Graphics.Z.GUI + Graphics.Z.FrontStep);
 
             // Taille du texte avant le curseur
             Vector2 size = font.MeasureString(Text.Substring(0, m_cursorPosition));
@@ -338,12 +356,12 @@ namespace Clank.View.Engine.Gui
             {
                 batch.DrawString(font, "|",
                     pos + new Vector2(Margins + size.X, Margins),
-                    Color.White,
+                    Color.Black,
                     0.0f,
                     Vector2.Zero,
                     1.0f,
                     SpriteEffects.None,
-                    Graphics.Z.GUI);
+                    Graphics.Z.GUI + Graphics.Z.FrontStep*2);
             }
         }
         #endregion

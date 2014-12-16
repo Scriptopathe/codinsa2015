@@ -173,6 +173,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\PonyCarpetExtractor\PonyCarpetExtractor.csproj">
+      <Project>{f0ce7cad-de71-4eed-9490-aeeb7c1bafe1}</Project>
+      <Name>PonyCarpetExtractor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clank.ViewContent\Clank.ViewContent.contentproj">
       <Name>Clank.ViewContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>

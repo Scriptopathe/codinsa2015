@@ -20,6 +20,7 @@ namespace Clank.View.Engine
         public static int UnitSize__OBSOLETE { get { return Mobattack.GetMap().UnitSize; } set { Mobattack.GetMap().UnitSize = value; } }
         const int TILE_SCALE = 16;
         const int BLUR_PASSES = 0;
+
         #region Variables
         /// <summary>
         /// Taille d'une unité métrique (= une case) en pixels.
@@ -313,20 +314,10 @@ namespace Clank.View.Engine
             m_passability = new bool[50, 50];
             __passabilityDrawRect(new Rectangle(1, 1, 40, 40), true);
             __passabilityDrawRect(new Rectangle(3, 4, 20, 2), false);
-
-            
             m_entities.Add(0, new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter , BaseMaxHP = 50000, HP = 50000});
-            /*m_entities.Add(1, new EntityHero() { Position = new Vector2(15, 10), Type = EntityType.Team2Player });
-            m_entities.Add(2, new EntityTower() { Position = new Vector2(14, 20), Type = EntityType.Team2Tower });
-            m_entities.Add(3, new EntityTower() { Position = new Vector2(21, 20), Type = EntityType.Team2Tower });
-            m_entities.Add(4, new EntityTower() { Position = new Vector2(18, 32), Type = EntityType.Team2Tower });
-            m_entities.Add(5, new EntityCreep() { Position = new Vector2(14, 2), Type = EntityType.Team1Creep });
-            m_entities.Add(6, new EntityCreep() { Position = new Vector2(15, 2), Type = EntityType.Team1Creep });
-            m_entities.Add(7, new EntityCreep() { Position = new Vector2(16, 2), Type = EntityType.Team1Creep });
-            m_entities.Add(8, new EntityBase() { Position = new Vector2(21, 22), Type = EntityType.Team2Player });
-            m_entities.Add(9, new EntitySpawner() { Position = new Vector2(13, 2), SpawnPosition = new Vector2(14, 2),  Type = EntityType.Team1Spawner });*/
-            // ----
 
+
+            // Vision
             Vision = new VisionMap(this);
 
             // Ajout des héros
@@ -486,6 +477,13 @@ namespace Clank.View.Engine
 
             __fireMapModifiedEvent |= m_passability[ix, iy] != value;
             m_passability[ix, iy] = value;
+        }
+
+        public void SetPassabilityRect(int x, int y, int w, int h, bool value)
+        {
+            for (int i = x; i < x + w; i++)
+                for (int j = y; j < y + h; j++)
+                    SetPassabilityAt(i, j, value);
         }
         /// <summary>
         /// Retourne la passabilité de la map à la position donnée en unités métriques.

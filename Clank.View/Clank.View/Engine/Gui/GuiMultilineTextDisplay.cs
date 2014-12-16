@@ -97,7 +97,7 @@ namespace Clank.View.Engine.Gui
             Drawing.DrawRectBox(batch, Ressources.TextBox,
                 menuBox,
                 Color.White,
-                Graphics.Z.GUI+0.05f);
+                Graphics.Z.GUI+Graphics.Z.FrontStep);
 
             // Dessine les lignes affichées
             for (int line = lastLine; line >= firstLine; line--)
@@ -105,12 +105,12 @@ namespace Clank.View.Engine.Gui
                 int y = (int)(Size.Y + (line - lastLine) * lineHeight);
                 batch.DrawString(font, m_linesCache[line],
                     pos + new Vector2(Margins, Margins+y),
-                    Color.White,
+                    Color.Black,
                     0.0f,
                     Vector2.Zero,
                     1.0f,
                     SpriteEffects.None,
-                    Graphics.Z.GUI + 0.02f);
+                    Graphics.Z.GUI + Graphics.Z.FrontStep*2);
             }
         }
         #endregion

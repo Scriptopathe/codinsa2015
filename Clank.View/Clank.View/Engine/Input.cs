@@ -21,6 +21,26 @@ namespace Clank.View.Engine
         static MouseState s_thisMouseState;
         static List<Keys> s_triggeredKeys;
         static bool s_clickCanceled;
+        static object s_focus;
+
+
+        #region Focus
+        public static void TakeFocus(object owner)
+        {
+            s_focus = owner;
+        }
+
+        public static void ReleaseFocus(object owner)
+        {
+            if (HasFocus(owner))
+                s_focus = null;
+        }
+
+        public static bool HasFocus(object owner)
+        {
+            return s_focus == owner;
+        }
+        #endregion
         public static MouseState GetMouseState()
         {
 
@@ -99,6 +119,7 @@ namespace Clank.View.Engine
         {
             return s_thisState.IsKeyDown(key) && !s_lastFrameState.IsKeyDown(key);
         }
+
         /// <summary>
         /// Checks if a key is pressed.
         /// </summary>
@@ -146,5 +167,17 @@ namespace Clank.View.Engine
         {
             return (s_thisMouseState.RightButton == ButtonState.Pressed) && (s_lastFrameMouseState.RightButton == ButtonState.Released) && !s_clickCanceled;
         }
+
+        #region With focus
+
+        public static bool IsTrigger(Keys key, object owner) { return IsTrigger(key) && HasFocus(owner); }
+        public static bool IsPressed(Keys key, object owner) { return IsPressed(key) && HasFocus(owner); }
+
+        public static bool IsLeftClickPressed(object owner) { return IsLeftClickPressed() && HasFocus(owner); }
+        public static bool IsRightClickPressed(object owner) { return IsRightClickPressed() && HasFocus(owner); }
+        public static bool IsLeftClickTrigger(object owner) { return IsLeftClickTrigger() && HasFocus(owner); }
+        public static bool IsRightClickTrigger(object owner) { return IsRightClickTrigger() && HasFocus(owner); }
+        
+        #endregion
     }
 }

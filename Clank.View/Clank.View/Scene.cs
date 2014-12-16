@@ -18,6 +18,7 @@ namespace Clank.View
     {
         #region Variables
         RenderTarget2D m_mainRenderTarget;
+
         #endregion
 
         #region Properties
@@ -104,6 +105,16 @@ namespace Clank.View
             get { return m_mainRenderTarget; }
             private set { m_mainRenderTarget = value; }
         }
+
+
+        /// <summary>
+        /// Obtient ou définit une référence vers l'interpréteur de commandes de la scène.
+        /// </summary>
+        public PonyCarpetExtractor.Interpreter GameInterpreter
+        {
+            get;
+            set;
+        }
         #endregion
 
         #region Methods
@@ -117,6 +128,31 @@ namespace Clank.View
         /// </summary>
         public void Initialize()
         {
+            // Initialise l'interpréteur de commandes.
+            GameInterpreter = new PonyCarpetExtractor.Interpreter();
+            GameInterpreter.MainContext.GlobalContext.LoadedAssemblies = new Dictionary<string, System.Reflection.Assembly>() 
+            {
+                { System.Reflection.Assembly.GetExecutingAssembly().FullName, System.Reflection.Assembly.GetExecutingAssembly()},
+                { System.Reflection.Assembly.GetAssembly(typeof(Vector2)).FullName, System.Reflection.Assembly.GetAssembly(typeof(Vector2))}
+            };
+            GameInterpreter.MainContext.GlobalContext.LoadedNamespaces = new List<string>() 
+            {
+                "System", 
+                "System.Collections.Generic",
+                "Microsoft.Xna.Framework",
+                "Clank",
+                "Clank.View.Engine",
+                "Clank.View.Engine.Entities",
+                "Clank.View.Engine.Equip",
+                "Clank.View.Engine.Controlers",
+                "Clank.View.Engine.Graphics",
+                "Clank.View.Engine.Spells",
+                "Clank.View.Engine.Spellcasts",
+                "Clank.View.Engine.Spells",
+                "Clank.View.Engine.Views",
+            };
+            
+
             if(System.IO.File.Exists("constants.xml"))
             {
                 Constants = GameConstants.LoadFromFile("constants.xml");
@@ -138,6 +174,10 @@ namespace Clank.View
             // DEBUG
             Controlers.Add(0, new Engine.Controlers.HumanControler(Map.Heroes[0]));
             MapEditControler.OnMapLoaded += MapEditControler_OnMapLoaded;
+
+            GameInterpreter.MainContext.LocalVariables.Add("map", new PonyCarpetExtractor.ExpressionTree.Mutable(Mobattack.GetMap()));
+            GameInterpreter.MainContext.LocalVariables.Add("scene", new PonyCarpetExtractor.ExpressionTree.Mutable(Mobattack.GetScene()));
+            GameInterpreter.MainContext.LocalVariables.Add("ctrl", new PonyCarpetExtractor.ExpressionTree.Mutable(MapEditControler));
         }
 
         /// <summary>
@@ -148,6 +188,7 @@ namespace Clank.View
             Map = map;
             Controlers.Clear();
             Controlers.Add(0, new Engine.Controlers.HumanControler(Map.Heroes[0]));
+            GameInterpreter.MainContext.LocalVariables["map"] = new PonyCarpetExtractor.ExpressionTree.Mutable(Mobattack.GetMap());
             RewardSystem = new RewardSystem(Map.Heroes);
         }
 
@@ -165,20 +206,28 @@ namespace Clank.View
         /// </summary>
         public void Update(GameTime time)
         {
+            // Passage du mode d'édition au mode normal.
+            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.LeftControl))
+                EditMode = !EditMode;
+
             // Mets à jour l'event scheduler.
             EventSheduler.Update(time);
 
             // Mets à jour la map
             Map.Update(time);
 
-            // Mets à jour les contrôleurs
-            foreach (var kvp in Controlers) { kvp.Value.Update(time); }
+            if (!EditMode)
+            {
+                // Mets à jour les contrôleurs
+                foreach (var kvp in Controlers) { kvp.Value.Update(time); }
+            }
 
             // Mets à jour les récompenses.
             RewardSystem.Update(time);
 
-            // Mets à jour le contrôleur
-            MapEditControler.Update(time);
+            // Mets à jour le contrôleur de la map.
+            if(EditMode)
+                MapEditControler.Update(time);
 
             // Mets à jour la gui
             GuiManager.Update(time);
