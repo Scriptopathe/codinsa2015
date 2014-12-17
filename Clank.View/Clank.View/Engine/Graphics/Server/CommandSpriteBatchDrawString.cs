@@ -12,6 +12,7 @@ namespace Clank.View.Engine.Graphics.Server
     class CommandSpriteBatchDrawString : Command
     {
         public RemoteSpriteBatch Batch { get; set; }
+        public RemoteSpriteFont Font { get; set; }
         public string String { get; set; }
         public Vector2 Position { get; set; }
         public Color Color { get; set; }
@@ -21,6 +22,7 @@ namespace Clank.View.Engine.Graphics.Server
         public float LayerDepth { get; set; }
         public CommandSpriteBatchDrawString(
             RemoteSpriteBatch batch, 
+            RemoteSpriteFont font,
             string str,
             Vector2 position,
             Color color,
@@ -31,6 +33,7 @@ namespace Clank.View.Engine.Graphics.Server
         {
             Batch = batch;
             String = str;
+            Font = font;
             Position = position;
             Color = color;
             Rotation = rotation;

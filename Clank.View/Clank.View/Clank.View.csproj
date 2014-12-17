@@ -103,10 +103,13 @@
     <Compile Include="Engine\Equip\Weapon.cs" />
     <Compile Include="Engine\GameConstants.cs" />
     <Compile Include="Engine\Graphics\Charset.cs" />
+    <Compile Include="Engine\Graphics\Client\IntegratedClient.cs" />
     <Compile Include="Engine\Graphics\Server\Command.cs" />
     <Compile Include="Engine\Graphics\Server\CommandCreateObject.cs" />
     <Compile Include="Engine\Graphics\Server\CommandGraphicsDeviceClear.cs" />
     <Compile Include="Engine\Graphics\Server\CommandGraphicsDeviceSetRenderTarget.cs" />
+    <Compile Include="Engine\Graphics\Server\CommandSetEffectParameterValue.cs" />
+    <Compile Include="Engine\Graphics\Server\CommandSetEffectTechnique.cs" />
     <Compile Include="Engine\Graphics\Server\CommandSpriteBatchBegin.cs" />
     <Compile Include="Engine\Graphics\Server\CommandSpriteBatchDraw.cs" />
     <Compile Include="Engine\Graphics\Server\CommandSpriteBatchDrawString.cs" />
@@ -116,6 +119,7 @@
     <Compile Include="Engine\Graphics\Server\RemoteEffect.cs" />
     <Compile Include="Engine\Graphics\Server\RemoteRenderTarget.cs" />
     <Compile Include="Engine\Graphics\Server\RemoteSpriteBatch.cs" />
+    <Compile Include="Engine\Graphics\Server\RemoteSpriteFont.cs" />
     <Compile Include="Engine\Graphics\Server\RemoteTexture.cs" />
     <Compile Include="Engine\Graphics\GaussianBlur.cs" />
     <Compile Include="Engine\Graphics\Z.cs" />
@@ -228,9 +232,7 @@
     <None Include="Engine\Views\Clank\stdtypes.clank" />
     <None Include="Engine\Views\Clank\XNAMacros.clank" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Engine\Graphics\Client\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

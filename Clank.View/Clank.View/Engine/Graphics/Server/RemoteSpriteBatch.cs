@@ -42,10 +42,11 @@ namespace Clank.View.Engine.Graphics.Server
         }
 
 
-        public void DrawString(string str, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float layerDepth)
+        public void DrawString(string str, RemoteSpriteFont font, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float layerDepth)
         {
             Server.SendCommand(new CommandSpriteBatchDrawString(
                 this,
+                font,
                 str,
                 position,
                 color,

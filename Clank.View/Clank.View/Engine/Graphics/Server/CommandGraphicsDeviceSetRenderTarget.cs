@@ -8,7 +8,7 @@ namespace Clank.View.Engine.Graphics.Server
     /// <summary>
     /// Représente un appel à GraphicsDevice.SetRenderTarget().
     /// </summary>
-    public class CommandGraphicsDeviceSetRenderTarget
+    public class CommandGraphicsDeviceSetRenderTarget : Command
     {
         public RemoteRenderTarget RenderTarget { get; set; }
         public CommandGraphicsDeviceSetRenderTarget(RemoteRenderTarget target)
