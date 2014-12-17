@@ -181,14 +181,44 @@ namespace Clank.View.Engine.Gui
                     case Keys.NumPad9:
                         InsertToCursor(key.ToString().Remove(0, 6));
                         break;
-                    case Keys.D6:
-                        InsertToCursor(isLeftControl ? "|" : "-");
+                    case Keys.OemQuestion:
+                        InsertToCursor(majUp ? "/" : ":");
+                        break;
+                    case Keys.Oem8:
+                        InsertToCursor(majUp ? "§" : "!");
+                        break;
+                    case Keys.OemBackslash:
+                        InsertToCursor(majUp ? ">" : "<");
+                        break;
+                    case Keys.D0:
+                        InsertToCursor(isLeftControl ? "@" : "à");
                         break;
                     case Keys.D1:
                         InsertToCursor("&");
                         break;
+                    case Keys.D2:
+                        InsertToCursor(isLeftControl ? "~" : "é");
+                        break;
                     case Keys.D3:
                         InsertToCursor(isLeftControl ? "#" : "\"");
+                        break;
+                    case Keys.D4:
+                        InsertToCursor(isLeftControl ? "{" : "'");
+                        break;
+                    case Keys.D5:
+                        InsertToCursor(isLeftControl ? "[" : "(");
+                        break;
+                    case Keys.D6:
+                        InsertToCursor(isLeftControl ? "|" : "-");
+                        break;
+                    case Keys.D7:
+                        InsertToCursor(isLeftControl ? "`" : "è");
+                        break;
+                    case Keys.D8:
+                        InsertToCursor(isLeftControl ? "\\" : "_");
+                        break;
+                    case Keys.D9:
+                        InsertToCursor(isLeftControl ? "^" : "ç");
                         break;
                     case Keys.OemComma:
                         InsertToCursor(majUp ? "?" : ",");
@@ -196,12 +226,10 @@ namespace Clank.View.Engine.Gui
                     case Keys.OemPeriod:
                         InsertToCursor(majUp ? "." : ";");
                         break;
-                    case Keys.D5:
-                        InsertToCursor(isLeftControl ? "[" : "(");
-                        break;
                     case Keys.OemOpenBrackets:
-                        InsertToCursor(isLeftControl ? "]" : ")");
+                        InsertToCursor(isLeftControl ? "]" : (majUp ? "°" : ")"));
                         break;
+                        
                     case Keys.Space:
                         InsertToCursor(" ");
                         break;
@@ -217,11 +245,8 @@ namespace Clank.View.Engine.Gui
                     case Keys.Divide:
                         InsertToCursor("/");
                         break;
-                    case Keys.OemQuestion:
-                        InsertToCursor("?");
-                        break;
                     case Keys.OemPlus:
-                        InsertToCursor(majUp ? "+" : "=");
+                        InsertToCursor(isLeftControl ? "}" : (majUp ? "+" : "="));
                         break;
                     case Keys.Back:
                         RemoveAtCursor();
@@ -229,9 +254,7 @@ namespace Clank.View.Engine.Gui
                     case Keys.Delete:
                         RemoveAfterCursor();
                         break;
-                    case Keys.D0:
-                        InsertToCursor(isLeftControl ? "@" : "à");
-                        break;
+
                     case Keys.Enter:
                         m_olderEntries.Push(Text);
                         if (TextValidated != null)

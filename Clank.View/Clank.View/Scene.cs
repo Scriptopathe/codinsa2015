@@ -178,6 +178,7 @@ namespace Clank.View
             GameInterpreter.MainContext.LocalVariables.Add("map", new PonyCarpetExtractor.ExpressionTree.Mutable(Mobattack.GetMap()));
             GameInterpreter.MainContext.LocalVariables.Add("scene", new PonyCarpetExtractor.ExpressionTree.Mutable(Mobattack.GetScene()));
             GameInterpreter.MainContext.LocalVariables.Add("ctrl", new PonyCarpetExtractor.ExpressionTree.Mutable(MapEditControler));
+            GameInterpreter.Eval("print = function(arg) { Interpreter.Puts(arg); };");
         }
 
         /// <summary>
@@ -207,7 +208,7 @@ namespace Clank.View
         public void Update(GameTime time)
         {
             // Passage du mode d'édition au mode normal.
-            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.LeftControl))
+            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.LeftControl) && !Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightAlt))
                 EditMode = !EditMode;
 
             // Mets à jour l'event scheduler.
