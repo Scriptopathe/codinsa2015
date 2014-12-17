@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.View.Engine.Graphics.Engine
+namespace Clank.View.Engine.Graphics.Server
 {
     /// <summary>
     /// Représente une texture se trouvant potentiellement sur une autre machine,

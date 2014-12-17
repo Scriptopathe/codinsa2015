@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.View.Engine.Graphics.Engine
+namespace Clank.View.Engine.Graphics.Server
 {
     public class RemoteGraphicsObject
     {
@@ -24,6 +24,7 @@ namespace Clank.View.Engine.Graphics.Engine
         public RemoteGraphicsObject(GraphicsServer server)
         {
             Server = server;
+            Server.SendCommand(new CommandCreateObject(this));
             ID = s_id++;
         }
     }

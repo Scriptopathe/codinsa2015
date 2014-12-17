@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Clank.View.Engine.Graphics.Engine
+namespace Clank.View.Engine.Graphics.Server
 {
     /// <summary>
     /// Représente un appel à SpriteBatch.Draw
