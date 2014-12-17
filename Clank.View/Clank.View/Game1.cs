@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Clank.View.Engine.Graphics.Server;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -8,7 +9,6 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-
 namespace Clank.View
 {
     /// <summary>
@@ -18,7 +18,7 @@ namespace Clank.View
     {
         public static Mobattack Instance;
         GraphicsDeviceManager m_graphics;
-        SpriteBatch m_spriteBatch;
+        RemoteSpriteBatch m_spriteBatch;
         Scene m_scene;
         GameTime m_time;
         public static GameTime GetTime()
@@ -80,10 +80,10 @@ namespace Clank.View
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            m_spriteBatch = new SpriteBatch(GraphicsDevice);
-            Engine.Ressources.LoadRessources(Content);
             m_scene.LoadContent();
+            Engine.Ressources.LoadRessources(Content);
             m_scene.Initialize();
+            m_spriteBatch = new RemoteSpriteBatch(m_scene.GraphicsServer);
             // TODO: use this.Content to load your game content here
         }
 

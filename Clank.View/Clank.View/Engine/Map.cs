@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Clank.View.Engine.Entities;
 using Clank.View.Engine.Spellcasts;
 using System.IO;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine
 {
     /// <summary>
@@ -56,13 +57,13 @@ namespace Clank.View.Engine
         /// <summary>
         /// Render Target des tiles
         /// </summary>
-        RenderTarget2D m_tilesRenderTarget;
+        RemoteRenderTarget m_tilesRenderTarget;
         /// <summary>
         /// Render target des entities.
         /// </summary>
-        RenderTarget2D m_entitiesRenderTarget;
-        RenderTarget2D m_tmpRenderTarget;
-        RenderTarget2D m_tmpRenderTarget2;
+        RemoteRenderTarget m_entitiesRenderTarget;
+        RemoteRenderTarget m_tmpRenderTarget;
+        RemoteRenderTarget m_tmpRenderTarget2;
         /// <summary>
         /// Effet de flou gaussien.
         /// </summary>
@@ -195,9 +196,9 @@ namespace Clank.View.Engine
                 m_entitiesRenderTarget.Dispose();
                 m_tilesRenderTarget.Dispose();
             }
-            m_entitiesRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
-            m_tmpRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
-            m_tmpRenderTarget2 = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
+            m_entitiesRenderTarget = new RemoteRenderTarget(Mobattack.GetScene().GraphicsServer, Viewport.Width, Viewport.Height, RenderTargetUsage.PreserveContents);
+            m_tmpRenderTarget = new RemoteRenderTarget(Mobattack.GetScene().GraphicsServer, Viewport.Width, Viewport.Height);
+            m_tmpRenderTarget2 = new RemoteRenderTarget(Mobattack.GetScene().GraphicsServer, Viewport.Width, Viewport.Height);
             SetupTileRenderTarget();
             m_blur.ComputeOffsets(Viewport.Width, Viewport.Height);
         }
@@ -208,7 +209,7 @@ namespace Clank.View.Engine
         {
             if (m_tilesRenderTarget != null)
                 m_tilesRenderTarget.Dispose();
-            m_tilesRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, Viewport.Width / TILE_SCALE, Viewport.Height / TILE_SCALE, false, SurfaceFormat.Color, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+            m_tilesRenderTarget = new RemoteRenderTarget(Mobattack.GetScene().GraphicsServer, Viewport.Width / TILE_SCALE, Viewport.Height / TILE_SCALE, RenderTargetUsage.PreserveContents);
         }
 
         public const bool SMOOTH_LIGHT = true;
@@ -220,9 +221,9 @@ namespace Clank.View.Engine
         /// </summary>
         /// <param name="time"></param>
         /// <param name="batch"></param>
-        public void Draw(GameTime time, SpriteBatch batch)
+        public void Draw(GameTime time, RemoteSpriteBatch batch)
         {
-            Mobattack.Instance.GraphicsDevice.SetRenderTarget(m_tilesRenderTarget);
+            batch.GraphicsDevice.SetRenderTarget(m_tilesRenderTarget);
             // batch.GraphicsDevice.Clear(Color.Transparent);
             batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
             // Dessin de debug de la map.
@@ -247,7 +248,7 @@ namespace Clank.View.Engine
             batch.End();
 
             // Dessin des entités
-            Mobattack.Instance.GraphicsDevice.SetRenderTarget(m_entitiesRenderTarget);
+            batch.GraphicsDevice.SetRenderTarget(m_entitiesRenderTarget);
             batch.GraphicsDevice.Clear(Color.Transparent);
             batch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied);
             foreach (var kvp in m_entities) { kvp.Value.Draw(time, batch); }
@@ -263,7 +264,7 @@ namespace Clank.View.Engine
             }
 
             // Dessin du tout
-            Mobattack.Instance.GraphicsDevice.SetRenderTarget(Mobattack.GetScene().MainRenderTarget);
+            batch.GraphicsDevice.SetRenderTarget(Mobattack.GetScene().MainRenderTarget);
             batch.GraphicsDevice.Clear(Color.Black);
             Ressources.MapEffect.Parameters["xSourceTexture"].SetValue(m_tilesRenderTarget);
             Ressources.MapEffect.Parameters["scrolling"].SetValue(new Vector2(Scrolling.X / (float)Viewport.Width, Scrolling.Y / (float)Viewport.Height));
@@ -301,7 +302,7 @@ namespace Clank.View.Engine
             m_unitSize = 32;
 
             // Initialise l'effet de blur.
-            m_blur = new Graphics.GaussianBlur(Mobattack.Instance);
+            m_blur = new Graphics.GaussianBlur(Mobattack.GetScene().GraphicsServer);
             m_blur.ComputeKernel(4, 2);
 
             // Création du viewport

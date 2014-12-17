@@ -6,6 +6,7 @@ using Clank.View.Engine;
 using Clank.View.Engine.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Editor
 {
     /// <summary>
@@ -29,8 +30,8 @@ namespace Clank.View.Engine.Editor
         Gui.GuiTextInput m_consoleInput;
         Gui.GuiMultilineTextDisplay m_consoleOutput;
         #region Graphics
-        SpriteBatch m_minimapBatch;
-        RenderTarget2D m_minimapTexture;
+        RemoteSpriteBatch m_minimapBatch;
+        RemoteRenderTarget m_minimapTexture;
         #endregion
         #endregion
 
@@ -56,7 +57,7 @@ namespace Clank.View.Engine.Editor
                 if (m_minimapTexture != null)
                     m_minimapTexture.Dispose();
 
-                m_minimapTexture = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, value.Size.X, value.Size.Y, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                m_minimapTexture = new RemoteRenderTarget(Mobattack.GetScene().GraphicsServer, value.Size.X, value.Size.Y, RenderTargetUsage.PreserveContents);
                 m_map.OnMapModified += m_map_OnMapModified;
             }
         }
@@ -71,7 +72,7 @@ namespace Clank.View.Engine.Editor
             CurrentMap = map;
             m_isEnabled = true;
             CurrentMap.OnMapModified += m_map_OnMapModified;
-            m_minimapBatch = new SpriteBatch(Mobattack.Instance.GraphicsDevice);
+            m_minimapBatch = new RemoteSpriteBatch(Mobattack.GetScene().GraphicsServer);
             CreateGui();
         }
 
@@ -428,7 +429,7 @@ namespace Clank.View.Engine.Editor
         /// <summary>
         /// Dessine les éléments graphiques du contrôleur.
         /// </summary>
-        public void Draw(SpriteBatch batch)
+        public void Draw(RemoteSpriteBatch batch)
         {            
             // Récupère la position de la souris
             Vector2 position = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
@@ -466,7 +467,7 @@ namespace Clank.View.Engine.Editor
         /// <summary>
         /// Dessine la minimap à l'emplacement donné.
         /// </summary>
-        void DrawMinimap(SpriteBatch batch, Rectangle rect, float z)
+        void DrawMinimap(RemoteSpriteBatch batch, Rectangle rect, float z)
         {
             if (!m_displayMinimap)
                 return;

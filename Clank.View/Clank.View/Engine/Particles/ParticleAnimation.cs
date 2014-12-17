@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Particles
 {
     /// <summary>
@@ -74,10 +75,16 @@ namespace Clank.View.Engine.Particles
         /// Dessine la particule à l'écran.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(SpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset)
+        public override void Draw(RemoteSpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset)
         {
             Rectangle srcTile = Charset.GetWalkSrcRect(m_counter / 8);
-            batch.Draw(Charset.Texture, this.CurrentPosition, srcTile, CurrentColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.Particles);
+            batch.Draw(Charset.Texture,
+                new Rectangle((int)this.CurrentPosition.X, (int)this.CurrentPosition.Y, srcTile.Width, srcTile.Height),
+                srcTile, CurrentColor, 
+                0.0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                Graphics.Z.Particles);
         }
         /// <summary>
         /// Libère la mémoire utilisée par cette particule.

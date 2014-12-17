@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Graphics
 {
     /// <summary>
@@ -21,7 +22,7 @@ namespace Clank.View.Engine.Graphics
         /// <summary>
         /// Obtient ou définit la texture associée à ce charset.
         /// </summary>
-        public Texture2D Texture
+        public RemoteTexture2D Texture
         {
             get;
             set;
@@ -70,7 +71,7 @@ namespace Clank.View.Engine.Graphics
         /// </summary>
         /// <param name="texture"></param>
         /// <param name="frameSize"></param>
-        public Charset(Texture2D texture, Point frameSize)
+        public Charset(RemoteTexture2D texture, Point frameSize)
         {
             Texture = texture;
             FrameSize = frameSize;

@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine
 {
     /// <summary>
@@ -12,21 +13,21 @@ namespace Clank.View.Engine
     /// </summary>
     public static class Ressources
     {
-        public static Texture2D DummyTexture;
+        public static RemoteTexture2D DummyTexture;
         public static string MapFilename = "Content/map.txt";
 
         #region ByName
-        static Dictionary<string, Texture2D> s_textureCache = new Dictionary<string,Texture2D>();
-        public static Texture2D GetSpellTexture(string spellname)
+        static Dictionary<string, RemoteTexture2D> s_textureCache = new Dictionary<string, RemoteTexture2D>();
+        public static RemoteTexture2D GetSpellTexture(string spellname)
         {
-            Texture2D tex;
+            RemoteTexture2D tex;
             try
             {
                 if (s_textureCache.ContainsKey(spellname))
                     return s_textureCache[spellname];
                 else
                 {
-                    tex = Mobattack.Instance.Content.Load<Texture2D>("textures/spells/" + spellname);
+                    tex = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/spells/" + spellname);
                     s_textureCache.Add(spellname, tex);
                 }
             }
@@ -41,11 +42,11 @@ namespace Clank.View.Engine
         #endregion
 
         #region Effects
-        public static Effect MapEffect { get; set; }
-        public static Texture2D WallTexture { get; set; }
-        public static Texture2D WallBorderTexture { get; set; }
-        public static Texture2D GrassTexture { get; set; }
-        public static Texture2D LavaTexture { get; set; }
+        public static RemoteEffect MapEffect { get; set; }
+        public static RemoteTexture2D WallTexture { get; set; }
+        public static RemoteTexture2D WallBorderTexture { get; set; }
+        public static RemoteTexture2D GrassTexture { get; set; }
+        public static RemoteTexture2D LavaTexture { get; set; }
         
         /// <summary>
         /// Matrice de transformation pour les dessins 2D.
@@ -56,31 +57,31 @@ namespace Clank.View.Engine
         /// <summary>
         /// Obtient une police de caractère utilisable pour l'affichage de texte.
         /// </summary>
-        public static SpriteFont Font
+        public static RemoteSpriteFont Font
         {
             get;
             private set;
         }
 
-        public static SpriteFont CourrierFont
+        public static RemoteSpriteFont CourrierFont
         {
             get;
             private set;
         }
 
-        public static SpriteFont NumbersFont
+        public static RemoteSpriteFont NumbersFont
         {
             get;
             private set;
         }
 
-        public static Texture2D LifebarEmpty
+        public static RemoteTexture2D LifebarEmpty
         {
             get;
             set;
         }
 
-        public static Texture2D LifebarFull
+        public static RemoteTexture2D LifebarFull
         {
             get;
             set;
@@ -89,48 +90,48 @@ namespace Clank.View.Engine
         /// <summary>
         /// Obtient une texture représentant une marque de sélection.
         /// </summary>
-        public static Texture2D SelectMark
+        public static RemoteTexture2D SelectMark
         {
             get;
             private set;
         }
 
-        public static Texture2D HighlightMark
+        public static RemoteTexture2D HighlightMark
         {
             get;
             private set;
         }
 
-        public static Texture2D CanMoveMark
+        public static RemoteTexture2D CanMoveMark
         {
             get;
             private set;
         }
-        public static Texture2D MenuItem
-        {
-            get;
-            private set;
-        }
-
-        public static Texture2D MenuItemHover
+        public static RemoteTexture2D MenuItem
         {
             get;
             private set;
         }
 
-        public static Texture2D TextBox
+        public static RemoteTexture2D MenuItemHover
+        {
+            get;
+            private set;
+        }
+
+        public static RemoteTexture2D TextBox
         {
             get;
             set;
         }
 
-        public static Texture2D Menu
+        public static RemoteTexture2D Menu
         {
             get;
             private set;
         }
 
-        public static Texture2D Cursor
+        public static RemoteTexture2D Cursor
         {
             get;
             private set;
@@ -144,26 +145,26 @@ namespace Clank.View.Engine
         public static void LoadRessources(ContentManager content)
         {
             
-            DummyTexture = content.Load<Texture2D>("textures/dummy");
-            Font = content.Load<SpriteFont>("textfont");// content.Load<SpriteFont>("segoe_ui_16");
-            NumbersFont = content.Load<SpriteFont>("numbers_font");
-            SelectMark = content.Load<Texture2D>("textures/select_mark");
-            MenuItem = content.Load<Texture2D>("textures/gui/menu_item");
-            MenuItemHover = content.Load<Texture2D>("textures/gui/menu_item_hover");
-            Menu = content.Load<Texture2D>("textures/gui/menu");
-            Cursor = content.Load<Texture2D>("textures/gui/cursor");
-            HighlightMark = content.Load<Texture2D>("textures/highlight_mark");
-            CanMoveMark = content.Load<Texture2D>("textures/canmove_mark");
-            TextBox = content.Load<Texture2D>("textures/gui/textbox");
-            CourrierFont = content.Load<SpriteFont>("courrier-16pt");
-            LifebarEmpty = content.Load<Texture2D>("textures/gui/lifebar_empty");
-            LifebarFull = content.Load<Texture2D>("textures/gui/lifebar_full");
-            LavaTexture = content.Load<Texture2D>("textures/lava");
+            DummyTexture = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/dummy");
+            Font = new RemoteSpriteFont(Mobattack.GetScene().GraphicsServer, "textfont");
+            NumbersFont = new RemoteSpriteFont(Mobattack.GetScene().GraphicsServer, "numbers_font");
+            CourrierFont = new RemoteSpriteFont(Mobattack.GetScene().GraphicsServer, "courrier-16pt");
+            SelectMark = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/select_mark");
+            MenuItem = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/gui/menu_item");
+            MenuItemHover = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/gui/menu_item_hover");
+            Menu = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/gui/menu");
+            Cursor = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/gui/cursor");
+            HighlightMark = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/highlight_mark");
+            CanMoveMark = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/canmove_mark");
+            TextBox = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/gui/textbox");
+            LifebarEmpty = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/gui/lifebar_empty");
+            LifebarFull = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/gui/lifebar_full");
+            LavaTexture = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/lava");
             // Effet de la map
-            WallTexture = content.Load<Texture2D>("textures/wall");
-            WallBorderTexture = content.Load<Texture2D>("textures/border");
-            GrassTexture = content.Load<Texture2D>("textures/grass");
-            MapEffect = content.Load<Effect>("shaders/mapshader");
+            WallTexture = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/wall");
+            WallBorderTexture = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/border");
+            GrassTexture = new RemoteTexture2D(Mobattack.GetScene().GraphicsServer, "textures/grass");
+            MapEffect = new RemoteEffect(Mobattack.GetScene().GraphicsServer, "shaders/mapshader");
             MapEffect.Parameters["xBorderTexture"].SetValue(WallBorderTexture);
             MapEffect.Parameters["xWallTexture"].SetValue(WallTexture);
             MapEffect.Parameters["xGrassTexture"].SetValue(GrassTexture);

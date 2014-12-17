@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Gui
 {
     /// <summary>
@@ -53,7 +53,7 @@ namespace Clank.View.Engine.Gui
         /// Dessine le widget.
         /// </summary>
         /// <param name="batch"></param>
-        public abstract void Draw(SpriteBatch batch);
+        public abstract void Draw(RemoteSpriteBatch batch);
         /// <summary>
         /// Supprime le widget.
         /// </summary>

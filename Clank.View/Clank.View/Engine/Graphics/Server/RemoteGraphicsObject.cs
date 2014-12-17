@@ -21,11 +21,27 @@ namespace Clank.View.Engine.Graphics.Server
         /// Crée une nouvelle instance de GraphicsObject.
         /// </summary>
         /// <param name="server"></param>
-        public RemoteGraphicsObject(GraphicsServer server)
+        public RemoteGraphicsObject(GraphicsServer server, bool registerNow=true)
         {
             Server = server;
-            Server.SendCommand(new CommandCreateObject(this));
             ID = s_id++;
+            if (registerNow)
+                Register();
+        }
+
+        /// <summary>
+        /// Enregistre cet objet auprès du serveur graphique.
+        /// </summary>
+        protected void Register()
+        {
+            Server.SendCommand(new CommandCreateObject(this));
+        }
+        /// <summary>
+        /// Demande au client de supprimer les ressources allouées par cet objet.
+        /// </summary>
+        public void Dispose()
+        {
+            Server.SendCommand(new CommandDisposeObject(this));   
         }
     }
 }

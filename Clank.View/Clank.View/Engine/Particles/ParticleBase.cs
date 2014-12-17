@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Particles
 {
     /// <summary>
@@ -327,7 +328,7 @@ namespace Clank.View.Engine.Particles
         /// Dessine la particule à l'écran.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(SpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset)
+        public override void Draw(RemoteSpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset)
         {
 
         }

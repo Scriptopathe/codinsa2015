@@ -37,6 +37,18 @@ namespace Clank.View.Engine.Graphics.Client
         /// Représente les polices chargées par ce client.
         /// </summary>
         Dictionary<int, SpriteFont> m_fonts;
+
+
+        public IntegratedClient(GraphicsDevice device, ContentManager content)
+        {
+            m_device = device;
+            m_content = content;
+            m_textures = new Dictionary<int, Texture2D>();
+            m_effects = new Dictionary<int, Effect>();
+            m_batches = new Dictionary<int, SpriteBatch>();
+            m_fonts = new Dictionary<int, SpriteFont>();
+        }
+
         /// <summary>
         /// Procède à l'exécution de la commande donnée.
         /// </summary>
@@ -55,8 +67,7 @@ namespace Clank.View.Engine.Graphics.Client
                 else if(cobj.GraphicsObject is Server.RemoteTexture2D)
                 {
                     Server.RemoteTexture2D remoteTex = (Server.RemoteTexture2D)cobj.GraphicsObject;
-                    Texture2D tex = m_content.Load<Texture2D>(remoteTex.Filename);
-                    m_textures[remoteTex.ID] = tex;
+                    m_textures[remoteTex.ID] = remoteTex.UnderlyingTexture;
                 }
                 else if(cobj.GraphicsObject is Server.RemoteSpriteBatch)
                 {
@@ -73,8 +84,32 @@ namespace Clank.View.Engine.Graphics.Client
                 else if(cobj.GraphicsObject is Server.RemoteSpriteFont)
                 {
                     Server.RemoteSpriteFont remoteFont = (Server.RemoteSpriteFont)cobj.GraphicsObject;
-                    SpriteFont font = m_content.Load<SpriteFont>(remoteFont.Filename);
+                    SpriteFont font = remoteFont.Font;
                     m_fonts[remoteFont.ID] = font;
+                }
+            }
+            else if(command is Server.CommandDisposeObject)
+            {
+                Server.CommandDisposeObject cobj = (Server.CommandDisposeObject)command;
+                if (cobj.GraphicsObject is Server.RemoteRenderTarget)
+                {
+                    Server.RemoteRenderTarget remoteTarget = (Server.RemoteRenderTarget)cobj.GraphicsObject;
+                    m_textures[remoteTarget.ID].Dispose();
+                }
+                else if (cobj.GraphicsObject is Server.RemoteTexture2D)
+                {
+                    Server.RemoteTexture2D remoteTex = (Server.RemoteTexture2D)cobj.GraphicsObject;
+                    m_textures[remoteTex.ID].Dispose();
+                }
+                else if (cobj.GraphicsObject is Server.RemoteSpriteBatch)
+                {
+                    Server.RemoteSpriteBatch remoteBatch = (Server.RemoteSpriteBatch)cobj.GraphicsObject;
+                    m_batches[remoteBatch.ID].Dispose();
+                }
+                else if (cobj.GraphicsObject is Server.RemoteEffect)
+                {
+                    Server.RemoteEffect remoteEffect = (Server.RemoteEffect)cobj.GraphicsObject;
+                    m_effects[remoteEffect.ID].Dispose();
                 }
             }
             else if(command is Server.CommandGraphicsDeviceClear)
@@ -85,7 +120,10 @@ namespace Clank.View.Engine.Graphics.Client
             else if(command is Server.CommandGraphicsDeviceSetRenderTarget)
             {
                 Server.CommandGraphicsDeviceSetRenderTarget cmd = (Server.CommandGraphicsDeviceSetRenderTarget)command;
-                m_device.SetRenderTarget((RenderTarget2D)m_textures[cmd.RenderTarget.ID]);
+                if (cmd.RenderTarget == null)
+                    m_device.SetRenderTarget(null);
+                else
+                    m_device.SetRenderTarget((RenderTarget2D)m_textures[cmd.RenderTarget.ID]);
             }
             else if(command is Server.CommandSetEffectParameterValue)
             {
@@ -101,17 +139,30 @@ namespace Clank.View.Engine.Graphics.Client
             else if(command is Server.CommandSpriteBatchBegin)
             {
                 Server.CommandSpriteBatchBegin cmd = (Server.CommandSpriteBatchBegin)command;
-                m_batches[cmd.Batch.ID].Begin(cmd.SortMode, cmd.BlendState, cmd.SamplerState, DepthStencilState.Default, RasterizerState.CullNone,
-                    m_effects[cmd.Effect.ID]);
+                if (cmd.Effect == null)
+                    m_batches[cmd.Batch.ID].Begin(cmd.SortMode, cmd.BlendState, cmd.SamplerState, DepthStencilState.Default, RasterizerState.CullNone);
+                else
+                    m_batches[cmd.Batch.ID].Begin(cmd.SortMode, cmd.BlendState, cmd.SamplerState, DepthStencilState.Default, RasterizerState.CullNone,
+                        m_effects[cmd.Effect.ID]);
             }
             else if(command is Server.CommandSpriteBatchDraw)
             {
                 Server.CommandSpriteBatchDraw cmd = (Server.CommandSpriteBatchDraw)command;
+                Texture2D tex = m_textures[cmd.Texture.ID];
                 if(cmd.DestinationRectangle.HasValue)
-                    m_batches[cmd.Batch.ID].Draw(m_textures[cmd.Texture.ID], cmd.DestinationRectangle.Value, cmd.SourceRectangle, cmd.Color, cmd.Rotation, cmd.Origin, SpriteEffects.None, cmd.LayerDepth);
+                {
+                    if(cmd.DestinationRectangle.Value.Width < 0 || cmd.DestinationRectangle.Value.Height < 0)
+                    {
+                        // On ajuste la valeur du dst rect à la valeur de la texture.
+                        Rectangle rect = new Rectangle(cmd.DestinationRectangle.Value.X, cmd.DestinationRectangle.Value.Y, tex.Width, tex.Height);
+                        m_batches[cmd.Batch.ID].Draw(tex, cmd.DestinationRectangle.Value, cmd.SourceRectangle, cmd.Color, cmd.Rotation, cmd.Origin, SpriteEffects.None, cmd.LayerDepth);
+                    }
+                    else
+                        m_batches[cmd.Batch.ID].Draw(tex, cmd.DestinationRectangle.Value, cmd.SourceRectangle, cmd.Color, cmd.Rotation, cmd.Origin, SpriteEffects.None, cmd.LayerDepth);
+                }
+                    
                 else
                 {
-                    Texture2D tex = m_textures[cmd.Texture.ID];
                     m_batches[cmd.Batch.ID].Draw(tex, new Rectangle(0, 0, tex.Width, tex.Height), cmd.SourceRectangle, cmd.Color, cmd.Rotation, cmd.Origin, SpriteEffects.None, cmd.LayerDepth);
                 }
             }
@@ -123,7 +174,7 @@ namespace Clank.View.Engine.Graphics.Client
             else if(command is Server.CommandSpriteBatchDrawString)
             {
                 Server.CommandSpriteBatchDrawString cmd = (Server.CommandSpriteBatchDrawString)command;
-                m_batches[cmd.Batch.ID].DrawString(m_fonts[cmd.Font.ID], cmd.String, cmd.Position, cmd.Color, cmd.Rotation, cmd.Origin, cmd.Scale, SpriteEffects.None, cmd.LayerDepth);
+                m_batches[cmd.Batch.ID].DrawString(m_fonts[cmd.Font.ID], cmd.String, cmd.Position, cmd.Color, cmd.Rotation, cmd.Origin, cmd.Scale, cmd.SpriteEffects, cmd.LayerDepth);
             }
         }
 

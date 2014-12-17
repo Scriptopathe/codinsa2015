@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Microsoft.Xna.Framework.Content;
 namespace Clank.View.Engine.Graphics.Server
 {
     /// <summary>
@@ -47,9 +47,27 @@ namespace Clank.View.Engine.Graphics.Server
             get;
             set;
         }
-        #endregion
-        #region Methods
 
+        /// <summary>
+        /// Représente le content manager utilisé par ce serveur.
+        /// </summary>
+        public ContentManager Content
+        {
+            get;
+            set;
+        }
+        #endregion
+
+
+        #region Methods
+        /// <summary>
+        /// Crée une nouvelle instance de graphics server.
+        /// </summary>
+        public GraphicsServer(CommandExecutionMode mode, ContentManager content)
+        {
+            Content = content;
+            Mode = mode;
+        }
         /// <summary>
         /// Envoie une commande au serveur graphique.
         /// </summary>
@@ -74,6 +92,23 @@ namespace Clank.View.Engine.Graphics.Server
                     CommandIssued(m_commands.Dequeue());
                 }
             }
+        }
+
+        /// <summary>
+        /// Change le render target en cours d'utilisation.
+        /// Null pour le back buffer.
+        /// </summary>
+        public void SetRenderTarget(RemoteRenderTarget target)
+        {
+            SendCommand(new CommandGraphicsDeviceSetRenderTarget(target));
+        }
+
+        /// <summary>
+        /// Remplit le render target actuel avec la couleur donnée.
+        /// </summary>
+        public void Clear(Microsoft.Xna.Framework.Color color)
+        {
+            SendCommand(new CommandGraphicsDeviceClear(color));
         }
         #endregion
 

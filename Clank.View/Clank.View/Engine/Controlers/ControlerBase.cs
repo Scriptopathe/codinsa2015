@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Controlers
 {
     /// <summary>
@@ -32,7 +33,7 @@ namespace Clank.View.Engine.Controlers
         /// <summary>
         /// Dessine les éléments graphique du contrôleur à l'écran.
         /// </summary>
-        public abstract void Draw(SpriteBatch batch, GameTime time);
+        public abstract void Draw(RemoteSpriteBatch batch, GameTime time);
 
 
         /* ------------------------------------------------------------------

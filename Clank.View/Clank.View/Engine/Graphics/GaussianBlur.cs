@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Graphics
 {
     /// <summary>
@@ -61,8 +61,7 @@ namespace Clank.View.Engine.Graphics
     /// </summary>
     public class GaussianBlur
     {
-        private Game game;
-        private Effect effect;
+        private RemoteEffect effect;
         private int radius;
         private float amount;
         private float sigma;
@@ -142,13 +141,9 @@ namespace Clank.View.Engine.Graphics
         /// be already bound to the asset name: 'Effects\GaussianBlur' or
         /// 'GaussianBlur'.
         /// </summary>
-        public GaussianBlur(Game game)
+        public GaussianBlur(GraphicsServer server)
         {
-            this.game = game;
-
-            effect = game.Content.Load<Effect>(@"shaders\RadialBlur").Clone();
-
-            // effect.Parameters["MatrixTransform"].SetValue(Ressources.PlaneTransform2D);
+            effect = new RemoteEffect(server, @"shaders\RadialBlur");
 
         }
 
@@ -231,22 +226,21 @@ namespace Clank.View.Engine.Graphics
         /// <param name="renderTargetDst">Stores the output from the vertical blur pass.</param>
         /// <param name="spriteBatch">Used to draw quads for the blur passes.</param>
         /// <returns>The resulting Gaussian blurred image.</returns>
-        public void PerformGaussianBlur(Texture2D srcTexture,
-                                             RenderTarget2D renderTargetTmp,
-                                             RenderTarget2D renderTargetDst,
-                                             SpriteBatch spriteBatch)
+        public void PerformGaussianBlur(RemoteTexture srcTexture,
+                                             RemoteRenderTarget renderTargetTmp,
+                                             RemoteRenderTarget renderTargetDst,
+                                             RemoteSpriteBatch spriteBatch)
         {
             if (effect == null)
                 throw new InvalidOperationException("GaussianBlur.fx effect not loaded.");
 
-            Texture2D outputTexture = null;
-            Rectangle srcRect = new Rectangle(0, 0, srcTexture.Width, srcTexture.Height);
+            RemoteTexture outputTexture = null;
             Rectangle destRect1 = new Rectangle(0, 0, renderTargetTmp.Width, renderTargetTmp.Height);
             Rectangle destRect2 = new Rectangle(0, 0, renderTargetDst.Width, renderTargetDst.Height);
 
             // Horizontal
   
-            game.GraphicsDevice.SetRenderTarget(renderTargetTmp);
+            spriteBatch.GraphicsDevice.SetRenderTarget(renderTargetTmp);
             effect.CurrentTechnique = effect.Techniques["Blur"];
             effect.Parameters["weights"].SetValue(kernel);
             effect.Parameters["offsets"].SetValue(offsetsHoriz);
@@ -259,8 +253,8 @@ namespace Clank.View.Engine.Graphics
 
             // Vertical
 
-            game.GraphicsDevice.SetRenderTarget(renderTargetDst);
-            outputTexture = (Texture2D)renderTargetTmp;
+            spriteBatch.GraphicsDevice.SetRenderTarget(renderTargetDst);
+            outputTexture = (RemoteTexture)renderTargetTmp;
 
             effect.Parameters["Texture"].SetValue(renderTargetTmp);
             effect.Parameters["offsets"].SetValue(offsetsVert);

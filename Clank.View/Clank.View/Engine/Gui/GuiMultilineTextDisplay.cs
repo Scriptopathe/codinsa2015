@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Gui
 {
     /// <summary>
@@ -75,7 +76,7 @@ namespace Clank.View.Engine.Gui
         /// Dessine les items de ce menu.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
+        public override void Draw(RemoteSpriteBatch batch)
         {
             if (!IsVisible)
                 return;

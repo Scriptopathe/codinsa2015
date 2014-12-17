@@ -20,6 +20,7 @@ namespace Clank.View.Engine.Graphics.Server
         public Vector2 Origin { get; set; }
         public Vector2 Scale { get; set; }
         public float LayerDepth { get; set; }
+        public SpriteEffects SpriteEffects { get; set; }
         public CommandSpriteBatchDrawString(
             RemoteSpriteBatch batch, 
             RemoteSpriteFont font,
@@ -29,6 +30,7 @@ namespace Clank.View.Engine.Graphics.Server
             float rotation,
             Vector2 origin,
             Vector2 scale,
+            SpriteEffects spriteEffects,
             float layerDepth)
         {
             Batch = batch;
@@ -40,6 +42,7 @@ namespace Clank.View.Engine.Graphics.Server
             Origin = origin;
             Scale = scale;
             LayerDepth = layerDepth;
+            SpriteEffects = spriteEffects;
         }
     }
 }

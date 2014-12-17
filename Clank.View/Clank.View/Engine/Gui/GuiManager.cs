@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Gui
 {
     /// <summary>
@@ -59,7 +60,7 @@ namespace Clank.View.Engine.Gui
         /// Dessine tous les composants du GuiManager.
         /// </summary>
         /// <param name="batch"></param>
-        public void Draw(SpriteBatch batch)
+        public void Draw(RemoteSpriteBatch batch)
         {
             foreach(GuiWidget widget in m_widgets)
             {

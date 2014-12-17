@@ -122,11 +122,11 @@ namespace Clank.View.Engine.Graphics.Server
         /// </summary>
         public string Filename { get; set; }
 
-        public RemoteEffect(GraphicsServer server, string filename) : base(server) 
+        public RemoteEffect(GraphicsServer server, string filename) : base(server, false) 
         {
             Parameters = new RemoteEffectParameterCollection(this);
             Filename = filename;
-
+            Register();
         }
     }
 }

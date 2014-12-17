@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Gui
 {
     /// <summary>
@@ -28,7 +29,7 @@ namespace Clank.View.Engine.Gui
             /// <summary>
             /// Icône affiché sur cet item.
             /// </summary>
-            public Texture2D Icon { get; set; }
+            public RemoteTexture2D Icon { get; set; }
             /// <summary>
             /// Id de l'event déclenché par cet item.
             /// </summary>
@@ -60,21 +61,21 @@ namespace Clank.View.Engine.Gui
                 IsEnabled = true;
             }
 
-            public GuiMenuItem(string text, Texture2D icon)
+            public GuiMenuItem(string text, RemoteTexture2D icon)
             {
                 Text = text;
                 Icon = icon;
                 IsEnabled = true;
             }
 
-            public GuiMenuItem(string text, Texture2D icon, bool isEnabled)
+            public GuiMenuItem(string text, RemoteTexture2D icon, bool isEnabled)
             {
                 Text = text;
                 Icon = icon;
                 IsEnabled = isEnabled;
             }
 
-            public GuiMenuItem(string text, Texture2D icon, bool isEnabled, ItemSelectedDelegate onItemSelected)
+            public GuiMenuItem(string text, RemoteTexture2D icon, bool isEnabled, ItemSelectedDelegate onItemSelected)
             {
                 Text = text;
                 Icon = icon;
@@ -120,7 +121,7 @@ namespace Clank.View.Engine.Gui
         /// <summary>
         /// Obtient ou définit la texture utilisée pour dessiner la boite principale du menu.
         /// </summary>
-        public Texture2D MenuBoxTexture
+        public RemoteTexture2D MenuBoxTexture
         {
             get;
             set;
@@ -129,7 +130,7 @@ namespace Clank.View.Engine.Gui
         /// <summary>
         /// Obtient ou définit la texture utilisée pour dessiner les items du menu.
         /// </summary>
-        public Texture2D ItemBoxTexture
+        public RemoteTexture2D ItemBoxTexture
         {
             get;
             set;
@@ -138,7 +139,7 @@ namespace Clank.View.Engine.Gui
         /// <summary>
         /// Obtient ou définit la texture utilisée pour dessiner les items du menu, lorsque la souris est dessus.
         /// </summary>
-        public Texture2D ItemHoverBoxTexture
+        public RemoteTexture2D ItemHoverBoxTexture
         {
             get;
             set;
@@ -308,15 +309,16 @@ namespace Clank.View.Engine.Gui
             int maxStringWidth = 120;
             int maxStringHeight = 20;
             int maxIconWidth = 0;
+            const int iconWidth = 32;
 
             for (int y = 0; y < Items.Count; y++)
             {
-                SpriteFont font = Ressources.Font;
+                RemoteSpriteFont font = Ressources.Font;
                 Vector2 size = font.MeasureString(Items[y].Text);
                 
                 if(Items[y].Icon != null)
                 {
-                    int w = Items[y].Icon.Width;
+                    int w = iconWidth;
                     if (w > maxIconWidth)
                         maxIconWidth = w;
                 }
@@ -387,7 +389,7 @@ namespace Clank.View.Engine.Gui
         /// Dessine les items de ce menu.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
+        public override void Draw(RemoteSpriteBatch batch)
         {
             if (!Visible)
                 return;
@@ -424,7 +426,7 @@ namespace Clank.View.Engine.Gui
 
                 // Dessin de la box
                 Rectangle pxRect = new Rectangle((int)pos.X, (int)pos.Y, m_itemWidth, m_itemHeight);
-                Texture2D t = isHover && Items[y].IsEnabled ? ItemHoverBoxTexture : ItemBoxTexture;
+                RemoteTexture2D t = isHover && Items[y].IsEnabled ? ItemHoverBoxTexture : ItemBoxTexture;
                 Drawing.DrawRectBox(batch, t, pxRect, Color.White, Graphics.Z.GUI + Graphics.Z.FrontStep / 2);
 
                 // Dessin de l'icone

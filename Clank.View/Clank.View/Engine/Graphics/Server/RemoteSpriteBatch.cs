@@ -12,6 +12,11 @@ namespace Clank.View.Engine.Graphics.Server
     public class RemoteSpriteBatch : RemoteGraphicsObject
     {
         /// <summary>
+        /// Alias pour la propriété serveur. (utilisé pour conserver la syntaxe originale
+        /// de SpriteBatch).
+        /// </summary>
+        public GraphicsServer GraphicsDevice { get { return Server; } }
+        /// <summary>
         /// Création d'un sprite batch distant.
         /// </summary>
         public RemoteSpriteBatch(GraphicsServer server) : base(server)
@@ -39,6 +44,7 @@ namespace Clank.View.Engine.Graphics.Server
             Server.SendCommand(new CommandSpriteBatchBegin(
                 this, SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null));
         }
+
         public void Draw(RemoteTexture texture, Rectangle destRect,
             Rectangle? srcRect, Color color, float rotation, Vector2 origin, SpriteEffects effects, float layerDepth)
         {
@@ -54,12 +60,13 @@ namespace Clank.View.Engine.Graphics.Server
                 layerDepth
                 ));
         }
+
         public void Draw(RemoteTexture texture, Vector2 position, Color color)
         {
             Server.SendCommand(new CommandSpriteBatchDraw(
                 this,
                 texture,
-                null,
+                new Rectangle((int)position.X, (int)position.Y, -1, -1),
                 null,
                 color,
                 0.0f,
@@ -68,8 +75,21 @@ namespace Clank.View.Engine.Graphics.Server
                 1.0f
                 ));
         }
-
-        public void DrawString(string str, RemoteSpriteFont font, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float layerDepth)
+        public void Draw(RemoteTexture texture, Rectangle dstRect, Color color)
+        {
+            Server.SendCommand(new CommandSpriteBatchDraw(
+                this,
+                texture,
+                dstRect,
+                null,
+                color,
+                0.0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                1.0f
+                ));
+        }
+        public void DrawString(RemoteSpriteFont font, string str, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float layerDepth)
         {
             Server.SendCommand(new CommandSpriteBatchDrawString(
                 this,
@@ -80,9 +100,52 @@ namespace Clank.View.Engine.Graphics.Server
                 rotation,
                 origin,
                 scale,
+                SpriteEffects.None,
+                layerDepth));
+        }
+        public void DrawString(RemoteSpriteFont font, string str, Vector2 position, Color color, float rotation, Vector2 origin, float scale, float layerDepth)
+        {
+            Server.SendCommand(new CommandSpriteBatchDrawString(
+                this,
+                font,
+                str,
+                position,
+                color,
+                rotation,
+                origin,
+                new Vector2(scale, scale),
+                SpriteEffects.None,
+                layerDepth));
+        }
+        public void DrawString(RemoteSpriteFont font, string str, Vector2 position, Color color, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layerDepth)
+        {
+            Server.SendCommand(new CommandSpriteBatchDrawString(
+                this,
+                font,
+                str,
+                position,
+                color,
+                rotation,
+                origin,
+                new Vector2(scale, scale),
+                spriteEffects,
                 layerDepth));
         }
 
+        public void DrawString(RemoteSpriteFont font, string str, Vector2 position, Color color)
+        {
+            Server.SendCommand(new CommandSpriteBatchDrawString(
+                this,
+                font,
+                str,
+                position,
+                color,
+                0.0f,
+                Vector2.Zero,
+                new Vector2(1.0f, 1.0f),
+                SpriteEffects.None,
+                1.0f));
+        }
         public void End()
         {
             Server.SendCommand(new CommandSpriteBatchEnd(this));

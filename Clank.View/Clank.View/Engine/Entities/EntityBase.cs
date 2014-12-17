@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Clank.View.Engine.Shapes;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Entities
 {
     
@@ -1065,7 +1066,7 @@ namespace Clank.View.Engine.Entities
         /// <summary>
         /// Dessine l'entitié.
         /// </summary>
-        public void Draw(GameTime time, SpriteBatch batch)
+        public void Draw(GameTime time, RemoteSpriteBatch batch)
         {
             Point scroll = Mobattack.GetMap().Scrolling;
             Point drawPos = new Point((int)(m_position.X * Mobattack.GetMap().UnitSize) - scroll.X, (int)(m_position.Y * Mobattack.GetMap().UnitSize) - scroll.Y);
@@ -1087,7 +1088,7 @@ namespace Clank.View.Engine.Entities
         /// <param name="time">Temps de jeu.</param>
         /// <param name="batch">Batch sur lequel dessiner.</param>
         /// <param name="position">Position à laquelle dessiner l'unité.</param>
-        public virtual void Draw(GameTime time, SpriteBatch batch, Point position)
+        public virtual void Draw(GameTime time, RemoteSpriteBatch batch, Point position)
         {
             Color col;
             if (Type.HasFlag(EntityType.Team1))
@@ -1097,7 +1098,7 @@ namespace Clank.View.Engine.Entities
             else
                 col = Color.White;
 
-            Texture2D tex = Ressources.DummyTexture;
+            RemoteTexture2D tex = Ressources.DummyTexture;
             if (Type.HasFlag(EntityType.Tower))
                 tex = Ressources.SelectMark;
             else if (Type.HasFlag(EntityType.Spawner))

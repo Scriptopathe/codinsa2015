@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Clank.View.Engine.Entities;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Spellcasts
 {
     /// <summary>
@@ -109,7 +110,7 @@ namespace Clank.View.Engine.Spellcasts
         /// <summary>
         /// Dessine ce sort à l'écran.
         /// </summary>
-        public override void Draw(GameTime time, SpriteBatch batch)
+        public override void Draw(GameTime time, RemoteSpriteBatch batch)
         {
             Point scroll = Mobattack.GetMap().Scrolling;
             batch.Draw(Ressources.DummyTexture,

@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Clank.View.Engine.Entities;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Spellcasts
 {
     public abstract class Spellcast
@@ -43,7 +44,7 @@ namespace Clank.View.Engine.Spellcasts
         /// <summary>
         /// Dessine ce sort à l'écran.
         /// </summary>
-        public abstract void Draw(GameTime time, SpriteBatch batch);
+        public abstract void Draw(GameTime time, RemoteSpriteBatch batch);
         
         /// <summary>
         /// Applique les effets du sorts à l'entité touchée.

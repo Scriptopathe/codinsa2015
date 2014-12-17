@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Gui
 {
     /// <summary>
@@ -40,7 +41,7 @@ namespace Clank.View.Engine.Gui
         /// <summary>
         /// Obtient ou définit la texture utilisée pour dessiner le bouton.
         /// </summary>
-        public Texture2D ButtonBoxTexture
+        public RemoteTexture2D ButtonBoxTexture
         {
             get;
             set;
@@ -49,7 +50,7 @@ namespace Clank.View.Engine.Gui
         /// <summary>
         /// Obtient ou définit la texture utilisée pour dessiner le bouton, lorsque la souris est dessus.
         /// </summary>
-        public Texture2D ButtonHoverBoxTexture
+        public RemoteTexture2D ButtonHoverBoxTexture
         {
             get;
             set;
@@ -120,7 +121,7 @@ namespace Clank.View.Engine.Gui
         /// <summary>
         /// Obtient ou définit l'icone du bouton.
         /// </summary>
-        public Texture2D Icon
+        public RemoteTexture2D Icon
         {
             get;
             set;
@@ -202,7 +203,7 @@ namespace Clank.View.Engine.Gui
         /// Dessine les items de ce menu.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
+        public override void Draw(RemoteSpriteBatch batch)
         {
             if (!Visible)
                 return;
@@ -222,7 +223,7 @@ namespace Clank.View.Engine.Gui
 
             // Dessin de la box
             pxRect = new Rectangle((int)Position.X, (int)Position.Y, m_width, m_height);
-            Texture2D t = hover && IsEnabled ? ButtonHoverBoxTexture : ButtonBoxTexture;
+            RemoteTexture2D t = hover && IsEnabled ? ButtonHoverBoxTexture : ButtonBoxTexture;
             Drawing.DrawRectBox(batch, t, pxRect, Color.White, Graphics.Z.GUI);
 
             // Dessin de l'icone

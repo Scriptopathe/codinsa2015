@@ -8,6 +8,7 @@ using Clank.View.Engine.Spellcasts;
 using Clank.View.Engine.Spells;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Clank.View.Engine.Graphics.Server;
 namespace Clank.View.Engine.Controlers
 {
     /// <summary>
@@ -159,7 +160,7 @@ namespace Clank.View.Engine.Controlers
         /// <summary>
         /// Dessine les icones des spells.
         /// </summary>
-        void DrawSpellIcons(SpriteBatch batch, GameTime time)
+        void DrawSpellIcons(RemoteSpriteBatch batch, GameTime time)
         {
             int spellCount = m_hero.Spells.Count;
             int y = (int)Mobattack.GetScreenSize().Y - spellIconSize - 5;
@@ -188,7 +189,7 @@ namespace Clank.View.Engine.Controlers
                     int offsetX = (spellIconSize - (int)stringW.X) / 2;
                     int offsetY = (spellIconSize - (int)stringW.Y) / 2;
 
-                    batch.DrawString(Ressources.Font, cooldown, new Vector2(x + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, Graphics.Z.HeroControler + Graphics.Z.FrontStep);
+                    batch.DrawString(Ressources.Font, cooldown, new Vector2(x + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, Graphics.Z.HeroControler + Graphics.Z.FrontStep);
                 }
 
             }
@@ -199,7 +200,7 @@ namespace Clank.View.Engine.Controlers
         /// </summary>
         /// <param name="batch"></param>
         /// <param name="time"></param>
-        void DrawEquipmentSlots(SpriteBatch batch, GameTime time)
+        void DrawEquipmentSlots(RemoteSpriteBatch batch, GameTime time)
         {
             Equip.Equipment[] equip = new Equip.Equipment[] { m_hero.Weapon, m_hero.Armor };
             int y = (int)Mobattack.GetScreenSize().Y - spellIconSize/2 - 5;
@@ -224,7 +225,7 @@ namespace Clank.View.Engine.Controlers
         /// </summary>
         /// <param name="batch"></param>
         /// <param name="time"></param>
-        void DrawConsummableSlots(SpriteBatch batch, GameTime time)
+        void DrawConsummableSlots(RemoteSpriteBatch batch, GameTime time)
         {
             int spellCount = m_hero.Spells.Count;
             int y = (int)Mobattack.GetScreenSize().Y - spellIconSize - 5;
@@ -266,7 +267,7 @@ namespace Clank.View.Engine.Controlers
         /// <summary>
         /// Dessine les éléments graphiques du contrôleur à l'écran.
         /// </summary>
-        public override void Draw(SpriteBatch batch, GameTime time)
+        public override void Draw(RemoteSpriteBatch batch, GameTime time)
         {
             DrawSpellIcons(batch, time);
             DrawConsummableSlots(batch, time);

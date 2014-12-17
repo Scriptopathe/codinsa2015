@@ -106,6 +106,7 @@
     <Compile Include="Engine\Graphics\Client\IntegratedClient.cs" />
     <Compile Include="Engine\Graphics\Server\Command.cs" />
     <Compile Include="Engine\Graphics\Server\CommandCreateObject.cs" />
+    <Compile Include="Engine\Graphics\Server\CommandDisposeObject.cs" />
     <Compile Include="Engine\Graphics\Server\CommandGraphicsDeviceClear.cs" />
     <Compile Include="Engine\Graphics\Server\CommandGraphicsDeviceSetRenderTarget.cs" />
     <Compile Include="Engine\Graphics\Server\CommandSetEffectParameterValue.cs" />
