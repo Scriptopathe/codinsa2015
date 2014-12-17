@@ -42,7 +42,7 @@ namespace Clank.View.Engine.Graphics.Server
         public void Begin()
         {
             Server.SendCommand(new CommandSpriteBatchBegin(
-                this, SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null));
+                this, SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null));
         }
 
         public void Draw(RemoteTexture texture, Rectangle destRect,
@@ -72,7 +72,7 @@ namespace Clank.View.Engine.Graphics.Server
                 0.0f,
                 Vector2.Zero,
                 SpriteEffects.None,
-                1.0f
+                0.0f
                 ));
         }
         public void Draw(RemoteTexture texture, Rectangle dstRect, Color color)
@@ -86,7 +86,7 @@ namespace Clank.View.Engine.Graphics.Server
                 0.0f,
                 Vector2.Zero,
                 SpriteEffects.None,
-                1.0f
+                0.0f
                 ));
         }
         public void DrawString(RemoteSpriteFont font, string str, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float layerDepth)

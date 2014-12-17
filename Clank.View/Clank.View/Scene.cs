@@ -275,19 +275,21 @@ namespace Clank.View
 
 
             // Dessine les GUI, particules etc...
-            batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null);
+            batch.GraphicsDevice.SetRenderTarget(m_mainRenderTarget);
+            batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
             GuiManager.Draw(batch);
             MapEditControler.Draw(batch);
             Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
             foreach (var kvp in Controlers) { kvp.Value.Draw(batch, time); }
             batch.End();
-
+            
 
             // Dessine le render target principal sur le back buffer.
             batch.GraphicsDevice.SetRenderTarget(null);
             batch.Begin();
             batch.Draw(MainRenderTarget, Vector2.Zero, Color.White);
             batch.End();
+
         }
 
         /// <summary>

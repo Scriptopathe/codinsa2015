@@ -257,15 +257,15 @@ namespace Clank.View.Engine
 
 
             // Blur
-            for (int i = 0; i < BLUR_PASSES; i++)
+            /*for (int i = 0; i < BLUR_PASSES; i++)
             {
                 m_blur.PerformGaussianBlur(m_tilesRenderTarget, m_tmpRenderTarget, m_tmpRenderTarget2, batch);
                 m_blur.PerformGaussianBlur(m_tmpRenderTarget2, m_tmpRenderTarget, m_tilesRenderTarget, batch);
-            }
+            }*/
 
             // Dessin du tout
             batch.GraphicsDevice.SetRenderTarget(Mobattack.GetScene().MainRenderTarget);
-            batch.GraphicsDevice.Clear(Color.Black);
+            batch.GraphicsDevice.Clear(Color.DarkGray);
             Ressources.MapEffect.Parameters["xSourceTexture"].SetValue(m_tilesRenderTarget);
             Ressources.MapEffect.Parameters["scrolling"].SetValue(new Vector2(Scrolling.X / (float)Viewport.Width, Scrolling.Y / (float)Viewport.Height));
             Ressources.MapEffect.Parameters["xPixelSize"].SetValue(new Vector2(1.0f / Viewport.Width, 1.0f / Viewport.Height));
