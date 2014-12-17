@@ -9,6 +9,8 @@ using Clank.View.Engine.Entities;
 using Clank.View.Engine.Gui;
 using Clank.View.Engine.Editor;
 using Clank.View.Engine.Particles;
+using Clank.View.Engine.Graphics.Server;
+using Clank.View.Engine.Graphics.Client;
 namespace Clank.View
 {
     /// <summary>
@@ -17,7 +19,7 @@ namespace Clank.View
     public class Scene
     {
         #region Variables
-        RenderTarget2D m_mainRenderTarget;
+        RemoteRenderTarget m_mainRenderTarget;
 
         #endregion
 
@@ -100,7 +102,7 @@ namespace Clank.View
         /// <summary>
         /// Render target principal.
         /// </summary>
-        public RenderTarget2D MainRenderTarget
+        public RemoteRenderTarget MainRenderTarget
         {
             get { return m_mainRenderTarget; }
             private set { m_mainRenderTarget = value; }
@@ -111,6 +113,24 @@ namespace Clank.View
         /// Obtient ou définit une référence vers l'interpréteur de commandes de la scène.
         /// </summary>
         public PonyCarpetExtractor.Interpreter GameInterpreter
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Serveur graphique de la scène.
+        /// </summary>
+        public Engine.Graphics.Server.GraphicsServer GraphicsServer
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Client graphique permettant le dessin du jeu.
+        /// </summary>
+        public Engine.Graphics.Client.IntegratedClient GraphicsClient
         {
             get;
             set;
@@ -198,8 +218,10 @@ namespace Clank.View
         /// </summary>
         public void LoadContent()
         {
-
-            m_mainRenderTarget = new RenderTarget2D(Mobattack.Instance.GraphicsDevice, (int)Mobattack.GetScreenSize().X, (int)Mobattack.GetScreenSize().Y, false, SurfaceFormat.Color, DepthFormat.Depth24, 1, RenderTargetUsage.PreserveContents);
+            GraphicsServer = new Engine.Graphics.Server.GraphicsServer(Engine.Graphics.Server.GraphicsServer.CommandExecutionMode.Immediate, Mobattack.Instance.Content);
+            GraphicsClient = new IntegratedClient(Mobattack.Instance.GraphicsDevice, Mobattack.Instance.Content);
+            GraphicsServer.CommandIssued += GraphicsClient.ProcessCommand;
+            m_mainRenderTarget = new RemoteRenderTarget(GraphicsServer, (int)Mobattack.GetScreenSize().X, (int)Mobattack.GetScreenSize().Y, RenderTargetUsage.PreserveContents);
         }
 
         /// <summary>
@@ -246,14 +268,14 @@ namespace Clank.View
         /// </summary>
         /// <param name="time"></param>
         /// <param name="batch"></param>
-        public void Draw(GameTime time, SpriteBatch batch)
+        public void Draw(GameTime time, RemoteSpriteBatch batch)
         {
             // Dessine la map sur le main render target.
             Map.Draw(time, batch);
 
 
             // Dessine les GUI, particules etc...
-            batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
+            batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null);
             GuiManager.Draw(batch);
             MapEditControler.Draw(batch);
             Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
