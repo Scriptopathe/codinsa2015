@@ -13,7 +13,7 @@ namespace Clank.View.Engine.Graphics.Server
     {
         public RemoteSpriteBatch Batch { get; set; }
         public RemoteTexture Texture { get; set; }
-        public Rectangle DestinationRectangle { get; set; }
+        public Rectangle? DestinationRectangle { get; set; }
         public Rectangle? SourceRectangle { get; set; }
         public Color Color { get; set; }
         public float Rotation { get; set; }
@@ -27,7 +27,7 @@ namespace Clank.View.Engine.Graphics.Server
         public CommandSpriteBatchDraw(
             RemoteSpriteBatch batch,
             RemoteTexture texture,
-            Rectangle destRect,
+            Rectangle? destRect,
             Rectangle? srcRect,
             Color color,
             float rotation,

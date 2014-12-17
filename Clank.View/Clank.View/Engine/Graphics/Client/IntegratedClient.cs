@@ -107,7 +107,13 @@ namespace Clank.View.Engine.Graphics.Client
             else if(command is Server.CommandSpriteBatchDraw)
             {
                 Server.CommandSpriteBatchDraw cmd = (Server.CommandSpriteBatchDraw)command;
-                m_batches[cmd.Batch.ID].Draw(m_textures[cmd.Texture.ID], cmd.DestinationRectangle, cmd.SourceRectangle, cmd.Color, cmd.Rotation, cmd.Origin, SpriteEffects.None, cmd.LayerDepth);
+                if(cmd.DestinationRectangle.HasValue)
+                    m_batches[cmd.Batch.ID].Draw(m_textures[cmd.Texture.ID], cmd.DestinationRectangle.Value, cmd.SourceRectangle, cmd.Color, cmd.Rotation, cmd.Origin, SpriteEffects.None, cmd.LayerDepth);
+                else
+                {
+                    Texture2D tex = m_textures[cmd.Texture.ID];
+                    m_batches[cmd.Batch.ID].Draw(tex, new Rectangle(0, 0, tex.Width, tex.Height), cmd.SourceRectangle, cmd.Color, cmd.Rotation, cmd.Origin, SpriteEffects.None, cmd.LayerDepth);
+                }
             }
             else if(command is Server.CommandSpriteBatchEnd)
             {
