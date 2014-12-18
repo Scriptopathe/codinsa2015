@@ -14,21 +14,19 @@ namespace Clank.View.Engine.Editor
     /// </summary>
     public class MapEditorControler
     {
-        public int ScrollSpeed = 16;
         
         #region Variables
-        bool m_isEnabled = false;
         Map m_map;
         bool m_terraFormingMode = true;
         int m_rowId = 0;
         int m_checkpointId = 0;
-        bool m_captureMouse = true;
         bool m_displayMinimap = true;
         private Gui.GuiButton m_modeButton;
         int m_brushSize = 2;
         bool m_minimapDirty = true;
         Gui.GuiTextInput m_consoleInput;
         Gui.GuiMultilineTextDisplay m_consoleOutput;
+        Controlers.ControlerBase m_baseControler;
         #region Graphics
         RemoteSpriteBatch m_minimapBatch;
         RemoteRenderTarget m_minimapTexture;
@@ -61,21 +59,35 @@ namespace Clank.View.Engine.Editor
                 m_map.OnMapModified += m_map_OnMapModified;
             }
         }
+
+        /// <summary>
+        /// Obtient ou définit une valeur indiquant si ce contrôleur est actuellement activé.
+        /// </summary>
+        public bool IsEnabled
+        {
+            get;
+            set;
+        }
         #endregion
 
         #region Methods
         /// <summary>
         /// Crée une nouvelle instance de MapEditorControler associé à la map donnée.
         /// </summary>
-        public MapEditorControler(Map map)
+        public MapEditorControler(Controlers.ControlerBase baseControler)
         {
-            CurrentMap = map;
-            m_isEnabled = true;
-            CurrentMap.OnMapModified += m_map_OnMapModified;
+            m_baseControler = baseControler;
+        }
+
+
+        /// <summary>
+        /// Charge les ressources graphiques dont a besoin ce contrôleur.
+        /// </summary>
+        public void LoadContent()
+        {
             m_minimapBatch = new RemoteSpriteBatch(Mobattack.GetScene().GraphicsServer);
             CreateGui();
         }
-
 
 
         /// <summary>
@@ -91,7 +103,7 @@ namespace Clank.View.Engine.Editor
                 Height = 25
             };
             m_modeButton.Clicked += OnChangeMode;
-            Mobattack.GetScene().GuiManager.AddWidget(m_modeButton);
+            m_baseControler.GuiManager.AddWidget(m_modeButton);
 
 
             // Console input
@@ -99,14 +111,14 @@ namespace Clank.View.Engine.Editor
             m_consoleInput.Position = new Vector2(0, Mobattack.GetScreenSize().Y - 25);
             m_consoleInput.Size = new Point((int)Mobattack.GetScreenSize().X - 200, 25);
             m_consoleInput.TextValidated += m_consoleInput_TextValidated;
-            
-            Mobattack.GetScene().GuiManager.AddWidget(m_consoleInput);
+
+            m_baseControler.GuiManager.AddWidget(m_consoleInput);
 
             // Console output
             m_consoleOutput = new Gui.GuiMultilineTextDisplay();
             m_consoleOutput.Position = new Vector2(0, Mobattack.GetScreenSize().Y - 100);
             m_consoleOutput.Size = new Point((int)Mobattack.GetScreenSize().X - 200, 75);
-            Mobattack.GetScene().GuiManager.AddWidget(m_consoleOutput);
+            m_baseControler.GuiManager.AddWidget(m_consoleOutput);
             Mobattack.GetScene().GameInterpreter.OnPuts = new PonyCarpetExtractor.Interpreter.PutsDelegate((string s) => { m_consoleOutput.AppendLine(s); });
             Mobattack.GetScene().GameInterpreter.OnError = new PonyCarpetExtractor.Interpreter.PutsDelegate((string s) => { m_consoleOutput.AppendLine("error: " + s); });
            
@@ -138,17 +150,15 @@ namespace Clank.View.Engine.Editor
         /// </summary>
         public void Update(GameTime time)
         {
+            if (!IsEnabled)
+                return;
+
             // Focus de la console.
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.OemComma))
                 m_consoleInput.HasFocus = true;
             
             if (m_consoleInput.HasFocus)
                 return;
-
-            // Capture de la souris.
-            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightControl))
-                m_captureMouse = !m_captureMouse;
-
 
             // Affichage de la minimap.
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M))
@@ -211,7 +221,7 @@ namespace Clank.View.Engine.Editor
                         });
                         item.IsEnabled = true;
                         menu.AddItem(item);
-                        Mobattack.GetScene().GuiManager.AddWidget(menu);
+                        Mobattack.GetScene().CurrentControler.GuiManager.AddWidget(menu);
                     }
                 }
 
@@ -406,27 +416,6 @@ namespace Clank.View.Engine.Editor
         #endregion
 
         /// <summary>
-        /// Mets à jour le scrolling en fonction de la position de la souris.
-        /// </summary>
-        void UpdateMouseScrolling()
-        {
-            // Récupère la position de la souris, et la garde sur le bord.
-            Vector2 position = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
-            position = Vector2.Max(Vector2.Zero, Vector2.Min(Mobattack.GetScreenSize(), position));
-            Microsoft.Xna.Framework.Input.Mouse.SetPosition((int)position.X, (int)position.Y);
-
-            // Fait bouger l'écran quand on est au bord.
-            if (position.X <= 10)
-                CurrentMap.ScrollingVector2 = new Vector2(CurrentMap.ScrollingVector2.X - ScrollSpeed, CurrentMap.ScrollingVector2.Y);
-            else if (position.X >= Mobattack.GetScreenSize().X - 10)
-                CurrentMap.ScrollingVector2 = new Vector2(CurrentMap.ScrollingVector2.X + ScrollSpeed, CurrentMap.ScrollingVector2.Y);
-            if (position.Y <= 10)
-                CurrentMap.ScrollingVector2 = new Vector2(CurrentMap.ScrollingVector2.X, CurrentMap.ScrollingVector2.Y - ScrollSpeed);
-            else if (position.Y >= Mobattack.GetScreenSize().Y - 10)
-                CurrentMap.ScrollingVector2 = new Vector2(CurrentMap.ScrollingVector2.X, CurrentMap.ScrollingVector2.Y + ScrollSpeed);
-        }
-
-        /// <summary>
         /// Dessine les éléments graphiques du contrôleur.
         /// </summary>
         public void Draw(RemoteSpriteBatch batch)
@@ -435,23 +424,20 @@ namespace Clank.View.Engine.Editor
             Vector2 position = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
             // Dessine le cursor
             batch.Draw(Ressources.Cursor, new Rectangle((int)position.X, (int)position.Y, 32, 32), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Graphics.Z.Front);
-
-            if(m_captureMouse)
-                UpdateMouseScrolling();
-
             
-            if (!Mobattack.GetScene().EditMode)
+            if (!IsEnabled)
             {
                 m_modeButton.Visible = false;
                 m_consoleInput.IsVisible = false;
                 m_consoleInput.HasFocus = false;
                 m_consoleOutput.IsVisible = false;
-                return;
             }
-            
-            m_modeButton.Visible = true;
-            m_consoleInput.IsVisible = true;
-            m_consoleOutput.IsVisible = true;
+            else
+            {
+                m_modeButton.Visible = true;
+                m_consoleInput.IsVisible = true;
+                m_consoleOutput.IsVisible = true;
+            }
 
             // Dessine le bandeau supérieur
             batch.Draw(Ressources.DummyTexture, new Rectangle(0, 0, (int)Mobattack.GetScreenSize().X, 25),

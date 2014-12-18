@@ -103,25 +103,6 @@
     <Compile Include="Engine\Equip\Weapon.cs" />
     <Compile Include="Engine\GameConstants.cs" />
     <Compile Include="Engine\Graphics\Charset.cs" />
-    <Compile Include="Engine\Graphics\Client\IntegratedClient.cs" />
-    <Compile Include="Engine\Graphics\Server\Command.cs" />
-    <Compile Include="Engine\Graphics\Server\CommandCreateObject.cs" />
-    <Compile Include="Engine\Graphics\Server\CommandDisposeObject.cs" />
-    <Compile Include="Engine\Graphics\Server\CommandGraphicsDeviceClear.cs" />
-    <Compile Include="Engine\Graphics\Server\CommandGraphicsDeviceSetRenderTarget.cs" />
-    <Compile Include="Engine\Graphics\Server\CommandSetEffectParameterValue.cs" />
-    <Compile Include="Engine\Graphics\Server\CommandSetEffectTechnique.cs" />
-    <Compile Include="Engine\Graphics\Server\CommandSpriteBatchBegin.cs" />
-    <Compile Include="Engine\Graphics\Server\CommandSpriteBatchDraw.cs" />
-    <Compile Include="Engine\Graphics\Server\CommandSpriteBatchDrawString.cs" />
-    <Compile Include="Engine\Graphics\Server\CommandSpriteBatchEnd.cs" />
-    <Compile Include="Engine\Graphics\Server\RemoteGraphicsObject.cs" />
-    <Compile Include="Engine\Graphics\Server\GraphicsServer.cs" />
-    <Compile Include="Engine\Graphics\Server\RemoteEffect.cs" />
-    <Compile Include="Engine\Graphics\Server\RemoteRenderTarget.cs" />
-    <Compile Include="Engine\Graphics\Server\RemoteSpriteBatch.cs" />
-    <Compile Include="Engine\Graphics\Server\RemoteSpriteFont.cs" />
-    <Compile Include="Engine\Graphics\Server\RemoteTexture.cs" />
     <Compile Include="Engine\Graphics\GaussianBlur.cs" />
     <Compile Include="Engine\Graphics\Z.cs" />
     <Compile Include="Engine\Gui\Drawing.cs">
@@ -192,6 +173,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Clank.View.Engine.Graphics\Clank.View.Engine.Graphics.csproj">
+      <Project>{1b831a6d-c2bd-4072-a3f7-273915e43f64}</Project>
+      <Name>Clank.View.Engine.Graphics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\PonyCarpetExtractor\PonyCarpetExtractor.csproj">
       <Project>{f0ce7cad-de71-4eed-9490-aeeb7c1bafe1}</Project>
       <Name>PonyCarpetExtractor</Name>

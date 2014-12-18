@@ -19,7 +19,6 @@ namespace Clank.View
     public class Scene
     {
         #region Variables
-        RemoteRenderTarget m_mainRenderTarget;
 
         #endregion
 
@@ -36,31 +35,7 @@ namespace Clank.View
             get;
             private set;
         }
-        /// <summary>
-        /// Obtient ou définit le gestionnaire d'interface graphique.
-        /// </summary>
-        public GuiManager GuiManager
-        {
-            get;
-            set;
-        }
-        /// <summary>
-        /// Obtient ou définit une valeur indiquant si la map est en cours d'édition.
-        /// </summary>
-        public bool EditMode
-        {
-            get;
-            set;
-        }
 
-        /// <summary>
-        /// Obtient ou définit le contrôleur permettant d'éditer la map.
-        /// </summary>
-        public MapEditorControler MapEditControler
-        {
-            get;
-            set;
-        }
 
         /// <summary>
         /// Obtient une référence vers le conteneur de constantes du jeu.
@@ -80,14 +55,6 @@ namespace Clank.View
             set;
         }
 
-        /// <summary>
-        /// Obtient une référence vers le gestionnaire de particules de la scène.
-        /// </summary>
-        public ParticleManager Particles
-        {
-            get;
-            set;
-        }
 
         /// <summary>
         /// Obtient un dictionnaire des contrôleurs des différents héros, indexés 
@@ -100,16 +67,6 @@ namespace Clank.View
         }
 
         /// <summary>
-        /// Render target principal.
-        /// </summary>
-        public RemoteRenderTarget MainRenderTarget
-        {
-            get { return m_mainRenderTarget; }
-            private set { m_mainRenderTarget = value; }
-        }
-
-
-        /// <summary>
         /// Obtient ou définit une référence vers l'interpréteur de commandes de la scène.
         /// </summary>
         public PonyCarpetExtractor.Interpreter GameInterpreter
@@ -119,18 +76,27 @@ namespace Clank.View
         }
 
         /// <summary>
-        /// Serveur graphique de la scène.
+        /// Obtient le serveur graphique utilisé par ce contrôleur.
         /// </summary>
-        public Engine.Graphics.Server.GraphicsServer GraphicsServer
+        public GraphicsServer GraphicsServer
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Client graphique permettant le dessin du jeu.
+        /// Render target principal.
         /// </summary>
-        public Engine.Graphics.Client.IntegratedClient GraphicsClient
+        public RemoteRenderTarget MainRenderTarget
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Obtient une référence vers le contrôleur entrain d'effectuer des opérations.
+        /// </summary>
+        public Engine.Controlers.ControlerBase CurrentControler
         {
             get;
             set;
@@ -153,7 +119,8 @@ namespace Clank.View
             GameInterpreter.MainContext.GlobalContext.LoadedAssemblies = new Dictionary<string, System.Reflection.Assembly>() 
             {
                 { System.Reflection.Assembly.GetExecutingAssembly().FullName, System.Reflection.Assembly.GetExecutingAssembly()},
-                { System.Reflection.Assembly.GetAssembly(typeof(Vector2)).FullName, System.Reflection.Assembly.GetAssembly(typeof(Vector2))}
+                { System.Reflection.Assembly.GetAssembly(typeof(Vector2)).FullName, System.Reflection.Assembly.GetAssembly(typeof(Vector2))},
+                { System.Reflection.Assembly.GetAssembly(typeof(System.Windows.Forms.Form)).FullName, System.Reflection.Assembly.GetAssembly(typeof(System.Windows.Forms.Form)) }
             };
             GameInterpreter.MainContext.GlobalContext.LoadedNamespaces = new List<string>() 
             {
@@ -170,6 +137,7 @@ namespace Clank.View
                 "Clank.View.Engine.Spellcasts",
                 "Clank.View.Engine.Spells",
                 "Clank.View.Engine.Views",
+                "System.Windows.Forms"
             };
             
 
@@ -184,27 +152,35 @@ namespace Clank.View
             }
 
             Controlers = new Dictionary<int, Engine.Controlers.ControlerBase>();
+
+            // Création de la map.
             Map = new Map();
+
+            // Création de l'event scheduler.
             EventSheduler = new Scheduler();
-            GuiManager = new GuiManager();
-            MapEditControler = new MapEditorControler(Map);
+
+            // Création du système de récompenses.
             RewardSystem = new RewardSystem(Map.Heroes);
-            Particles = new ParticleManager();
 
-            // DEBUG
-            Controlers.Add(0, new Engine.Controlers.HumanControler(Map.Heroes[0]));
-            MapEditControler.OnMapLoaded += MapEditControler_OnMapLoaded;
 
+            // Charge les contrôleurs.
+            var humanControler = new Engine.Controlers.HumanControler(Map.Heroes[0]);
+            Controlers.Add(0, humanControler);
+
+            // Charge les variables dans l'interpréteur.
             GameInterpreter.MainContext.LocalVariables.Add("map", new PonyCarpetExtractor.ExpressionTree.Mutable(Mobattack.GetMap()));
             GameInterpreter.MainContext.LocalVariables.Add("scene", new PonyCarpetExtractor.ExpressionTree.Mutable(Mobattack.GetScene()));
-            GameInterpreter.MainContext.LocalVariables.Add("ctrl", new PonyCarpetExtractor.ExpressionTree.Mutable(MapEditControler));
+            GameInterpreter.MainContext.LocalVariables.Add("ctrl", new PonyCarpetExtractor.ExpressionTree.Mutable(humanControler));
             GameInterpreter.Eval("print = function(arg) { Interpreter.Puts(arg); };");
+
+            // Serveur graphique.
+            GraphicsServer = new Engine.Graphics.Server.GraphicsServer(Engine.Graphics.Server.GraphicsServer.CommandExecutionMode.Immediate, Mobattack.Instance.Content);
         }
 
         /// <summary>
         /// Se produit lorsqu'une nouvelle map est chargée.
         /// </summary>
-        void MapEditControler_OnMapLoaded(Map map)
+        public void LoadMap(Map map)
         {
             Map = map;
             Controlers.Clear();
@@ -214,14 +190,27 @@ namespace Clank.View
         }
 
         /// <summary>
+        /// Lie les clients graphiques des contrôleurs au serveur graphique.
+        /// </summary>
+        public void BindGraphicsClients()
+        {
+            foreach(var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.BindGraphicsClient(GraphicsServer); };
+        }
+        /// <summary>
         /// Charge le contenu de la scène.
         /// </summary>
         public void LoadContent()
         {
-            GraphicsServer = new Engine.Graphics.Server.GraphicsServer(Engine.Graphics.Server.GraphicsServer.CommandExecutionMode.Immediate, Mobattack.Instance.Content);
-            GraphicsClient = new IntegratedClient(Mobattack.Instance.GraphicsDevice, Mobattack.Instance.Content);
-            GraphicsServer.CommandIssued += GraphicsClient.ProcessCommand;
-            m_mainRenderTarget = new RemoteRenderTarget(GraphicsServer, (int)Mobattack.GetScreenSize().X, (int)Mobattack.GetScreenSize().Y, RenderTargetUsage.PreserveContents);
+            // Charge le content des contrôleurs.
+            foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.LoadContent(); }
+
+            MainRenderTarget = new RemoteRenderTarget(GraphicsServer, (int)Mobattack.GetScreenSize().X, (int)Mobattack.GetScreenSize().Y, RenderTargetUsage.PreserveContents);
+            
+            Map.LoadContent();
+
+
+
+
         }
 
         /// <summary>
@@ -229,35 +218,17 @@ namespace Clank.View
         /// </summary>
         public void Update(GameTime time)
         {
-            // Passage du mode d'édition au mode normal.
-            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.LeftControl) && !Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightAlt))
-                EditMode = !EditMode;
-
             // Mets à jour l'event scheduler.
             EventSheduler.Update(time);
 
             // Mets à jour la map
             Map.Update(time);
 
-            if (!EditMode)
-            {
-                // Mets à jour les contrôleurs
-                foreach (var kvp in Controlers) { kvp.Value.Update(time); }
-            }
-
+            // Mets à jour les contrôleurs
+            foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Update(time); }
+            
             // Mets à jour les récompenses.
             RewardSystem.Update(time);
-
-            // Mets à jour le contrôleur de la map.
-            if(EditMode)
-                MapEditControler.Update(time);
-
-            // Mets à jour la gui
-            GuiManager.Update(time);
-
-            // Mets à jour les particules.
-            Particles.Update(time);
-
             
             // Mets à jour l'input
             Input.Update();
@@ -270,25 +241,7 @@ namespace Clank.View
         /// <param name="batch"></param>
         public void Draw(GameTime time, RemoteSpriteBatch batch)
         {
-            // Dessine la map sur le main render target.
-            Map.Draw(time, batch);
-
-
-            // Dessine les GUI, particules etc...
-            batch.GraphicsDevice.SetRenderTarget(m_mainRenderTarget);
-            batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
-            GuiManager.Draw(batch);
-            MapEditControler.Draw(batch);
-            Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
-            foreach (var kvp in Controlers) { kvp.Value.Draw(batch, time); }
-            batch.End();
-            
-
-            // Dessine le render target principal sur le back buffer.
-            batch.GraphicsDevice.SetRenderTarget(null);
-            batch.Begin();
-            batch.Draw(MainRenderTarget, Vector2.Zero, Color.White);
-            batch.End();
+            foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Draw(batch, time); GraphicsServer.Flush(); }
 
         }
 

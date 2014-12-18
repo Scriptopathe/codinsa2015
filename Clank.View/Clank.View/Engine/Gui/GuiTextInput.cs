@@ -164,10 +164,12 @@ namespace Clank.View.Engine.Gui
                     case Keys.U:
                     case Keys.V:
                     case Keys.W:
-                    case Keys.X:
                     case Keys.Y:
                     case Keys.Z:
                         InsertToCursor(majUp ? key.ToString().ToUpper() : key.ToString().ToLower());
+                        break;
+                    case Keys.X:
+                        InsertToCursor("x");
                         break;
                     case Keys.NumPad0:
                     case Keys.NumPad1:

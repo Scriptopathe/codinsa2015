@@ -23,9 +23,15 @@ namespace Clank.View.Engine.Controlers
         /// Héros contrôlé par cette instance de contrôleur.
         /// </summary>
         EntityHero m_hero;
+
+        /// <summary>
+        /// Indique si le contrôleur doit capturer la souris (l'empêcher de sortir des bords + scrolling).
+        /// </summary>
+        bool m_captureMouse = true;
         #endregion
 
         #region Properties
+        public int ScrollSpeed = 16;
         /// <summary>
         /// Obtient ou définit le héros contrôlé.
         /// </summary>
@@ -34,18 +40,91 @@ namespace Clank.View.Engine.Controlers
             get { return m_hero; }
             set { m_hero = value; }
         }
+
+        /// <summary>
+        /// Obtient le point de vue de ce contrôleur sur la map.
+        /// </summary>
+        public Map.PointOfView Pov
+        {
+            get;
+            set;
+        }
+
+
+        /// <summary>
+        /// Obtient une référence vers la map contrôlée.
+        /// </summary>
+        public Map Map
+        {
+            get { return Mobattack.GetScene().Map; }
+        }
+
+        /// <summary>
+        /// Représente le contrôleur d'édition de la map.
+        /// </summary>
+        Editor.MapEditorControler MapEditControler
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Obtient le client graphique que ce contrôleur utilise pour afficher la scène.
+        /// </summary>
+        public Graphics.Client.IntegratedClient GraphicsClient
+        {
+            get;
+            set;
+        }
+
+
+        /// <summary>
+        /// Obtient une valeur indiquant si le contrôleur est en mode édition de map.
+        /// </summary>
+        public bool EditMode
+        {
+            get;
+            set;
+        }
         #endregion
 
         #region Methods
+
+        #region Init
         /// <summary>
         /// Crée un nouveau contrôleur ayant le contrôle sur le héros donné.
         /// </summary>
         /// <param name="hero"></param>
         public HumanControler(EntityHero hero) : base(hero)
         {
+            EditMode = false;
             m_hero = hero;
+            Pov = new Engine.Map.PointOfView() { Teams = hero.Type, UnitSize = 32 };
+            Particles = new Engine.Particles.ParticleManager();
+            GuiManager = new Gui.GuiManager();
+            MapEditControler = new Editor.MapEditorControler(this);
         }
 
+        /// <summary>
+        /// Lie le client graphique (si existant) du contrôleur au serveur donné.
+        /// </summary>
+        public override void BindGraphicsClient(GraphicsServer server)
+        {
+            GraphicsClient = new Graphics.Client.IntegratedClient(Mobattack.Instance.GraphicsDevice, Mobattack.Instance.Content);
+            Mobattack.GetScene().GraphicsServer.CommandIssued += GraphicsClient.ProcessCommand;
+        }
+        /// <summary>
+        /// Charges les ressources (graphiques et autres) dont a besoin de contrôleur.
+        /// </summary>
+        public override void LoadContent()
+        {
+            MapEditControler.LoadContent();
+            MapEditControler.CurrentMap = Mobattack.GetScene().Map;
+            MapEditControler.OnMapLoaded += Mobattack.GetScene().LoadMap;
+        }
+        #endregion
+
+        #region Update
         int __oldScroll;
         Point __oldPos;
         /// <summary>
@@ -54,10 +133,34 @@ namespace Clank.View.Engine.Controlers
         /// <param name="time"></param>
         public override void Update(GameTime time)
         {
+            // Passage du mode d'édition au mode normal.
+            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.LeftControl) && !Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightAlt))
+                EditMode = !EditMode;
+
+            // Toogle de la capture de la souris.
+            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightControl))
+                m_captureMouse = !m_captureMouse;
+
+            // Change le point de vue de la map.
+            Map.Pov = Pov;
+
+            // Capture de la souris + scrolling.
+            if(m_captureMouse)
+                UpdateMouseScrolling();
+
+            // Mise à jour du contrôleur de la map.
+            MapEditControler.IsEnabled = EditMode;
+            MapEditControler.Update(time);
+            
+            // Particules / etc
+            Particles.Update(time);
+            // Gui manager
+            GuiManager.Update(time);
+
             // Mouvement du héros.
             var ms = Input.GetMouseState();
             Vector2 pos = Mobattack.GetMap().ToMapSpace(new Vector2(ms.X, ms.Y));
-            if(Input.IsRightClickPressed() && Mobattack.GetMap().GetPassabilityAt(pos))
+            if (Input.IsRightClickPressed() && Mobattack.GetMap().GetPassabilityAt(pos))
             {
                 m_hero.Path = new Trajectory(new List<Vector2>() { pos });
             }
@@ -67,9 +170,10 @@ namespace Clank.View.Engine.Controlers
                 m_hero.StartMoveTo(m_hero.Path.LastPosition());
             }
 
+            // Vision range
             if (ms.ScrollWheelValue - __oldScroll < 0)
                 m_hero.VisionRange--;
-            else if (ms.ScrollWheelValue - __oldScroll> 0)
+            else if (ms.ScrollWheelValue - __oldScroll > 0)
                 m_hero.VisionRange++;
 
             // Mise à jour des spells.
@@ -79,8 +183,30 @@ namespace Clank.View.Engine.Controlers
             UpdateConsummable();
 
             __oldScroll = ms.ScrollWheelValue;
+            
         }
-        
+
+        /// <summary>
+        /// Mets à jour le scrolling en fonction de la position de la souris.
+        /// </summary>
+        void UpdateMouseScrolling()
+        {
+            // Récupère la position de la souris, et la garde sur le bord.
+            Vector2 position = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
+            Vector2 position2 = Vector2.Max(Vector2.Zero, Vector2.Min(Mobattack.GetScreenSize(), position));
+            if(position != position2)
+                Input.SetMousePosition((int)position2.X, (int)position2.Y);
+            
+            // Fait bouger l'écran quand on est au bord.
+            if (position.X <= 10)
+                MapEditControler.CurrentMap.ScrollingVector2 = new Vector2(MapEditControler.CurrentMap.ScrollingVector2.X - ScrollSpeed, MapEditControler.CurrentMap.ScrollingVector2.Y);
+            else if (position.X >= Mobattack.GetScreenSize().X - 10)
+                MapEditControler.CurrentMap.ScrollingVector2 = new Vector2(MapEditControler.CurrentMap.ScrollingVector2.X + ScrollSpeed, MapEditControler.CurrentMap.ScrollingVector2.Y);
+            if (position.Y <= 10)
+                MapEditControler.CurrentMap.ScrollingVector2 = new Vector2(MapEditControler.CurrentMap.ScrollingVector2.X, MapEditControler.CurrentMap.ScrollingVector2.Y - ScrollSpeed);
+            else if (position.Y >= Mobattack.GetScreenSize().Y - 10)
+                MapEditControler.CurrentMap.ScrollingVector2 = new Vector2(MapEditControler.CurrentMap.ScrollingVector2.X, MapEditControler.CurrentMap.ScrollingVector2.Y + ScrollSpeed);
+        }
         /// <summary>
         /// Détermine si le joueur a appuyé sur une touche pour warder, et effectue l'action
         /// dans ce cas.
@@ -153,8 +279,11 @@ namespace Clank.View.Engine.Controlers
                 }
             }
         }
+        #endregion
 
         #region Draw
+
+        #region GUI and stuff
         const int spellIconSize = 64;
         const int padding = 4;
         /// <summary>
@@ -264,17 +393,50 @@ namespace Clank.View.Engine.Controlers
 
 
         }
+
+        #endregion
+
         /// <summary>
         /// Dessine les éléments graphiques du contrôleur à l'écran.
         /// </summary>
         public override void Draw(RemoteSpriteBatch batch, GameTime time)
         {
+            // Change le point de vue de la map.
+            Map.Pov = Pov;
+
+            // Dessine la map sur le main render target.
+            MapEditControler.CurrentMap.Draw(time, batch);
+
+
+            // Dessine les GUI, particules etc...
+            batch.GraphicsDevice.SetRenderTarget(Mobattack.GetScene().MainRenderTarget);
+            batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
+            GuiManager.Draw(batch);
+            Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
+            DrawControlerGUI(batch, time);
+            batch.End();
+
+
+            // Dessine le render target principal sur le back buffer.
+            batch.GraphicsDevice.SetRenderTarget(null);
+            batch.Begin();
+            batch.Draw(Mobattack.GetScene().MainRenderTarget, Vector2.Zero, Color.White);
+            batch.End();
+        }
+
+
+        /// <summary>
+        /// Dessine les éléments de GUI du contrôleur.
+        /// </summary>
+        /// <param name="batch"></param>
+        /// <param name="time"></param>
+        void DrawControlerGUI(RemoteSpriteBatch batch, GameTime time)
+        {
+            MapEditControler.Draw(batch);
             DrawSpellIcons(batch, time);
             DrawConsummableSlots(batch, time);
             DrawEquipmentSlots(batch, time);
         }
-
-
         #endregion
 
         

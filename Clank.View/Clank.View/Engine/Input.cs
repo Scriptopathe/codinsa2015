@@ -47,6 +47,12 @@ namespace Clank.View.Engine
             return s_thisMouseState;
         }
 
+        public static void SetMousePosition(int x, int y)
+        {
+            s_thisMouseState = new MouseState(x, y, s_thisMouseState.ScrollWheelValue, s_thisMouseState.LeftButton, s_thisMouseState.MiddleButton, s_thisMouseState.RightButton, s_thisMouseState.XButton1,
+                s_thisMouseState.XButton2);
+            Microsoft.Xna.Framework.Input.Mouse.SetPosition(x, y);
+        }
         /// <summary>
         /// Initialize the input.
         /// </summary>

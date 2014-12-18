@@ -35,7 +35,22 @@ namespace Clank.View.Engine.Controlers
         /// </summary>
         public abstract void Draw(RemoteSpriteBatch batch, GameTime time);
 
-
+        /// <summary>
+        /// Charge les ressources graphiques et autres dont a besoin ce contrôleur.
+        /// </summary>
+        public abstract void LoadContent();
+        /// <summary>
+        /// Lie le client graphique (si existant) du contrôleur au serveur donné.
+        /// </summary>
+        public abstract void BindGraphicsClient(GraphicsServer server);
+        /// <summary>
+        /// Obtient une référence vers le gestionnaire de particules du contrôleur.
+        /// </summary>
+        public Particles.ParticleManager Particles { get; set; }
+        /// <summary>
+        /// Obtient une référence vers le gestionnaire de GUI du contrôleur.
+        /// </summary>
+        public Gui.GuiManager GuiManager { get; set; }
         /* ------------------------------------------------------------------
          * IFACE
          * Contient les fonctions auxquelles vont faire appel les IAs.

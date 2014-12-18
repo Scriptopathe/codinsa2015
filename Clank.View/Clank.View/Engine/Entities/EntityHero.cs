@@ -233,7 +233,7 @@ namespace Clank.View.Engine.Entities
         void UpdatePAParticle()
         {
             if (__paDiff > 2)
-                Mobattack.GetScene().Particles.Add(new Particles.ParticleText()
+                Mobattack.GetScene().CurrentControler.Particles.Add(new Particles.ParticleText()
                 {
                     CurrentColor = Color.White,
                     MoveFunction = Particles.ParticleBase.MoveLine((this.Position + new Vector2(0, -1))),

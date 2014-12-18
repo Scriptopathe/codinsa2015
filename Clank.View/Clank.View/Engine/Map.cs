@@ -16,6 +16,19 @@ namespace Clank.View.Engine
     public class Map
     {
         /// <summary>
+        /// Représente une façon de voir la map.
+        /// </summary>
+        public class PointOfView
+        {
+            /// <summary>
+            /// Obtient ou définit la / les teams pour lesquelles la vision sera affichée.
+            /// </summary>
+            public EntityType Teams;
+            public Point Scrolling;
+            public int UnitSize;
+        }
+
+        /// <summary>
         /// Taille d'une unité métrique (= un case) en pixels.
         /// </summary>
         public static int UnitSize__OBSOLETE { get { return Mobattack.GetMap().UnitSize; } set { Mobattack.GetMap().UnitSize = value; } }
@@ -24,9 +37,9 @@ namespace Clank.View.Engine
 
         #region Variables
         /// <summary>
-        /// Taille d'une unité métrique (= une case) en pixels.
+        /// Représente les paramètres de point de vue de la map.
         /// </summary>
-        int m_unitSize;
+        PointOfView m_pointOfView;
         /// <summary>
         /// Passabilité de la map pour chaque case :
         /// - true veut dire passable
@@ -45,10 +58,6 @@ namespace Clank.View.Engine
         /// Rectangle de l'écran sur lequel sera dessinée la map.
         /// </summary>
         Rectangle m_viewport;
-        /// <summary>
-        /// Scrolling de la map (en px).
-        /// </summary>
-        Point m_scrolling;
         /// <summary>
         /// Liste des entités à ajouter à la prochaine frame.
         /// </summary>
@@ -85,12 +94,24 @@ namespace Clank.View.Engine
 
         #region Properties
         /// <summary>
+        /// Obtient ou définit le point de vue en cours de la map.
+        /// </summary>
+        public PointOfView Pov
+        {
+            get { return m_pointOfView; }
+            set
+            {
+                m_pointOfView = value;
+                SetupTileRenderTarget();
+            }
+        }
+        /// <summary>
         /// Taille d'une unité métrique en pixels.
         /// </summary>
         public int UnitSize
         {
-            get { return m_unitSize; }
-            set { m_unitSize = value; SetupTileRenderTarget(); }
+            get { return m_pointOfView.UnitSize; }
+            set { m_pointOfView.UnitSize = value; SetupTileRenderTarget(); }
         }
         /// <summary>
         /// Retourne la liste des héros.
@@ -161,8 +182,8 @@ namespace Clank.View.Engine
         /// </summary>
         public Point Scrolling
         {
-            get { return m_scrolling; }
-            set { m_scrolling = value; }
+            get { return m_pointOfView.Scrolling; }
+            set { m_pointOfView.Scrolling = value; }
         }
 
         /// <summary>
@@ -170,8 +191,8 @@ namespace Clank.View.Engine
         /// </summary>
         public Vector2 ScrollingVector2
         {
-            get { return new Vector2(m_scrolling.X, m_scrolling.Y); }
-            set { m_scrolling = new Point((int)value.X, (int)value.Y); }
+            get { return new Vector2(m_pointOfView.Scrolling.X, m_pointOfView.Scrolling.Y); }
+            set { m_pointOfView.Scrolling = new Point((int)value.X, (int)value.Y); }
         }
 
         /// <summary>
@@ -207,9 +228,15 @@ namespace Clank.View.Engine
         /// </summary>
         void SetupTileRenderTarget()
         {
-            if (m_tilesRenderTarget != null)
+            if (m_tilesRenderTarget == null)
+            {
+                m_tilesRenderTarget = new RemoteRenderTarget(Mobattack.GetScene().GraphicsServer, Viewport.Width / TILE_SCALE, Viewport.Height / TILE_SCALE, RenderTargetUsage.PreserveContents);
+            }
+            else if (m_tilesRenderTarget.Width != Viewport.Width / TILE_SCALE || m_tilesRenderTarget.Height != Viewport.Height / TILE_SCALE)
+            {
                 m_tilesRenderTarget.Dispose();
-            m_tilesRenderTarget = new RemoteRenderTarget(Mobattack.GetScene().GraphicsServer, Viewport.Width / TILE_SCALE, Viewport.Height / TILE_SCALE, RenderTargetUsage.PreserveContents);
+                m_tilesRenderTarget = new RemoteRenderTarget(Mobattack.GetScene().GraphicsServer, Viewport.Width / TILE_SCALE, Viewport.Height / TILE_SCALE, RenderTargetUsage.PreserveContents);
+            }
         }
 
         public const bool SMOOTH_LIGHT = true;
@@ -227,8 +254,8 @@ namespace Clank.View.Engine
             // batch.GraphicsDevice.Clear(Color.Transparent);
             batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
             // Dessin de debug de la map.
-            int beginX = m_scrolling.X / UnitSize;
-            int beginY = m_scrolling.Y / UnitSize;
+            int beginX = Scrolling.X / UnitSize;
+            int beginY = Scrolling.Y / UnitSize;
             int endX = Math.Min(beginX + (Viewport.Width / UnitSize + 1), m_passability.GetLength(0));
             int endY = Math.Min(beginY + (Viewport.Height / UnitSize + 1), m_passability.GetLength(1));
 
@@ -239,7 +266,7 @@ namespace Clank.View.Engine
                 {
                     Point drawPos = new Point(x * UnitSize - Scrolling.X, y * UnitSize - Scrolling.Y);
                     int r = m_passability[x, y] ? 0 : 255;
-                    int b = Vision.HasVision(EntityType.Team1, new Vector2(x, y)) ? 255 : 0;
+                    int b = Vision.HasVision(Pov.Teams, new Vector2(x, y)) ? 255 : 0;
                     int a = SMOOTH_LIGHT ? smoothAlpha : 255;
                     batch.Draw(Ressources.DummyTexture, new Rectangle(drawPos.X / TILE_SCALE, drawPos.Y / TILE_SCALE, UnitSize / TILE_SCALE, UnitSize / TILE_SCALE), new Color(r, 0, b, a));
                     
@@ -299,17 +326,9 @@ namespace Clank.View.Engine
             m_entities = new EntityCollection();
             m_entitiesAddList = new EntityCollection();
             m_spellcasts = new List<Spellcast>();
-            m_unitSize = 32;
-
-            // Initialise l'effet de blur.
-            m_blur = new Graphics.GaussianBlur(Mobattack.GetScene().GraphicsServer);
-            m_blur.ComputeKernel(4, 2);
-
-            // Création du viewport
-            Viewport = new Rectangle(0, 25, (int)Mobattack.GetScreenSize().X, (int)Mobattack.GetScreenSize().Y - 125);
-            m_scrolling = new Point();
-            
-
+            m_pointOfView = new PointOfView();
+            m_pointOfView.UnitSize = 32;
+            m_pointOfView.Teams = EntityType.Team1;           
             
             // DEBUG CODE
             m_passability = new bool[50, 50];
@@ -324,6 +343,21 @@ namespace Clank.View.Engine
             // Ajout des héros
             Heroes = new List<EntityHero>();
             Heroes.Add((EntityHero)m_entities[0]);
+        }
+
+        /// <summary>
+        /// Charge les ressources graphiques dont a besoin la map.
+        /// </summary>
+        public void LoadContent()
+        {
+            // Initialise l'effet de blur.
+            m_blur = new Graphics.GaussianBlur(Mobattack.GetScene().GraphicsServer);
+            m_blur.ComputeKernel(4, 2);
+
+
+            // Création du viewport
+            Viewport = new Rectangle(0, 25, (int)Mobattack.GetScreenSize().X, (int)Mobattack.GetScreenSize().Y - 125);
+            Scrolling = new Point();
         }
         /// <summary>
         /// Mets à jour la map ainsi que les entités qu'elle contient.
@@ -409,16 +443,16 @@ namespace Clank.View.Engine
             // Scrolling
             int speed = 16;
             if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad4))
-                m_scrolling.X -= speed;
+                m_pointOfView.Scrolling.X -= speed;
             else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad6))
-                m_scrolling.X += speed;
+                m_pointOfView.Scrolling.X += speed;
             if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad8))
-                m_scrolling.Y -= speed;
+                m_pointOfView.Scrolling.Y -= speed;
             else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad2))
-                m_scrolling.Y += speed;
+                m_pointOfView.Scrolling.Y += speed;
 
-            m_scrolling.X = Math.Max(0, Math.Min(m_passability.GetLength(0) * UnitSize - m_viewport.Width, m_scrolling.X));
-            m_scrolling.Y = Math.Max(0, Math.Min(m_passability.GetLength(1) * UnitSize - m_viewport.Height, m_scrolling.Y));
+            m_pointOfView.Scrolling.X = Math.Max(0, Math.Min(m_passability.GetLength(0) * UnitSize - m_viewport.Width, Scrolling.X));
+            m_pointOfView.Scrolling.Y = Math.Max(0, Math.Min(m_passability.GetLength(1) * UnitSize - m_viewport.Height, Scrolling.Y));
         }
         #endregion
         
@@ -431,7 +465,6 @@ namespace Clank.View.Engine
         /// <returns></returns>
         public Vector2 ToScreenSpace(Vector2 mapPos)
         {
-            // screenSpacePos = 
             return mapPos * UnitSize - ScrollingVector2 + new Vector2(Viewport.X, Viewport.Y);
         }
 

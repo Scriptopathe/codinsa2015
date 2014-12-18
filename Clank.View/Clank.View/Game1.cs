@@ -69,6 +69,7 @@ namespace Clank.View
         {
             // TODO: Add your initialization logic here
             Engine.Input.ModuleInit();
+            m_scene.Initialize();
             m_graphics.GraphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
             base.Initialize();
         }
@@ -80,9 +81,9 @@ namespace Clank.View
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            m_scene.LoadContent();
+            m_scene.BindGraphicsClients();
             Engine.Ressources.LoadRessources(Content);
-            m_scene.Initialize();
+            m_scene.LoadContent();
             m_spriteBatch = new RemoteSpriteBatch(m_scene.GraphicsServer);
             // TODO: use this.Content to load your game content here
         }

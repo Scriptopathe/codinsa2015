@@ -10,7 +10,7 @@ namespace Clank.View.Engine.Graphics.Client
     /// <summary>
     /// Représente un client graphique intégré.
     /// </summary>
-    public class IntegratedClient
+    public class IntegratedClient : GraphicsClient
     {
         /// <summary>
         /// Représente l'instance de GraphicsDevice utilisée pour le dessin etc...
@@ -52,7 +52,7 @@ namespace Clank.View.Engine.Graphics.Client
         /// <summary>
         /// Procède à l'exécution de la commande donnée.
         /// </summary>
-        public void ProcessCommand(Server.Command command)
+        public override void ProcessCommand(Server.Command command)
         {
             if (command is Server.CommandCreateObject)
             {
