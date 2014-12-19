@@ -83,17 +83,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Clank.View.Engine.Graphics\Codinsa2015.Graphics.csproj">
-      <Project>{1b831a6d-c2bd-4072-a3f7-273915e43f64}</Project>
-      <Name>Codinsa2015.Graphics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Codinsa2015\Clank.ViewContent\Codinsa2015Content.contentproj">
-      <Project>{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}</Project>
-      <Name>Codinsa2015Content</Name>
-      <XnaReferenceType>Content</XnaReferenceType>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 et x64%29</ProductName>
@@ -114,6 +103,12 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Codinsa2015.Graphics\Codinsa2015.Graphics.csproj">
+      <Project>{1b831a6d-c2bd-4072-a3f7-273915e43f64}</Project>
+      <Name>Codinsa2015.Graphics</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

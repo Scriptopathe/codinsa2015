@@ -174,7 +174,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Clank.View.Engine.Graphics\Codinsa2015.Graphics.csproj">
+    <ProjectReference Include="..\..\Codinsa2015.Graphics\Codinsa2015.Graphics.csproj">
       <Project>{1b831a6d-c2bd-4072-a3f7-273915e43f64}</Project>
       <Name>Codinsa2015.Graphics</Name>
     </ProjectReference>
