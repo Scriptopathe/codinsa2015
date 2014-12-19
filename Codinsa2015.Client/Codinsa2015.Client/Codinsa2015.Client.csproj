@@ -87,7 +87,7 @@
       <Project>{1b831a6d-c2bd-4072-a3f7-273915e43f64}</Project>
       <Name>Codinsa2015.Graphics</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Clank.View\Clank.ViewContent\Codinsa2015Content.contentproj">
+    <ProjectReference Include="..\..\Codinsa2015\Clank.ViewContent\Codinsa2015Content.contentproj">
       <Project>{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}</Project>
       <Name>Codinsa2015Content</Name>
       <XnaReferenceType>Content</XnaReferenceType>
