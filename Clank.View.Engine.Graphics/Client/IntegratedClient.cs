@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-namespace Clank.View.Engine.Graphics.Client
+namespace Codinsa2015.Graphics.Client
 {
     /// <summary>
     /// Représente un client graphique intégré.
@@ -67,7 +67,10 @@ namespace Clank.View.Engine.Graphics.Client
                 else if (cobj.GraphicsObject is Server.RemoteTexture2D)
                 {
                     Server.RemoteTexture2D remoteTex = (Server.RemoteTexture2D)cobj.GraphicsObject;
-                    m_textures[remoteTex.ID] = remoteTex.UnderlyingTexture;
+                    if (remoteTex.UnderlyingTexture == null)
+                        m_textures[remoteTex.ID] = m_content.Load<Texture2D>(remoteTex.Filename);
+                    else
+                        m_textures[remoteTex.ID] = remoteTex.UnderlyingTexture;
                 }
                 else if (cobj.GraphicsObject is Server.RemoteSpriteBatch)
                 {
@@ -84,8 +87,10 @@ namespace Clank.View.Engine.Graphics.Client
                 else if (cobj.GraphicsObject is Server.RemoteSpriteFont)
                 {
                     Server.RemoteSpriteFont remoteFont = (Server.RemoteSpriteFont)cobj.GraphicsObject;
-                    SpriteFont font = remoteFont.Font;
-                    m_fonts[remoteFont.ID] = font;
+                    if (remoteFont.Font == null)
+                        m_fonts[remoteFont.ID] = m_content.Load<SpriteFont>(remoteFont.Filename);
+                    else
+                        m_fonts[remoteFont.ID] = remoteFont.Font;
                 }
             }
             else if (command is Server.CommandDisposeObject)
@@ -175,6 +180,10 @@ namespace Clank.View.Engine.Graphics.Client
             {
                 Server.CommandSpriteBatchDrawString cmd = (Server.CommandSpriteBatchDrawString)command;
                 m_batches[cmd.Batch.ID].DrawString(m_fonts[cmd.Font.ID], cmd.String, cmd.Position, cmd.Color, cmd.Rotation, cmd.Origin, cmd.Scale, cmd.SpriteEffects, cmd.LayerDepth);
+            }
+            else if(command is Server.CommandEndFrame)
+            {
+
             }
             else
                 throw new NotImplementedException();

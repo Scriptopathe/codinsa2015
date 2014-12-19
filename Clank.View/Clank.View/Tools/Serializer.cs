@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using System.IO;
-namespace Clank.View.Tools
+namespace Codinsa2015.Tools
 {
     public class Serializer
     {

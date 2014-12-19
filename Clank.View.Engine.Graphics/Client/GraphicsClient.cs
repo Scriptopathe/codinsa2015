@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.View.Engine.Graphics.Client
+namespace Codinsa2015.Graphics.Client
 {
     /// <summary>
     /// Représente un client graphique.

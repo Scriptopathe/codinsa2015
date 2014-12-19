@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Clank.View.Engine.Graphics.Server
+namespace Codinsa2015.Graphics.Server
 {
     /// <summary>
     /// Représente un appel à SpriteBatch.Draw
@@ -21,6 +21,7 @@ namespace Clank.View.Engine.Graphics.Server
         public SpriteEffects Effect { get; set; }
         public float LayerDepth { get; set; }
 
+        public CommandSpriteBatchDraw() { }
         /// <summary>
         /// Crée une nouvelle instance de CommandSpriteBatchDraw.
         /// </summary>

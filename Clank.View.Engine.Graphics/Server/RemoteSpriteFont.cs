@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Clank.View.Engine.Graphics.Server
+namespace Codinsa2015.Graphics.Server
 {
     /// <summary>
     /// Représente une instance de SpriteFont.
@@ -12,7 +12,11 @@ namespace Clank.View.Engine.Graphics.Server
     public class RemoteSpriteFont : RemoteGraphicsObject
     {
         public string Filename { get; set; }
+
+        [System.Xml.Serialization.XmlIgnore()]
         public SpriteFont Font { get; set; }
+
+        public RemoteSpriteFont() { }
         public RemoteSpriteFont(GraphicsServer server, string filename) : base(server, false)
         {
             Filename = filename;

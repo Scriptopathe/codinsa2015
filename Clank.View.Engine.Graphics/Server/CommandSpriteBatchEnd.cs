@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.View.Engine.Graphics.Server
+namespace Codinsa2015.Graphics.Server
 {
     /// <summary>
     /// Représente un appel à SpriteBatch.End().
@@ -11,6 +11,8 @@ namespace Clank.View.Engine.Graphics.Server
     public class CommandSpriteBatchEnd : Command
     {
         public RemoteSpriteBatch Batch { get; set; }
+
+        public CommandSpriteBatchEnd() { }
         public CommandSpriteBatchEnd(RemoteSpriteBatch batch)
         {
             Batch = batch;

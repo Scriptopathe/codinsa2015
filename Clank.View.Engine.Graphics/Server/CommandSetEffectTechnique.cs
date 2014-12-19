@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.View.Engine.Graphics.Server
+namespace Codinsa2015.Graphics.Server
 {
     /// <summary>
     /// Représente un appel à Effect.CurrentTechnique = Effect.Techniques["name"];
@@ -12,6 +12,8 @@ namespace Clank.View.Engine.Graphics.Server
     {
         public RemoteEffect Effect { get; set; }
         public string TechniqueName { get; set; }
+
+        public CommandSetEffectTechnique() { }
         public CommandSetEffectTechnique(RemoteEffect effect, string techniqueName)
         {
             Effect = effect;

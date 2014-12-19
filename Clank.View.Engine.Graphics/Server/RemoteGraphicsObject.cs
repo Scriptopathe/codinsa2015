@@ -2,9 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-namespace Clank.View.Engine.Graphics.Server
+using System.Xml.Serialization;
+namespace Codinsa2015.Graphics.Server
 {
+    
+    [XmlInclude(typeof(RemoteRenderTarget))]
+    [XmlInclude(typeof(RemoteSpriteBatch))]
+    [XmlInclude(typeof(RemoteSpriteFont))]
+    [XmlInclude(typeof(RemoteTexture))]
+    [XmlInclude(typeof(RemoteTexture2D))]
     public class RemoteGraphicsObject
     {
         static int s_id = 0;
@@ -12,6 +18,7 @@ namespace Clank.View.Engine.Graphics.Server
         /// <summary>
         /// Représente le serveur auquel cet objet appartient.
         /// </summary>
+        [System.Xml.Serialization.XmlIgnore()]
         public GraphicsServer Server { get; set; }
         /// <summary>
         /// Identificateur unique de l'objet.
@@ -28,6 +35,11 @@ namespace Clank.View.Engine.Graphics.Server
             if (registerNow)
                 Register();
         }
+
+        /// <summary>
+        /// Constructeur utilisé par le sérialiseur XML.
+        /// </summary>
+        public RemoteGraphicsObject() { }
 
         /// <summary>
         /// Enregistre cet objet auprès du serveur graphique.

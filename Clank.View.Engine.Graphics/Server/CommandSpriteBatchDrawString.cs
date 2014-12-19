@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Clank.View.Engine.Graphics.Server
+namespace Codinsa2015.Graphics.Server
 {
     /// <summary>
     /// Représente un appel à SpriteBatch.DrawString().
     /// </summary>
-    class CommandSpriteBatchDrawString : Command
+    public class CommandSpriteBatchDrawString : Command
     {
         public RemoteSpriteBatch Batch { get; set; }
         public RemoteSpriteFont Font { get; set; }
@@ -21,6 +21,9 @@ namespace Clank.View.Engine.Graphics.Server
         public Vector2 Scale { get; set; }
         public float LayerDepth { get; set; }
         public SpriteEffects SpriteEffects { get; set; }
+
+        public CommandSpriteBatchDrawString() { }
+
         public CommandSpriteBatchDrawString(
             RemoteSpriteBatch batch, 
             RemoteSpriteFont font,

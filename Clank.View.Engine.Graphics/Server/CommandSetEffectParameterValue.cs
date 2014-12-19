@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.View.Engine.Graphics.Server
+namespace Codinsa2015.Graphics.Server
 {
     /// <summary>
     /// Représente un appel à Effect.Parameters["name"].SetValue().
     /// </summary>
-    class CommandSetEffectParameterValue : Command
+    public class CommandSetEffectParameterValue : Command
     {
         /// <summary>
         /// Effet associé à cette commande.
@@ -17,6 +17,7 @@ namespace Clank.View.Engine.Graphics.Server
         public string ParameterName { get; set; }
         public object Value { get; set; }
 
+        public CommandSetEffectParameterValue() { }
         public CommandSetEffectParameterValue(RemoteEffect effect, string parameterValue, object value)
         {
             Effect = effect;

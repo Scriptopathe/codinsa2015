@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Clank.View.Engine.Graphics.Server
+namespace Codinsa2015.Graphics.Server
 {
     /// <summary>
     /// Représente un SpriteBatch distant.
@@ -16,6 +16,8 @@ namespace Clank.View.Engine.Graphics.Server
         /// de SpriteBatch).
         /// </summary>
         public GraphicsServer GraphicsDevice { get { return Server; } }
+
+        public RemoteSpriteBatch() { }
         /// <summary>
         /// Création d'un sprite batch distant.
         /// </summary>

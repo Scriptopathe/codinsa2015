@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Content;
-namespace Clank.View.Engine.Graphics.Server
+namespace Codinsa2015.Graphics.Server
 {
     /// <summary>
     /// Représente le serveur graphique du jeu.
@@ -85,6 +85,8 @@ namespace Clank.View.Engine.Graphics.Server
         /// </summary>
         public void Flush()
         {
+            SendCommand(new CommandEndFrame());
+
             if(Mode == CommandExecutionMode.Postponed && CommandIssued != null)
             {
                 while(m_commands.Count != 0)

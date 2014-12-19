@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Clank.View.Engine.Graphics.Server
+namespace Codinsa2015.Graphics.Server
 {
     /// <summary>
     /// Représente un paramètre d'effet.
@@ -13,6 +13,7 @@ namespace Clank.View.Engine.Graphics.Server
         public RemoteEffect Effect { get; set; }
         public string Name { get; set; }
 
+        public RemoteEffectParameter() { }
         public RemoteEffectParameter(RemoteEffect effect, string name)
         {
             Effect = effect;
@@ -40,6 +41,7 @@ namespace Clank.View.Engine.Graphics.Server
             Effect = e;
         }
 
+        public RemoteEffectParameterCollection() { }
         public RemoteEffectParameter this[string name]
         {
             get { return new RemoteEffectParameter(Effect, name); }
@@ -54,6 +56,7 @@ namespace Clank.View.Engine.Graphics.Server
         public RemoteEffect Effect { get; set; }
         public string Name { get; set; }
 
+        public RemoteEffectTechnique() { }
         public RemoteEffectTechnique(RemoteEffect effect, string name)
         {
             Effect = effect;
@@ -74,6 +77,8 @@ namespace Clank.View.Engine.Graphics.Server
             Effect = e;
         }
 
+        public RemoteEffectTechniqueCollection() { }
+
         public RemoteEffectTechnique this[string name]
         {
             get { return new RemoteEffectTechnique(Effect, name); }
@@ -89,6 +94,7 @@ namespace Clank.View.Engine.Graphics.Server
         /// <summary>
         /// Collection fictive de paramètres d'effet.
         /// </summary>
+        [System.Xml.Serialization.XmlIgnore()]
         public RemoteEffectParameterCollection Parameters
         {
             get;
@@ -98,6 +104,7 @@ namespace Clank.View.Engine.Graphics.Server
         /// <summary>
         /// Collection fictive de techniques d'effet.
         /// </summary>
+        [System.Xml.Serialization.XmlIgnore()]
         public RemoteEffectTechniqueCollection Techniques
         {
             get;
@@ -106,7 +113,8 @@ namespace Clank.View.Engine.Graphics.Server
 
         /// <summary>
         /// Définit la technique courante de l'effet.
-        /// </summary>
+        /// </summary
+        [System.Xml.Serialization.XmlIgnore()]
         public RemoteEffectTechnique CurrentTechnique
         {
             set
@@ -121,6 +129,12 @@ namespace Clank.View.Engine.Graphics.Server
         /// Nom de l'asset contenant l'effet.
         /// </summary>
         public string Filename { get; set; }
+
+        public RemoteEffect()
+        {
+            Parameters = new RemoteEffectParameterCollection();
+            Techniques = new RemoteEffectTechniqueCollection();
+        }
 
         public RemoteEffect(GraphicsServer server, string filename) : base(server, false) 
         {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Clank.View
+namespace Codinsa2015
 {
 #if WINDOWS || XBOX
     static class Program
@@ -10,7 +10,7 @@ namespace Clank.View
         /// </summary>
         static void Main(string[] args)
         {
-            using (Mobattack game = new Mobattack())
+            using (GameClient game = new GameClient())
             {
                 game.Run();
             }
