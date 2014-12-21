@@ -490,6 +490,11 @@ namespace Clank.IDE
         /// <param name="filename"></param>
         void OpenProjectFile(string filename)
         {
+            if (!File.Exists(filename))
+            {
+                MessageBox.Show("Le fichier '" + filename + "' n'existe pas.");
+                return;
+            }
             ProjectNode proj = ProjectNode.Load(filename);
             m_project = proj;
             m_projectTree.SetProject(proj);
