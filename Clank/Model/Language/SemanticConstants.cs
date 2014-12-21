@@ -27,6 +27,7 @@ namespace Clank.Core.Model.Language
         public const string New = "new";
         public const string Return = "return";
         public const string Class = "class";
+        public const string Enum = "enum";
         #endregion
 
         #region Blocks

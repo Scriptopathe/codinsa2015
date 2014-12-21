@@ -57,6 +57,11 @@ namespace Clank.Core.Model.Language
             set;
         }
         /// <summary>
+        /// Si le type est un type énuméré, représente les différentes valeurs contenues 
+        /// dans l'énumération. Fait correspondre à chaque nom sa valeur.
+        /// </summary>
+        public Dictionary<string, int> EnumValues { get; set; }
+        /// <summary>
         /// Obtient ou définit une valeur indiquant si ce type est un type "macro".
         /// </summary>
         public virtual bool IsMacro
@@ -136,6 +141,7 @@ namespace Clank.Core.Model.Language
             InstanceMethods = new Dictionary<string, FunctionDeclaration>();
             GenericArgumentNames = new List<string>();
             LanguageMetadata = new Dictionary<string, Dictionary<string, string>>();
+            EnumValues = new Dictionary<string, int>();
             IsPublic = false;
             IsEnum = false;
             JType = JSONType.Object;

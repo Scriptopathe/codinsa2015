@@ -6,16 +6,9 @@ using System.Text;
 namespace Default.Namespace
 {
 
-	public class Double
+	public class TestMePls
 	{
 
-		public float Value;	
-		public Double()
-		{
-		}	
-		public Double(float value)
-		{
-			Value = value;
-		}	
+		public Oktamer test;	
 	}
 }

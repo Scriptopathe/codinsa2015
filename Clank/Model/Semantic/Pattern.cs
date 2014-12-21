@@ -252,7 +252,34 @@ namespace Clank.Core.Model.Semantic
                 }
             }
         };
+        /// <summary>
+        /// Pattern de déclaration d'enum.
+        /// </summary>
+        public static Pattern EnumDeclarationPattern = new Pattern()
+        {
+            Identifier = "Modifiers",
+            Repeats = true,
+            Content = new List<string>() { Language.SemanticConstants.Public },
+            TkType = new List<TokenType>() { TokenType.Name },
+            Optional = true,
 
+            Next = new Pattern()
+            {
+                Identifier = "StructKW",
+                Repeats = false,
+                Content = new List<string>() { Language.SemanticConstants.Enum },
+                TkType = new List<TokenType>() { TokenType.Name },
+                Next = new Pattern()
+                {
+                    Identifier = "Block",
+                    Repeats = false,
+                    Content = null,
+                    TkType = new List<TokenType>() { TokenType.NamedCodeBlock },
+                    Next = null,
+                }
+            }
+            
+        };
         /// <summary>
         /// Pattern de déclaration de classe générique.
         /// </summary>

@@ -368,6 +368,7 @@ namespace Clank.Core.Model.Semantic
         {
             bool foundClass = false;
             bool isPublic = false;
+            bool foundEnum = false;
             foreach(Token token in tokens)
             {
                 if (foundClass)
@@ -432,13 +433,13 @@ namespace Clank.Core.Model.Semantic
                         // Override pour le type array.
                         if (newType.Name == "Array" && newType.GenericArgumentNames.Count == 1 && newType.IsMacro)
                         {
-                            // Types[newType.Name] = newType;
                             newType = Types[newType.Name];
                         }
                         else
                         {
                             Types.Add(newType.Name, newType);
                         }
+
                         // Création du contexte fils
                         Context childContext = new Context();
                         childContext.ParentContext = context;
@@ -477,6 +478,83 @@ namespace Clank.Core.Model.Semantic
                     foundClass = false;
                     isPublic = false;
                 }
+                else if(foundEnum)
+                {
+                    #region Found enum
+                    if(token.TkType == TokenType.NamedCodeBlock)
+                    {
+                        // Crée le type de base.
+                        Language.ClankType newType = new Language.ClankType()
+                        {
+                            Name = token.NamedCodeBlockIdentifier.Content,
+                            IsPublic = isPublic,
+                            IsEnum = true,
+                            JType = Language.JSONType.Int,
+                            SupportSerialization = true,
+                            SupportSerializationAsGeneric = true
+                        };
+
+                        // Crée l'instance associée.
+                        Language.ClankTypeInstance newTypeInstance = new Language.ClankTypeInstance()
+                        {
+                            BaseType = newType,
+                            GenericArguments = new List<Language.ClankTypeInstance>(),
+                        };
+
+                        // Ajoute les membres de l'enum.
+                        string currentName = null;
+                        int currentValue = 0;
+                        foreach(Token tk in token.NamedCodeBlockInstructions.ListTokens)
+                        {
+                            if (tk.TkType != TokenType.List || tk.ChildToken.TkType != TokenType.ExpressionGroup)
+                            {
+                                string error = "Erreur de syntaxe dans la déclaration d'enum : jeton '" + tk.ToReadableCode() + "' inattendu.";
+                                OnLog(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, error, tk.Line, tk.Character, tk.Source));
+                                throw new Tokenizers.SyntaxError(error, tk.Line, tk.Source);
+                            }
+
+                            Token expr = tk.ChildToken;
+                            Token name = expr.Operands1.ChildToken;
+                            Token value = expr.Operands2.ChildToken;
+                            Token op = expr.Operator;
+
+                            if (name.TkType == TokenType.Name && value.TkType == TokenType.NumberLiteral && op.Content == "=")
+                            {
+                                currentValue = Int32.Parse(value.Content);
+                                currentName = name.Content;
+                                // Erreur si doublon.
+                                if(newType.EnumValues.ContainsKey(currentName))
+                                {
+                                    string error = "La valeur '" + currentName + "' est déjà présente dans l'énumération '" + newType.Name + "'.";
+                                    OnLog(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, error, tk.Line, tk.Character, tk.Source));
+                                    throw new Tokenizers.SyntaxError(error, tk.Line, tk.Source);
+                                }
+
+                                newType.EnumValues.Add(currentName, currentValue);
+                            }
+
+                        }
+
+                        // Ajoute le type dans la table des types.
+                        string fullname = newTypeInstance.GetFullName();
+                        if (TypeInstances.ContainsKey(fullname))
+                            TypeInstances[fullname] = newTypeInstance;
+                        else
+                            TypeInstances.Add(newTypeInstance.GetFullName(), newTypeInstance);
+
+                        // Si le type existe déjà : on le remplace.
+                        if (Types.ContainsKey(newType.Name))
+                            OnLog(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, "Le type énuméré'" + newType.Name + "' est déjà défini.",
+                                token.Line, token.Character, token.Source));
+
+                        Types.Add(newType.Name, newType);
+                    }
+
+                    #endregion
+
+                    foundEnum = false;
+                    isPublic = false;
+                }
                 else // if !foundClass
                 {
                     switch (token.TkType)
@@ -498,6 +576,10 @@ namespace Clank.Core.Model.Semantic
                             {
                                 foundClass = true;
                             }
+                            else if(token.Content == Language.SemanticConstants.Enum)
+                            {
+                                foundEnum = true;
+                            }
                             else if(token.Content == Language.SemanticConstants.Public)
                             {
                                 isPublic = true;
@@ -508,6 +590,15 @@ namespace Clank.Core.Model.Semantic
             }
 
         }
+        /*
+        /// <summary>
+        /// Ajoute les membres de l'énumération contenus dans blockToken dans le type énuméré
+        /// passé en paramètre.
+        /// </summary>
+        public static void ParseEnumMembers(Language.ClankType enumType, Token blockToken)
+        {
+
+        }*/
         /// <summary>
         /// Retourne vrai si la table contient le type dont le nom est passé en paramètre.
         /// </summary>

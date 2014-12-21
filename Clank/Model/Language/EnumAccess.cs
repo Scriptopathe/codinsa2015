@@ -14,7 +14,10 @@ namespace Clank.Core.Model.Language
         /// Nom du membre de l'énumération.
         /// </summary>
         public string Name { get; set; }
-
+        /// <summary>
+        /// Expression évaluable sur laquelle on va vouloir faire un accès.
+        /// </summary>
+        public Evaluable Left { get; set; }
         /// <summary>
         /// Crée une nouvelle instance de EnumAccess.
         /// </summary>

@@ -422,6 +422,39 @@ namespace Clank.Core.Model.Semantic
             }
             #endregion
 
+
+            // Déclaration de classe.
+            #region Enum Declaration
+            match = Pattern.EnumDeclarationPattern.MatchPattern(instructionToken.ListTokens);
+            if (match.MatchPattern)
+            {
+                var modifiers = match.FindByIdentifier("Modifiers");
+                var block = match.FindByIdentifier("Block").First();
+
+                // Modificateurs
+                Language.EnumDeclaration decl = new Language.EnumDeclaration();
+                decl.Modifiers = modifiers.Select(delegate(Pattern.MatchUnit unit)
+                {
+                    return unit.MatchedToken.Content;
+                }).ToList();
+
+                decl.Line = block.MatchedToken.Line;
+                decl.Source = block.MatchedToken.Source;
+                decl.Character = block.MatchedToken.Character;
+
+                // Nom
+                if (block.MatchedToken.TkType == TokenType.NamedCodeBlock)
+                {
+                    decl.Name = block.MatchedToken.NamedCodeBlockIdentifier.Content;
+                }
+                else
+                {
+                    decl.Name = block.MatchedToken.NamedGenericCodeBlockNameIdentifier.Content;
+                }
+                decl.Members = Types.Types[decl.Name].EnumValues;
+                return decl;
+            }
+            #endregion
             // Déclaration de variable
             #region Variable Declaration
             match = Pattern.VariableDeclarationPattern.MatchPattern(instructionToken.ListTokens);
@@ -879,6 +912,7 @@ namespace Clank.Core.Model.Semantic
                             }
                             else if(token.Operands2.TkType == TokenType.Name)
                             {
+                                
                                 // Access
                                 Language.VariableAccess access = new Language.VariableAccess();
                                 access.Left = ParseEvaluable(token.Operands1, context, preparse);
@@ -886,45 +920,73 @@ namespace Clank.Core.Model.Semantic
 
                                 // Vérification de l'accessibilité
                                 Language.ClankType ctype = access.Left.Type.BaseType;
-                                if(!ctype.InstanceVariables.ContainsKey(access.VariableName))
+                                if(ctype.Name == "Type")
                                 {
-                                    error = "La variable d'instance " + access.VariableName + " n'existe pas pour les objets de type : " + ctype.GetFullName() + ".";
-                                    Log.AddError(error, token.Line, token.Character, token.Source);
-                                    throw new SemanticError(error);
-                                }
+                                    // Ici, on parse soit un accès à un membre d'enum, soit une membre statique (non supporté).
+                                    #region Static / enum
+                                    ctype = ((Language.Typename) access.Left).Name.BaseType;
+                                    Language.EnumAccess enumAccess = new Language.EnumAccess();
+                                    enumAccess.Left = access.Left;
+                                    enumAccess.Name = access.VariableName;
+                                    enumAccess.Type = ctype.AsInstance();
 
-                                try
-                                {
-                                    access.Type = ctype.InstanceVariables[access.VariableName].Type.Instanciate(access.Left.Type.GenericArguments);
-                                }
-                                catch(SemanticError e)
-                                {
-                                    error = e.Message;
-                                    Log.AddError(error, token.Line, token.Character, token.Source);
-                                    throw new SemanticError(error);
-                                }
-
-                                // Vérification de l'accessibilité
-                                Language.ClankType current = context.Container;
-                                Language.ClankType owner = ctype;
-                                if (!ctype.InstanceVariables[access.VariableName].IsPublic)
-                                {
-                                    // Si on n'est pas dans le type, ou qu'on opère pas sur un objet state depuis write/access.
-                                    if (current != owner && 
-                                        !(owner.GetFullName() == Language.SemanticConstants.StateClass && 
-                                        (context.BlockName == Language.SemanticConstants.WriteBk || context.BlockName == Language.SemanticConstants.AccessBk)))
+                                    // Vérification de l'existance du membre.
+                                    if(!ctype.EnumValues.ContainsKey(access.VariableName))
                                     {
-                                        error = "La variable d'instance " + access.VariableName + " du type " + ctype.GetFullName() +
-                                            " existe mais n'est pas accessible dans le contexte actuel. (mot clef public manquant ?).";
-                                        Log.AddWarning(error, token.Line, token.Character, token.Source);
-
-                                        if (StrictCompilation)
-                                            throw new SemanticError(error);
+                                        error = "Le membre d'énumération '" + enumAccess.Name + "' n'existe pas pour l'énumération : '" + ctype.GetFullName() + "'.";
+                                        Log.AddError(error, token.Line, token.Character, token.Source);
+                                        throw new SemanticError(error);
                                     }
+                                    return enumAccess;
+
+                                    #endregion
                                 }
+                                else
+                                {
+                                    #region Instance variable
+                                    if (!ctype.InstanceVariables.ContainsKey(access.VariableName))
+                                    {
+                                        error = "La variable d'instance '" + access.VariableName + "' n'existe pas pour les objets de type : '" + ctype.GetFullName() + "'.";
+                                        Log.AddError(error, token.Line, token.Character, token.Source);
+                                        throw new SemanticError(error);
+                                    }
+
+                                    try
+                                    {
+                                        access.Type = ctype.InstanceVariables[access.VariableName].Type.Instanciate(access.Left.Type.GenericArguments);
+                                    }
+                                    catch(SemanticError e)
+                                    {
+                                        error = e.Message;
+                                        Log.AddError(error, token.Line, token.Character, token.Source);
+                                        throw new SemanticError(error);
+                                    }
+
+                                    // Vérification de l'accessibilité
+                                    Language.ClankType current = context.Container;
+                                    Language.ClankType owner = ctype;
+                                    if (!ctype.InstanceVariables[access.VariableName].IsPublic)
+                                    {
+                                        // Si on n'est pas dans le type, ou qu'on opère pas sur un objet state depuis write/access.
+                                        if (current != owner && 
+                                            !(owner.GetFullName() == Language.SemanticConstants.StateClass && 
+                                            (context.BlockName == Language.SemanticConstants.WriteBk || context.BlockName == Language.SemanticConstants.AccessBk)))
+                                        {
+                                            error = "La variable d'instance " + access.VariableName + " du type " + ctype.GetFullName() +
+                                                " existe mais n'est pas accessible dans le contexte actuel. (mot clef public manquant ?).";
+                                            Log.AddWarning(error, token.Line, token.Character, token.Source);
+
+                                            if (StrictCompilation)
+                                                throw new SemanticError(error);
+                                        }
+                                    }
                               
-                                return access;
+                                    return access;
+
+                                    #endregion
+                                }
                             }
+
 
                             throw new SemanticError("Source d'erreur inconnue [Semantic Parser.ParseEvaluable:ExpressionGroup]");
                         }

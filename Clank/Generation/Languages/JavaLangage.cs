@@ -892,10 +892,13 @@ namespace Clank.Core.Generation.Languages
         {
             StringBuilder builder = new StringBuilder();
             builder.Append("public enum " + decl.Name + "\n{\n");
-            foreach(string member in decl.Members)
+            foreach (var kvp in decl.Members)
             {
+                string member = kvp.Key;
+                int value = kvp.Value;
                 builder.Append(Tools.StringUtils.Indent(member, 1));
-                if (member != decl.Members.Last())
+                builder.Append(" = " + value.ToString());
+                if (kvp.Key != decl.Members.Last().Key)
                     builder.Append(',');
                 builder.Append("\n");
             }

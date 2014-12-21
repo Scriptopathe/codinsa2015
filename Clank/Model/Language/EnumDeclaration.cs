@@ -13,18 +13,21 @@ namespace Clank.Core.Model.Language
         /// <summary>
         /// Membres de l'enum.
         /// </summary>
-        public List<string> Members { get; set; }
+        public Dictionary<string, int> Members { get; set; }
         /// <summary>
         /// Membre de l'enum.
         /// </summary>
         public string Name { get; set; }
-
+        /// <summary>
+        /// Retourne la liste des modificateurs de l'enum.
+        /// </summary>
+        public List<string> Modifiers { get; set; }
         /// <summary>
         /// Crée une nouvelle instance de EnumDeclaration.
         /// </summary>
         public EnumDeclaration()
         {
-            Members = new List<string>();
+            Members = new Dictionary<string, int>();
         }
     }
 }

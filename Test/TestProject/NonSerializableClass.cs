@@ -6,16 +6,9 @@ using System.Text;
 namespace Default.Namespace
 {
 
-	public class Integer
+	public class NonSerializableClass<T>
 	{
 
-		public int Value;	
-		public Integer()
-		{
-		}	
-		public Integer(int value)
-		{
-			Value = value;
-		}	
+		WorkIfTSerializable<T> var;	
 	}
 }

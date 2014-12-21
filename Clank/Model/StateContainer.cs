@@ -61,6 +61,10 @@ namespace Clank.Core.Model
                     PerformSerializableChecking((Language.ClassDeclaration)instruction, types);
                     Classes.Add((Language.ClassDeclaration)instruction);
                 }
+                else if(instruction is Language.EnumDeclaration)
+                {
+                    StateClass.Instructions.Add(instruction);
+                }
                 else if(instruction is Language.VariableDeclarationInstruction)
                 {
                     Language.VariableDeclarationInstruction variable = (Language.VariableDeclarationInstruction)instruction;

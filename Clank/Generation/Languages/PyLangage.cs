@@ -292,17 +292,8 @@ namespace Clank.Core.Generation.Languages
         /// <returns></returns>
         static string GenerateEnumInstruction(EnumDeclaration decl)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.Append("enum " + decl.Name + "\n{\n");
-            foreach(string member in decl.Members)
-            {
-                builder.Append(Tools.StringUtils.Indent(member, 1));
-                if (member != decl.Members.Last())
-                    builder.Append(',');
-                builder.Append("\n");
-            }
-            builder.Append("}\n");
-            return builder.ToString();
+
+            throw new NotImplementedException();
         }
         /// <summary>
         /// Génère une instruction d'affectation.
