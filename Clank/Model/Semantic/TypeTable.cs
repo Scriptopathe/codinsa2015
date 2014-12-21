@@ -384,7 +384,7 @@ namespace Clank.Core.Model.Semantic
                             IsPublic = isPublic,
                             IsMacro = context.BlockName == Language.SemanticConstants.MacroBk
                         };
-
+                        
                         // Crée l'instance associée.
                         Language.ClankTypeInstance newTypeInstance = new Language.ClankTypeInstance()
                         {
@@ -392,7 +392,17 @@ namespace Clank.Core.Model.Semantic
                             GenericArguments = new List<Language.ClankTypeInstance>(),
                         };
 
-                        TypeInstances.Add(newTypeInstance.GetFullName(), newTypeInstance);
+                        string fullname = newTypeInstance.GetFullName();
+                        if (TypeInstances.ContainsKey(fullname))
+                            TypeInstances[fullname] = newTypeInstance;
+                        else
+                            TypeInstances.Add(newTypeInstance.GetFullName(), newTypeInstance);
+
+                        // Si le type existe déjà : on le remplace.
+                        if (Types.ContainsKey(newType.Name))
+                            OnLog(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, "Le type '" + newType.Name + "' est déjà défini.",
+                                token.Line, token.Character, token.Source));
+                        
                         Types.Add(newType.Name, newType);
                     }
                     // On cherche les paramètres génériques et on en crée des instances.
@@ -576,7 +586,7 @@ namespace Clank.Core.Model.Semantic
         /// <summary>
         /// Parse le jeton pour en extraire une instance de type de base en fonction du contexte.
         /// </summary>
-        public Language.ClankTypeInstance FetchInstancedType(Token token, Context context)
+        public Language.ClankTypeInstance FetchInstancedType(Token token, Context context, bool containsType=false)
         {
             Language.ClankType baseType = null;
             bool isGeneric = false;
@@ -586,13 +596,13 @@ namespace Clank.Core.Model.Semantic
                 if (token.ListTokens.Count != 1)
                     throw new InvalidOperationException();
 
-                return FetchInstancedType(token.ListTokens[0], context);
+                return FetchInstancedType(token.ListTokens[0], context, containsType);
             }
             else if (token.TkType == TokenType.ArrayType)
             {
                 // On crée un array avec comme param générique le type de cette array.
                 baseType = Types["Array"];
-                Language.ClankTypeInstance inst = FetchInstancedType(token.ArrayTypeIdentifier, context);
+                Language.ClankTypeInstance inst = FetchInstancedType(token.ArrayTypeIdentifier, context, containsType);
 
                 if (inst == null)
                 {
@@ -618,10 +628,10 @@ namespace Clank.Core.Model.Semantic
                 isGeneric = true;
                 foreach(Token tok in token.GenericTypeArgs.ListTokens)
                 {
-                    Language.ClankTypeInstance inst = FetchInstancedType(tok, context);
+                    Language.ClankTypeInstance inst = FetchInstancedType(tok, context, true);
                     if(inst == null)
                     {
-                        string error = "Le type " + token.Content + " n'existe pas.";
+                        string error = "Le type '" + tok.ToReadableCode() + "' n'existe pas.";
                         if(OnLog != null)
                             OnLog(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, error, token.Line, token.Character, token.Source));
                         throw new SemanticError(error);
@@ -659,8 +669,12 @@ namespace Clank.Core.Model.Semantic
                     }
                 }
 
-                // Rien n'a été trouvé, on retourne null. (ce n'est pas un type)
-                return null;
+                baseType = new Language.ClankType() { Name = token.Content };
+                // FIXME : enlever true va créer une nouvelle instance de type basé sur un nouveau
+                // type (baseType du dessus là) pas encore déclaré. -> on casse des références.
+                if(!containsType || true)
+                    // Rien n'a été trouvé, on retourne null. (ce n'est pas un type)
+                    return null;
             }
 
             Language.ClankTypeInstance type = new Language.ClankTypeInstance()
