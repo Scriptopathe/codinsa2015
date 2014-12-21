@@ -43,7 +43,9 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Représente la source de l'altération d'état.
         /// </summary>
+        [Clank.ViewCreator.Export("int", "Id de la source de l'altération d'état.")]
         public EntityBase Source { get; set; }
+
         /// <summary>
         /// Représente le type de source de l'altération d'état.
         /// Les altérations d'état peuvent provenir de Consommables,

@@ -18,6 +18,7 @@ namespace Codinsa2015.Server.Entities
     {
         #region Constants
         #endregion
+
         #region Static
         public static int EntityCount = 0;
         public static void ResetEntityCount()
@@ -34,6 +35,7 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         int m_movementBlockedCounter;
         #endregion
+
         #region Battle variables
         /// <summary>
         /// Représente les points de vie actuels de l'entité.
@@ -138,6 +140,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient la liste des altérations d'état affectées à cette entité.
         /// </summary>
+        [Clank.ViewCreator.Export("List<StateAlteration>", "Obtient la liste des altérations d'état affectées à cette entité.")]
         public StateAlterationCollection StateAlterations
         {
             get { return m_stateAlterations; }
@@ -148,6 +151,7 @@ namespace Codinsa2015.Server.Entities
         /// Les points d'armure réduisent les dégâts infligés à cette unité selon la formule :
         /// dégats infligés = dmg * 100 / (100+armor)
         /// </summary>
+        [Clank.ViewCreator.Export("List<StateAlterationView>", "Représente les points d'armure de base de cette entité.")]
         public float BaseArmor
         {
             get { return m_baseArmor; }
@@ -156,6 +160,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Représente la direction de cette entité.
         /// </summary>
+        [Clank.ViewCreator.Export("Vector2", "Représente la direction de cette entité.")]
         public Vector2 Direction
         {
             get { return m_direction; }
@@ -165,6 +170,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Position de l'entité sur la map.
         /// </summary>
+        [Clank.ViewCreator.Export("Vector2", "Position de l'entité sur la map.")]
         public Vector2 Position
         {
             get { return m_position; }
@@ -184,6 +190,7 @@ namespace Codinsa2015.Server.Entities
         /// Points de bouclier de cette entité.
         /// Si l'entité subit des dégâts, ils sont répercutés en priorité sur les points de bouclier.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Points de bouclier de cette entité.")]
         public float ShieldPoints
         {
             get { return m_shieldPoints; }
@@ -193,6 +200,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient les points de vie actuels de l'entité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Obtient les points de vie actuels de l'entité")]
         public float HP
         {
             get { return m_hp; }
@@ -206,6 +214,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient le nombre de points de vie maximum de base de cette entité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Obtient le nombre de points de vie maximum de base de cette entité.")]
         public float BaseMaxHP
         {
             get { return m_baseMaxHP; }
@@ -215,6 +224,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient ou définit la vitesse de déplacement de base de l'entité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Obtient la vitesse de déplacement de base de l'entité.")]
         public float BaseMoveSpeed
         {
             get { return m_baseMoveSpeed; }
@@ -223,6 +233,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Retourne une valeur indiquant si l'entité est morte.
         /// </summary>
+        [Clank.ViewCreator.Export("bool", "Retourne une valeur indiquant si l'entité est morte.")]
         public bool IsDead
         {
             get { return m_hp <= 0; }
@@ -233,6 +244,7 @@ namespace Codinsa2015.Server.Entities
         /// Le type inclut des informations sur l'équipe de l'entité (Team1, Team2 ou Neutral),
         /// ainsi que sur sa catégorie (Héros, tour, idole etc...).
         /// </summary>
+        [Clank.ViewCreator.Export("EntityType", "Retourne le type de cette entité.")]
         public EntityType Type
         {
             get { return m_type; }
@@ -242,6 +254,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient l'id de cette entité.
         /// </summary>
+        [Clank.ViewCreator.Export("int", "Obtient l'id de cette entité.")]
         public int ID
         {
             get;
@@ -269,6 +282,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient ou définit les points d'attaque de base de cette unité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Obtient ou définit les points d'attaque de base de cette unité.")]
         public float BaseAttackDamage
         {
             get { return m_baseAttackDamage; }
@@ -279,6 +293,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Cooldown reduction de base de cette unité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Cooldown reduction de base de cette unité.")]
         public float BaseCooldownReduction
         {
             get { return m_baseCooldownReduction; }
@@ -288,6 +303,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Attack speed de base de cette entité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Attack speed de base de cette entité.")]
         public float BaseAttackSpeed
         {
             get { return m_baseAttackSpeed; }
@@ -296,6 +312,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Points d'AP de base de cette entité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Points d'AP de base de cette entité.")]
         public float BaseAbilityPower
         {
             get { return m_baseAbilityPower; }
@@ -304,6 +321,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Point de résistance magique de base de cette entité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Point de résistance magique de base de cette entité.")]
         public float BaseMagicResist
         {
             get { return m_baseMagicResist; }
@@ -314,6 +332,7 @@ namespace Codinsa2015.Server.Entities
         /// Retourne la résistance magique effective de cette entité.
         /// </summary>
         /// <returns></returns>
+        [Clank.ViewCreator.Export("float", "Retourne la résistance magique effective de cette entité.")]
         public virtual float GetMagicResist()
         {
             return BaseMagicResist;
@@ -323,6 +342,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Retourne la valeur d'AP effective de cette entité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Retourne la valeur d'AP effective de cette entité.")]
         public virtual float GetAbilityPower()
         {
             return BaseAbilityPower;
@@ -332,6 +352,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Retourne la valeur de CDR effective de cette entité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Retourne la valeur de CDR effective de cette entité.")]
         public virtual float GetCooldownReduction()
         {
             return BaseCooldownReduction;
@@ -342,6 +363,7 @@ namespace Codinsa2015.Server.Entities
         /// Obtient la vitesse de déplacement de l'entité.
         /// </summary>
         /// <returns></returns>
+        [Clank.ViewCreator.Export("float", "Obtient la vitesse de déplacement de l'entité.")]
         public virtual float GetMoveSpeed()
         {
             float totalMs = BaseMoveSpeed;
@@ -363,8 +385,9 @@ namespace Codinsa2015.Server.Entities
             return Math.Max(0, totalMs);
         }
         /// <summary>
-        /// Fonction utilisée pour obtenir les points d'attaque effectifs de cette entité.
+        /// Obtient les points d'attaque effectifs de cette entité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Obtient les points d'attaque effectifs de cette entité.")]
         public virtual float GetAttackDamage()
         {
             float totalDamage = BaseAttackDamage;
@@ -407,6 +430,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Fonction utilisée pour obtenir les points d'armure effectifs sur cette unité.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Fonction utilisée pour obtenir les points d'armure effectifs sur cette unité.")]
         public virtual float GetArmor()
         {
             float totalArmor = BaseArmor;
@@ -450,6 +474,7 @@ namespace Codinsa2015.Server.Entities
         /// Obtient les HP actuels de cette entité.
         /// </summary>
         /// <returns></returns>
+        [Clank.ViewCreator.Export("float", "Obtient les HP actuels de cette entité.")]
         public virtual float GetHP()
         {
             return HP;
@@ -459,6 +484,7 @@ namespace Codinsa2015.Server.Entities
         /// Obtient les HP max actuels de cette entité.
         /// </summary>
         /// <returns></returns>
+        [Clank.ViewCreator.Export("float", "Obtient les HP max actuels de cette entité.")]
         public virtual float GetMaxHP()
         {
             float totalHP = BaseArmor;
@@ -536,6 +562,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient une valeur indiquant si cette entité est Rootée. (ne peut plus bouger).
         /// </summary>
+        [Clank.ViewCreator.Export("bool", "Obtient une valeur indiquant si cette entité est Rootée. (ne peut plus bouger).")]
         public bool IsRooted
         {
             get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Root).Count != 0; }
@@ -544,6 +571,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient une valeur indiquant si cette unité est Silenced (ne peut pas utiliser de sorts).
         /// </summary>
+        [Clank.ViewCreator.Export("bool", "Obtient une valeur indiquant si cette unité est Silenced (ne peut pas utiliser de sorts).")]
         public bool IsSilenced
         {
             get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Silence).Count != 0; }
@@ -552,6 +580,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient une valeur indiquant si cette unité est Stuned (ne peut pas bouger ni utiliser de sorts).
         /// </summary>
+        [Clank.ViewCreator.Export("bool", "Obtient une valeur indiquant si cette unité est Stuned (ne peut pas bouger ni utiliser de sorts).")]
         public bool IsStuned
         {
             get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Stun).Count != 0; }
@@ -560,6 +589,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient une valeur indiquant si cette unité est invisible.
         /// </summary>
+        [Clank.ViewCreator.Export("bool", "Obtient une valeur indiquant si cette unité est invisible.")]
         public bool IsStealthed
         {
             get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Stealth).Count != 0; }
@@ -568,6 +598,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient une valeur indiquant si cette entité possède la vision pure.
         /// </summary>
+        [Clank.ViewCreator.Export("bool", "Obtient une valeur indiquant si cette entité possède la vision pure.")]
         public bool HasTrueVision
         {
             get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.TrueSight).Count != 0; }
@@ -576,6 +607,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient une valeur indiquant si cette unité peut voir les wards.
         /// </summary>
+        [Clank.ViewCreator.Export("bool", "Obtient une valeur indiquant si cette unité peut voir les wards.")]
         public bool HasWardVision
         {
             get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.WardSight).Count != 0; }
@@ -584,6 +616,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Retourne la range à laquelle cette entité donne la vision.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Retourne la range à laquelle cette entité donne la vision.")]
         public float VisionRange
         {
             get;

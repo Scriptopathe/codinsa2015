@@ -26,8 +26,9 @@ namespace Codinsa2015.Server.Spells
     {
         #region Properties
         /// <summary>
-        /// Description du spell.
+        /// Référence vers la description du spell au niveau actuel du spell.
         /// </summary>
+        [Clank.ViewCreator.Export("SpellDescriptionView", "Référence vers la description du spell au niveau actuel du spell.")]
         public SpellDescription Description
         {
             get { return Levels[Level]; }
@@ -36,6 +37,7 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Cooldown actuel de ce sort, en secondes.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Cooldown actuel du sort, en secondes")]
         public float CurrentCooldown
         {
             get;
@@ -45,6 +47,7 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Entité possédant le sort.
         /// </summary>
+        [Clank.ViewCreator.Export("int", "Id de l'entité possédant le sort.")]
         public Entities.EntityBase SourceCaster
         {
             get;
@@ -54,6 +57,7 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Représente les descriptions du spell pour les différents niveaux.
         /// </summary>
+        [Clank.ViewCreator.Export("List<SpellDescriptionView>", "Représente les descriptions du spell pour les différents niveaux.")]
         public List<SpellDescription> Levels
         {
             get;
@@ -63,6 +67,7 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Obtient le actuel du spell.
         /// </summary>
+        [Clank.ViewCreator.Export("Level", "Niveau actuel du spell.")]
         public int Level
         {
             get;
@@ -96,6 +101,7 @@ namespace Codinsa2015.Server.Spells
             set;
         }
         #endregion
+
         #region Methods
         /// <summary>
         /// Obtient le temps de récupération de ce spell après l'utilisation d'un

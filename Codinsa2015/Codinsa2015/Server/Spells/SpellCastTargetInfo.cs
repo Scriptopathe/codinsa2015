@@ -38,6 +38,7 @@ namespace Codinsa2015.Server.Spells
         /// Il existe 3 types de ciblages : Targetted (sur une cible précise), Position (à une
         /// position donnée), Direction (vers une direction donnée).
         /// </summary>
+        [Clank.ViewCreator.Export("TargettingType", "Type de ciblage de cet objet TargetInfo.")]
         public TargettingType Type
         {
             get;
@@ -46,6 +47,7 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Retourne la position de la cible, si le type de ciblage (Type) est TargettingType.Position.
         /// </summary>
+        [Clank.ViewCreator.Export("Vector2", "Retourne la position de la cible, si le type de ciblage (Type) est TargettingType.Position.")]
         public Vector2 TargetPosition
         {
             get

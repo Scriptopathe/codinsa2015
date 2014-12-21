@@ -55,6 +55,19 @@ namespace Codinsa2015.Server.Controlers
          * IFACE
          * Contient les fonctions auxquelles vont faire appel les IAs.
          * ----------------------------------------------------------------*/
+        #region IFACE-Get
+        /// <summary>
+        /// Retourne la map de jeu.
+        /// </summary>
+        /// <returns></returns>
+        public Map GetMap()
+        {
+            return GameServer.GetMap();
+        }
+
+
+        #endregion
+
         #region IFACE
         /// <summary>
         /// Achète l'armure dont le numéro est celui donné, au shop d'id donné.
@@ -114,8 +127,8 @@ namespace Codinsa2015.Server.Controlers
             return ShopItem(shopId, weaponId, shop.GetWeapons(Hero));
         }
 
-        
-        public void MovePlayerTo(Vector2 position) { }
+        [Clank.ViewCreator.Access("GameServer.GetScene().CurrentControler", "DUMMY")]
+        public List<Vector2> MovePlayerTo(Vector2 position) { return new List<Vector2>(); }
         public void UseSpell(int spellId, Spells.SpellCastTargetInfo castInfo) { }
         #endregion
     }
