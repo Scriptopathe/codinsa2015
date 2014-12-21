@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codinsa2015", "Codinsa2015\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codinsa2015Content", "Codinsa2015\Codinsa2015Content\Codinsa2015Content.contentproj", "{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clank.ViewCreator", "Clank.ViewCreator\Clank.ViewCreator.csproj", "{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +143,16 @@ Global
 		{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}.Release|Any CPU.ActiveCfg = Release|x86
 		{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}.Release|x86.ActiveCfg = Release|x86
+		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
