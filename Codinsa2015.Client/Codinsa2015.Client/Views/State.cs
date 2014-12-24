@@ -137,6 +137,13 @@ namespace Codinsa2015.Views
 		Direction = 4
 	}
 	
+	public enum SceneMode
+	{
+		Lobby = 0,
+		Pick = 1,
+		Game = 2
+	}
+	
 	public class State
 	{
 
@@ -153,11 +160,50 @@ namespace Codinsa2015.Views
 			return (MapView)o[0].ToObject(typeof(MapView));
 		}
 	
+		public bool StartMoveTo(Vector2 position)
+		{
+			// Send
+			List<object> args = new List<object>() { position};
+			int funcId = 1;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return o.Value<bool>(0);
+		}
+	
+		public bool IsAutoMoving()
+		{
+			// Send
+			List<object> args = new List<object>() { };
+			int funcId = 2;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return o.Value<bool>(0);
+		}
+	
+		public bool EndMoveTo()
+		{
+			// Send
+			List<object> args = new List<object>() { };
+			int funcId = 3;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return o.Value<bool>(0);
+		}
+	
 		public List<EntityBaseView> GetEntitiesInSight()
 		{
 			// Send
 			List<object> args = new List<object>() { };
-			int funcId = 1;
+			int funcId = 4;
 			List<object> obj = new List<object>() { funcId, args };
 			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
 			// Receive

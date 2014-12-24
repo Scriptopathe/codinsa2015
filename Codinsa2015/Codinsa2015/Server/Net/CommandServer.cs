@@ -51,6 +51,9 @@ namespace Codinsa2015.Server.Net
         static byte[] s_buffer = new byte[512];
         #endregion
 
+        #region Properties
+        public bool IsWaitingForConnections { get; set; }
+        #endregion
         public CommandServer()
         {
             m_socketToIds = new Dictionary<Socket, int>();
@@ -71,6 +74,7 @@ namespace Codinsa2015.Server.Net
 
                 try
                 {
+                    IsWaitingForConnections = true;
                     m_listenSocket.Listen(10);
                     int id = 0;
                     while (true)
@@ -99,6 +103,10 @@ namespace Codinsa2015.Server.Net
                     // Ce bloc est éxécuté quand StopWaitingForConnections est appelé.
                     // Console.WriteLine("Exception : " + e.Message);
                 }
+                finally
+                {
+                    IsWaitingForConnections = false;
+                }
             }));
             thread.Start();
         }
@@ -109,6 +117,7 @@ namespace Codinsa2015.Server.Net
         public void StopWaitingForConnections()
         {
             m_listenSocket.Close();
+            IsWaitingForConnections = false; // force
         }
         #endregion
 

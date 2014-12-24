@@ -56,7 +56,7 @@ namespace Codinsa2015.Server
         /// <returns></returns>
         public static Vector2 GetScreenSize()
         {
-            return new Vector2(1366, 768 + 100);
+            return new Vector2(640, 480 + 100);//new Vector2(1366, 768 + 100);
         }
 
         /// <summary>
@@ -106,8 +106,6 @@ namespace Codinsa2015.Server
             Server.Input.ModuleInit();
             // Initialisation de la scène, et chargement des contrôleurs.
             m_scene.Initialize();
-
-            m_scene.LoadControlers();
         }
 
         /// <summary>
@@ -135,7 +133,7 @@ namespace Codinsa2015.Server
         /// </summary>
         public void UnloadContent()
         {
-
+            m_scene.Dispose();
         }
 
         /// <summary>
@@ -148,6 +146,9 @@ namespace Codinsa2015.Server
 
             // Mise à jour de la scène.
             m_scene.Update(gameTime);
+
+            // Mets à jour l'input
+            Input.Update();
         }
 
         /// <summary>

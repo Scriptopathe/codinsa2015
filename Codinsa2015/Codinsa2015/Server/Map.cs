@@ -336,7 +336,6 @@ namespace Codinsa2015.Server
             m_passability = new bool[50, 50];
             __passabilityDrawRect(new Rectangle(1, 1, 40, 40), true);
             __passabilityDrawRect(new Rectangle(3, 4, 20, 2), false);
-            m_entities.Add(0, new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter , BaseMaxHP = 50000, HP = 50000});
 
 
             // Vision
@@ -344,7 +343,6 @@ namespace Codinsa2015.Server
 
             // Ajout des héros
             Heroes = new List<EntityHero>();
-            Heroes.Add((EntityHero)m_entities[0]);
         }
 
         /// <summary>

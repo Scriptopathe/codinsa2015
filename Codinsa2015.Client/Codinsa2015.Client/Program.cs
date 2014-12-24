@@ -22,10 +22,14 @@ namespace Codinsa2015.Client
             {
                 var entities = state.GetEntitiesInSight();
 
-                Console.WriteLine("Count = " + state.GetEntitiesInSight().Count);
-                foreach(var entity in entities)
+                if(entities.Count != 0)
                 {
-                    Console.WriteLine("{id=" + entity.ID + ", position=" + entity.Position + ", maxHP=" + entity.GetMaxHP + "}");
+                    var entity = entities[0];
+                    if(!state.IsAutoMoving())
+                    {
+                        Console.WriteLine("Moving to entity " + entity.ID + ", position = " + entity.Position);
+                        state.StartMoveTo(entity.Position);
+                    }
                 }
             }
         }

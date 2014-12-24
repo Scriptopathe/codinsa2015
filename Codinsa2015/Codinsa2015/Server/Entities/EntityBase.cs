@@ -726,14 +726,24 @@ namespace Codinsa2015.Server.Entities
         /// EndMoveTo() soit appelé, ou que le héros atteigne la position désirée.
         /// </summary>
         /// <param name="position"></param>
-        public void StartMoveTo(Vector2 position)
+        /// <returns>Retourne true si le mouvement a réussi.</returns>
+        public bool StartMoveTo(Vector2 position)
         {
             m_path = new Trajectory(PathFinder.Astar(Position, position));
             Direction = Vector2.Zero;
             if (m_path.TrajectoryUnits.Count <= 1)
                 m_path = null;
+            return m_path != null;
         }
 
+        /// <summary>
+        /// Obtient une valeur indiquant si le héros est entrain de se déplacer à l'aide du path finding.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsAutoMoving()
+        {
+            return m_path != null;
+        }
         /// <summary>
         /// Avance dans la direction du personnage, à la vitesse du personnage,
         /// pendant le temps écoulé durant la frame précédente.

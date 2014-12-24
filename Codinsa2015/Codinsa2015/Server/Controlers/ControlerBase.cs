@@ -131,7 +131,7 @@ namespace Codinsa2015.Server.Controlers
         /// Retourne les informations concernant la map actuelle.
         /// </summary>
         /// <returns></returns>
-        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().Controlers[clientId]", "Retourne les informations concernant la map actuelle")]
+        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)", "Retourne les informations concernant la map actuelle")]
         public Views.MapView GetMapView()
         {
             Views.MapView view = new Views.MapView();
@@ -140,10 +140,40 @@ namespace Codinsa2015.Server.Controlers
         }
 
         /// <summary>
+        /// Déplace le joueur vers la position donnée en utilisant l'A*.
+        /// </summary>
+        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)", "Déplace le joueur vers la position donnée en utilisant l'A*.")]
+        public bool StartMoveTo(Vector2 position)
+        {
+            return Hero.StartMoveTo(position);
+        }
+
+        /// <summary>
+        /// Indique si le joueur est entrain de se déplacer en utilisant son A*.
+        /// </summary>
+        /// <returns></returns>
+        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)", "Indique si le joueur est entrain de se déplacer en utilisant son A*.")]
+        public bool IsAutoMoving()
+        {
+            return Hero.IsAutoMoving();
+        }
+
+        /// <summary>
+        /// Arrête le déplacement automatique (A*) du joueur.
+        /// </summary>
+        /// <returns></returns>
+        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)", "Arrête le déplacement automatique (A*) du joueur.")]
+        public bool EndMoveTo()
+        {
+            Hero.EndMoveTo();
+            return true;
+        }
+
+        /// <summary>
         /// Retourne la liste des entités en vue.
         /// </summary>
         /// <returns></returns>
-        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().Controlers[clientId]", "Retourne la liste des entités en vue")]
+        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)", "Retourne la liste des entités en vue")]
         public List<Views.EntityBaseView> GetEntitiesInSight()
         {
             List<Views.EntityBaseView> views = new List<Views.EntityBaseView>();

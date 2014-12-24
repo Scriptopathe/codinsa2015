@@ -137,18 +137,36 @@ namespace Codinsa2015.Views
 		Direction = 4
 	}
 	
+	public enum SceneMode
+	{
+		Lobby = 0,
+		Pick = 1,
+		Game = 2
+	}
+	
 	public class State
 	{
 
 		public MapView GetMapView(int clientId)
 		{
-			return Codinsa2015.Server.GameServer.GetScene().Controlers[clientId].GetMapView();
-		}
-
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMapView();
+		}	
+		public bool StartMoveTo(Vector2 position, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).StartMoveTo(position);
+		}	
+		public bool IsAutoMoving(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).IsAutoMoving();
+		}	
+		public bool EndMoveTo(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).EndMoveTo();
+		}	
 		public List<EntityBaseView> GetEntitiesInSight(int clientId)
 		{
-			return Codinsa2015.Server.GameServer.GetScene().Controlers[clientId].GetEntitiesInSight();
-		}
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntitiesInSight();
+		}	
 		/// <summary>
 		/// Génère le code pour la fonction de traitement des messages.
 		/// </summary>
@@ -161,6 +179,13 @@ namespace Codinsa2015.Views
 				case 0:
 					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetMapView(clientId) });
 				case 1:
+					Vector2 arg1_0 = (Vector2)o[1][0].ToObject(typeof(Vector2));
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { StartMoveTo(arg1_0, clientId) });
+				case 2:
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { IsAutoMoving(clientId) });
+				case 3:
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { EndMoveTo(clientId) });
+				case 4:
 					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetEntitiesInSight(clientId) });
 			}
 			return "";

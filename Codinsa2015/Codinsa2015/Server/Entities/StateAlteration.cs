@@ -34,7 +34,10 @@ namespace Codinsa2015.Server.Entities
         {
             Views.StateAlterationParametersView view = new Views.StateAlterationParametersView();
             view.DashTargetDirection = DashTargetDirection;
-            view.DashTargetEntity = DashTargetEntity.ID;
+            if (DashTargetEntity != null)
+                view.DashTargetEntity = DashTargetEntity.ID;
+            else
+                view.DashTargetEntity = -1;
             return view;
         }
     }

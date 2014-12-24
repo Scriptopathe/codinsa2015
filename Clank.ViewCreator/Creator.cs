@@ -265,6 +265,13 @@ namespace Clank.ViewCreator
         }
         static string CreateTypeName(Type type)
         {
+            if (type == typeof(System.Boolean))
+                return "bool";
+            else if (type == typeof(System.Int32))
+                return "int";
+            else if (type == typeof(System.Single))
+                return "float";
+
             StringBuilder b = new StringBuilder();
             b.Append(type.Name.Split('`')[0]);
             if (type.IsGenericType)
