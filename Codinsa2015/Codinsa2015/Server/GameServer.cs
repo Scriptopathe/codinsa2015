@@ -56,7 +56,7 @@ namespace Codinsa2015.Server
         /// <returns></returns>
         public static Vector2 GetScreenSize()
         {
-            return new Vector2(640, 480 + 100);//new Vector2(1366, 768 + 100);
+            return new Vector2(800, 600 + 100);//new Vector2(1366, 768 + 100);
         }
 
         /// <summary>

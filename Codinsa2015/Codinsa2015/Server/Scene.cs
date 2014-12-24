@@ -330,7 +330,7 @@ namespace Codinsa2015.Server
             foreach(var kvp in Controlers)
             {
                 EntityHero hero = kvp.Value.Hero;
-                batch.DrawString(Ressources.CourrierFont, "Joueur n°" + kvp.Key + " connecté.", new Vector2(x, y), Color.White);
+                batch.DrawString(Ressources.CourrierFont, "Joueur n°" + kvp.Key + " connecté. (contrôleur : " + kvp.Value.GetType().Name + ")", new Vector2(x, y), Color.White);
                 y += 25;
             }
 
