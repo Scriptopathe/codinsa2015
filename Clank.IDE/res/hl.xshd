@@ -55,6 +55,7 @@
 				<Key word = "for" />
 				<Key word = "include" />
 				<Key word = "class" />
+				<Key word = "enum" />
 				<Key word = "public" />
 				<Key word = "static" />
 				<Key word = "constructor" />

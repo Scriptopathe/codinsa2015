@@ -302,7 +302,7 @@ namespace Clank.IDE
 
             double elapsedTime = (DateTime.Now - start).TotalSeconds;
             // Informe l'utilisateur que la compilation est terminée.
-            if (files.Count != 1 + m_project.Settings.ClientTargets.Count)
+            if (files.Count == 0)
                 SetStatusMessage("Echec de la compilation !");
             else
                 SetStatusMessage("Compilation terminée. (" + elapsedTime + "s)");
