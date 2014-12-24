@@ -5,7 +5,7 @@
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Clank.View.Client</RootNamespace>
     <AssemblyName>Clank.View.Client</AssemblyName>
@@ -59,12 +59,18 @@
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Codinsa2015.Client.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Clank.Server\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -75,6 +81,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="TCPHelper.cs" />
+    <Compile Include="Views\EntityBaseView.cs" />
+    <Compile Include="Views\MapView.cs" />
+    <Compile Include="Views\SpellCastTargetInfoView.cs" />
+    <Compile Include="Views\SpellDescriptionView.cs" />
+    <Compile Include="Views\SpellTargetInfoView.cs" />
+    <Compile Include="Views\SpellView.cs" />
+    <Compile Include="Views\State.cs" />
+    <Compile Include="Views\StateAlterationModelView.cs" />
+    <Compile Include="Views\StateAlterationParametersView.cs" />
+    <Compile Include="Views\StateAlterationView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
@@ -108,6 +125,10 @@
     <ProjectReference Include="..\..\Codinsa2015.Graphics\Codinsa2015.Graphics.csproj">
       <Project>{1b831a6d-c2bd-4072-a3f7-273915e43f64}</Project>
       <Name>Codinsa2015.Graphics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Codinsa2015\Codinsa2015\Codinsa2015.csproj">
+      <Project>{69ba97d2-8f6f-4aa4-8870-c5234bcf26be}</Project>
+      <Name>Codinsa2015</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
