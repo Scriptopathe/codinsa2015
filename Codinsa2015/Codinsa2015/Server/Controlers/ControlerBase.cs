@@ -127,9 +127,80 @@ namespace Codinsa2015.Server.Controlers
             return ShopItem(shopId, weaponId, shop.GetWeapons(Hero));
         }
 
-        [Clank.ViewCreator.Access("GameServer.GetScene().CurrentControler", "DUMMY")]
-        public List<Vector2> MovePlayerTo(Vector2 position) { return new List<Vector2>(); }
-        public void UseSpell(int spellId, Spells.SpellCastTargetInfo castInfo) { }
+        /// <summary>
+        /// Retourne les informations concernant la map actuelle.
+        /// </summary>
+        /// <returns></returns>
+        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().Controlers[clientId]", "Retourne les informations concernant la map actuelle")]
+        public Views.MapView GetMapView()
+        {
+            Views.MapView view = new Views.MapView();
+            view.Passability = GetMap().Passability;
+            return view;
+        }
+
+        /// <summary>
+        /// Retourne la liste des entités en vue.
+        /// </summary>
+        /// <returns></returns>
+        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().Controlers[clientId]", "Retourne la liste des entités en vue")]
+        public List<Views.EntityBaseView> GetEntitiesInSight()
+        {
+            List<Views.EntityBaseView> views = new List<Views.EntityBaseView>();
+            foreach(var kvp in GetMap().Entities.GetEntitiesInSight(Hero.Type))
+            {
+                views.Add(GetEntityById(kvp.Key));
+            }
+            return views;
+        }
+
+        /// <summary>
+        /// Obtient une vue sur l'entité dont l'id est passé en paramètre.
+        /// </summary>
+        public Views.EntityBaseView GetEntityById(int entityId)
+        {
+            Entities.EntityBase entity =  GetMap().GetEntityById(entityId);
+            if(Hero.Sees(entity))
+            {
+                Views.EntityBaseView view = new Views.EntityBaseView();
+                view.BaseAbilityPower = entity.BaseAbilityPower;
+                view.BaseArmor = entity.BaseArmor;
+                view.BaseAttackDamage = entity.BaseAttackDamage;
+                view.BaseAttackSpeed = entity.BaseAttackSpeed;
+                view.BaseCooldownReduction = entity.BaseCooldownReduction;
+                view.BaseMagicResist = entity.BaseMagicResist;
+                view.BaseMaxHP = entity.BaseMaxHP;
+                view.BaseMoveSpeed = entity.BaseMoveSpeed;
+                view.Direction = entity.Direction;
+                view.GetAbilityPower = entity.GetAbilityPower();
+                view.GetArmor = entity.GetArmor();
+                view.GetAttackDamage = entity.GetAttackDamage();
+                view.GetCooldownReduction = entity.GetCooldownReduction();
+                view.GetHP = entity.GetHP();
+                view.GetMagicResist = entity.GetMagicResist();
+                view.GetMaxHP = entity.GetMaxHP();
+                view.GetMoveSpeed = entity.GetMoveSpeed();
+                view.HasTrueVision = entity.HasTrueVision;
+                view.HasWardVision = entity.HasWardVision;
+                view.HP = entity.HP;
+                view.ID = entity.ID;
+                view.IsDead = entity.IsDead;
+                view.IsRooted = entity.IsRooted;
+                view.IsSilenced = entity.IsSilenced;
+                view.IsStealthed = entity.IsStealthed;
+                view.IsStuned = entity.IsStuned;
+                view.Position = entity.Position;
+                view.ShieldPoints = entity.ShieldPoints;
+                view.StateAlterations = entity.StateAlterations.ToView();
+                view.Type = (Views.EntityType)entity.Type;
+                view.VisionRange = entity.VisionRange;
+                return view;
+            }
+            else
+            {
+                return new Views.EntityBaseView();
+            }
+        }
         #endregion
     }
 }

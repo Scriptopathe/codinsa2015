@@ -62,5 +62,18 @@ namespace Codinsa2015.Server.Entities
         }
 
 
+        /// <summary>
+        /// Retourne une liste de vues de cette collection d'altération.
+        /// </summary>
+        public List<Views.StateAlterationView> ToView()
+        {
+            List<Views.StateAlterationView> views = new List<Views.StateAlterationView>();
+            foreach(StateAlteration alt in this)
+            {
+                views.Add(alt.ToView());
+            }
+            return views;
+        }
+
     }
 }

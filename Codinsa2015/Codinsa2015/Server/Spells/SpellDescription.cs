@@ -26,6 +26,7 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Cooldown de base du sort.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Cooldown de base du sort.")]
         public float BaseCooldown { get; set; }
 
         /// <summary>
@@ -47,22 +48,26 @@ namespace Codinsa2015.Server.Spells
         /// Pour TargetType == TargettingType.Position ou Direction
         /// Le projectile est lancé une fois le casting time terminé.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Casting time du sort.")]
         public float CastingTime { get; set; }
 
         /// <summary>
         /// Altération d'état appliquée pendant le casting time.
         /// </summary>
+        [Clank.ViewCreator.Export("StateAlterationModelView", "Altération d'état appliquée pendant le casting time.")]
         public StateAlterationModel CastingTimeAlteration { get; set; }
 
         /// <summary>
         /// Manière dont le ciblage du sort est effectué.
         /// </summary>
+        [Clank.ViewCreator.Export("SpellTargetInfoView", "Indique la manière dont le ciblage du sort est effectué.")]
         public SpellTargetInfo TargetType { get; set; }
 
         /// <summary>
         /// Effets à l'impact du sort.
         /// Ils sont appliqués une fois le casting time terminé.
         /// </summary>
+        [Clank.ViewCreator.Export("List<StateAlterationModelView>", "Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.")]
         public List<StateAlterationModel> OnHitEffects { get; set; }
     }
 }

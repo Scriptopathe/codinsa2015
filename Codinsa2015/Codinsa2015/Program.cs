@@ -17,7 +17,9 @@ namespace Codinsa2015
                 var views = Clank.ViewCreator.Creator.CreateViews(System.Reflection.Assembly.GetExecutingAssembly());
                 views.Add("main.clank", Clank.ViewCreator.Creator.CreateMain(System.Reflection.Assembly.GetExecutingAssembly(), views));
                 views.Add("autoproject.clankproject", 
-                    Clank.ViewCreator.Creator.CreateProjectFile("Codinsa2015", "cs:ServerCS", "cs:ClientCS", views).Replace("encoding=\"utf-16\"", ""));
+                    Clank.ViewCreator.Creator.CreateProjectFile("Codinsa2015",
+                    "cs:\"..\"", 
+                    "cs:\"../../../../../Codinsa2015.Client/Codinsa2015.Client/Views\"", views).Replace("encoding=\"utf-16\"", ""));
                 foreach (var kvp in views)
                 {
                     System.IO.File.WriteAllText(root + kvp.Key, kvp.Value);

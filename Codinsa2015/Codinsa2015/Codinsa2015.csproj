@@ -76,6 +76,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Server\Controlers\IAControler.cs" />
     <Compile Include="Server\Controlers\HumanControler.cs" />
     <Compile Include="Server\Controlers\ControlerBase.cs" />
     <Compile Include="Server\Editor\MapEditorControler.cs" />
@@ -128,6 +129,7 @@
     </Compile>
     <Compile Include="Server\Input.cs" />
     <Compile Include="Server\Map.cs" />
+    <Compile Include="Server\Net\CommandServer.cs" />
     <Compile Include="Server\Particles\Particle.cs" />
     <Compile Include="Server\Particles\ParticleAnimation.cs" />
     <Compile Include="Server\Particles\ParticleBase.cs" />
@@ -148,16 +150,19 @@
     <Compile Include="Server\Spells\SpellCastTargetInfo.cs" />
     <Compile Include="Server\Spells\SpellDescription.cs" />
     <Compile Include="Server\Trajectory.cs" />
-    <Compile Include="Server\Views\Clank\ServerCS\Double.cs" />
-    <Compile Include="Server\Views\Clank\ServerCS\EntityView.cs" />
-    <Compile Include="Server\Views\Clank\ServerCS\Integer.cs" />
-    <Compile Include="Server\Views\Clank\ServerCS\SpellView.cs" />
-    <Compile Include="Server\Views\Clank\ServerCS\State.cs" />
-    <Compile Include="Server\Views\Clank\ServerCS\String.cs" />
-    <Compile Include="Server\Views\EntityView.cs" />
     <Compile Include="Server\Shapes\Shape.cs" />
     <Compile Include="Server\Spells\Spell.cs" />
     <Compile Include="Server\Spells\SpellTargetInfo.cs" />
+    <Compile Include="Server\Views\EntityBaseView.cs" />
+    <Compile Include="Server\Views\MapView.cs" />
+    <Compile Include="Server\Views\SpellCastTargetInfoView.cs" />
+    <Compile Include="Server\Views\SpellDescriptionView.cs" />
+    <Compile Include="Server\Views\SpellTargetInfoView.cs" />
+    <Compile Include="Server\Views\SpellView.cs" />
+    <Compile Include="Server\Views\State.cs" />
+    <Compile Include="Server\Views\StateAlterationModelView.cs" />
+    <Compile Include="Server\Views\StateAlterationParametersView.cs" />
+    <Compile Include="Server\Views\StateAlterationView.cs" />
     <Compile Include="Server\VisionMap.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="Server\PathFinding.cs" />
@@ -186,7 +191,7 @@
       <Project>{f0ce7cad-de71-4eed-9490-aeeb7c1bafe1}</Project>
       <Name>PonyCarpetExtractor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Clank.ViewContent\Codinsa2015Content.contentproj">
+    <ProjectReference Include="..\Codinsa2015Content\Codinsa2015Content.contentproj">
       <Name>Codinsa2015Content</Name>
       <XnaReferenceType>Content</XnaReferenceType>
       <Project>{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}</Project>
@@ -213,16 +218,6 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Server\Views\Clank\clankserv.clankproject" />
-    <None Include="Server\Views\Clank\EntityTypeView.clank" />
-    <None Include="Server\Views\Clank\EntityView.clank" />
-    <None Include="Server\Views\Clank\interface.clank" />
-    <None Include="Server\Views\Clank\main.clank" />
-    <None Include="Server\Views\Clank\SpellView.clank" />
-    <None Include="Server\Views\Clank\stdtypes.clank" />
-    <None Include="Server\Views\Clank\XNAMacros.clank" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

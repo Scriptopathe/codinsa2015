@@ -65,6 +65,7 @@ namespace Codinsa2015.Server.Spells
         /// Retourne la direction de la cible, si le type de ciblage (Type) est TargettingType.Direction.
         /// Ce vecteur est transformé automatiquement en vecteur unitaire.
         /// </summary>
+        [Clank.ViewCreator.Export("Vector2", "Retourne la direction de la cible, si le type de ciblage (Type) est TargettingType.Direction. Ce vecteur est transformé automatiquement en vecteur unitaire.")]
         public Vector2 TargetDirection
         {
             get
@@ -82,6 +83,7 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Retourne l'id de la cible, si le type de cibale (Type) est TargettingType.Targetted.
         /// </summary>
+        [Clank.ViewCreator.Export("int", "Retourne l'id de la cible, si le type de cibale (Type) est TargettingType.Targetted.")]
         public int TargetId
         {
             get

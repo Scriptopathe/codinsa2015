@@ -10,6 +10,7 @@ namespace Codinsa2015.Server.Entities
     /// /!\ Les types d'entités dans cet enum doivent correspondre aux types
     ///     dans l'enum EntityTypeRelative !!
     /// </summary>
+    [Clank.ViewCreator.Enum("Contient les différents types d'entités.")]
     public enum EntityType
     {
         Team1           = 0x02,
@@ -61,6 +62,7 @@ namespace Codinsa2015.Server.Entities
     /// <summary>
     /// Représente le type d'entité, relatif à une équipe.
     /// </summary>
+    [Clank.ViewCreator.Enum("Contient les différents types d'entités, relatives à une équipe.")]
     public enum EntityTypeRelative
     {
         Me              = 0x01,

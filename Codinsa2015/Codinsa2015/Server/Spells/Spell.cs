@@ -67,7 +67,7 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Obtient le actuel du spell.
         /// </summary>
-        [Clank.ViewCreator.Export("Level", "Niveau actuel du spell.")]
+        [Clank.ViewCreator.Export("int", "Niveau actuel du spell.")]
         public int Level
         {
             get;

@@ -15,15 +15,31 @@ namespace Codinsa2015.Server.Entities
         /// Position finale que le dash doit atteindre.
         /// (si le targetting est Direction)
         /// </summary>
+        [Clank.ViewCreator.Export("Vector2", "Position finale que le dash doit atteindre (si le targetting est Direction)")]
         public Vector2 DashTargetDirection { get; set; }
 
         /// <summary>
         /// Entité vers laquelle le dash doit se diriger.
         /// (si le targetting du dash est Entity).
         /// </summary>
+        [Clank.ViewCreator.Export("int", "Entité vers laquelle le dash doit se diriger (si le targetting du dash est Entity).")]
         public EntityBase DashTargetEntity { get; set; }
+
+
+        /// <summary>
+        /// Retourne une vue de ces paramètres.
+        /// </summary>
+        /// <returns></returns>
+        public Views.StateAlterationParametersView ToView()
+        {
+            Views.StateAlterationParametersView view = new Views.StateAlterationParametersView();
+            view.DashTargetDirection = DashTargetDirection;
+            view.DashTargetEntity = DashTargetEntity.ID;
+            return view;
+        }
     }
 
+    [Clank.ViewCreator.Enum("Enumère les différentes sources possibles d'altération d'états.")]
     public enum StateAlterationSource
     {
         Consumable,
@@ -32,8 +48,8 @@ namespace Codinsa2015.Server.Entities
         Boots,
         Self,
         Spell
-
     }
+
     /// <summary>
     /// Représente une altération d'état en cours.
     /// </summary>
@@ -51,19 +67,23 @@ namespace Codinsa2015.Server.Entities
         /// Les altérations d'état peuvent provenir de Consommables,
         /// Armes, Armures, Bottes, et Spells.
         /// </summary>
+        [Clank.ViewCreator.Export("StateAlterationSource", "Représente le type de source de l'altération d'état.")]
         public StateAlterationSource SourceType { get; set; }
         /// <summary>
         /// Représente le modèle d'altération d'état appliquée sur une entité.
         /// </summary>
+        [Clank.ViewCreator.Export("StateAlterationModelView", "Représente le modèle d'altération d'état appliquée sur une entité.")]
         public StateAlterationModel Model { get; set; }
         /// <summary>
         /// Représente les paramètres de l'altération d'état.
         /// </summary>
+        [Clank.ViewCreator.Export("StateAlterationParametersView", "Représente les paramètres de l'altération d'état.")]
         public StateAlterationParameters Parameters { get; set; }
 
         /// <summary>
         /// Temps restant en secondes pour l'altération d'état.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Temps restant en secondes pour l'altération d'état.")]
         public float RemainingTime { get; set; }
 
         /// <summary>
@@ -119,6 +139,21 @@ namespace Codinsa2015.Server.Entities
         public void EndNow()
         {
             RemainingTime = 0;
+        }
+
+        /// <summary>
+        /// Retourne une vue de cette altération d'état.
+        /// </summary>
+        /// <returns></returns>
+        public Views.StateAlterationView ToView()
+        {
+            Views.StateAlterationView view = new Views.StateAlterationView();
+            view.Source = this.Source.ID;
+            view.SourceType = (Views.StateAlterationSource)this.SourceType;
+            view.RemainingTime = this.RemainingTime;
+            view.Parameters = this.Parameters.ToView();
+            view.Model = this.Model.ToView();
+            return view;
         }
     }
 }

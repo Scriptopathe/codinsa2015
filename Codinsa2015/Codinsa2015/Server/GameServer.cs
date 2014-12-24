@@ -106,6 +106,7 @@ namespace Codinsa2015.Server
             Server.Input.ModuleInit();
             // Initialisation de la scène, et chargement des contrôleurs.
             m_scene.Initialize();
+
             m_scene.LoadControlers();
         }
 

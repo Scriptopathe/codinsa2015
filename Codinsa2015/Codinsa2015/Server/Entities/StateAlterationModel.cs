@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 namespace Codinsa2015.Server.Entities
 {
+    [Clank.ViewCreator.Enum("Représente un type d'altération d'état.")]
     public enum StateAlterationType
     {
         None            = 0x0000,
@@ -60,6 +61,7 @@ namespace Codinsa2015.Server.Entities
     /// <summary>
     /// Représente une direction de dash.
     /// </summary>
+    [Clank.ViewCreator.Enum("Représente une direction de dash.")]
     public enum DashDirectionType
     {
         TowardsEntity,
@@ -76,6 +78,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Type de l'altération d'état.
         /// </summary>
+        [Clank.ViewCreator.Export("StateAlterationType", "Représente le type de l'altération d'état.")]
         public StateAlterationType Type { get; set; }
         /// <summary>
         /// Durée de base de l'altération d'état en secondes.
@@ -88,6 +91,7 @@ namespace Codinsa2015.Server.Entities
         /// 
         /// Elle doit être nulle pour les sorts infligeant des dégâts.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Durée de base de l'altération d'état en secondes")]
         public float BaseDuration { get; set; }
         /// <summary>
         /// Si Type contient Dash : vitesse du dash.
@@ -103,10 +107,13 @@ namespace Codinsa2015.Server.Entities
         /// Si Type contient Dash :
         /// Obtient ou définit une valeur indiquant si le dash permet traverser les murs.
         /// </summary>
+
+        [Clank.ViewCreator.Export("bool", @"Si Type contient Dash : Obtient ou définit une valeur indiquant si le dash permet traverser les murs.")]
         public bool DashGoThroughWall { get; set; }
         /// <summary>
         /// Si Type contient Dash : type direction du dash.
         /// </summary>
+        [Clank.ViewCreator.Export("DashDirectionType", @"Si Type contient Dash : type direction du dash.")]
         public DashDirectionType DashDirectionType { get; set; }
 
 
@@ -144,69 +151,85 @@ namespace Codinsa2015.Server.Entities
         /// Valeur flat du buff / debuff (valeur positive : buff, valeur négative : debuff).
         /// La nature du buff dépend de Type.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Valeur flat du buff / debuff (valeur positive : buff, valeur négative : debuff). La nature du buff dépend de Type.")]
         public float FlatValue { get; set; }
         /// <summary>
         /// Même que FlatValue, mais en pourcentage de dégâts d'attaque actuels de la source.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue, mais en pourcentage de dégâts d'attaque actuels de la source.")]
         public float SourcePercentADValue { get; set; }
         /// <summary>
         /// Même que FlatValue, mais en pourcentage des HP actuels de la source.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue, mais en pourcentage des HP actuels de la source.")]
         public float SourcePercentHPValue { get; set; }
         /// <summary>
         /// Même que FlatValue, mais en pourcentage des HP max de la source.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue, mais en pourcentage des HP max de la source.")]
         public float SourcePercentMaxHPValue { get; set; }
         /// <summary>
         /// Même que FlatValue mais en pourcentage de l'armure actuelle de la source.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue mais en pourcentage de l'armure actuelle de la source.")]
         public float SourcePercentArmorValue { get; set; }
         /// <summary>
         /// Même que FlatValue, mais en pourcentage de l'AP actuelle de l'entité source.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue, mais en pourcentage de l'AP actuelle de l'entité source.")]
         public float SourcePercentAPValue { get; set; }
         /// <summary>
         /// Même que FlatValue mais en pourcentage de la RM actuelle de l'entité source.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue mais en pourcentage de la RM actuelle de l'entité source.")]
         public float SourcePercentRMValue { get; set; }
 
 
         /// <summary>
         /// Même que FlatValue, mais en pourcentage de dégâts d'attaque actuels de l'entité de destination.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue, mais en pourcentage de dégâts d'attaque actuels de l'entité de destination.")]
         public float DestPercentADValue { get; set; }
         /// <summary>
         /// Même que FlatValue, mais en pourcentage des HP actuels de l'entité de destination.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue, mais en pourcentage des HP actuels de l'entité de destination.")]
         public float DestPercentHPValue { get; set; }
         /// <summary>
         /// Même que FlatValue, mais en pourcentage des HP max de l'entité de destination.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue, mais en pourcentage des HP max de l'entité de destination.")]
         public float DestPercentMaxHPValue { get; set; }
         /// <summary>
         /// Même que FlatValue mais en pourcentage de l'armure actuelle de l'entité de destination.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue mais en pourcentage de l'armure actuelle de l'entité de destination.")]
         public float DestPercentArmorValue { get; set; }
         /// <summary>
         /// Même que FlatValue, mais en pourcentage de l'AP actuelle de l'entité de destination.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue, mais en pourcentage de l'AP actuelle de l'entité de destination.")]
         public float DestPercentAPValue { get; set; }
         /// <summary>
         /// Même que FlatValue mais en pourcentage de la RM actuelle de l'entité de destination.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Même que FlatValue mais en pourcentage de la RM actuelle de l'entité de destination.")]
         public float DestPercentRMValue { get; set; }
 
         /// <summary>
         /// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée à une structure.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Obtient le multiplicateur de dégâts lorsque l'altération est appliquée à une structure.")]
         public float StructureBonus { get; set; }
         /// <summary>
         /// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un monstre neute.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un monstre neute.")]
         public float MonsterBonus { get; set; }
         /// <summary>
         /// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.")]
         public float CreepBonus { get; set; }
 
         /// <summary>
@@ -347,6 +370,36 @@ namespace Codinsa2015.Server.Entities
             CreepBonus = 1.0f;
             MonsterBonus = 1.0f;
             StructureBonus = 1.0f;
+        }
+
+        /// <summary>
+        /// Retourne une vue de cette instance de StateAlterationModel.
+        /// </summary>
+        /// <returns></returns>
+        public Views.StateAlterationModelView ToView()
+        {
+            Views.StateAlterationModelView view = new Views.StateAlterationModelView();
+            view.BaseDuration = BaseDuration;
+            view.CreepBonus = CreepBonus;
+            view.DashDirectionType = (Views.DashDirectionType)DashDirectionType;
+            view.DashGoThroughWall = DashGoThroughWall;
+            view.DestPercentADValue = DestPercentADValue;
+            view.DestPercentAPValue = DestPercentAPValue;
+            view.DestPercentArmorValue = DestPercentArmorValue;
+            view.DestPercentHPValue = DestPercentHPValue;
+            view.DestPercentMaxHPValue = DestPercentMaxHPValue;
+            view.DestPercentRMValue = DestPercentRMValue;
+            view.FlatValue = FlatValue;
+            view.MonsterBonus = MonsterBonus;
+            view.SourcePercentADValue = SourcePercentADValue;
+            view.SourcePercentAPValue = SourcePercentAPValue;
+            view.SourcePercentArmorValue = SourcePercentArmorValue;
+            view.SourcePercentHPValue = SourcePercentHPValue;
+            view.SourcePercentMaxHPValue = SourcePercentMaxHPValue;
+            view.SourcePercentRMValue = SourcePercentRMValue;
+            view.StructureBonus = StructureBonus;
+            view.Type = (Views.StateAlterationType)Type;
+            return view;
         }
         #region Constructors
         public static StateAlterationModel None() { return new StateAlterationModel(); }

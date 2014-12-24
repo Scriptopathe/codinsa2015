@@ -140,7 +140,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient la liste des altérations d'état affectées à cette entité.
         /// </summary>
-        [Clank.ViewCreator.Export("List<StateAlteration>", "Obtient la liste des altérations d'état affectées à cette entité.")]
+        [Clank.ViewCreator.Export("List<StateAlterationView>", "Obtient la liste des altérations d'état affectées à cette entité.")]
         public StateAlterationCollection StateAlterations
         {
             get { return m_stateAlterations; }
@@ -151,7 +151,7 @@ namespace Codinsa2015.Server.Entities
         /// Les points d'armure réduisent les dégâts infligés à cette unité selon la formule :
         /// dégats infligés = dmg * 100 / (100+armor)
         /// </summary>
-        [Clank.ViewCreator.Export("List<StateAlterationView>", "Représente les points d'armure de base de cette entité.")]
+        [Clank.ViewCreator.Export("float", "Représente les points d'armure de base de cette entité.")]
         public float BaseArmor
         {
             get { return m_baseArmor; }

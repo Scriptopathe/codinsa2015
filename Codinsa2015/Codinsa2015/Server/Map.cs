@@ -172,6 +172,7 @@ namespace Codinsa2015.Server
         /// - true veut dire passable
         /// - false veut dire non passable.
         /// </summary>
+        [Clank.ViewCreator.Export("Matrix<bool>", "Tableau de passabilité de la map. true : passable, false : non passable.")]
         public bool[,] Passability
         {
             get { return m_passability; }
@@ -206,6 +207,7 @@ namespace Codinsa2015.Server
         
         #endregion
 
+        
         #region Graphics
         /// <summary>
         /// Crée les render targets.
@@ -725,6 +727,10 @@ namespace Codinsa2015.Server
         }
         #endregion
 
+
+        #region View
+        
+        #endregion
     }
 
 

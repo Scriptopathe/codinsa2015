@@ -232,7 +232,8 @@ namespace Codinsa2015.Server
                 {
                     m_vision[(int)currentStep.X, (int)currentStep.Y] |= flags;
                 }
-                else if (dir.Y < -0.1f && distanceOK)
+                else if (dir.Y < -0.1f && distanceOK && (currentStep.X > 0 && currentStep.Y > 0 && currentStep.X <= m_vision.GetLength(0) - 1 &&
+                        currentStep.Y <= m_vision.GetLength(1) - 1))
                 {
                     // Effet graphique pour éclairer les murs.
                     m_vision[(int)currentStep.X, (int)currentStep.Y] |= flags;
