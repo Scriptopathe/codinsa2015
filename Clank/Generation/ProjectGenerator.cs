@@ -93,6 +93,21 @@ namespace Clank.Core.Generation
             generationLog = log.ToString();
             return output;
         }
+
+        string plinemapping(Dictionary<int, Generation.Preprocessor.Preprocessor.LineInfo> map, string script)
+        {
+            StringBuilder b = new StringBuilder();
+            string[] lines = script.Split('\n');
+
+            foreach(var kvp in map)
+            {
+                if (kvp.Key < lines.Length)
+                    b.Append(kvp.Key + ":" + kvp.Value.ToString() + ":" + lines[kvp.Key]);
+                else
+                    b.Append(kvp.Key + ":" + kvp.Value.ToString() + ":" + " out of range");
+            }
+            return b.ToString();
+        }
         /// <summary>
         /// Génère le projet à partir d'un script.
         /// TODO :  - préprocesseur (include)
@@ -127,6 +142,7 @@ namespace Clank.Core.Generation
                 // Crée les jetons d'expression à partir du script.
                 var tokens = Tokenizers.Tokenizer.Parse(processedScript, lineMapping);
                 var exprTokens = Tokenizers.ExpressionParser.Parse(tokens);
+               
 
                 // Crée la table des types à partir des jetons d'expression.
                 // A ce point de l'exécution, la table ne contient pas les fonctions.

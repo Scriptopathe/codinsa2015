@@ -219,15 +219,19 @@ namespace Clank.ViewCreator
             b.AppendLine(padding + "public enum " + t.Name + "\r\n" + padding + "{");
             Array values = t.GetEnumValues();
             int i = 0;
-            foreach(string name in t.GetEnumNames())
+            string[] enumNames = t.GetEnumNames();
+
+            foreach(string name in enumNames)
             {
                 b.Append(padding + "\t");
                 b.Append(name + " = ");
-                b.AppendLine((int)t.GetField(name).GetValue(t) + ",");
+                if(i == enumNames.Length - 1)
+                    b.AppendLine(((int)t.GetField(name).GetValue(t)).ToString());
+                else
+                    b.AppendLine((int)t.GetField(name).GetValue(t) + ",");
                 
                 i++;
             }
-            b.Remove(b.Length - 1, 1); // supprime la virgule en trop
 
             b.AppendLine(padding + "}");
 
