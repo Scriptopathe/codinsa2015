@@ -47,8 +47,8 @@ namespace Codinsa2015.Server.Net
 
 
         object m_clientSocketsLock = new object();
-        static byte[] s_smallBuffer = new byte[1];
-        static byte[] s_buffer = new byte[512];
+        Dictionary<int, byte[]> m_smallBuffer;
+        Dictionary<int, byte[]> m_buffer;
         #endregion
 
         #region Properties
@@ -59,6 +59,8 @@ namespace Codinsa2015.Server.Net
             m_socketToIds = new Dictionary<Socket, int>();
             m_idToSocket = new Dictionary<int, Socket>();
             m_consecutiveTimeouts = new Dictionary<Socket, int>();
+            m_smallBuffer = new Dictionary<int, byte[]>();
+            m_buffer = new Dictionary<int, byte[]>();
         }
 
         #region Wait for connections
@@ -85,6 +87,8 @@ namespace Codinsa2015.Server.Net
                             m_socketToIds.Add(sock, id);
                             m_idToSocket.Add(id, sock);
                             m_consecutiveTimeouts.Add(sock, 0);
+                            m_smallBuffer.Add(id, new byte[1]);
+                            m_buffer.Add(id, new byte[512]);
                         }
 
                         if (ClientConnected != null)
@@ -170,35 +174,38 @@ namespace Codinsa2015.Server.Net
             }
         }
 
-        public string Receive(int clientId) { return Receive(m_idToSocket[clientId]); }
+        public string Receive(int clientId) { return Receive(m_idToSocket[clientId], clientId); }
         /// <summary>
         /// Recoit une commande depuis le socket.
         /// </summary>
         /// <returns></returns>
-        public string Receive(Socket s)
+        public string Receive(Socket s, int clientId)
         {
             // Représente le caractère '\n'.
             byte last = Encoding.UTF8.GetBytes(new char[] { '\n' })[0];
 
             // Récupère le nombre de données à lire
             string dataLengthStr = "";
+            byte[] buff = m_smallBuffer[clientId];
+            buff[0] = 0;
             while (true)
             {
-                int bytes = s.Receive(s_smallBuffer);
-                if (s_smallBuffer[0] == last)
+                int bytes = s.Receive(buff);
+                if (buff[0] == last)
                     break;
-                dataLengthStr += Encoding.UTF8.GetString(s_smallBuffer);
+                dataLengthStr += Encoding.UTF8.GetString(buff);
             }
 
 
+            buff = m_buffer[clientId];
             string data = "";
             int dataLength = int.Parse(dataLengthStr);
             int totalBytes = 0;
             while (totalBytes < dataLength)
             {
-                int bytes = s.Receive(s_buffer, Math.Min(dataLength - totalBytes, s_buffer.Length), SocketFlags.None);
+                int bytes = s.Receive(buff, Math.Min(dataLength - totalBytes, buff.Length), SocketFlags.None);
                 totalBytes += bytes;
-                data += Encoding.UTF8.GetString(s_buffer, 0, bytes);
+                data += Encoding.UTF8.GetString(buff, 0, bytes);
             }
 
             return data;
