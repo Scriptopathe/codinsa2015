@@ -29,4 +29,13 @@ namespace Clank.ViewCreator
             Comment = comment;
         }
     }
+
+    public class EnumAttribute : Attribute
+    {
+        public string Comment { get; set; }
+        public EnumAttribute(string comment)
+        {
+            Comment = comment;
+        }
+    }
 }

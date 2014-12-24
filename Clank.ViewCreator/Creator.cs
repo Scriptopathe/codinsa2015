@@ -66,11 +66,13 @@ namespace Clank.ViewCreator
             node.SavePath = "";
             foreach (var kvp in files)
                 node.SourceFiles.Add(kvp.Key);
+            node.SourceFiles.Add("stdtypes.clank");
+            node.SourceFiles.Add("XNAMacros.clank");
             node.Name = name;
             node.Settings = new IDE.ProjectSettings();
             node.Settings.ClientTargets = Core.Generation.GenerationTarget.TargetsFromString(clientTargets);
             node.Settings.ServerTarget = Core.Generation.GenerationTarget.FromString(serverTargets);
-
+            node.MainFile = "main.clank";
             StringWriter w = new StringWriter();
             XmlSerializer ser = new XmlSerializer(typeof(IDE.ProjectNode));
             ser.Serialize(w, node);
@@ -85,16 +87,17 @@ namespace Clank.ViewCreator
             StringBuilder b = new StringBuilder();
             List<string> macros = new List<string>();
             List<string> access = new List<string>();
-
+            List<string> enums = new List<string>();
             // Parcours tous les types pour en extraire les macros / access.
             foreach (Type type in assembly.GetTypes())
             {
                 MethodInfo[] fields = type.GetMethods();
+                object[] attributes;
                 foreach (MethodInfo info in fields)
                 {
                     if (info.DeclaringType != type)
                         continue;
-                    object[] attributes = info.GetCustomAttributes(typeof(AccessAttribute), false);
+                    attributes = info.GetCustomAttributes(typeof(AccessAttribute), false);
                     foreach(object att in attributes)
                     {
                         AccessAttribute attr = att as AccessAttribute;
@@ -104,17 +107,55 @@ namespace Clank.ViewCreator
                             access.Add(CreateAccess("\t\t", info, attr));
                         }
                     }
+
+
+                }
+
+                if (type.IsEnum)
+                {
+                    // Récupère les types énumérés.
+                    attributes = type.GetCustomAttributes(typeof(EnumAttribute), false);
+                    foreach (object att in attributes)
+                    {
+                        EnumAttribute attr = att as EnumAttribute;
+                        if (attr != null)
+                        {
+                            enums.Add(CreateEnum("\t\t", type, attr));
+                        }
+                    }
                 }
             }
 
+
+
+
+
+            b.AppendLine("#include stdtypes.clank");
+            b.AppendLine("#include XNAMacros.clank");
             b.AppendLine("main\r\n{");
-            b.AppendLine("\tstate\r\n\t{");
+
 
             // Ecrit les includes
-            foreach(var kvp in views)
+            foreach (var kvp in views)
             {
-                b.AppendLine("\t\t#include " + kvp.Key);
+                b.AppendLine("\t#include " + kvp.Key);
             }
+
+            b.AppendLine("\tstate\r\n\t{");
+
+            b.AppendLine("\t\t# Rajoute les statements using et le bon namespace pour la classe state.");
+            b.AppendLine("\t\tvoid getClassMetadata_cs()");
+            b.AppendLine("\t\t{");
+            b.AppendLine("\t\t\tstring usingStatements = \"using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;\";");
+            b.AppendLine("\t\t\tstring namespace = \"Codinsa2015.Views\";");
+            b.AppendLine("\t\t}");
+
+            // Enumérations.
+            foreach(string str in enums)
+            {
+                b.AppendLine(str);
+            }
+
 
             b.AppendLine("\t}");
             // Macros
@@ -156,14 +197,39 @@ namespace Clank.ViewCreator
                 b.Append(CreateTypeName(arg.ParameterType) + " " + arg.Name + ",");
             }
             b.Remove(b.Length - 1, 1); // supprime la virgule en trop
-            b.Append(") { string cs = \"" + attr.ObjectSource + "." + info.Name + "($(clientId),");
+            b.Append(") { string cs = \"" + attr.ObjectSource + "." + info.Name + "(");
             foreach (var arg in info.GetParameters())
             {
                 b.Append("$(" + arg.Name + "),");
             }
 
-            b.Remove(b.Length - 1, 1); // supprime la virgule en trop
+            if(info.GetParameters().Length != 0)
+                b.Remove(b.Length - 1, 1); // supprime la virgule en trop
+
             b.Append(")\"; }");
+
+            return b.ToString();
+        }
+        /// <summary>
+        /// Crée une enum clank à partir du type énuméré C# donné.
+        /// </summary>
+        static string CreateEnum(string padding, Type t, EnumAttribute attr)
+        {
+            StringBuilder b = new StringBuilder();
+            b.AppendLine(padding + "public enum " + t.Name + "\r\n" + padding + "{");
+            Array values = t.GetEnumValues();
+            int i = 0;
+            foreach(string name in t.GetEnumNames())
+            {
+                b.Append(padding + "\t");
+                b.Append(name + " = ");
+                b.AppendLine((int)t.GetField(name).GetValue(t) + ",");
+                
+                i++;
+            }
+            b.Remove(b.Length - 1, 1); // supprime la virgule en trop
+
+            b.AppendLine(padding + "}");
 
             return b.ToString();
         }
@@ -174,16 +240,19 @@ namespace Clank.ViewCreator
         {
             StringBuilder b = new StringBuilder();
             b.AppendLine(padding + "# " + attr.Comment);
-            b.Append(padding + CreateTypeName(info.ReturnType) + " " + info.Name);
-            b.Append("(int clientId,");
+            b.Append(padding + "public " + CreateTypeName(info.ReturnType) + " " + info.Name);
+            b.Append("(");
             foreach (var arg in info.GetParameters())
             {
                 b.Append(CreateTypeName(arg.ParameterType) + " " + arg.Name + ",");
             }
-            b.Remove(b.Length - 1, 1); // supprime la virgule en trop
+
+            if(info.GetParameters().Length != 0)
+                b.Remove(b.Length - 1, 1); // supprime la virgule en trop
+
             b.AppendLine(")");
             b.AppendLine(padding + "{ ");
-            b.Append(padding + "\t" + info.Name + "_macro(clientId,");
+            b.Append(padding + "\treturn " + info.Name + "_macro(clientId,");
             foreach (var arg in info.GetParameters())
             {
                 b.Append(arg.Name + ",");
@@ -234,17 +303,29 @@ namespace Clank.ViewCreator
                 }
             }
 
+            if (records.Count == 0)
+                return "";
 
             StringBuilder b = new StringBuilder();
             b.AppendLine("# Généré automatiquement (Clank.ViewCreator)\r\n\r\n");
             b.AppendLine("state {");
             b.AppendLine("\tpublic serializable class " + typename + "View\r\n\t{\r\n");
 
+            // Metadata
+            b.AppendLine("\t\t# Rajoute les statements using et le bon namespace pour la classe state.");
+            b.AppendLine("\t\tvoid getClassMetadata_cs()");
+            b.AppendLine("\t\t{");
+            b.AppendLine("\t\t\tstring usingStatements = \"using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;\";");
+            b.AppendLine("\t\t\tstring namespace = \"Codinsa2015.Views\";");
+            b.AppendLine("\t\t}");
+
+            // Records
             foreach(Record r in records)
             {
                 b.AppendLine("\t\t#" + r.Comment);
                 b.AppendLine("\t\tpublic " + r.Type + " " + r.Name + ";");
             }
+
             b.AppendLine("\t}");
             b.AppendLine("}");
 
