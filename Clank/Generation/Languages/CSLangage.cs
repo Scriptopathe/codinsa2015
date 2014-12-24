@@ -71,8 +71,20 @@ using System.Text;");
             if (metadata.ContainsKey("namespace"))
                 theNamespace = metadata["namespace"];
             builder.AppendLine("namespace " + theNamespace + "\r\n{\r\n");
-            builder.Append("\t");
 
+            // Génère les potentielles enums
+            List<Instruction> enums = declaration.Instructions.Where(new Func<Instruction, bool>((Instruction inst) =>
+            {
+                return inst is EnumDeclaration;
+            })).ToList();
+            foreach(Instruction instruction in enums)
+            {
+                    builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 1));
+                    builder.Append("\t\n");
+            }
+
+
+            builder.Append("\t");
             string inheritance = declaration.InheritsFrom == null ? "" : " : " + declaration.InheritsFrom;
             if (declaration.Modifiers.Contains("public"))
                 builder.Append("public ");
@@ -96,8 +108,11 @@ using System.Text;");
             // Instructions
             foreach(Instruction instruction in declaration.Instructions)
             {
-                builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 2));
-                builder.Append("\t\n");
+                if (!(instruction is EnumDeclaration))
+                {
+                    builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 2));
+                    builder.Append("\t\n");
+                }
             }
 
             builder.AppendLine("\t}");

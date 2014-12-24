@@ -216,10 +216,12 @@ namespace Clank.Core.Generation
             catch (Core.Tokenizers.SyntaxError syntaxError)
             {
                 logHandler(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, "Erreur de syntaxe : " + syntaxError.Message, syntaxError.Line, 0, syntaxError.Source));
+                outputFiles.Clear();
             }
             catch (Core.Model.Semantic.SemanticError semError)
             {
                 // Le parseur sémantique utilise déjà le log.
+                outputFiles.Clear();
             }
             return outputFiles;
         }

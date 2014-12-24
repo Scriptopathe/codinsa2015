@@ -86,13 +86,16 @@ namespace Clank.Core.Model
 
 
             List<Language.Instruction> classes = new List<Language.Instruction>();
-
+            
             // Copie de la classe state
             Language.ClassDeclaration stateClass = State.StateClass.Copy();
+            stateClass.Modifiers.Add("public");
+
+
             stateClass.Instructions = stateClass.Instructions.Where((Language.Instruction inst) =>
             {
                 // Ne garde que les fonctions.
-                return inst is Language.FunctionDeclaration;
+                return inst is Language.FunctionDeclaration || inst is Language.EnumDeclaration;
             }).ToList();
 
             stateClass.Comment = "Contient toutes les informations concernant l'état du serveur.";
@@ -116,7 +119,6 @@ namespace Clank.Core.Model
                 id++;
             }
 
-
             classes.AddRange(stateClasses);
             classes.Add(stateClass);
 
@@ -132,6 +134,7 @@ namespace Clank.Core.Model
 
             // Copie de la classe state
             Language.ClassDeclaration stateClass = State.StateClass.Copy();
+            stateClass.Modifiers.Add("public");
             stateClass.Comment = "Contient toutes les informations concernant l'état du serveur.";
             // Copie des classes state
             List<Language.ClassDeclaration> stateClasses = new List<Language.ClassDeclaration>();
@@ -159,6 +162,7 @@ namespace Clank.Core.Model
             Language.Macros.ProcessMessageMacro processFunc = new Language.Macros.ProcessMessageMacro(Access, Write);
             processFunc.Comment = "Génère le code pour la fonction de traitement des messages.";
             stateClass.Instructions.Add(processFunc);
+
 
 
             // Classe de message

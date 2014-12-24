@@ -275,8 +275,17 @@ namespace Clank.Core.Model.Semantic
                 
                 // Si on est dans le block access / write, ajout de la variable spéciale id !
                 if((context.BlockName == Language.SemanticConstants.AccessBk || context.BlockName == Language.SemanticConstants.WriteBk))
-                    childContext.Variables.Add(Language.SemanticConstants.ClientID,
-                        new Language.Variable() { Name = Language.SemanticConstants.ClientID, Type = Types.FetchInstancedType("int", childContext) });
+                    if(childContext.Variables.ContainsKey(Language.SemanticConstants.ClientID))
+                    {
+                        string warning = "La variable '" + Language.SemanticConstants.ClientID + "' est implicitement déclarée dans le contexte actuel.";
+                        Log.AddWarning(warning, decl.Line, decl.Character, decl.Source);
+                    }
+                    else
+                    {
+                        childContext.Variables.Add(Language.SemanticConstants.ClientID,
+                            new Language.Variable() { Name = Language.SemanticConstants.ClientID, Type = Types.FetchInstancedType("int", childContext) });
+                    }
+
 
                 // Si on préparse, on ajoute juste la fonction à la table des types
                 // Sinon, on parse le code.
@@ -1021,8 +1030,8 @@ namespace Clank.Core.Model.Semantic
                             {
                                 // Une affectation n'est pas évaluable.
                                 error = "Une affectation n'est pas une expression évaluable. Peut être avez-vous oublié un point-virgule, ou peut être vous êtes vous cru en C?";
-                                Log.AddError(error, token.Line, token.Character, token.Source);
-                                throw new Clank.Core.Tokenizers.SyntaxError(error, token.Line, token.Source);
+                                Log.AddError(error, token.Operator.Line, token.Operator.Character, token.Operator.Source);
+                                throw new Clank.Core.Tokenizers.SyntaxError(error, token.Operator.Line, token.Operator.Source);
                             }
 
                             // Si le type n'existe pas, on lève une erreur.
