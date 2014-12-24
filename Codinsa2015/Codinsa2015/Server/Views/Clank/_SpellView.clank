@@ -1,0 +1,25 @@
+# Généré automatiquement (Clank.ViewCreator)
+
+
+state {
+	public serializable class SpellView
+	{
+
+		# Rajoute les statements using et le bon namespace pour la classe state.
+		void getClassMetadata_cs()
+		{
+			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string namespace = "Codinsa2015.Views";
+		}
+		#Référence vers la description du spell au niveau actuel du spell.
+		public SpellDescriptionView Description;
+		#Cooldown actuel du sort, en secondes
+		public float CurrentCooldown;
+		#Id de l'entité possédant le sort.
+		public int SourceCaster;
+		#Représente les descriptions du spell pour les différents niveaux.
+		public List<SpellDescriptionView> Levels;
+		#Niveau actuel du spell.
+		public int Level;
+	}
+}

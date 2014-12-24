@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<ProjectNode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>Codinsa2015</Name>
+  <SavePath />
+  <SourceFiles>
+    <string>_EntityBaseView.clank</string>
+    <string>_StateAlterationParametersView.clank</string>
+    <string>_StateAlterationView.clank</string>
+    <string>_StateAlterationModelView.clank</string>
+    <string>_MapView.clank</string>
+    <string>_SpellView.clank</string>
+    <string>_SpellCastTargetInfoView.clank</string>
+    <string>_SpellDescriptionView.clank</string>
+    <string>_SpellTargetInfoView.clank</string>
+    <string>main.clank</string>
+    <string>stdtypes.clank</string>
+    <string>XNAMacros.clank</string>
+  </SourceFiles>
+  <MainFile>main.clank</MainFile>
+  <Settings>
+    <ServerTarget>
+      <LanguageIdentifier>cs</LanguageIdentifier>
+      <OutputDirectory>..</OutputDirectory>
+    </ServerTarget>
+    <ClientTargets>
+      <GenerationTarget>
+        <LanguageIdentifier>cs</LanguageIdentifier>
+        <OutputDirectory>../../../../../Codinsa2015.Client/Codinsa2015.Client/Views</OutputDirectory>
+      </GenerationTarget>
+    </ClientTargets>
+  </Settings>
+</ProjectNode>

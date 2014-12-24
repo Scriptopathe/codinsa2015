@@ -1,0 +1,77 @@
+# Généré automatiquement (Clank.ViewCreator)
+
+
+state {
+	public serializable class EntityBaseView
+	{
+
+		# Rajoute les statements using et le bon namespace pour la classe state.
+		void getClassMetadata_cs()
+		{
+			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string namespace = "Codinsa2015.Views";
+		}
+		#Retourne la résistance magique effective de cette entité.
+		public float GetMagicResist;
+		#Retourne la valeur d'AP effective de cette entité.
+		public float GetAbilityPower;
+		#Retourne la valeur de CDR effective de cette entité.
+		public float GetCooldownReduction;
+		#Obtient la vitesse de déplacement de l'entité.
+		public float GetMoveSpeed;
+		#Obtient les points d'attaque effectifs de cette entité.
+		public float GetAttackDamage;
+		#Fonction utilisée pour obtenir les points d'armure effectifs sur cette unité.
+		public float GetArmor;
+		#Obtient les HP actuels de cette entité.
+		public float GetHP;
+		#Obtient les HP max actuels de cette entité.
+		public float GetMaxHP;
+		#Obtient la liste des altérations d'état affectées à cette entité.
+		public List<StateAlterationView> StateAlterations;
+		#Représente les points d'armure de base de cette entité.
+		public float BaseArmor;
+		#Représente la direction de cette entité.
+		public Vector2 Direction;
+		#Position de l'entité sur la map.
+		public Vector2 Position;
+		#Points de bouclier de cette entité.
+		public float ShieldPoints;
+		#Obtient les points de vie actuels de l'entité
+		public float HP;
+		#Obtient le nombre de points de vie maximum de base de cette entité.
+		public float BaseMaxHP;
+		#Obtient la vitesse de déplacement de base de l'entité.
+		public float BaseMoveSpeed;
+		#Retourne une valeur indiquant si l'entité est morte.
+		public bool IsDead;
+		#Retourne le type de cette entité.
+		public EntityType Type;
+		#Obtient l'id de cette entité.
+		public int ID;
+		#Obtient ou définit les points d'attaque de base de cette unité.
+		public float BaseAttackDamage;
+		#Cooldown reduction de base de cette unité.
+		public float BaseCooldownReduction;
+		#Attack speed de base de cette entité.
+		public float BaseAttackSpeed;
+		#Points d'AP de base de cette entité.
+		public float BaseAbilityPower;
+		#Point de résistance magique de base de cette entité.
+		public float BaseMagicResist;
+		#Obtient une valeur indiquant si cette entité est Rootée. (ne peut plus bouger).
+		public bool IsRooted;
+		#Obtient une valeur indiquant si cette unité est Silenced (ne peut pas utiliser de sorts).
+		public bool IsSilenced;
+		#Obtient une valeur indiquant si cette unité est Stuned (ne peut pas bouger ni utiliser de sorts).
+		public bool IsStuned;
+		#Obtient une valeur indiquant si cette unité est invisible.
+		public bool IsStealthed;
+		#Obtient une valeur indiquant si cette entité possède la vision pure.
+		public bool HasTrueVision;
+		#Obtient une valeur indiquant si cette unité peut voir les wards.
+		public bool HasWardVision;
+		#Retourne la range à laquelle cette entité donne la vision.
+		public float VisionRange;
+	}
+}

@@ -1,0 +1,23 @@
+# Généré automatiquement (Clank.ViewCreator)
+
+
+state {
+	public serializable class SpellCastTargetInfoView
+	{
+
+		# Rajoute les statements using et le bon namespace pour la classe state.
+		void getClassMetadata_cs()
+		{
+			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string namespace = "Codinsa2015.Views";
+		}
+		#Type de ciblage de cet objet TargetInfo.
+		public TargettingType Type;
+		#Retourne la position de la cible, si le type de ciblage (Type) est TargettingType.Position.
+		public Vector2 TargetPosition;
+		#Retourne la direction de la cible, si le type de ciblage (Type) est TargettingType.Direction. Ce vecteur est transformé automatiquement en vecteur unitaire.
+		public Vector2 TargetDirection;
+		#Retourne l'id de la cible, si le type de cibale (Type) est TargettingType.Targetted.
+		public int TargetId;
+	}
+}

@@ -1,0 +1,27 @@
+# Généré automatiquement (Clank.ViewCreator)
+
+
+state {
+	public serializable class SpellTargetInfoView
+	{
+
+		# Rajoute les statements using et le bon namespace pour la classe state.
+		void getClassMetadata_cs()
+		{
+			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string namespace = "Codinsa2015.Views";
+		}
+		#Type de ciblage du sort.
+		public TargettingType Type;
+		#Range du sort en unités métriques.
+		public float Range;
+		#Durée en secondes que met le sort à atteindre la position donnée.
+		public float Duration;
+		#Rayon du sort. (non utilisé pour les sort targetted)
+		public float AoeRadius;
+		#Obtient une valeur indiquant si le sort est détruit lors d'une collision avec une entité
+		public bool DieOnCollision;
+		#Retourne le type de cibles pouvant être touchées par ce sort.
+		public EntityTypeRelative AllowedTargetTypes;
+	}
+}
