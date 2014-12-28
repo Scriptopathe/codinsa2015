@@ -81,6 +81,7 @@
     <Compile Include="Server\Controlers\ControlerBase.cs" />
     <Compile Include="Server\Editor\MapEditorControler.cs" />
     <Compile Include="Server\Entities\EntityBase.cs" />
+    <Compile Include="Server\Entities\EntityHeroSpawner.cs" />
     <Compile Include="Server\Entities\EntityShop.cs" />
     <Compile Include="Server\Entities\EntityWard.cs" />
     <Compile Include="Server\Entities\EntityWardPlacement.cs" />
@@ -129,6 +130,7 @@
     </Compile>
     <Compile Include="Server\Input.cs" />
     <Compile Include="Server\Map.cs" />
+    <Compile Include="Server\MapFIle.cs" />
     <Compile Include="Server\Net\CommandServer.cs" />
     <Compile Include="Server\Particles\Particle.cs" />
     <Compile Include="Server\Particles\ParticleAnimation.cs" />

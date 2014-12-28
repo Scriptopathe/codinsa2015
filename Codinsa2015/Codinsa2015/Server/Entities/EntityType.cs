@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Codinsa2015.Server.Entities
 {
+
     /// <summary>
     /// Représente le type d'entité.
     /// /!\ Les types d'entités dans cet enum doivent correspondre aux types
@@ -35,11 +36,14 @@ namespace Codinsa2015.Server.Entities
         // Player
         Player          = 0x8000,
 
+        // Others
+        HeroSpawner     = 0x00080000,
+
         // Macros
-        AllTeam1    = Team1 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
-        AllTeam2    = Team2 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
+        AllTeam1        = Team1 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
+        AllTeam2        = Team2 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
         AllObjectives   = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss,
-        AllSaved        = AllObjectives | Checkpoint | EntityType.WardPlacement,
+        AllSaved        = AllObjectives | Checkpoint | WardPlacement | HeroSpawner,
         
         // Team
         Team1Tower      = Team1 | Tower,
@@ -88,6 +92,9 @@ namespace Codinsa2015.Server.Entities
 
         // Player
         Player          = 0x8000,
+
+        // Others
+        HeroSpawner = 0x00080000,
 
         // Macros
         AllEnnemy       = Ennemy | Tower | Inhibitor | Spawner | Idol | Player | Creep,
@@ -200,5 +207,34 @@ namespace Codinsa2015.Server.Entities
             return (EntityType)absInt;
         }
     }
+    /*public enum EntityTypev
+    {
+        // Macro types
+        Structure               = 0x0001,
+        Hero                    = 0x0002,
+        Monster                 = 0x0004,
+        Vision                  = 0x0008,
+        Untargettable           = 0x0010,
 
+        // Structures
+        HeroSpawner             = 0x0100 | Untargettable,
+        CreepSpawner            = 0x0200 | Structure,
+        Tower                   = 0x0400 | Structure,
+        Inhibitor               = 0x0800 | Structure,
+        Idol                    = 0x1000 | Structure,
+
+        // Monsters
+        Creep                   = 0x00010000 | Monster,
+        JungleMonster           = 0x00020000 | Monster,
+        MinibossMonster         = 0x00040000 | Monster,
+        BossMonster             = 0x00080000 | Monster,
+
+        // Vision
+        WardPlacement           = 0x00100000 | Vision | Untargettable,
+        Ward                    = 0x00200000 | Vision,
+
+        // Autres
+        Shop                    = 0x00400000 | Untargettable
+        Checkpoint              = 0x00800000 | Untargettable
+    }*/
 }

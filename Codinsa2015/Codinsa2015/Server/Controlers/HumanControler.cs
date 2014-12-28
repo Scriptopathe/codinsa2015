@@ -124,7 +124,7 @@ namespace Codinsa2015.Server.Controlers
         {
             MapEditControler.LoadContent();
             MapEditControler.CurrentMap = GameServer.GetScene().Map;
-            MapEditControler.OnMapLoaded += GameServer.GetScene().LoadMap;
+            MapEditControler.OnMapLoaded += GameServer.GetScene().Map.Load;
         }
         #endregion
 
@@ -145,12 +145,13 @@ namespace Codinsa2015.Server.Controlers
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightControl))
                 m_captureMouse = !m_captureMouse;
 
-            // Change le point de vue de la map.
-            Map.Pov = Pov;
 
             // Capture de la souris + scrolling.
             if(m_captureMouse)
                 UpdateMouseScrolling();
+
+            // Change le point de vue de la map.
+            Map.Pov = Pov;
 
             // Mise à jour du contrôleur de la map.
             MapEditControler.IsEnabled = EditMode;

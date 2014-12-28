@@ -28,10 +28,6 @@ namespace Codinsa2015.Server
             public int UnitSize;
         }
 
-        /// <summary>
-        /// Taille d'une unité métrique (= un case) en pixels.
-        /// </summary>
-        public static int UnitSize__OBSOLETE { get { return GameServer.GetMap().UnitSize; } set { GameServer.GetMap().UnitSize = value; } }
         const int TILE_SCALE = 16;
         const int BLUR_PASSES = 0;
 
@@ -188,7 +184,7 @@ namespace Codinsa2015.Server
             set 
             {
                 Vector2 valueVect = new Vector2(value.X, value.Y);
-                Vector2 pos = Vector2.Max(new Vector2(0, 0), Vector2.Min(valueVect, SizePixels - valueVect));
+                Vector2 pos = Vector2.Max(new Vector2(0, 0), Vector2.Min(valueVect, SizePixels - new Vector2(Viewport.Width, Viewport.Height)));
                 m_pointOfView.Scrolling = new Point((int)pos.X, (int)pos.Y);
             }
         }
@@ -231,19 +227,20 @@ namespace Codinsa2015.Server
             SetupTileRenderTarget();
             m_blur.ComputeOffsets(Viewport.Width, Viewport.Height);
         }
+
+        Dictionary<Point, RemoteRenderTarget> m_tilesRenderTargets = new Dictionary<Point, RemoteRenderTarget>();
         /// <summary>
         /// Crée le render target des tiles (s'adapted à la taille des cases).
         /// </summary>
         void SetupTileRenderTarget()
         {
-            if (m_tilesRenderTarget == null)
+            Point resolution = new Point(Viewport.Width / TILE_SCALE, Viewport.Height / TILE_SCALE);
+            if (m_tilesRenderTargets.ContainsKey(resolution))
+                m_tilesRenderTarget = m_tilesRenderTargets[resolution];
+            else
             {
-                m_tilesRenderTarget = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, Viewport.Width / TILE_SCALE, Viewport.Height / TILE_SCALE, RenderTargetUsage.PreserveContents);
-            }
-            else if (m_tilesRenderTarget.Width != Viewport.Width / TILE_SCALE || m_tilesRenderTarget.Height != Viewport.Height / TILE_SCALE)
-            {
-                m_tilesRenderTarget.Dispose();
-                m_tilesRenderTarget = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, Viewport.Width / TILE_SCALE, Viewport.Height / TILE_SCALE, RenderTargetUsage.PreserveContents);
+                m_tilesRenderTarget = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, resolution.X, resolution.Y, RenderTargetUsage.PreserveContents);
+                m_tilesRenderTargets.Add(resolution, m_tilesRenderTarget);
             }
         }
 
@@ -262,8 +259,8 @@ namespace Codinsa2015.Server
             // batch.GraphicsDevice.Clear(Color.Transparent);
             batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
             // Dessin de debug de la map.
-            int beginX = Scrolling.X / UnitSize;
-            int beginY = Scrolling.Y / UnitSize;
+            int beginX = Math.Max(0, Scrolling.X / UnitSize);
+            int beginY = Math.Max(0, Scrolling.Y / UnitSize);
             int endX = Math.Min(beginX + (Viewport.Width / UnitSize + 1), m_passability.GetLength(0));
             int endY = Math.Min(beginY + (Viewport.Height / UnitSize + 1), m_passability.GetLength(1));
 
@@ -554,168 +551,43 @@ namespace Codinsa2015.Server
         }
         #endregion
 
-        #region Save Load
+        #region Load
         /// <summary>
-        /// Sauvegarde la map.
+        /// Charge la map passée en paramètre.
         /// </summary>
-        public void Save()
+        /// <param name="map"></param>
+        public void Load(MapFile map)
         {
-            FileStream fs = new System.IO.FileStream(Ressources.MapFilename, System.IO.FileMode.Create);
-            StreamWriter writer = new StreamWriter(fs);
-            writer.WriteLine("size " + Size.X.ToString() + " " + Size.Y.ToString());
-            writer.WriteLine("map ");
-            for(int y = 0; y < Size.Y; y++)
-            {
-                for(int x = 0; x < Size.X; x++)
-                {
-                    writer.Write(GetPassabilityAt(x, y) ? "1" : "0");
-                }
-                writer.WriteLine();
-            }
+            Passability = map.Passability;
 
-            // Ecrit les entités
-            foreach(EntityBase entity in m_entities.Values)
-            {
-                string x = entity.Position.X.ToString();
-                string y = entity.Position.Y.ToString();
-                if(entity.Type.HasFlag(EntityType.Structure) | entity.Type.HasFlag(EntityType.WardPlacement))
-                    writer.WriteLine(entity.Type.ToString() + " " + x.ToString() + " " + y.ToString());
-                else if(entity.Type.HasFlag(EntityType.Checkpoint))
-                {
-                    EntityCheckpoint cp = (EntityCheckpoint)entity;
-                    writer.WriteLine(entity.Type.ToString() + " " + x.ToString() + " " + y.ToString() + " " + 
-                        cp.CheckpointRow + " " + cp.CheckpointID);
-                }
-                    
-            }
-
-            writer.Flush();
-            writer.Close();
-            fs.Close();
-        }
-
-        /// <summary>
-        /// Crée une nouvelle map depuis un fichier.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static Map FromFile(string path)
-        {
-            string[] words = File.ReadAllText(path).Split(new char[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            Point size = new Point(10, 10);
-            bool[,] pass = new bool[10, 10];
             EntityCollection newEntities = new EntityCollection();
             
-            for(int i = 0; i < words.Length; i++)
+            // Supprime les entités non-héros
+            foreach(var entity in Entities)
             {
-                string word = words[i];
-                if(word == "size")
-                {
-                    int sX = int.Parse(words[i + 1]);
-                    int sY = int.Parse(words[i + 2]);
-                    size = new Point(sX, sY);
-                    pass = new bool[sX, sY];
-                    i += 2;
-                } 
-                else if(word == "map")
-                {
-                    i++;
-
-                    for(int y = 0; y < size.Y; y++)
-                    {
-                        for(int x = 0; x < size.X; x++)
-                        {
-                            pass[x, y] = words[i][x] == '1' ? true : false;
-                        }
-                        i++;
-                    }
-
-                    i--;
-                }
-                else
-                {
-                    try
-                    {
-                        // Entitié
-                        EntityType type = (EntityType)Enum.Parse(typeof(EntityType), word);
-                        float sX = float.Parse(words[i + 1]);
-                        float sY = float.Parse(words[i + 2]);
-                        EntityBase newEntity = null;
-                        switch (type & (EntityType.AllSaved))
-                        {
-                            case EntityType.Tower:
-                                newEntity = new EntityTower()
-                                {
-                                    Position = new Vector2(sX, sY),
-                                    Type = type
-                                };
-                                break;
-
-                            case EntityType.Spawner:
-                                newEntity = new EntitySpawner()
-                                {
-                                    Position = new Vector2(sX, sY),
-                                    SpawnPosition = new Vector2(sX, sY),
-                                    Type = type
-                                };
-                                break;
-
-                            case EntityType.WardPlacement:
-                                newEntity = new EntityWardPlacement()
-                                {
-                                    Position = new Vector2(sX, sY),
-                                    Type = type,
-                                };
-                                break;
-                            case EntityType.Checkpoint:
-                                int row = int.Parse(words[i + 3]);
-                                int id = int.Parse(words[i + 4]);
-                                i += 2;
-                                newEntity = new EntityCheckpoint()
-                                {
-                                    Position = new Vector2(sX, sY),
-                                    Type = type,
-                                    CheckpointRow = row,
-                                    CheckpointID = id
-                                };
-                                break;
-
-                            case EntityType.Inhibitor:
-                                throw new NotImplementedException();
-                                break;
-                            case EntityType.Miniboss:
-                                throw new NotImplementedException();
-                                break;
-                            case EntityType.Idol:
-                                throw new NotImplementedException();
-                                break;
-                            case EntityType.Boss:
-                                throw new NotImplementedException();
-                                break;
-                        }
-
-                        i += 2;
-                        newEntities.Add(newEntity.ID, newEntity);
-                    }
-                    catch (System.ArgumentException) { }
-                }
+                if (entity.Value.Type.HasFlag(EntityType.Player))
+                    newEntities.Add(entity.Key, entity.Value);
             }
 
-            Map map = new Map() { Entities = newEntities, Passability = pass };
+            foreach(var entity in map.Entities)
+            {
+                newEntities.Add(entity.Key, entity.Value);
+            }
 
-            EntityHero dummyPlayer = new EntityHero() { Position = new Vector2(14, 20), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
-            map.Entities.Add(dummyPlayer.ID, dummyPlayer);
-            map.Heroes.Clear();
-            map.Heroes.Add(dummyPlayer);
-            return map;
+            Entities = newEntities;
+            Vision.TheMap = this;
+            if(OnMapModified != null)
+                OnMapModified();
         }
         #endregion
 
 
         #region View
-        
+
         #endregion
     }
 
 
 }
+
+

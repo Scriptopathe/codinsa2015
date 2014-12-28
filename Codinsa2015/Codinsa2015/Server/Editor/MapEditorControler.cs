@@ -34,7 +34,7 @@ namespace Codinsa2015.Server.Editor
         #endregion
 
         #region Events
-        public delegate void MapLoadedDelegate(Map map);
+        public delegate void MapLoadedDelegate(MapFile map);
         public event MapLoadedDelegate OnMapLoaded;
         #endregion
 
@@ -392,7 +392,7 @@ namespace Codinsa2015.Server.Editor
         /// </summary>
         public void Save()
         {
-            CurrentMap.Save();
+            MapFile.Save(CurrentMap);
         }
 
         /// <summary>
@@ -404,10 +404,9 @@ namespace Codinsa2015.Server.Editor
             {
                 try
                 {
-                    Map loaded = Map.FromFile(Ressources.MapFilename);
-                    CurrentMap = loaded;
+                    MapFile loaded = MapFile.FromFile(Ressources.MapFilename);
                     if (OnMapLoaded != null)
-                        OnMapLoaded(CurrentMap);
+                        OnMapLoaded(loaded);
                 }
                 /*catch { }*/
                 finally { }
@@ -465,6 +464,15 @@ namespace Codinsa2015.Server.Editor
 
             if(m_displayMinimap && m_minimapDirty)
             {
+                // Si la taille de la map a a changé, on change la taille de la texture de la minimap.
+                if(m_minimapTexture.Width != CurrentMap.Passability.GetLength(0) || m_minimapTexture.Height != CurrentMap.Passability.GetLength(1))
+                {
+                    m_minimapTexture.Dispose();
+                    m_minimapTexture = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, CurrentMap.Size.X, CurrentMap.Size.Y, RenderTargetUsage.PreserveContents);
+                    
+                    
+                }
+
                 m_minimapBatch.GraphicsDevice.SetRenderTarget(m_minimapTexture);
                 m_minimapBatch.Begin(SpriteSortMode.BackToFront, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
                 m_minimapBatch.GraphicsDevice.Clear(Color.White);
