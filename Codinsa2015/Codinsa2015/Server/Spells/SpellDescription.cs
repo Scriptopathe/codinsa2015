@@ -69,5 +69,24 @@ namespace Codinsa2015.Server.Spells
         /// </summary>
         [Clank.ViewCreator.Export("List<StateAlterationModelView>", "Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.")]
         public List<StateAlterationModel> OnHitEffects { get; set; }
+
+        /// <summary>
+        /// Retourne une vue représentant cette instance.
+        /// </summary>
+        /// <returns></returns>
+        public Views.SpellDescriptionView ToView()
+        {
+            Views.SpellDescriptionView view = new Views.SpellDescriptionView();
+            view.BaseCooldown = BaseCooldown;
+            view.CastingTime = CastingTime;
+            view.CastingTimeAlteration = CastingTimeAlteration.ToView();
+            view.TargetType = TargetType.ToView();
+            view.OnHitEffects = new List<Views.StateAlterationModelView>();
+            foreach(var ohe in OnHitEffects)
+            {
+                view.OnHitEffects.Add(ohe.ToView());
+            }
+            return view;
+        }
     }
 }

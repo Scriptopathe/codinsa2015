@@ -13,7 +13,6 @@ namespace Codinsa2015.Views
 	{
 
 	
-		public SpellDescriptionView Description;	
 		public float CurrentCooldown;	
 		public int SourceCaster;	
 		public List<SpellDescriptionView> Levels;	

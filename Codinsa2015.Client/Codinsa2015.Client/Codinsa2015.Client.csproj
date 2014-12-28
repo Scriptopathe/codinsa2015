@@ -82,16 +82,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="TCPHelper.cs" />
-    <Compile Include="Views\EntityBaseView.cs" />
-    <Compile Include="Views\MapView.cs" />
-    <Compile Include="Views\SpellCastTargetInfoView.cs" />
-    <Compile Include="Views\SpellDescriptionView.cs" />
-    <Compile Include="Views\SpellTargetInfoView.cs" />
-    <Compile Include="Views\SpellView.cs" />
     <Compile Include="Views\State.cs" />
-    <Compile Include="Views\StateAlterationModelView.cs" />
-    <Compile Include="Views\StateAlterationParametersView.cs" />
-    <Compile Include="Views\StateAlterationView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

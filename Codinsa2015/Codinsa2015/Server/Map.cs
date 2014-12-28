@@ -102,6 +102,7 @@ namespace Codinsa2015.Server
             set
             {
                 m_pointOfView = value;
+                Scrolling = m_pointOfView.Scrolling; // auto adjust scrolling
                 SetupTileRenderTarget();
             }
         }
@@ -184,7 +185,12 @@ namespace Codinsa2015.Server
         public Point Scrolling
         {
             get { return m_pointOfView.Scrolling; }
-            set { m_pointOfView.Scrolling = value; }
+            set 
+            {
+                Vector2 valueVect = new Vector2(value.X, value.Y);
+                Vector2 pos = Vector2.Max(new Vector2(0, 0), Vector2.Min(valueVect, SizePixels - valueVect));
+                m_pointOfView.Scrolling = new Point((int)pos.X, (int)pos.Y);
+            }
         }
 
         /// <summary>
@@ -192,8 +198,8 @@ namespace Codinsa2015.Server
         /// </summary>
         public Vector2 ScrollingVector2
         {
-            get { return new Vector2(m_pointOfView.Scrolling.X, m_pointOfView.Scrolling.Y); }
-            set { m_pointOfView.Scrolling = new Point((int)value.X, (int)value.Y); }
+            get { return new Vector2(Scrolling.X, Scrolling.Y); }
+            set { Scrolling = new Point((int)value.X, (int)value.Y); }
         }
 
         /// <summary>
@@ -423,7 +429,6 @@ namespace Codinsa2015.Server
                 m_spellcasts.Remove(cast); 
             }
 
-            UpdateScrolling();
 
             // Lance l'évènement indiquant que la map a été modifiée.
             if(__fireMapModifiedEvent)
@@ -435,25 +440,6 @@ namespace Codinsa2015.Server
         }
 
         
-        /// <summary>
-        /// Mise à jour du scrolling de la map.
-        /// </summary>
-        void UpdateScrolling()
-        {
-            // Scrolling
-            int speed = 16;
-            if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad4))
-                m_pointOfView.Scrolling.X -= speed;
-            else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad6))
-                m_pointOfView.Scrolling.X += speed;
-            if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad8))
-                m_pointOfView.Scrolling.Y -= speed;
-            else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad2))
-                m_pointOfView.Scrolling.Y += speed;
-
-            m_pointOfView.Scrolling.X = Math.Max(0, Math.Min(m_passability.GetLength(0) * UnitSize - m_viewport.Width, Scrolling.X));
-            m_pointOfView.Scrolling.Y = Math.Max(0, Math.Min(m_passability.GetLength(1) * UnitSize - m_viewport.Height, Scrolling.Y));
-        }
         #endregion
         
         #region Positions
@@ -493,7 +479,7 @@ namespace Codinsa2015.Server
         /// </summary>
         public bool GetPassabilityAt(float x, float y)
         {
-            if (x < 0 || y < 0 || x >= m_passability.GetLength(0) || y >= m_passability.GetLength(1))
+            if (x < 0 || y < 0 || x >= m_passability.GetLength(0) || y >= m_passability.GetLength(1) || float.IsNaN(x) || float.IsNaN(y))
                 return false;
 
             return m_passability[(int)x, (int)y];

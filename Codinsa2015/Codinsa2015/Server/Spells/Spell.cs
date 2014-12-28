@@ -28,7 +28,6 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Référence vers la description du spell au niveau actuel du spell.
         /// </summary>
-        [Clank.ViewCreator.Export("SpellDescriptionView", "Référence vers la description du spell au niveau actuel du spell.")]
         public SpellDescription Description
         {
             get { return Levels[Level]; }
@@ -192,5 +191,21 @@ namespace Codinsa2015.Server.Spells
             CurrentCooldown = Math.Max(0.0f, CurrentCooldown - elapsedSeconds);
         }
         #endregion
+
+        /// <summary>
+        /// Retourne une vue représentant cette instance.
+        /// </summary>
+        /// <returns></returns>
+        public Views.SpellView ToView()
+        {
+            Views.SpellView view = new Views.SpellView();
+            view.CurrentCooldown = CurrentCooldown;
+            view.Level = Level;
+            view.Levels = new List<Views.SpellDescriptionView>();
+            foreach (var lvl in Levels)
+                view.Levels.Add(lvl.ToView());
+            view.SourceCaster = SourceCaster.ID;
+            return view;
+        }
     }
 }

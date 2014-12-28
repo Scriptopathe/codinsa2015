@@ -11,8 +11,6 @@ state {
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
-		#Référence vers la description du spell au niveau actuel du spell.
-		public SpellDescriptionView Description;
 		#Cooldown actuel du sort, en secondes
 		public float CurrentCooldown;
 		#Id de l'entité possédant le sort.

@@ -288,7 +288,7 @@ namespace Codinsa2015.Server
         /// <returns></returns>
         public static List<Vector2> Astar(Vector2 debut, Vector2 fin, int maxAllowedMoves = 1000)
         {
-            if (!GameServer.GetMap().GetPassabilityAt(fin))
+            if (!GameServer.GetMap().GetPassabilityAt(fin) || !GameServer.GetMap().GetPassabilityAt(debut))
                 return new List<Vector2>();
 
             Point start = new Point((int)debut.X, (int)debut.Y);

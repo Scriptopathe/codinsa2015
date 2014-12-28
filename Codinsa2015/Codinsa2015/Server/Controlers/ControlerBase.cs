@@ -69,6 +69,7 @@ namespace Codinsa2015.Server.Controlers
         #endregion
 
         #region IFACE
+        const string controlerAccessStr = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)";
         /// <summary>
         /// Achète l'armure dont le numéro est celui donné, au shop d'id donné.
         /// </summary>
@@ -127,11 +128,30 @@ namespace Codinsa2015.Server.Controlers
             return ShopItem(shopId, weaponId, shop.GetWeapons(Hero));
         }
 
+
+        /// <summary>
+        /// Retourne une vue vers le héros contrôlé par ce contrôleur.
+        /// </summary>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Retourne une vue vers le héros contrôlé par ce contrôleur.")]
+        public Views.EntityBaseView GetHero()
+        {
+            return GetEntityById(Hero.ID);
+        }
+        
+        /// <summary>
+        /// Retourne la position du héros.
+        /// </summary>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Retourne la position du héros.")]
+        public Vector2 GetPosition()
+        {
+            return Hero.Position;
+        }
+
         /// <summary>
         /// Retourne les informations concernant la map actuelle.
         /// </summary>
         /// <returns></returns>
-        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)", "Retourne les informations concernant la map actuelle")]
+        [Clank.ViewCreator.Access(controlerAccessStr, "Retourne les informations concernant la map actuelle")]
         public Views.MapView GetMapView()
         {
             Views.MapView view = new Views.MapView();
@@ -142,7 +162,7 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Déplace le joueur vers la position donnée en utilisant l'A*.
         /// </summary>
-        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)", "Déplace le joueur vers la position donnée en utilisant l'A*.")]
+        [Clank.ViewCreator.Access(controlerAccessStr, "Déplace le joueur vers la position donnée en utilisant l'A*.")]
         public bool StartMoveTo(Vector2 position)
         {
             return Hero.StartMoveTo(position);
@@ -152,7 +172,7 @@ namespace Codinsa2015.Server.Controlers
         /// Indique si le joueur est entrain de se déplacer en utilisant son A*.
         /// </summary>
         /// <returns></returns>
-        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)", "Indique si le joueur est entrain de se déplacer en utilisant son A*.")]
+        [Clank.ViewCreator.Access(controlerAccessStr, "Indique si le joueur est entrain de se déplacer en utilisant son A*.")]
         public bool IsAutoMoving()
         {
             return Hero.IsAutoMoving();
@@ -162,7 +182,7 @@ namespace Codinsa2015.Server.Controlers
         /// Arrête le déplacement automatique (A*) du joueur.
         /// </summary>
         /// <returns></returns>
-        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)", "Arrête le déplacement automatique (A*) du joueur.")]
+        [Clank.ViewCreator.Access(controlerAccessStr, "Arrête le déplacement automatique (A*) du joueur.")]
         public bool EndMoveTo()
         {
             Hero.EndMoveTo();
@@ -173,7 +193,7 @@ namespace Codinsa2015.Server.Controlers
         /// Retourne la liste des entités en vue.
         /// </summary>
         /// <returns></returns>
-        [Clank.ViewCreator.Access("Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)", "Retourne la liste des entités en vue")]
+        [Clank.ViewCreator.Access(controlerAccessStr, "Retourne la liste des entités en vue")]
         public List<Views.EntityBaseView> GetEntitiesInSight()
         {
             List<Views.EntityBaseView> views = new List<Views.EntityBaseView>();
@@ -187,6 +207,7 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Obtient une vue sur l'entité dont l'id est passé en paramètre.
         /// </summary>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès refusé)")]
         public Views.EntityBaseView GetEntityById(int entityId)
         {
             Entities.EntityBase entity =  GetMap().GetEntityById(entityId);
@@ -228,8 +249,96 @@ namespace Codinsa2015.Server.Controlers
             }
             else
             {
-                return new Views.EntityBaseView();
+                return new Views.EntityBaseView() { ID = -1 };
             }
+        }
+
+        /// <summary>
+        /// Utilise le sort d'id donné.
+        /// </summary>
+        /// <returns>Retourne true si l'action a été effectuée.</returns>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Utilise le sort d'id donné. Retourne true si l'action a été effectuée.")]
+        public bool UseSpell(int spellId, Views.SpellCastTargetInfoView target)
+        {
+            if(Hero.Spells.Count <= spellId)
+            {
+                return false;
+            }
+
+            return Hero.Spells[spellId].Use(new Spells.SpellCastTargetInfo()
+            {
+                TargetDirection = target.TargetDirection,
+                TargetPosition = target.TargetPosition,
+                TargetId = target.TargetId,
+                Type = (Codinsa2015.Server.Spells.TargettingType)target.Type,
+                AlterationParameters = new Entities.StateAlterationParameters()
+            });
+        }
+
+        /// <summary>
+        /// Obtient la description du spell dont l'id est donné en paramètre.
+        /// </summary>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient la description du spell dont l'id est donné en paramètre.")]
+        public Views.SpellDescriptionView GetSpellCurrentLevelDescription(int spellId)
+        {
+            // Check de l'id du spell.
+            if (Hero.Spells.Count <= spellId)
+            {
+                return new Views.SpellDescriptionView();
+            }
+
+            return Hero.Spells[spellId].Description.ToView();
+        }
+
+        /// <summary>
+        /// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+        /// </summary>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.")]
+        public Views.SpellView GetSpell(int spellId)
+        {
+            // Check de l'id du spell.
+            if (Hero.Spells.Count <= spellId)
+            {
+                return new Views.SpellView();
+            }
+
+            return Hero.Spells[spellId].ToView();
+        }
+
+        /// <summary>
+        /// Obtient la liste des spells du héros contrôlé.
+        /// </summary>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient la liste des spells du héros contrôlé.")]
+        public List<Views.SpellView> GetSpells()
+        {
+            List<Views.SpellView> spells = new List<Views.SpellView>();
+            foreach (var spell in Hero.Spells)
+                spells.Add(spell.ToView());
+
+            return spells;
+        }
+
+        /// <summary>
+        /// Obtient les spells possédés par le héros dont l'id est passé en paramètre.
+        /// </summary>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient les spells possédés par le héros dont l'id est passé en paramètre.")]
+        public List<Views.SpellView> GetHeroSpells(int entityId)
+        {
+            // Vérifie que l'entité existe.
+            if(!GetMap().Entities.ContainsKey(entityId))
+                return new List<Views.SpellView>();
+
+            Entities.EntityHero hero = GetMap().Entities[entityId] as Entities.EntityHero;
+
+            // Vérifie que l'entité est bien un héros.
+            if (hero == null)
+                return new List<Views.SpellView>();
+
+            List<Views.SpellView> spells = new List<Views.SpellView>();
+            foreach (var spell in hero.Spells)
+                spells.Add(spell.ToView());
+
+            return spells;
         }
         #endregion
     }

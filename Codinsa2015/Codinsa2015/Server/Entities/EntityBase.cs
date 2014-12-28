@@ -999,6 +999,10 @@ namespace Codinsa2015.Server.Entities
             // Détermine si la direction finale est praticable.
             Vector2 finalPosition = Position + direction * speed * remainingDuration;
 
+            if(float.IsNaN(finalPosition.X) || float.IsNaN(finalPosition.Y))
+                return;
+            
+
             // Dash : on ignore les murs tant que la destination est praticable, si elle ne l'est pas,
             // on cogne.
             if (goThroughWalls && GameServer.GetMap().GetPassabilityAt(finalPosition.X, finalPosition.Y))

@@ -345,7 +345,7 @@ namespace Codinsa2015.Server
         void CommandServer_ClientConnected(int clientId)
         {
             // Crée le héros correspondant au contrô
-            EntityHero hero = new EntityHero() { Type = EntityType.Team1Player, HP = 5000, Position = new Vector2(15, 15) };
+            EntityHero hero = new EntityHero() { Type = EntityType.Team2Player, HP = 5000, Position = new Vector2(15, 15) };
 
             // Génère un id de contrôleur.
             int controlerId = Controlers.Count;

@@ -77,6 +77,21 @@ namespace Codinsa2015.Server.Spells
         /// </summary>
         [Clank.ViewCreator.Export("EntityTypeRelative", "Retourne le type de cibles pouvant être touchées par ce sort.")]
         public Entities.EntityTypeRelative AllowedTargetTypes { get; set; }
+
+        /// <summary>
+        /// Retourne une view représentant cette instance.
+        /// </summary>
+        public Views.SpellTargetInfoView ToView()
+        {
+            Views.SpellTargetInfoView view = new Views.SpellTargetInfoView();
+            view.AllowedTargetTypes = (Views.EntityTypeRelative)AllowedTargetTypes;
+            view.AoeRadius = AoeRadius;
+            view.DieOnCollision = DieOnCollision;
+            view.Duration = Duration;
+            view.Range = Range;
+            view.Type = (Views.TargettingType)Type;
+            return view;
+        }
     }
 
 }
