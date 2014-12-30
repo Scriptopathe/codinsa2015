@@ -53,13 +53,22 @@ namespace Codinsa2015.Server.Spellcasts
             m_entityIgnoreList = new List<EntityBase>();
 
             if (castInfo.Type == Spells.TargettingType.Targetted)
-                m_initialTargetPos = GameServer.GetMap().GetEntityById(castInfo.TargetId).Position;
+            {
+                EntityBase target = GameServer.GetMap().GetEntityById(castInfo.TargetId);
+                if(target == null)
+                    IsDisposing= true;
+                else
+                    m_initialTargetPos = target.Position;
+            }
         }
         /// <summary>
         /// Mets à jour ce sort.
         /// </summary>
         public override void Update(GameTime time)
         {
+            if (IsDisposing)
+                return;
+
             // Supprime le spell une fois que sa durée est terminée.
             if (m_time > SourceSpell.Description.TargetType.Duration)
             {
@@ -84,6 +93,12 @@ namespace Codinsa2015.Server.Spellcasts
                     break;
                 // Targetted : on avance vers la cible.
                 case Spells.TargettingType.Targetted:
+                    if(GameServer.GetMap().GetEntityById(m_castInfo.TargetId) == null)
+                    {
+                        IsDisposing = true;
+                        return;
+                    }
+
                     if(SourceSpell.Description.TargetType.Duration == 0)
                     {
                         // Duration 0 : sort instant.
