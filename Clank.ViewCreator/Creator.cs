@@ -142,7 +142,6 @@ namespace Clank.ViewCreator
             }
 
             b.AppendLine("\tstate\r\n\t{");
-
             b.AppendLine("\t\t# Rajoute les statements using et le bon namespace pour la classe state.");
             b.AppendLine("\t\tvoid getClassMetadata_cs()");
             b.AppendLine("\t\t{");
