@@ -560,13 +560,25 @@ namespace Codinsa2015.Server
         {
             Passability = map.Passability;
 
+            // Cherche les spawners des 2 équipes
+            EntityCollection spawners = map.Entities.GetEntitiesByType(EntityType.HeroSpawner);
             EntityCollection newEntities = new EntityCollection();
             
             // Supprime les entités non-héros
             foreach(var entity in Entities)
             {
                 if (entity.Value.Type.HasFlag(EntityType.Player))
+                {
                     newEntities.Add(entity.Key, entity.Value);
+
+                    // Positionne les héros sur les spawners.
+                    var spawnerCol = spawners.GetEntitiesByType(entity.Value.Type & EntityType.Teams);
+                    if(spawnerCol.Count > 0)
+                    {
+                        EntityBase spawner = spawnerCol.First().Value;
+                        entity.Value.Position = spawner.Position;
+                    }
+                }
             }
 
             foreach(var entity in map.Entities)

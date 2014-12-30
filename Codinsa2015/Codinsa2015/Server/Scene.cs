@@ -98,11 +98,17 @@ namespace Codinsa2015.Server
         public Server.Controlers.ControlerBase CurrentControler { get; set; }
 
         /// <summary>
+        /// Représente le contrôleur utilisé pour la phase du lobby.
+        /// </summary>
+        public Server.Controlers.LobbyControler LobbyControler { get; set; }
+
+        /// <summary>
         /// Obtient une référence vers l'état du serveur.
         /// </summary>
         public Views.State State { get; set; }
 
-        object m_controlerLock = new object();
+        public object ControlerLock = new object();
+        public object CommandLock = new object();
         #endregion
 
         #region Methods
@@ -115,6 +121,7 @@ namespace Codinsa2015.Server
         {
             m_commands = new Queue<Tuple<int, string>>();
             m_clientIdToControlerId = new Dictionary<int, int>();
+            LobbyControler = new Server.Controlers.LobbyControler(this);
             Mode = SceneMode.Lobby;
         }
 
@@ -148,8 +155,28 @@ namespace Codinsa2015.Server
         {
             // Charge le contrôleur humain.
             Entities.EntityHero hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
-            Server.Controlers.HumanControler humanControler = new Server.Controlers.HumanControler(hero);
+            Server.Controlers.HumanControler humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Joueur intégré" };
             Controlers.Add(0, humanControler);
+
+            /*hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
+            humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Joueur intégré" };
+            Controlers.Add(1, humanControler);
+
+            hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
+            humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Joueur intégré" };
+            Controlers.Add(2, humanControler);
+
+            hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team2Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
+            humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Joueur intégré" };
+            Controlers.Add(3, humanControler);
+
+            hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team2Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
+            humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Joueur intégré" };
+            Controlers.Add(4, humanControler);
+
+            hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team2Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
+            humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Joueur intégré" };
+            Controlers.Add(5, humanControler);*/
 
             // Démarre l'attente de connexions.
             CommandServer.WaitForConnectionsAsync(Codinsa2015.Graphics.Client.RemoteClient.__DEBUG_PORT, "127.0.0.1");
@@ -211,7 +238,7 @@ namespace Codinsa2015.Server
         void LoadGameContent()
         {
             // Charge le content des contrôleurs.
-            lock (m_controlerLock)
+            lock (ControlerLock)
                 foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.LoadContent(); }
 
             // Charge le ressources de la map.
@@ -311,6 +338,8 @@ namespace Codinsa2015.Server
         /// <param name="time"></param>
         void UpdateLobby(GameTime time)
         {
+            LobbyControler.Update(time);
+
             if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Enter))
             {
                 Mode = SceneMode.Game;
@@ -323,28 +352,16 @@ namespace Codinsa2015.Server
         /// </summary>
         void DrawLobby(GameTime time, RemoteSpriteBatch batch)
         {
-            batch.Begin();
-            batch.GraphicsDevice.Clear(Color.Black);
-            int y = 100;
-            int x = 5;
-            foreach(var kvp in Controlers)
-            {
-                EntityHero hero = kvp.Value.Hero;
-                batch.DrawString(Ressources.CourrierFont, "Joueur n°" + kvp.Key + " connecté. (contrôleur : " + kvp.Value.GetType().Name + ")", new Vector2(x, y), Color.White);
-                y += 25;
-            }
-
-            batch.DrawString(Ressources.CourrierFont, "Appuyez sur Entrée pour lancer le jeu.", new Vector2(x, y), Color.Gray);
-            batch.End();
-
+            LobbyControler.Draw(time, batch);
         }
+
         /// <summary>
         /// Callback appelé lorsqu'un client se connecte au serveur.
         /// </summary>
         /// <param name="clientId"></param>
-        void CommandServer_ClientConnected(int clientId)
+        void CommandServer_ClientConnected(int clientId, string name)
         {
-            // Crée le héros correspondant au contrô
+            // Crée le héros lié à ce client.
             EntityHero hero = new EntityHero() { Type = EntityType.Team2Player, HP = 5000, Position = new Vector2(15, 15) };
 
             // Génère un id de contrôleur.
@@ -352,11 +369,10 @@ namespace Codinsa2015.Server
             
             // Mappe l'id du client à l'id du contrôleur.
             m_clientIdToControlerId[clientId] = controlerId;
-
+            
             // Enregistre le contrôleur.
-            lock (m_controlerLock)
-                Controlers.Add(controlerId, new Controlers.IAControler(hero));
-
+            lock (ControlerLock)
+                Controlers.Add(controlerId, new Controlers.IAControler(hero) { HeroName = name });
         }
         #endregion
 
@@ -369,7 +385,8 @@ namespace Codinsa2015.Server
         /// <returns></returns>
         void CommandServer_CommandReceived(int clientId, string command)
         {
-            m_commands.Enqueue(new Tuple<int, string>(clientId, command));
+            lock(CommandLock)
+                m_commands.Enqueue(new Tuple<int, string>(clientId, command));
         }
 
         /// <summary>
@@ -377,10 +394,13 @@ namespace Codinsa2015.Server
         /// </summary>
         void CommandServer_Update()
         {
-            while (m_commands.Count != 0)
+            lock (CommandLock)
             {
-                var tup = m_commands.Dequeue();
-                CommandServer.Send(tup.Item1, State.ProcessRequest(tup.Item2, tup.Item1));
+                while (m_commands.Count != 0)
+                {
+                    var tup = m_commands.Dequeue();
+                    CommandServer.Send(tup.Item1, State.ProcessRequest(tup.Item2, tup.Item1));
+                }
             }
         }
         /// <summary>
@@ -398,7 +418,7 @@ namespace Codinsa2015.Server
             Map.Update(time);
 
             // Mets à jour les contrôleurs
-            lock (m_controlerLock)
+            lock (ControlerLock)
                 foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Update(time); }
 
             // Mets à jour les récompenses.
@@ -413,7 +433,7 @@ namespace Codinsa2015.Server
         /// <param name="batch"></param>
         void DrawGameMode(GameTime time, RemoteSpriteBatch batch)
         {
-            lock (m_controlerLock)
+            lock (ControlerLock)
                 foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Draw(batch, time); GraphicsServer.Flush(); }
         }
         #endregion

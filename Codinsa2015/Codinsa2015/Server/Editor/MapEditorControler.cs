@@ -387,6 +387,21 @@ namespace Codinsa2015.Server.Editor
             };
             CurrentMap.Entities.Add(entity.ID, entity);
         }
+
+        /// <summary>
+        /// Ajoute une zone de spawn de héros à la position donnée.
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="position"></param>
+        public void AddHeroSpawner(EntityType team, Vector2 position)
+        {
+            Entities.EntityBase entity = new EntityHeroSpawner()
+            {
+                Position = position,
+                Type = EntityType.HeroSpawner | team,
+            };
+            CurrentMap.Entities.Add(entity.ID, entity);
+        }
         /// <summary>
         /// Sauvegarde la map.
         /// </summary>
