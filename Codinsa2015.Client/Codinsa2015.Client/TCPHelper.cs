@@ -18,10 +18,11 @@ namespace Codinsa2015.Views
         /// <summary>
         /// Initialise un client vers un serveur sur l'IP donnée.
         /// </summary>
-        public static void Initialize(int port, string ip)
+        public static void Initialize(int port, string ip, string nickname)
         {
             s_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             s_socket.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
+            Send(nickname);
         }
 
         /// <summary>

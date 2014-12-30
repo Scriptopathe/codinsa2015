@@ -14,7 +14,7 @@ namespace Codinsa2015.Server.Net
     public class CommandServer
     {
         #region Delegates / events
-        public delegate void ClientConnectedDelegate(int clientId);
+        public delegate void ClientConnectedDelegate(int clientId, string nickname);
         public delegate void CommandReceivedDelegate(int clientId, string command);
 
         /// <summary>
@@ -91,8 +91,9 @@ namespace Codinsa2015.Server.Net
                             m_buffer.Add(id, new byte[512]);
                         }
 
+                        string name = Receive(id);
                         if (ClientConnected != null)
-                            ClientConnected(id);
+                            ClientConnected(id, name);
 
                         id++;
                     }
