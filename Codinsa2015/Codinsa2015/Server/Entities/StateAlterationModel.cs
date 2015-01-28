@@ -401,6 +401,37 @@ namespace Codinsa2015.Server.Entities
             view.Type = (Views.StateAlterationType)Type;
             return view;
         }
+
+        /// <summary>
+        /// Obtient une copie de cet objet.
+        /// </summary>
+        /// <returns></returns>
+        public StateAlterationModel Copy()
+        {
+            StateAlterationModel view = new StateAlterationModel();
+            view.BaseDuration = BaseDuration;
+            view.CreepBonus = CreepBonus;
+            view.DashDirectionType = DashDirectionType;
+            view.DashGoThroughWall = DashGoThroughWall;
+            view.DestPercentADValue = DestPercentADValue;
+            view.DestPercentAPValue = DestPercentAPValue;
+            view.DestPercentArmorValue = DestPercentArmorValue;
+            view.DestPercentHPValue = DestPercentHPValue;
+            view.DestPercentMaxHPValue = DestPercentMaxHPValue;
+            view.DestPercentRMValue = DestPercentRMValue;
+            view.FlatValue = FlatValue;
+            view.MonsterBonus = MonsterBonus;
+            view.SourcePercentADValue = SourcePercentADValue;
+            view.SourcePercentAPValue = SourcePercentAPValue;
+            view.SourcePercentArmorValue = SourcePercentArmorValue;
+            view.SourcePercentHPValue = SourcePercentHPValue;
+            view.SourcePercentMaxHPValue = SourcePercentMaxHPValue;
+            view.SourcePercentRMValue = SourcePercentRMValue;
+            view.StructureBonus = StructureBonus;
+            view.Type = Type;
+            
+            return view;
+        }
         #region Constructors
         public static StateAlterationModel None() { return new StateAlterationModel(); }
         public static StateAlterationModel Root(float duration)

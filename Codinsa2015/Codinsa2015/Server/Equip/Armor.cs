@@ -8,11 +8,9 @@ namespace Codinsa2015.Server.Equip
     /// <summary>
     /// Classe de base pour représenter une armure.
     /// </summary>
-    public class Armor : Equipment
+    public class Armor : PassiveEquipment
     {
-        public override EquipmentType Type
-        {
-            get { return EquipmentType.Armor; }
-        }
+        public Armor(Entities.EntityHero owner, PassiveEquipmentModel model)
+            : base(owner, model) { }
     }
 }

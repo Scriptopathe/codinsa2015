@@ -15,7 +15,7 @@ namespace Codinsa2015.Views
 	
 		public float BaseCooldown;	
 		public float CastingTime;	
-		public StateAlterationModelView CastingTimeAlteration;	
+		public List<StateAlterationModelView> CastingTimeAlterations;	
 		public SpellTargetInfoView TargetType;	
 		public List<StateAlterationModelView> OnHitEffects;	
 	}

@@ -5,6 +5,7 @@ using System.Text;
 using Codinsa2015.Server.Entities;
 namespace Codinsa2015.Server.Equip
 {
+    
     /// <summary>
     /// Classe permettant la présentation de divers équipements.
     /// 
@@ -13,14 +14,14 @@ namespace Codinsa2015.Server.Equip
     public class Shop
     {
         #region Variables
-        List<Equipment> m_availableEquip;
+        List<EquipmentModel> m_availableEquip;
         List<Consummable> m_availableConsummables;
         #endregion
 
         /// <summary>
         /// Crée une nouvelle instance de shop, avec la liste des équipements donnée.
         /// </summary>
-        public Shop(List<Equipment> equip, List<Consummable> consummables)
+        public Shop(List<EquipmentModel> equip, List<Consummable> consummables)
         {
             m_availableEquip = equip;
             m_availableConsummables = consummables;
@@ -31,7 +32,7 @@ namespace Codinsa2015.Server.Equip
         /// </summary>
         /// <param name="hero"></param>
         /// <returns></returns>
-        public List<Consummable> GetElixirs(EntityHero hero)
+        public List<Consummable> GetConsummables(EntityHero hero)
         {
             return m_availableConsummables;
         }
@@ -39,22 +40,22 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Retourne une liste d'armes disponibles pour le héros donné.
         /// </summary>
-        public List<Equipment> GetWeapons(EntityHero hero)
+        public List<EquipmentModel> GetWeapons(EntityHero hero)
         {
-            return m_availableEquip.Where(new Func<Equipment, bool>((Equipment e) =>
+            return m_availableEquip.Where(new Func<EquipmentModel, bool>((EquipmentModel e) =>
             {
                 return e.Type == EquipmentType.Weapon;
             })).ToList();
         }
+
         /// <summary>
         /// Retourne une liste d'armures disponibles pour le héros donné.
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public List<Equipment> GetArmors(EntityHero hero)
+        public List<EquipmentModel> GetArmors(EntityHero hero)
         {
-
-            return m_availableEquip.Where(new Func<Equipment, bool>((Equipment e) =>
+            return m_availableEquip.Where(new Func<EquipmentModel, bool>((EquipmentModel e) =>
             {
                 return e.Type == EquipmentType.Armor;
             })).ToList();
@@ -63,14 +64,13 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Retourne une liste de bottes disponibles pour le héros donné.
         /// </summary>
-        public List<Equipment> GetBoots(EntityHero hero)
+        public List<EquipmentModel> GetBoots(EntityHero hero)
         {
-            return m_availableEquip.Where(new Func<Equipment, bool>((Equipment e) =>
+            return m_availableEquip.Where(new Func<EquipmentModel, bool>((EquipmentModel e) =>
             {
                 return e.Type == EquipmentType.Boots;
             })).ToList();
         }
-        
 
     }
 }

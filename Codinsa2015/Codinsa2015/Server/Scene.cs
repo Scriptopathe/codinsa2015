@@ -28,6 +28,7 @@ namespace Codinsa2015.Server
     /// </summary>
     public class Scene
     {
+        public const bool SKIP_PICKS = true;
         #region Variables
 
         /// <summary>
@@ -60,6 +61,11 @@ namespace Codinsa2015.Server
         /// Obtient une référence vers le conteneur de constantes du jeu.
         /// </summary>
         public GameConstants Constants { get; set; }
+
+        /// <summary>
+        /// Obtient la base de données du shop.
+        /// </summary>
+        public Equip.ShopDatabase ShopDB { get; set; }
 
         /// <summary>
         /// Obtient une référence vers le système de récompenses.
@@ -103,6 +109,11 @@ namespace Codinsa2015.Server
         public Server.Controlers.LobbyControler LobbyControler { get; set; }
 
         /// <summary>
+        /// Représente le contrôleur utilisé pour la phase de picks.
+        /// </summary>
+        public Server.Controlers.PickPhaseControler PickControler { get; set; }
+
+        /// <summary>
         /// Obtient une référence vers l'état du serveur.
         /// </summary>
         public Views.State State { get; set; }
@@ -121,8 +132,16 @@ namespace Codinsa2015.Server
         {
             m_commands = new Queue<Tuple<int, string>>();
             m_clientIdToControlerId = new Dictionary<int, int>();
-            LobbyControler = new Server.Controlers.LobbyControler(this);
-            Mode = SceneMode.Lobby;
+
+            if (!SKIP_PICKS)
+            {
+                LobbyControler = new Server.Controlers.LobbyControler(this);
+                Mode = SceneMode.Lobby;
+            }
+            else
+            {
+                Mode = SceneMode.Game;
+            }
         }
 
         /// <summary>
@@ -144,8 +163,15 @@ namespace Codinsa2015.Server
             // Controleurs.
             Controlers = new Dictionary<int, Server.Controlers.ControlerBase>();
 
-            // Initialise le lobby
-            InitializeLobby();
+            if (SKIP_PICKS)
+            {
+                InitializeGameMode();
+            }
+            else
+            {
+                // Initialise le lobby
+                InitializeLobby();
+            }
         }
 
         /// <summary>
@@ -155,7 +181,8 @@ namespace Codinsa2015.Server
         {
             // Charge le contrôleur humain.
             Entities.EntityHero hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
-            Server.Controlers.HumanControler humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Joueur intégré" };
+            Server.Controlers.HumanControler humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Test" };
+            m_clientIdToControlerId.Add(hero.ID, 0);
             Controlers.Add(0, humanControler);
 
             /*hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
@@ -187,12 +214,21 @@ namespace Codinsa2015.Server
         /// </summary>
         void InitializeGameMode()
         {
+            // Charge les constantes du jeu.
+            LoadConstants();
+            LoadDB();
+
+            if(SKIP_PICKS)
+            {
+                // Charge le contrôleur humain.
+                Entities.EntityHero hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
+                Server.Controlers.HumanControler humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Test" };
+                m_clientIdToControlerId.Add(hero.ID, 0);
+                Controlers.Add(0, humanControler);
+            }
             // Initialise l'interpréteur de commandes.
             InitializeInterpreter();
 
-            // Charge les constantes du jeu.
-            LoadConstants();
- 
             // Création de la map.
             Map = new Map();
 
@@ -206,18 +242,26 @@ namespace Codinsa2015.Server
             GameInterpreter.MainContext.LocalVariables.Add("ctrl", new PonyCarpetExtractor.ExpressionTree.Mutable(Controlers[0]));
             GameInterpreter.Eval("print = function(arg) { Interpreter.Puts(arg); };");
 
-            // Chargement du content du jeu.
-            LoadGameContent();
+            if(!SKIP_PICKS)
+            {
+                // Chargement du content du jeu.
+                LoadGameContent();
+            }
+
 
             // Chargement des héros à partir des contrôleurs loggués.
             LoadPlayers();
-
 
             // Création du système de récompenses.
             RewardSystem = new RewardSystem(Map.Heroes);
 
             // Démarre le serveur de commandes.
             CommandServer.Start();
+
+            // DEBUG
+            Map.Heroes[0].Weapon = new Equip.Weapon(Map.Heroes[0], GameServer.GetScene().ShopDB.Weapons.First());
+            Map.Heroes[0].Armor = new Equip.Armor(Map.Heroes[0], GameServer.GetScene().ShopDB.Armors.First());
+            Map.Heroes[0].Boots = new Equip.Boots(Map.Heroes[0], GameServer.GetScene().ShopDB.Boots.First());
         }
 
         /// <summary>
@@ -262,6 +306,107 @@ namespace Codinsa2015.Server
             }
         }
 
+        /// <summary>
+        /// Charge la base de données du jeu.
+        /// </summary>
+        void LoadDB()
+        {
+            if (System.IO.File.Exists("shopdb.xml"))
+            {
+                ShopDB = Equip.ShopDatabase.Load("shopdb.xml");
+            }
+            else
+            {
+                ShopDB = new Equip.ShopDatabase();
+
+                // Bottes
+                Equip.PassiveEquipmentModel baseBoots = new Equip.PassiveEquipmentModel();
+                baseBoots.Type = Equip.EquipmentType.Boots;
+                baseBoots.Upgrades = new List<Equip.PassiveEquipmentUpgradeModel>() { 
+                    new Equip.PassiveEquipmentUpgradeModel(
+                        new List<StateAlterationModel>() 
+                        {
+                            
+                            new StateAlterationModel()
+                            {
+                                Type = StateAlterationType.MoveSpeed,
+                                BaseDuration = 1.0f,
+                                FlatValue = 5f,
+                            }
+                        },
+                        0)
+                };
+                ShopDB.Boots.Add(baseBoots);
+
+                // Armure
+                Equip.PassiveEquipmentModel baseArmor = new Equip.PassiveEquipmentModel();
+                baseArmor.Type = Equip.EquipmentType.Armor;
+                baseArmor.Upgrades = new List<Equip.PassiveEquipmentUpgradeModel>() { 
+                    new Equip.PassiveEquipmentUpgradeModel(
+                        new List<StateAlterationModel>() { },
+                        0)
+                };
+                ShopDB.Armors.Add(baseArmor);
+                
+                // Arme
+                Equip.WeaponModel model = new Equip.WeaponModel();
+                model.Name = "Arme de base";
+                model.Price = 0;
+                model.Upgrades = new List<Equip.WeaponUpgradeModel>()
+                {
+                    new Equip.WeaponUpgradeModel()
+                    {
+                        Cost = 400,
+                        PassiveAlterations = new List<StateAlterationModel>()
+                        {
+                            new StateAlterationModel()
+                            {
+                                BaseDuration = 1.0f,
+                                Type = StateAlterationType.AttackSpeed,
+                                FlatValue = 1
+                            }
+                        },
+                        Description = new Spells.SpellDescription()
+                        {
+                            BaseCooldown = 8.0f,
+                            CastingTime = 0.0f,
+                            CastingTimeAlterations = new List<StateAlterationModel>(),
+                            
+                            TargetType = new Spells.SpellTargetInfo()
+                            {
+                                Type = Spells.TargettingType.Targetted,
+                                AllowedTargetTypes = EntityTypeRelative.AllEnnemy,
+                                Range = 8,
+                                DieOnCollision = true,
+                                Duration = 1,
+                                AoeRadius = 0.3f
+                            },
+                            OnHitEffects = new List<StateAlterationModel>()
+                            {
+                                new StateAlterationModel()
+                                {
+                                    BaseDuration = 0,
+                                    FlatValue = 25,
+                                    Type = StateAlterationType.AttackDamage,
+                                }
+                            },
+                           
+                        }
+                    }
+                };
+
+                Equip.WeaponEnchantModel enchant = new Equip.WeaponEnchantModel()
+                {
+                    Name = "base",
+                    Price = 0,
+
+                };
+
+                ShopDB.Weapons.Add(model);
+                ShopDB.Enchants.Add(enchant);
+                ShopDB.Save("shopdb.xml");
+            }
+        }
         /// <summary>
         /// Initialise l'interpreteur de commandes.
         /// </summary>
@@ -317,6 +462,7 @@ namespace Codinsa2015.Server
 
         /// <summary>
         /// Lie les clients graphiques des contrôleurs au serveur graphique.
+        /// Pré-requis : initialisation des contrôleurs.
         /// </summary>
         public void BindGraphicsClients()
         {
@@ -328,6 +474,11 @@ namespace Codinsa2015.Server
         /// </summary>
         public void LoadContent()
         {
+            if(SKIP_PICKS)
+            {
+                // Chargement du content du jeu.
+                LoadGameContent();
+            }
 
         }
 
@@ -342,8 +493,8 @@ namespace Codinsa2015.Server
 
             if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Enter))
             {
-                Mode = SceneMode.Game;
-                InitializeGameMode();
+                Mode = SceneMode.Pick;
+                InitializePickPhase();
             }
         }
 
@@ -365,7 +516,7 @@ namespace Codinsa2015.Server
             EntityHero hero = new EntityHero() { Type = EntityType.Team2Player, HP = 5000, Position = new Vector2(15, 15) };
 
             // Génère un id de contrôleur.
-            int controlerId = Controlers.Count;
+            int controlerId = hero.ID;
             
             // Mappe l'id du client à l'id du contrôleur.
             m_clientIdToControlerId[clientId] = controlerId;
@@ -376,6 +527,53 @@ namespace Codinsa2015.Server
         }
         #endregion
 
+
+        #region Pick phase
+        /// <summary>
+        /// Initialise la phase de picks.
+        /// </summary>
+        void InitializePickPhase()
+        {
+            PickControler = new Controlers.PickPhaseControler(this, Controlers.Select(
+                new Func<KeyValuePair<int,Controlers.ControlerBase>, EntityHero>( (KeyValuePair<int, Controlers.ControlerBase> kvp) =>
+                    {
+                        return kvp.Value.Hero;
+                    })).ToList());
+        }
+        /// <summary>
+        /// Mets à jour la scène en mode "Pick".
+        /// </summary>
+        /// <param name="time"></param>
+        void UpdatePickPhase(GameTime time)
+        {
+            // Mets à jour le contrôleur de la phase de picks.
+            PickControler.Update(time);
+
+            // Mise à jour du serveur de commandes.
+            CommandServer_Update();
+
+            // Mets à jour les contrôleurs
+            lock (ControlerLock)
+                foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Update(time); }
+
+            if (PickControler.IsReadyToGo() && Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Enter))
+            {
+                Mode = SceneMode.Game;
+                InitializeGameMode();
+            }
+        }
+
+        /// <summary>
+        /// Dessine la scène en mode "Pick".
+        /// </summary>
+        void DrawPickPhase(GameTime time, RemoteSpriteBatch batch)
+        {
+            PickControler.Draw(time, batch); 
+
+            lock (ControlerLock)
+                foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Draw(batch, time); GraphicsServer.Flush(); }
+        }
+        #endregion
         #region Game mode
         /// <summary>
         /// Callback appelé lorsqu'une commande est envoyée au serveur par un client.
@@ -453,6 +651,9 @@ namespace Codinsa2015.Server
                 case SceneMode.Lobby:
                     DrawLobby(time, batch);
                     break;
+                case SceneMode.Pick:
+                    DrawPickPhase(time, batch);
+                    break;
             }
         }
 
@@ -468,6 +669,9 @@ namespace Codinsa2015.Server
                     break;
                 case SceneMode.Lobby:
                     UpdateLobby(time);
+                    break;
+                case SceneMode.Pick:
+                    UpdatePickPhase(time);
                     break;
             }
         }
@@ -489,6 +693,11 @@ namespace Codinsa2015.Server
         public Controlers.ControlerBase GetControler(int clientId)
         {
             return Controlers[m_clientIdToControlerId[clientId]];
+        }
+
+        public Controlers.ControlerBase GetControlerByHeroId(int heroId)
+        {
+            return Controlers[heroId];
         }
         #endregion
         #endregion

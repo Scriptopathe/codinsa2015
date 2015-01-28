@@ -54,8 +54,8 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Altération d'état appliquée pendant le casting time.
         /// </summary>
-        [Clank.ViewCreator.Export("StateAlterationModelView", "Altération d'état appliquée pendant le casting time.")]
-        public StateAlterationModel CastingTimeAlteration { get; set; }
+        [Clank.ViewCreator.Export("List<StateAlterationModelView>", "Altération d'état appliquée pendant le casting time.")]
+        public List<StateAlterationModel> CastingTimeAlterations { get; set; }
 
         /// <summary>
         /// Manière dont le ciblage du sort est effectué.
@@ -79,7 +79,11 @@ namespace Codinsa2015.Server.Spells
             Views.SpellDescriptionView view = new Views.SpellDescriptionView();
             view.BaseCooldown = BaseCooldown;
             view.CastingTime = CastingTime;
-            view.CastingTimeAlteration = CastingTimeAlteration.ToView();
+            view.CastingTimeAlterations = new List<Views.StateAlterationModelView>();
+            foreach(var alt in CastingTimeAlterations)
+            {
+                view.CastingTimeAlterations.Add(alt.ToView());
+            }
             view.TargetType = TargetType.ToView();
             view.OnHitEffects = new List<Views.StateAlterationModelView>();
             foreach(var ohe in OnHitEffects)
@@ -87,6 +91,30 @@ namespace Codinsa2015.Server.Spells
                 view.OnHitEffects.Add(ohe.ToView());
             }
             return view;
+        }
+
+        /// <summary>
+        /// Obtient une copue de cet objet.
+        /// </summary>
+        public SpellDescription Copy()
+        {
+            SpellDescription desc = new SpellDescription();
+            desc.BaseCooldown = BaseCooldown;
+            desc.CastingTime = CastingTime;
+
+            desc.CastingTimeAlterations = new List<StateAlterationModel>();
+            foreach(var effect in CastingTimeAlterations)
+            {
+                desc.CastingTimeAlterations.Add(effect.Copy());
+            }
+
+            desc.TargetType = TargetType;
+            desc.OnHitEffects = new List<StateAlterationModel>();
+            foreach(var effect in OnHitEffects)
+            {
+                desc.OnHitEffects.Add(effect.Copy());
+            }
+            return desc;
         }
     }
 }

@@ -206,7 +206,7 @@ namespace Codinsa2015.Server
         /// </summary>
         public void Save(string path)
         {
-            Tools.Serializer.Serialize<GameConstants>(this, path);
+            System.IO.File.WriteAllText(path, Tools.Serializer.Serialize<GameConstants>(this));
         }
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace Codinsa2015.Server
         /// <returns></returns>
         public static GameConstants LoadFromFile(string path)
         {
-            return Tools.Serializer.Deserialize<GameConstants>(path);
+            return Tools.Serializer.Deserialize<GameConstants>(System.IO.File.ReadAllText(path));
         }
     }
 }

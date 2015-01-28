@@ -20,7 +20,6 @@ namespace Codinsa2015.Graphics.Client
         /// Représente le content manager associé à ce client graphique.
         /// </summary>
         ContentManager m_content;
-
         /// <summary>
         /// Représente les textures / render targets chargées par ce client.
         /// </summary>

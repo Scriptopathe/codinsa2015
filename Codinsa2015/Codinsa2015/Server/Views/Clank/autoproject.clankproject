@@ -7,6 +7,9 @@
     <string>_StateAlterationParametersView.clank</string>
     <string>_StateAlterationView.clank</string>
     <string>_StateAlterationModelView.clank</string>
+    <string>_PassiveEquipmentUpgradeModelView.clank</string>
+    <string>_WeaponUpgradeModelView.clank</string>
+    <string>_WeaponEnchantModelView.clank</string>
     <string>_MapView.clank</string>
     <string>_SpellView.clank</string>
     <string>_SpellCastTargetInfoView.clank</string>

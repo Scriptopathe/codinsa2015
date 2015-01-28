@@ -33,6 +33,7 @@ namespace Codinsa2015
             m_graphics.PreferredBackBufferWidth = (int)GameServer.GetScreenSize().X;
             m_graphics.PreferredBackBufferHeight = (int)GameServer.GetScreenSize().Y;
             m_graphics.SynchronizeWithVerticalRetrace = false;
+            m_graphics.IsFullScreen = false;
         }
 
         /// <summary>

@@ -18,10 +18,11 @@ namespace Codinsa2015.Client
             {
                 game.Run();
             }*/
-            Views.TCPHelper.Initialize(Codinsa2015.Graphics.Client.RemoteClient.__DEBUG_PORT, "127.0.0.1", "IA LOLOLOL");
+            Console.Write("Name: ");
+            string str = Console.ReadLine();
+            TCPHelper.Initialize(Codinsa2015.Graphics.Client.RemoteClient.__DEBUG_PORT, "127.0.0.1", str);
             State state = new State();
             Console.WriteLine("Client started...");
-
             List<Views.SpellView> spells = state.GetSpells();
             int spellId = 0;
             while (true)

@@ -67,6 +67,10 @@ namespace Codinsa2015.Server.Controlers
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Space) && m_controlledId != -1)
                 m_scene.Controlers[m_controlledId].Hero.Type ^= EntityType.Teams;
 
+            // Changement de rôle
+            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.A))
+                m_scene.Controlers[m_controlledId].Hero.Role = (EntityHeroRole)(((int)m_scene.Controlers[m_controlledId].Hero.Role + 1) % ((int)EntityHeroRole.Max+1));
+
             if (m_playerId < 0)
                 m_playerId = playerCount[m_teamId] - 1;
             if (m_playerId >= playerCount[m_teamId])
@@ -74,13 +78,31 @@ namespace Codinsa2015.Server.Controlers
         }
 
         /// <summary>
+        /// Obtient l'icone du rôle donné.
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        RemoteTexture2D GetIcon(EntityHeroRole role)
+        {
+            switch(role)
+            {
+                case EntityHeroRole.Fighter:
+                    return Ressources.IconFighter;
+                case EntityHeroRole.Mage:
+                    return Ressources.IconMage;
+                case EntityHeroRole.Tank:
+                    return Ressources.IconTank;
+            }
+            return Ressources.IconTank;
+        }
+        /// <summary>
         /// Dessine le lobby.
         /// </summary>
         public void Draw(GameTime time, RemoteSpriteBatch batch)
         {
             int sw = (int)GameServer.GetScreenSize().X;
             int sh = (int)GameServer.GetScreenSize().Y;
-            
+            const int iconSize = 16;
 
             // Dessine l'avant plan.
             batch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
@@ -103,16 +125,16 @@ namespace Codinsa2015.Server.Controlers
 
                     string s = kvp.Value.HeroName + " (" + kvp.Value.GetType().Name.Replace("Controler", "") + ")";
                     Vector2 size = Ressources.CourrierFont.MeasureString(s);
-                    Vector2 offset = (new Vector2(rect.Width, rect.Height) - size) / 2;
+                    Vector2 offset = (new Vector2(size.X, rect.Height) - size) / 2;
 
-
-                    batch.DrawString(Ressources.CourrierFont, s, new Vector2(rect.X, rect.Y) + offset, Color.White, 0.0f, Vector2.Zero, 1f, 0.0f);
+                    batch.Draw(GetIcon(hero.Role), new Rectangle(rect.X + 2, rect.Y + 4, iconSize, iconSize), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                    batch.DrawString(Ressources.CourrierFont, s, new Vector2(rect.X+(iconSize+6), rect.Y) + offset, Color.White, 0.0f, Vector2.Zero, 1f, 0.0f);
                     playerCount[team]++;
                 }
             }
             // VS
             int oy = (1 * sh / 3);
-            int scale = 8;
+            int scale = 6;
             string str = "VS";
             Vector2 strsize = Ressources.CourrierFont.MeasureString(str) * scale;
             batch.DrawString(Ressources.CourrierFont, str, new Vector2((sw - (int)strsize.X) / 2, (-oy/2 + sh - (int)strsize.Y) / 2), Color.Black, 0.0f, Vector2.Zero, scale, 0.0f);
@@ -138,7 +160,7 @@ namespace Codinsa2015.Server.Controlers
             int sh = (int)GameServer.GetScreenSize().Y;
 
             // Largeur / hauteur des cadres.
-            const int w = 200;
+            const int w = 250;
             const int h = 25;
 
             int ox = (sw / 2 - w) / 2;

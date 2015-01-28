@@ -8,6 +8,19 @@ using Codinsa2015.Server;
 namespace Codinsa2015.Server.Spells
 {
     /// <summary>
+    /// Représente les différents résultats possibles d'utilisation d'un sort.
+    /// </summary>
+    [Clank.ViewCreator.Enum("Représente les différents résultats possibles d'utilisation d'un sort.")]
+    public enum SpellUseResult
+    {
+        Success,
+        InvalidTarget,
+        OnCooldown,
+        Silenced,
+        OutOfRange,
+    }
+
+    /// <summary>
     /// Classe de base pour représenter les sorts.
     /// 
     /// Des classes héritant de Spell doivent être crées pour représenter
@@ -131,37 +144,50 @@ namespace Codinsa2015.Server.Spells
 
             return true;
         }
+
+
         /// <summary>
         /// Utilise ce spell, si il n'est pas en cooldown et que la cible spécifiée est valide.
         /// </summary>
-        /// <returns>Retourne true si le sort a pu être casté, false sinon. Le sort n'est pas casté si : la
+        /// <returns>Retourne une valeur indiquant le résultat du cast du sort. Le sort n'est pas casté si : la
         /// cible subit un silence, tente de cibler une entité invalide, le sort est en cooldown, 
         /// le sort est ciblé sur une entité et l'entité n'est pas en range.</returns>
-        public bool Use(SpellCastTargetInfo target)
+        public SpellUseResult Use(SpellCastTargetInfo target, bool isWeaponAttack=false)
         {
             // Vérifie que le type de ciblage est le bon.
             if (((target.Type & Description.TargetType.Type) != Description.TargetType.Type))
-                return false;
+                return SpellUseResult.InvalidTarget;
 
             // Vérifie que le sort n'est pas en cooldown.
             if (CurrentCooldown > 0)
-                return false;
+                return SpellUseResult.OnCooldown;
 
             // Vérifie que la cible ne subit pas un silence
-            if (SourceCaster.IsSilenced)
-                return false;
+            if (!isWeaponAttack && SourceCaster.IsSilenced)
+                return SpellUseResult.Silenced;
 
             // Vérifie que la cible est dans le bon range.
             if ((target.Type & TargettingType.Targetted) == TargettingType.Targetted)
             {
-                Vector2 entityPosition = GameServer.GetMap().GetEntityById(target.TargetId).Position;
+                EntityBase entity = GameServer.GetMap().GetEntityById(target.TargetId);
+                if (entity == null)
+                    return SpellUseResult.InvalidTarget;
+
+                Vector2 entityPosition = entity.Position;
                 if (Vector2.Distance(entityPosition, SourceCaster.Position) > Description.TargetType.Range)
-                    return false;
+                    return SpellUseResult.OutOfRange;
                 
             }
 
             // Applique les effets du casting time.
-            SourceCaster.AddAlteration(new Entities.StateAlteration(SourceCaster, Description.CastingTimeAlteration, target.AlterationParameters, Entities.StateAlterationSource.Spell));
+            foreach(var alterationModel in Description.CastingTimeAlterations)
+            {
+                SourceCaster.AddAlteration(new Entities.StateAlteration(SourceCaster,
+                    alterationModel, 
+                    target.AlterationParameters,
+                    isWeaponAttack ? Entities.StateAlterationSource.Weapon : Entities.StateAlterationSource.SpellActive));
+            }
+            
 
             // Appelle la fonction qui va lancer le spell avec un délai correspondant au casting time.
             GameServer.GetScene().EventSheduler.Schedule(new Scheduler.ActionDelegate(() => {
@@ -171,7 +197,7 @@ namespace Codinsa2015.Server.Spells
 
             // Met le spell en cooldown.
             CurrentCooldown = GetUseCooldown() * (1 - Math.Min(0.40f, SourceCaster.GetCooldownReduction()));
-            return true;
+            return SpellUseResult.Success;
         }
 
         /// <summary>
@@ -179,6 +205,15 @@ namespace Codinsa2015.Server.Spells
         /// </summary>
         /// <param name="target"></param>
         protected virtual void DoUseSpell(SpellCastTargetInfo target)
+        {
+
+        }
+
+        /// <summary>
+        /// Applique les effets passifs du sort.
+        /// Les effets passifs sont reset à chaque frame.
+        /// </summary>
+        public virtual void ApplyPassives()
         {
 
         }

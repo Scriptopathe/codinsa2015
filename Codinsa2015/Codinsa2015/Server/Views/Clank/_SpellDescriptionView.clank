@@ -16,7 +16,7 @@ state {
 		#Casting time du sort.
 		public float CastingTime;
 		#Altération d'état appliquée pendant le casting time.
-		public StateAlterationModelView CastingTimeAlteration;
+		public List<StateAlterationModelView> CastingTimeAlterations;
 		#Indique la manière dont le ciblage du sort est effectué.
 		public SpellTargetInfoView TargetType;
 		#Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.

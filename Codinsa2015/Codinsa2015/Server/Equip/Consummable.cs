@@ -21,7 +21,6 @@ namespace Codinsa2015.Server.Equip
         /// Obtient le type du consommable.
         /// </summary>
         public abstract ConsummableType Type { get; }
-
         /// <summary>
         /// Retourne une variable indiquant le temps restant avant disparition du consommable.
         /// Cette variable est maintenue à titre indicatif.
@@ -49,6 +48,20 @@ namespace Codinsa2015.Server.Equip
             return false;
         }
 
+        /// <summary>
+        /// Nom du consommable.
+        /// </summary>
+        public string Name
+        {
+            get;
+            set;
+        }
+
+
+        public Consummable()
+        {
+            Name = "dummy";
+        }
     }
 
     /// <summary>

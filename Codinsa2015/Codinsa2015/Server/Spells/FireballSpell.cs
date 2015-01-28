@@ -53,10 +53,13 @@ namespace Codinsa2015.Server.Spells
                 },
                 BaseCooldown = cooldownBase,
                 CastingTime = 0.01f,
-                CastingTimeAlteration = new StateAlterationModel() 
+                CastingTimeAlterations = new List<StateAlterationModel>() 
                 {
-                    Type = StateAlterationType.Root,
-                    BaseDuration = 0.01f,
+                    new StateAlterationModel() 
+                    {
+                        Type = StateAlterationType.Root,
+                        BaseDuration = 0.01f,
+                    }
                 },
                 
                 OnHitEffects = new List<StateAlterationModel>() { 

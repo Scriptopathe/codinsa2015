@@ -138,13 +138,18 @@ namespace Codinsa2015.Server
         }
         #endregion
 
+        public static RemoteTexture2D IconMage { get; set; }
+        public static RemoteTexture2D IconFighter { get; set; }
+        public static RemoteTexture2D IconTank { get; set; }
         /// <summary>
         /// Charge les ressources à partir du content manager passé en paramètre.
         /// </summary>
         /// <param name="content"></param>
         public static void LoadRessources(ContentManager content)
         {
-            
+            IconMage = new RemoteTexture2D(GameServer.GetScene().GraphicsServer, "textures/icons/mage");
+            IconFighter = new RemoteTexture2D(GameServer.GetScene().GraphicsServer, "textures/icons/fighter");
+            IconTank = new RemoteTexture2D(GameServer.GetScene().GraphicsServer, "textures/icons/tank");
             DummyTexture = new RemoteTexture2D(GameServer.GetScene().GraphicsServer, "textures/dummy");
             Font = new RemoteSpriteFont(GameServer.GetScene().GraphicsServer, "textfont");
             NumbersFont = new RemoteSpriteFont(GameServer.GetScene().GraphicsServer, "numbers_font");

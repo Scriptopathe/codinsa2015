@@ -48,9 +48,11 @@ namespace Codinsa2015.Server.Entities
         Consumable,
         Armor,
         Weapon,
+        Amulet,
         Boots,
         Self,
-        Spell
+        SpellActive,
+        SpellPassive,
     }
 
     /// <summary>

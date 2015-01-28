@@ -137,57 +137,84 @@ namespace Codinsa2015.Server.Controlers
         /// <param name="time"></param>
         public override void Update(GameTime time)
         {
-            // Passage du mode d'édition au mode normal.
-            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.LeftControl) && !Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightAlt))
-                EditMode = !EditMode;
-
-            // Toogle de la capture de la souris.
-            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightControl))
-                m_captureMouse = !m_captureMouse;
-
-
-            // Capture de la souris + scrolling.
-            if(m_captureMouse)
-                UpdateMouseScrolling();
-
-            // Change le point de vue de la map.
-            Map.Pov = Pov;
-
-            // Mise à jour du contrôleur de la map.
-            MapEditControler.IsEnabled = EditMode;
-            MapEditControler.Update(time);
-            
-            // Particules / etc
-            Particles.Update(time);
-            // Gui manager
-            GuiManager.Update(time);
-
-            // Mouvement du héros.
-            var ms = Input.GetMouseState();
-            Vector2 pos = GameServer.GetMap().ToMapSpace(new Vector2(ms.X, ms.Y));
-            if (Input.IsRightClickPressed() && GameServer.GetMap().GetPassabilityAt(pos))
+            if(GameServer.GetScene().Mode == SceneMode.Game)
             {
-                m_hero.Path = new Trajectory(new List<Vector2>() { pos });
-            }
+                // Passage du mode d'édition au mode normal.
+                if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.LeftControl) && !Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightAlt))
+                    EditMode = !EditMode;
 
-            if (m_hero.Path != null && m_hero.IsBlockedByWall)
+                // Toogle de la capture de la souris.
+                if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightControl))
+                    m_captureMouse = !m_captureMouse;
+
+
+                // Capture de la souris + scrolling.
+                if (m_captureMouse)
+                    UpdateMouseScrolling();
+
+                // Change le point de vue de la map.
+                Map.Pov = Pov;
+
+                // Mise à jour du contrôleur de la map.
+                MapEditControler.IsEnabled = EditMode;
+                MapEditControler.Update(time);
+
+                // Particules / etc
+                Particles.Update(time);
+                // Gui manager
+                GuiManager.Update(time);
+
+                // Mouvement du héros.
+                var ms = Input.GetMouseState();
+                Vector2 pos = GameServer.GetMap().ToMapSpace(new Vector2(ms.X, ms.Y));
+                if (Input.IsRightClickPressed() && GameServer.GetMap().GetPassabilityAt(pos))
+                {
+                    // Obtient les entités targettables par le héros à portée.
+                    var entities = GameServer.GetMap().Entities.GetEntitiesInSight(Hero.Type).
+                        GetAliveEntitiesInRange(pos, 1).Where(delegate(KeyValuePair<int, EntityBase> kvp)
+                        {
+                            EntityType ennemyteam = (Hero.Type & EntityType.Teams) ^ EntityType.Teams;
+                            return kvp.Value.Type.HasFlag(ennemyteam) || kvp.Value.Type.HasFlag(EntityType.AllTargettableNeutral);
+                        }).ToList();
+
+                    // Utilise l'arme sur le héros.
+                    if(entities.Count != 0)
+                    {
+                        Hero.Weapon.Use(Hero, entities.First().Value);
+                    }
+
+                    m_hero.Path = new Trajectory(new List<Vector2>() { pos });
+                }
+
+                if (m_hero.Path != null && m_hero.IsBlockedByWall)
+                {
+                    m_hero.StartMoveTo(m_hero.Path.LastPosition());
+                }
+
+                // Vision range
+                if (ms.ScrollWheelValue - __oldScroll < 0)
+                    m_hero.VisionRange--;
+                else if (ms.ScrollWheelValue - __oldScroll > 0)
+                    m_hero.VisionRange++;
+
+                // Mise à jour des spells.
+                UpdateSpells();
+
+                // Utilisation des consommables.
+                UpdateConsummable();
+
+                __oldScroll = ms.ScrollWheelValue;
+            }
+            else
             {
-                m_hero.StartMoveTo(m_hero.Path.LastPosition());
+                // MODE : PICK
+                var ms = Input.GetMouseState();
+                GameServer.GetScene().PickControler.SetVirtualMousePos(new Vector2(ms.X, ms.Y));
+
+                if (Input.IsLeftClickTrigger())
+                    GameServer.GetScene().PickControler.VirtualMouseClick(Hero.ID);
+
             }
-
-            // Vision range
-            if (ms.ScrollWheelValue - __oldScroll < 0)
-                m_hero.VisionRange--;
-            else if (ms.ScrollWheelValue - __oldScroll > 0)
-                m_hero.VisionRange++;
-
-            // Mise à jour des spells.
-            UpdateSpells();
-
-            // Utilisation des consommables.
-            UpdateConsummable();
-
-            __oldScroll = ms.ScrollWheelValue;
             
         }
 
@@ -336,7 +363,6 @@ namespace Codinsa2015.Server.Controlers
         /// <param name="time"></param>
         void DrawEquipmentSlots(RemoteSpriteBatch batch, GameTime time)
         {
-            Equip.Equipment[] equip = new Equip.Equipment[] { m_hero.Weapon, m_hero.Armor };
             int y = (int)GameServer.GetScreenSize().Y - spellIconSize/2 - 5;
             int xBase = ((int)GameServer.GetScreenSize().X - ((spellIconSize + padding) * m_hero.Spells.Count)) / 2;
             int size = spellIconSize / 2;
@@ -346,7 +372,7 @@ namespace Codinsa2015.Server.Controlers
                 Color col = m_hero.Consummables[i].UsingStarted ? Color.Gray : Color.White;
 
                 // Dessine le slot du consommable.
-                batch.Draw(Ressources.GetSpellTexture(equip[i].Name),
+                batch.Draw(Ressources.GetSpellTexture(m_hero.Consummables[i].Name),
                     new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.HeroControler);
 
                 xBase += size + padding;
@@ -406,27 +432,39 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         public override void Draw(RemoteSpriteBatch batch, GameTime time)
         {
-            // Change le point de vue de la map.
-            Map.Pov = Pov;
+            if(GameServer.GetScene().Mode == SceneMode.Game)
+            {
+                // Change le point de vue de la map.
+                Map.Pov = Pov;
 
-            // Dessine la map sur le main render target.
-            MapEditControler.CurrentMap.Draw(time, batch);
-
-
-            // Dessine les GUI, particules etc...
-            batch.GraphicsDevice.SetRenderTarget(GameServer.GetScene().MainRenderTarget);
-            batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
-            GuiManager.Draw(batch);
-            Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
-            DrawControlerGUI(batch, time);
-            batch.End();
+                // Dessine la map sur le main render target.
+                MapEditControler.CurrentMap.Draw(time, batch);
 
 
-            // Dessine le render target principal sur le back buffer.
-            batch.GraphicsDevice.SetRenderTarget(null);
-            batch.Begin();
-            batch.Draw(GameServer.GetScene().MainRenderTarget, Vector2.Zero, Color.White);
-            batch.End();
+                // Dessine les GUI, particules etc...
+                batch.GraphicsDevice.SetRenderTarget(GameServer.GetScene().MainRenderTarget);
+                batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
+                GuiManager.Draw(batch);
+                Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
+                DrawControlerGUI(batch, time);
+                batch.End();
+
+
+                // Dessine le render target principal sur le back buffer.
+                batch.GraphicsDevice.SetRenderTarget(null);
+                batch.Begin();
+                batch.Draw(GameServer.GetScene().MainRenderTarget, Vector2.Zero, Color.White);
+                batch.End();
+            }
+            else
+            {
+                // PICKS
+                var ms = Input.GetMouseState();
+                batch.Begin();
+                batch.Draw(Ressources.Cursor, new Rectangle((int)ms.X, (int)ms.Y, 32, 32), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.Front);
+                batch.End();
+            }
+
         }
 
 

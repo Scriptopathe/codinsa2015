@@ -59,62 +59,7 @@ namespace Codinsa2015.Server.Controlers
          * IFACE
          * Contient les fonctions auxquelles vont faire appel les IAs.
          * ----------------------------------------------------------------*/
-        #region IFACE-Get
-        /// <summary>
-        /// Retourne la map de jeu.
-        /// </summary>
-        /// <returns></returns>
-        public Map GetMap()
-        {
-            return GameServer.GetMap();
-        }
-
-
-        #endregion
-
-        #region IFACE
-        const string controlerAccessStr = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)";
-        /// <summary>
-        /// Achète l'armure dont le numéro est celui donné, au shop d'id donné.
-        /// </summary>
-        /// <returns>Retourne true si l'armure a pu être achetée, false sinon.</returns>
-        public bool ShopItem(int shopId, int itemId, List<Equip.Equipment> collection)
-        {
-            Entities.EntityShop shopEntity = GameServer.GetMap().GetEntityById(shopId) as Entities.EntityShop;
-
-            // Contrôle de l'id.
-            if (shopEntity == null)
-                return false;
-
-            // Shop
-            Equip.Shop shop = shopEntity.Shop;
-            IEnumerable<Equip.Equipment> requestedItem = collection.Where(new Func<Equip.Equipment, bool>((Equip.Equipment e) =>
-            {
-                return e.ID == itemId;
-            }));
-
-            // Contrôle : id de l'armure correct ?
-            if (requestedItem.Count() == 0)
-                return false;
-
-            // On a trouvé la bonne armure : vérification du solde du héros.
-            Equip.Equipment equip = requestedItem.First();
-
-            // Prix trop élevé.
-            if (equip.Price > Hero.PA)
-                return false;
-
-            if (equip is Equip.Armor)
-                Hero.Armor = (Equip.Armor)equip;
-            else if (equip is Equip.Weapon)
-                Hero.Weapon = (Equip.Weapon)equip;
-            
-
-            Hero.PA -= equip.Price;
-
-            return true;
-        }
-
+        #region misc
         /// <summary>
         /// Achète l'arme dont le numéro est celui donné, au shop d'id donné.
         /// </summary>
@@ -131,6 +76,68 @@ namespace Codinsa2015.Server.Controlers
 
             return ShopItem(shopId, weaponId, shop.GetWeapons(Hero));
         }
+        #endregion
+        #region IFACE-Get
+        /// <summary>
+        /// Retourne la map de jeu.
+        /// </summary>
+        /// <returns></returns>
+        public Map GetMap()
+        {
+            return GameServer.GetMap();
+        }
+
+
+        #endregion
+
+        #region  Picks IFACE
+
+        #endregion
+
+        #region  Game IFACE
+        const string controlerAccessStr = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)";
+        /// <summary>
+        /// Achète l'armure dont le numéro est celui donné, au shop d'id donné.
+        /// </summary>
+        /// <returns>Retourne true si l'armure a pu être achetée, false sinon.</returns>
+        public bool ShopItem(int shopId, int itemId, List<Equip.EquipmentModel> collection)
+        {
+            Entities.EntityShop shopEntity = GameServer.GetMap().GetEntityById(shopId) as Entities.EntityShop;
+
+            // Contrôle de l'id.
+            if (shopEntity == null)
+                return false;
+
+            // Shop
+            Equip.Shop shop = shopEntity.Shop;
+            IEnumerable<Equip.EquipmentModel> requestedItem = collection.Where(new Func<Equip.EquipmentModel, bool>((Equip.EquipmentModel e) =>
+            {
+                return e.ID == itemId;
+            }));
+
+            // Contrôle : id de l'armure correct ?
+            if (requestedItem.Count() == 0)
+                return false;
+
+            // On a trouvé la bonne armure : vérification du solde du héros.
+            Equip.EquipmentModel equip = requestedItem.First();
+
+            // Prix trop élevé.
+            if (equip.Price > Hero.PA)
+                return false;
+
+            if (equip.Type == Equip.EquipmentType.Armor)
+                Hero.Armor = new Equip.Armor(Hero, (Equip.PassiveEquipmentModel)equip);
+            else if (equip is Equip.WeaponModel)
+                Hero.Weapon = new Equip.Weapon(Hero, (Equip.WeaponModel)equip) { Enchant = Hero.Weapon.Enchant };
+            
+
+            Hero.PA -= equip.Price;
+
+            return true;
+        }
+
+
 
 
         
@@ -307,7 +314,7 @@ namespace Codinsa2015.Server.Controlers
                 TargetId = target.TargetId,
                 Type = (Codinsa2015.Server.Spells.TargettingType)target.Type,
                 AlterationParameters = new Entities.StateAlterationParameters()
-            });
+            }) == Spells.SpellUseResult.Success; // TODO
         }
 
         /// <summary>

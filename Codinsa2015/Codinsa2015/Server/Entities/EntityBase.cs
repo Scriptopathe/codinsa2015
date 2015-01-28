@@ -372,18 +372,37 @@ namespace Codinsa2015.Server.Entities
             List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.MoveSpeed);
     
 
-            // Applique les buffs / debuffs ne prenant pas en compte les dégâts d'attaque de
-            // cette entité.
+            // Applique les buffs / debuffs
             foreach (StateAlteration alteration in alterations)
             {
                 totalMs += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All);
             }
 
+            return Math.Max(0, totalMs);
+        }
+
+        /// <summary>
+        /// Obtient la vitesse d'attaque effective de l'entité.
+        /// </summary>
+        /// <returns></returns>
+        [Clank.ViewCreator.Export("float", "Obtient la vitesse d'attaque effective de l'entité.")]
+        public virtual float GetAttackSpeed()
+        {
+            float totalMs = BaseAttackSpeed;
+
+            // Récupère tous les buffs d'attaque.
+            List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.AttackSpeed);
 
 
+            // Applique les buffs / debuffs
+            foreach (StateAlteration alteration in alterations)
+            {
+                totalMs += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All);
+            }
 
             return Math.Max(0, totalMs);
         }
+
         /// <summary>
         /// Obtient les points d'attaque effectifs de cette entité.
         /// </summary>
@@ -640,6 +659,8 @@ namespace Codinsa2015.Server.Entities
             BaseArmor = 50;
             VisionRange = 3.0f;
             DamageTimeMemory = 30f;
+            BaseAttackSpeed = 0.5f;
+            BaseAttackDamage = 10;
 
             // Initialisation
             m_stateAlterations = new StateAlterationCollection();

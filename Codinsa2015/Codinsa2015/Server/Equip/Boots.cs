@@ -8,11 +8,8 @@ namespace Codinsa2015.Server.Equip
     /// <summary>
     /// Représente une paire de bottes.
     /// </summary>
-    public class Boots : Equipment
+    public class Boots : PassiveEquipment
     {
-        public override EquipmentType Type
-        {
-            get { return EquipmentType.Boots; }
-        }
+        public Boots(Entities.EntityHero owner, PassiveEquipmentModel model) : base(owner, model) { }
     }
 }

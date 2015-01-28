@@ -9,9 +9,11 @@ namespace Codinsa2015.Server.Entities
 {
     public enum EntityHeroRole
     {
-        Fighter,
-        Mage,
-        Tank
+        Fighter     = 0,
+        Mage        = 1,
+        Tank        = 2,
+        Max         = Tank,
+        
     }
     /// <summary>
     /// Classe de base pour toutes les entités héros.
@@ -32,13 +34,23 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Représente l'armure possédée par ce héros.
         /// </summary>
-        Equipment m_armor;
-
+        Armor m_armor;
 
         /// <summary>
         /// Représente l'arme possédée par le héros.
         /// </summary>
         Weapon m_weapon;
+
+        /// <summary>
+        /// Représente la paire de bottes possédée par le héros.
+        /// </summary>
+        Boots m_boots;
+
+        /// <summary>
+        /// Représente l'amulette possédée par le héros.
+        /// </summary>
+        Amulet m_amulet;
+
         /// <summary>
         /// Représente les consommables possédés par le héros.
         /// </summary>
@@ -63,7 +75,7 @@ namespace Codinsa2015.Server.Entities
             protected set { m_consummables[0] = value; }
         }
         /// <summary>
-        /// Obtient le consommable contenu dans le slot 1.
+        /// Obtient le consommable contenu dans le slot 2.
         /// </summary>
         public Consummable Consummable2
         {
@@ -79,6 +91,7 @@ namespace Codinsa2015.Server.Entities
             get;
             set;
         }
+
         /// <summary>
         /// Obtient ou définit le rôle de ce héros.
         /// </summary>
@@ -87,6 +100,7 @@ namespace Codinsa2015.Server.Entities
             get;
             set;
         }
+
         /// <summary>
         /// Obtient ou définit la liste des spells accessibles pour ce héros.
         /// </summary>
@@ -123,49 +137,90 @@ namespace Codinsa2015.Server.Entities
             set
             {
                 // Si on remplace l'arme précédente.
-                if(m_weapon != null)
-                {
-                    StateAlterations.EndAlterations(StateAlterationSource.Weapon);
-                }
-
                 m_weapon = value;
+                ApplyWeaponPassives();
+            }
+        }
 
-                if(value != null)
-                    foreach(StateAlterationModel model in m_weapon.Alterations)
-                    {
-                        model.BaseDuration = StateAlteration.DURATION_INFINITY;
-                        AddAlteration(new StateAlteration(this, model, new StateAlterationParameters(), StateAlterationSource.Armor));
-                    }
+        /// <summary>
+        /// Obtient la paire de bottes équipée par ce héros.
+        /// </summary>
+        public Equip.Boots Boots
+        {
+            get { return m_boots; }
+            set
+            {
+                m_boots = value;
+                ApplyPassives(EquipmentType.Boots);
             }
         }
         /// <summary>
-        /// Obtient l'armure équippée par ce héros.
+        /// Obtient l'amulette possédée par ce héros.
         /// </summary>
-        public Equip.Equipment Armor
+        public Equip.Amulet Amulet
+        {
+            get { return m_amulet; }
+            set
+            {
+                m_amulet = value;
+                ApplyPassives(EquipmentType.Amulet);
+            }
+        }
+        /// <summary>
+        /// Obtient l'armure équipée par ce héros.
+        /// </summary>
+        public Equip.Armor Armor
         {
             get { return m_armor; }
             set
             {
-                // Si on remplace l'armure précédente : on termine toutes ses anciennes
-                // intéractions.
-                if(m_armor != null)
-                {
-                    StateAlterations.EndAlterations(StateAlterationSource.Armor);
-                }
-
                 m_armor = value;
-
-                // Si la nouvelle valeur n'est pas nulle, on applique les intéractions.
-                if(value != null)
-                    foreach(StateAlterationModel model in m_armor.Alterations)
-                    {
-                        model.BaseDuration = StateAlteration.DURATION_INFINITY;
-                        StateAlteration alt = new StateAlteration(this, model, new StateAlterationParameters(), StateAlterationSource.Armor);
-                        AddAlteration(alt);
-                    }
+                ApplyPassives(EquipmentType.Armor);
             }
         }
 
+        
+        /// <summary>
+        /// Applique les passifs des armes.
+        /// </summary>
+        public void ApplyWeaponPassives()
+        {
+            StateAlterations.EndAlterations(StateAlterationSource.Weapon);
+            if (m_weapon != null)
+                foreach (StateAlterationModel model in m_weapon.GetPassives())
+                {
+                    model.BaseDuration = StateAlteration.DURATION_INFINITY;
+                    AddAlteration(new StateAlteration(this, model, new StateAlterationParameters(), StateAlterationSource.Weapon));
+                }
+        }
+
+        /// <summary>
+        /// Applique les passifs de l'équipement passif passé en paramètre.
+        /// </summary>
+        public void ApplyPassives(EquipmentType equip)
+        {
+            StateAlterationSource src;
+            PassiveEquipment passiveEquip;
+            switch(equip)
+            {
+                case EquipmentType.Armor:
+                    src = StateAlterationSource.Armor; passiveEquip = m_armor; break;
+                case EquipmentType.Boots:
+                    src = StateAlterationSource.Boots; passiveEquip = m_boots; break;
+                case EquipmentType.Amulet:
+                    src = StateAlterationSource.Amulet; passiveEquip = m_amulet; break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            StateAlterations.EndAlterations(src);
+            if (passiveEquip != null)
+                foreach (StateAlterationModel model in passiveEquip.GetPassives())
+                {
+                    model.BaseDuration = StateAlteration.DURATION_INFINITY;
+                    AddAlteration(new StateAlteration(this, model, new StateAlterationParameters(), src));
+                }
+        }
         #endregion
 
         #region Methods
@@ -182,8 +237,6 @@ namespace Codinsa2015.Server.Entities
             Spells.Add(new Spells.TargettedTowerSpell(this));
             VisionRange = 8;
             BaseMoveSpeed = 2;
-            Weapon = new Equip.Weapon();
-            Armor = new Armor();
             m_consummables = new Consummable[2] {
                 new WardConsummable(),
                 new UnwardConsummable()
@@ -198,7 +251,14 @@ namespace Codinsa2015.Server.Entities
             base.DoUpdate(time);
             UpdatePAParticle();
             UpdateConsummables(time);
-            foreach (Spell spell in Spells) { spell.UpdateCooldown((float)time.ElapsedGameTime.TotalSeconds); }
+
+            if(Weapon != null)
+                Weapon.Update(time);
+            // Supprime les effets des passsifs
+            StateAlterations.EndAlterations(StateAlterationSource.SpellPassive);
+
+            // Mets à jour les spells et applique les passifs.
+            foreach (Spell spell in Spells) { spell.UpdateCooldown((float)time.ElapsedGameTime.TotalSeconds); spell.ApplyPassives(); }
         }
 
         /// <summary>

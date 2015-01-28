@@ -19,6 +19,8 @@ state {
 		public float GetCooldownReduction;
 		#Obtient la vitesse de déplacement de l'entité.
 		public float GetMoveSpeed;
+		#Obtient la vitesse d'attaque effective de l'entité.
+		public float GetAttackSpeed;
 		#Obtient les points d'attaque effectifs de cette entité.
 		public float GetAttackDamage;
 		#Fonction utilisée pour obtenir les points d'armure effectifs sur cette unité.

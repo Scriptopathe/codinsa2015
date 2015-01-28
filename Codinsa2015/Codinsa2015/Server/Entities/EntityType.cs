@@ -14,53 +14,54 @@ namespace Codinsa2015.Server.Entities
     [Clank.ViewCreator.Enum("Contient les différents types d'entités.")]
     public enum EntityType
     {
-        Team1           = 0x02,
-        Team2           = 0x04,
-        Structure       = 0x08,
-        Tower           = 0x10 | Structure,
-        Inhibitor       = 0x20 | Structure,
-        Spawner         = 0x40 | Structure,
-        Idol            = 0x80 | Structure,
+        Team1 = 0x02,
+        Team2 = 0x04,
+        Structure = 0x08,
+        Tower = 0x10 | Structure,
+        Inhibitor = 0x20 | Structure,
+        Spawner = 0x40 | Structure,
+        Idol = 0x80 | Structure,
 
         // Neutral
-        Monster         = 0x0100,
-        Creep           = 0x0200,
-        WardPlacement   = 0x00010000,
-        Ward            = 0x00020000,
-        Shop            = 0x00040000,
+        Monster = 0x0100,
+        Creep = 0x0200,
+        WardPlacement = 0x00010000,
+        Ward = 0x00020000,
+        Shop = 0x00040000,
         // Creeps
-        Boss            = 0x0400 | Monster,
-        Miniboss        = 0x0800 | Monster,
-        Checkpoint      = 0x4000,
+        Boss = 0x0400 | Monster,
+        Miniboss = 0x0800 | Monster,
+        Checkpoint = 0x4000,
 
         // Player
-        Player          = 0x8000,
+        Player = 0x8000,
 
         // Others
-        HeroSpawner     = 0x00080000,
+        HeroSpawner = 0x00080000,
 
         // Macros
-        AllTeam1        = Team1 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
-        AllTeam2        = Team2 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
-        AllObjectives   = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss,
-        AllSaved        = AllObjectives | Checkpoint | WardPlacement | HeroSpawner,
-        
+        AllTeam1 = Team1 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
+        AllTeam2 = Team2 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
+        AllObjectives = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss,
+        AllSaved = AllObjectives | Checkpoint | WardPlacement | HeroSpawner,
+        AllTargettableNeutral = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss | Creep | Monster,
         // Team
-        Team1Tower      = Team1 | Tower,
-        Team2Tower      = Team2 | Tower,
-        Team1Inhibitor  = Team1 | Inhibitor,
-        Team2Inhibitor  = Team2 | Inhibitor,
-        Team1Spawner    = Team1 | Spawner,
-        Team2Spawner    = Team2 | Spawner,
-        Team1Idol       = Team1 | Idol,
-        Team2Idol       = Team2 | Idol,
-        Team1Player     = Player | Team1,
-        Team2Player     = Player | Team2,
-        Team1Creep      = Team1 | Creep,
-        Team2Creep      = Team2 | Creep,
+        Team1Tower = Team1 | Tower,
+        Team2Tower = Team2 | Tower,
+        Team1Inhibitor = Team1 | Inhibitor,
+        Team2Inhibitor = Team2 | Inhibitor,
+        Team1Spawner = Team1 | Spawner,
+        Team2Spawner = Team2 | Spawner,
+        Team1Idol = Team1 | Idol,
+        Team2Idol = Team2 | Idol,
+        Team1Player = Player | Team1,
+        Team2Player = Player | Team2,
+        Team1Creep = Team1 | Creep,
+        Team2Creep = Team2 | Creep,
         Team1Checkpoint = Team1 | Checkpoint,
         Team2CheckPoint = Team2 | Checkpoint,
-        Teams           = Team1 | Team2
+        Teams = Team1 | Team2,
+        
     }
 
     /// <summary>

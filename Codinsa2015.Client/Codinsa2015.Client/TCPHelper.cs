@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
-namespace Codinsa2015.Views
+namespace Codinsa2015
 {
     /// <summary>
     /// Contient un ensemble de fonction permettant à un client d'envoyer des données vers
