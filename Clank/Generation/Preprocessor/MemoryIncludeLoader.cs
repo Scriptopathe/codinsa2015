@@ -22,7 +22,8 @@ namespace Clank.Core.Generation.Preprocessor
         /// <returns></returns>
         public string Load(string uri)
         {
-
+            if (!m_scripts.ContainsKey(uri))
+                throw new RessourceNotFoundException(uri);
             return m_scripts[uri];
         }
 
