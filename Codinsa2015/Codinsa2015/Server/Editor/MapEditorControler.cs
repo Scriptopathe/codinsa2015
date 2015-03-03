@@ -271,7 +271,7 @@ namespace Codinsa2015.Server.Editor
             }
 
             // Sauvegarde
-            if( Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.S))
+            if( Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M))
             {
                 Save();
             }

@@ -7,7 +7,7 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Clank.View</RootNamespace>
+    <RootNamespace>Codinsa2015</RootNamespace>
     <AssemblyName>Clank.View</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -83,6 +83,8 @@
     <Compile Include="Server\Controlers\LobbyControler.cs" />
     <Compile Include="Server\Editor\MapEditorControler.cs" />
     <Compile Include="Server\Entities\EntityBase.cs" />
+    <Compile Include="Server\Entities\EntityCampMonster.cs" />
+    <Compile Include="Server\Entities\EntityMiniboss.cs" />
     <Compile Include="Server\Entities\EntityHeroSpawner.cs" />
     <Compile Include="Server\Entities\EntitySpawner.cs" />
     <Compile Include="Server\Entities\EntityWard.cs" />
@@ -108,6 +110,8 @@
     <Compile Include="Server\Equip\UnwardConsummable.cs" />
     <Compile Include="Server\Equip\WardConsummable.cs" />
     <Compile Include="Server\Equip\Weapon.cs" />
+    <Compile Include="Server\Events\EventCamp.cs" />
+    <Compile Include="Server\Events\GameEvent.cs" />
     <Compile Include="Server\GameConstants.cs" />
     <Compile Include="Server\GraphicsHelpers\Charset.cs" />
     <Compile Include="Server\GraphicsHelpers\GaussianBlur.cs" />

@@ -12,19 +12,12 @@ namespace Codinsa2015.Server.Equip
     public class UnwardConsummable : Consummable
     {
         bool _started = true;
-        /// <summary>
-        /// Obtient le type de consommable de cette ward.
-        /// </summary>
-        public override ConsummableType Type
-        {
-            get { return ConsummableType.Unward; }
-        }
 
         /// <summary>
         /// Donne un buff au possesseur du consommable qui révèle les wards environnantes lors de la première utilisation.
         /// La 2e utilisation supprime la ward la plus proche (si l'effet est encore actif).
         /// </summary>
-        public override bool Use(EntityHero owner)
+        public override ConsummableUseResult Use(EntityHero owner)
         {
             if(!UsingStarted)
             {
@@ -37,6 +30,7 @@ namespace Codinsa2015.Server.Equip
 
                 RemainingTime = GameServer.GetScene().Constants.Vision.WardRevealDuration;
                 UsingStarted = true;
+                return ConsummableUseResult.Success;
             }
             else
             {
@@ -49,11 +43,11 @@ namespace Codinsa2015.Server.Equip
                 if(nearest != null)
                 {
                     nearest.DestroyWard(owner);
-                    return true;
+                    return ConsummableUseResult.SuccessAndDestroyed;
                 }
             }
 
-            return false;
+            return ConsummableUseResult.Fail;
         }
 
         /// <summary>

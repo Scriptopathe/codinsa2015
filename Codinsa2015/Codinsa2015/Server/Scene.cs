@@ -29,6 +29,7 @@ namespace Codinsa2015.Server
     public class Scene
     {
         public const bool SKIP_PICKS = true;
+        public const bool LOAD_DB_FILE = false;
         #region Variables
 
         /// <summary>
@@ -311,7 +312,7 @@ namespace Codinsa2015.Server
         /// </summary>
         void LoadDB()
         {
-            if (System.IO.File.Exists("shopdb.xml"))
+            if (LOAD_DB_FILE && System.IO.File.Exists("shopdb.xml"))
             {
                 ShopDB = Equip.ShopDatabase.Load("shopdb.xml");
             }
@@ -369,13 +370,20 @@ namespace Codinsa2015.Server
                         Description = new Spells.SpellDescription()
                         {
                             BaseCooldown = 8.0f,
-                            CastingTime = 0.0f,
-                            CastingTimeAlterations = new List<StateAlterationModel>(),
+                            CastingTime = 0.1f,
+                            CastingTimeAlterations = new List<StateAlterationModel>()
+                            {
+                                new StateAlterationModel()
+                                {
+                                    BaseDuration = 0.01f,
+                                    Type = StateAlterationType.Root
+                                }
+                            },
                             
                             TargetType = new Spells.SpellTargetInfo()
                             {
                                 Type = Spells.TargettingType.Targetted,
-                                AllowedTargetTypes = EntityTypeRelative.AllEnnemy,
+                                AllowedTargetTypes = EntityTypeRelative.AllEnnemy | EntityTypeRelative.AllTargettableNeutral,
                                 Range = 8,
                                 DieOnCollision = true,
                                 Duration = 1,
@@ -402,9 +410,34 @@ namespace Codinsa2015.Server
 
                 };
 
+                Equip.ConsummableModel unward = new Equip.ConsummableModel()
+                {
+                    ConsummableType = Equip.ConsummableType.Unward,
+                    MaxStackSize = 2,
+                    Name = "unward",
+                    Price = 80,
+                };
+                Equip.ConsummableModel ward = new Equip.ConsummableModel()
+                {
+                    ConsummableType = Equip.ConsummableType.Ward,
+                    MaxStackSize = 2,
+                    Name = "ward",
+                    Price = 80,
+                };
+                Equip.ConsummableModel empty = new Equip.ConsummableModel()
+                {
+                    ConsummableType = Equip.ConsummableType.Empty,
+                    MaxStackSize = 2,
+                    Name = "empty",
+                    Price = 80
+                };
+                ShopDB.Consummables.Add(unward);
+                ShopDB.Consummables.Add(ward);
+                ShopDB.Consummables.Add(empty);
                 ShopDB.Weapons.Add(model);
                 ShopDB.Enchants.Add(enchant);
-                ShopDB.Save("shopdb.xml");
+                if(LOAD_DB_FILE)
+                    ShopDB.Save("shopdb.xml");
             }
         }
         /// <summary>

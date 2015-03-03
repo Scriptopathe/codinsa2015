@@ -27,6 +27,11 @@ namespace Codinsa2015.Server.Equip
         /// Bottes contenues dans la base de données.
         /// </summary>
         public List<PassiveEquipmentModel> Boots { get; set; }
+
+        /// <summary>
+        /// Obtient les différents types de consommables.
+        /// </summary>
+        public List<ConsummableModel> Consummables { get; set; }
         /// <summary>
         /// Crée une nouvelle instance de ShopDatabase vide.
         /// </summary>
@@ -36,8 +41,19 @@ namespace Codinsa2015.Server.Equip
             Enchants = new List<WeaponEnchantModel>();
             Armors = new List<PassiveEquipmentModel>();
             Boots = new List<PassiveEquipmentModel>();
+            Consummables = new List<ConsummableModel>();
         }
 
+        /// <summary>
+        /// Obtient le modèle de consommables correspondant au type de consommable donné.
+        /// </summary>
+        public ConsummableModel GetConsummableModelByType(ConsummableType type)
+        {
+            foreach (ConsummableModel model in Consummables)
+                if (model.ConsummableType == type)
+                    return model;
+            return null;
+        }
         /// <summary>
         /// Charge une base de données depuis un fichier dont le chemin d'accès est passé en paramètre.
         /// </summary>

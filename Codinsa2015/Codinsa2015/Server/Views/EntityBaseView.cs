@@ -17,6 +17,7 @@ namespace Codinsa2015.Views
 		public float GetAbilityPower;	
 		public float GetCooldownReduction;	
 		public float GetMoveSpeed;	
+		public float GetAttackSpeed;	
 		public float GetAttackDamage;	
 		public float GetArmor;	
 		public float GetHP;	

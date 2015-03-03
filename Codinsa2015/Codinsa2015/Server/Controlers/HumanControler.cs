@@ -169,21 +169,32 @@ namespace Codinsa2015.Server.Controlers
                 Vector2 pos = GameServer.GetMap().ToMapSpace(new Vector2(ms.X, ms.Y));
                 if (Input.IsRightClickPressed() && GameServer.GetMap().GetPassabilityAt(pos))
                 {
+
+                    float dst = Vector2.Distance(pos, Hero.Position);
                     // Obtient les entités targettables par le héros à portée.
                     var entities = GameServer.GetMap().Entities.GetEntitiesInSight(Hero.Type).
                         GetAliveEntitiesInRange(pos, 1).Where(delegate(KeyValuePair<int, EntityBase> kvp)
                         {
                             EntityType ennemyteam = (Hero.Type & EntityType.Teams) ^ EntityType.Teams;
-                            return kvp.Value.Type.HasFlag(ennemyteam) || kvp.Value.Type.HasFlag(EntityType.AllTargettableNeutral);
+                            return kvp.Value.Type.HasFlag(ennemyteam) || EntityType.AllTargettableNeutral.HasFlag(kvp.Value.Type);
                         }).ToList();
 
                     // Utilise l'arme sur le héros.
                     if(entities.Count != 0)
                     {
-                        Hero.Weapon.Use(Hero, entities.First().Value);
+                        if (Hero.Weapon.Use(Hero, entities.First().Value) == SpellUseResult.Success)
+                        {
+                            m_hero.EndMoveTo();
+                            m_hero.Path = null;
+                        }
                     }
 
-                    m_hero.Path = new Trajectory(new List<Vector2>() { pos });
+                    // Si on effectue une auto attaque
+                    if(entities.Count == 0  || 
+                        dst > Hero.Weapon.GetAttackSpell().TargetType.Range)
+                        m_hero.Path = new Trajectory(new List<Vector2>() { pos });
+                    
+                    
                 }
 
                 if (m_hero.Path != null && m_hero.IsBlockedByWall)
@@ -372,7 +383,7 @@ namespace Codinsa2015.Server.Controlers
                 Color col = m_hero.Consummables[i].UsingStarted ? Color.Gray : Color.White;
 
                 // Dessine le slot du consommable.
-                batch.Draw(Ressources.GetSpellTexture(m_hero.Consummables[i].Name),
+                batch.Draw(Ressources.GetSpellTexture(m_hero.Consummables[i].Model.Name),
                     new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.HeroControler);
 
                 xBase += size + padding;
@@ -397,7 +408,7 @@ namespace Codinsa2015.Server.Controlers
                 Color col = m_hero.Consummables[i].UsingStarted ? Color.Gray : Color.White;
 
                 // Dessine le slot du consommable.
-                batch.Draw(Ressources.GetSpellTexture(m_hero.Consummables[i].Type.ToString()),
+                batch.Draw(Ressources.GetSpellTexture(m_hero.Consummables[i].Model.ConsummableType.ToString()),
                     new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.HeroControler);
 
                 // Dessine le cooldown.

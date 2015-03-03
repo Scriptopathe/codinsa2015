@@ -10,18 +10,11 @@ namespace Codinsa2015.Server.Equip
     /// </summary>
     public class WardConsummable : Consummable
     {
-        /// <summary>
-        /// Obtient le type de consommable de cette ward.
-        /// </summary>
-        public override ConsummableType Type
-        {
-            get { return ConsummableType.Ward; }
-        }
 
         /// <summary>
         /// Place la ward sur l'emplacement à ward le plus proche du héros.
         /// </summary>
-        public override bool Use(EntityHero owner)
+        public override ConsummableUseResult Use(EntityHero owner)
         {
             EntityWardPlacement nearest = GameServer.GetMap().Entities.
                                 GetEntitiesByType(EntityType.WardPlacement).
@@ -33,9 +26,10 @@ namespace Codinsa2015.Server.Equip
             {
                 nearest.PutWard(owner);
                 UsingStarted = true;
-                return true;
+                return  ConsummableUseResult.SuccessAndDestroyed;
             }
-            return false;
+
+            return ConsummableUseResult.Fail;
         }
     }
 }

@@ -7,6 +7,7 @@ namespace Codinsa2015.Server.Equip
 {
     public enum EquipmentType
     {
+        Consummable,
         Armor,
         Weapon,
         WeaponEnchant,

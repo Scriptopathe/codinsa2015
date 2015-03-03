@@ -8,6 +8,7 @@ using Codinsa2015.Server.Entities;
 using Codinsa2015.Server.Spellcasts;
 using System.IO;
 using Codinsa2015.Graphics.Server;
+using Codinsa2015.Server.Events;
 namespace Codinsa2015.Server
 {
     /// <summary>
@@ -50,6 +51,10 @@ namespace Codinsa2015.Server
         /// Liste des sorts en cours d'activation sur la map.
         /// </summary>
         List<Spellcast> m_spellcasts;
+        /// <summary>
+        /// Dictionnaire contenant les différents évènements du jeu, addressés par leur type.
+        /// </summary>
+        Dictionary<EventType, GameEvent> m_events;
         /// <summary>
         /// Rectangle de l'écran sur lequel sera dessinée la map.
         /// </summary>
@@ -248,6 +253,7 @@ namespace Codinsa2015.Server
         float __xShaderTime = 0.0f;
         Vector2 __oldScroll;
         int __oldUnitSize;
+
         /// <summary>
         /// Dessine la map ainsi que les entités qu'elle contient.
         /// </summary>
@@ -331,14 +337,17 @@ namespace Codinsa2015.Server
             m_entities = new EntityCollection();
             m_entitiesAddList = new EntityCollection();
             m_spellcasts = new List<Spellcast>();
+            m_events = new Dictionary<EventType, GameEvent>();
             m_pointOfView = new PointOfView();
             m_pointOfView.UnitSize = 32;
-            m_pointOfView.Teams = EntityType.Team1;           
-            
+            m_pointOfView.Teams = EntityType.Team1;
+            m_events.Add(EventType.Camps, new Events.EventCamp());
             // DEBUG CODE
             m_passability = new bool[50, 50];
             __passabilityDrawRect(new Rectangle(1, 1, 40, 40), true);
             __passabilityDrawRect(new Rectangle(3, 4, 20, 2), false);
+
+            // TODO : chargement des évents.
 
 
             // Vision
@@ -361,6 +370,10 @@ namespace Codinsa2015.Server
             // Création du viewport
             Viewport = new Rectangle(0, 25, (int)GameServer.GetScreenSize().X, (int)GameServer.GetScreenSize().Y - 125);
             Scrolling = new Point();
+
+            // Initialisation des évents
+            foreach (var kvp in m_events)
+                kvp.Value.Initialize();
         }
         /// <summary>
         /// Mets à jour la map ainsi que les entités qu'elle contient.
@@ -392,6 +405,10 @@ namespace Codinsa2015.Server
                 m_entities.Add(first.Key, first.Value);
                 m_entitiesAddList.Remove(first.Key);
             }
+
+            // Mets à jour tous les évènements.
+            foreach (var kvp in m_events)
+                kvp.Value.Update(time);
 
             // Mets à jour les entités.
             foreach (var kvp in m_entities) 
@@ -584,6 +601,12 @@ namespace Codinsa2015.Server
             foreach(var entity in map.Entities)
             {
                 newEntities.Add(entity.Key, entity.Value);
+            }
+
+            // Reset de tous les évents
+            foreach(var evt in m_events)
+            {
+                evt.Value.Initialize();
             }
 
             Entities = newEntities;

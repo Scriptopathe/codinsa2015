@@ -100,6 +100,9 @@ namespace Codinsa2015.Server.Entities
         // Macros
         AllEnnemy       = Ennemy | Tower | Inhibitor | Spawner | Idol | Player | Creep,
         AllAlly         = Ally | Tower | Inhibitor | Spawner | Idol | Player | Creep,
+        AllObjectives   = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss,
+        AllSaved        = AllObjectives | Checkpoint | WardPlacement | HeroSpawner,
+        AllTargettableNeutral = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss | Creep | Monster,
 
         // Team
         AllyTower       = Ally | Tower,

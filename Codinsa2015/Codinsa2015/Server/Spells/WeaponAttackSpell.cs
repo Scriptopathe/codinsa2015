@@ -46,6 +46,7 @@ namespace Codinsa2015.Server.Spells
                 attack.OnHitEffects.AddRange(enchant.OnHitEffects);
             if(enchant.CastingEffects != null)
                 attack.CastingTimeAlterations.AddRange(enchant.CastingEffects);
+
             Levels = new List<SpellDescription>() 
             { 
                 attack,

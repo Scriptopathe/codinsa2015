@@ -44,7 +44,7 @@ namespace Codinsa2015.Server.Spells
                 
                 TargetType = new SpellTargetInfo()
                 {
-                    AllowedTargetTypes = EntityTypeRelative.AllEnnemy,
+                    AllowedTargetTypes = EntityTypeRelative.AllEnnemy | EntityTypeRelative.AllTargettableNeutral,
                     AoeRadius = 0.3f,
                     Range = 6f,
                     Duration = 0.6f,

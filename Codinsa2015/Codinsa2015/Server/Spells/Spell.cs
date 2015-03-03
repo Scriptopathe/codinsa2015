@@ -15,6 +15,7 @@ namespace Codinsa2015.Server.Spells
     {
         Success,
         InvalidTarget,
+        InvalidTargettingType,
         OnCooldown,
         Silenced,
         OutOfRange,
@@ -156,7 +157,7 @@ namespace Codinsa2015.Server.Spells
         {
             // Vérifie que le type de ciblage est le bon.
             if (((target.Type & Description.TargetType.Type) != Description.TargetType.Type))
-                return SpellUseResult.InvalidTarget;
+                return SpellUseResult.InvalidTargettingType;
 
             // Vérifie que le sort n'est pas en cooldown.
             if (CurrentCooldown > 0)
@@ -171,6 +172,9 @@ namespace Codinsa2015.Server.Spells
             {
                 EntityBase entity = GameServer.GetMap().GetEntityById(target.TargetId);
                 if (entity == null)
+                    return SpellUseResult.InvalidTarget;
+
+                if (!this.HasEffectOn(entity, target))
                     return SpellUseResult.InvalidTarget;
 
                 Vector2 entityPosition = entity.Position;

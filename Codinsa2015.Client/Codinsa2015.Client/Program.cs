@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Codinsa2015.Views.Client;
@@ -18,7 +19,7 @@ namespace Codinsa2015.Client
             {
                 game.Run();
             }*/
-            Console.Write("Name: ");
+            
             string str = Console.ReadLine();
             TCPHelper.Initialize(Codinsa2015.Graphics.Client.RemoteClient.__DEBUG_PORT, "127.0.0.1", str);
             State state = new State();

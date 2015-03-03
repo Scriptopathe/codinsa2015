@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 
-namespace Codinsa2015.Views
+namespace Codinsa2015.Views.Client
 {
 
 	public enum EntityType
@@ -34,6 +34,7 @@ namespace Codinsa2015.Views
 		Boss = 1280,
 		Miniboss = 2304,
 		AllObjectives = 3576,
+		AllTargettableNeutral = 4088,
 		Checkpoint = 16384,
 		Team1Checkpoint = 16386,
 		Team2CheckPoint = 16388,
@@ -43,9 +44,10 @@ namespace Codinsa2015.Views
 		AllTeam1 = 33530,
 		AllTeam2 = 33532,
 		WardPlacement = 65536,
-		AllSaved = 85496,
 		Ward = 131072,
-		Shop = 262144
+		Shop = 262144,
+		HeroSpawner = 524288,
+		AllSaved = 609784
 	}
 	
 	public enum EntityTypeRelative
@@ -82,7 +84,8 @@ namespace Codinsa2015.Views
 		AllEnnemy = 33532,
 		WardPlacement = 65536,
 		Ward = 131072,
-		Shop = 262144
+		Shop = 262144,
+		HeroSpawner = 524288
 	}
 	
 	public enum StateAlterationSource
@@ -90,9 +93,11 @@ namespace Codinsa2015.Views
 		Consumable = 0,
 		Armor = 1,
 		Weapon = 2,
-		Boots = 3,
-		Self = 4,
-		Spell = 5
+		Amulet = 3,
+		Boots = 4,
+		Self = 5,
+		SpellActive = 6,
+		SpellPassive = 7
 	}
 	
 	public enum StateAlterationType
@@ -130,6 +135,31 @@ namespace Codinsa2015.Views
 		BackwardsCaster = 2
 	}
 	
+	public enum ConsummableType
+	{
+		Empty = 0,
+		Ward = 1,
+		Unward = 2
+	}
+	
+	public enum ConsummableUseResult
+	{
+		Success = 0,
+		SuccessAndDestroyed = 1,
+		Fail = 2,
+		NotUnits = 3
+	}
+	
+	public enum SpellUseResult
+	{
+		Success = 0,
+		InvalidTarget = 1,
+		InvalidTargettingType = 2,
+		OnCooldown = 3,
+		Silenced = 4,
+		OutOfRange = 5
+	}
+	
 	public enum TargettingType
 	{
 		Targetted = 1,
@@ -147,11 +177,37 @@ namespace Codinsa2015.Views
 	public class State
 	{
 
-		public MapView GetMapView()
+		public EntityBaseView GetHero()
 		{
 			// Send
 			List<object> args = new List<object>() { };
 			int funcId = 0;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return (EntityBaseView)o[0].ToObject(typeof(EntityBaseView));
+		}
+	
+		public Vector2 GetPosition()
+		{
+			// Send
+			List<object> args = new List<object>() { };
+			int funcId = 1;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return (Vector2)o[0].ToObject(typeof(Vector2));
+		}
+	
+		public MapView GetMapView()
+		{
+			// Send
+			List<object> args = new List<object>() { };
+			int funcId = 2;
 			List<object> obj = new List<object>() { funcId, args };
 			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
 			// Receive
@@ -164,7 +220,7 @@ namespace Codinsa2015.Views
 		{
 			// Send
 			List<object> args = new List<object>() { position};
-			int funcId = 1;
+			int funcId = 3;
 			List<object> obj = new List<object>() { funcId, args };
 			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
 			// Receive
@@ -177,7 +233,7 @@ namespace Codinsa2015.Views
 		{
 			// Send
 			List<object> args = new List<object>() { };
-			int funcId = 2;
+			int funcId = 4;
 			List<object> obj = new List<object>() { funcId, args };
 			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
 			// Receive
@@ -190,7 +246,7 @@ namespace Codinsa2015.Views
 		{
 			// Send
 			List<object> args = new List<object>() { };
-			int funcId = 3;
+			int funcId = 5;
 			List<object> obj = new List<object>() { funcId, args };
 			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
 			// Receive
@@ -203,13 +259,104 @@ namespace Codinsa2015.Views
 		{
 			// Send
 			List<object> args = new List<object>() { };
-			int funcId = 4;
+			int funcId = 6;
 			List<object> obj = new List<object>() { funcId, args };
 			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
 			// Receive
 			string str = TCPHelper.Receive();
 			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
 			return (List<EntityBaseView>)o[0].ToObject(typeof(List<EntityBaseView>));
+		}
+	
+		public EntityBaseView GetEntityById(int entityId)
+		{
+			// Send
+			List<object> args = new List<object>() { entityId};
+			int funcId = 7;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return (EntityBaseView)o[0].ToObject(typeof(EntityBaseView));
+		}
+	
+		public bool UseSpell(int spellId,SpellCastTargetInfoView target)
+		{
+			// Send
+			List<object> args = new List<object>() { spellId,target};
+			int funcId = 8;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return o.Value<bool>(0);
+		}
+	
+		public SceneMode GetMode()
+		{
+			// Send
+			List<object> args = new List<object>() { };
+			int funcId = 9;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return o.Value<SceneMode>(0);
+		}
+	
+		public SpellDescriptionView GetSpellCurrentLevelDescription(int spellId)
+		{
+			// Send
+			List<object> args = new List<object>() { spellId};
+			int funcId = 10;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return (SpellDescriptionView)o[0].ToObject(typeof(SpellDescriptionView));
+		}
+	
+		public SpellView GetSpell(int spellId)
+		{
+			// Send
+			List<object> args = new List<object>() { spellId};
+			int funcId = 11;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return (SpellView)o[0].ToObject(typeof(SpellView));
+		}
+	
+		public List<SpellView> GetSpells()
+		{
+			// Send
+			List<object> args = new List<object>() { };
+			int funcId = 12;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return (List<SpellView>)o[0].ToObject(typeof(List<SpellView>));
+		}
+	
+		public List<SpellView> GetHeroSpells(int entityId)
+		{
+			// Send
+			List<object> args = new List<object>() { entityId};
+			int funcId = 13;
+			List<object> obj = new List<object>() { funcId, args };
+			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+			// Receive
+			string str = TCPHelper.Receive();
+			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
+			return (List<SpellView>)o[0].ToObject(typeof(List<SpellView>));
 		}
 	
 	}

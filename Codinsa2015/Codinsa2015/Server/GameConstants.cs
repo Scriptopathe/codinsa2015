@@ -51,6 +51,41 @@ namespace Codinsa2015.Server
         public float CreepDeathRewardRange = 5f;
         public float CreepDeathReward = 4f;
     }
+
+    /// <summary>
+    /// Constantes pour les camps de monstres.
+    /// </summary>
+    public class MonsterCampEventConstants
+    {
+        /// <summary>
+        /// Temps de respawn en secondes du camp.
+        /// </summary>
+        public float RespawnTimer;
+        /// <summary>
+        /// Intervalle en secondes entre 2 spawn de creeps par le camp
+        /// lorsqu'il est possédé.
+        /// </summary>
+        public float CreepSpawnInterval;
+        public MonsterCampEventConstants()
+        {
+            RespawnTimer = 10;
+            CreepSpawnInterval = 5;
+        }
+    }
+
+    /// <summary>
+    /// Constantes concernant les évènements.
+    /// </summary>
+    public class EventConstants
+    {
+        public MonsterCampEventConstants MonsterCamp;
+
+        public EventConstants()
+        {
+            MonsterCamp = new MonsterCampEventConstants();
+        }
+    }
+
     /// <summary>
     /// Constantes pour les tours.
     /// </summary>
@@ -98,6 +133,20 @@ namespace Codinsa2015.Server
     }
 
     /// <summary>
+    /// Contient les constantes concernant les échoppes.
+    /// </summary>
+    public class ShopConstants
+    {
+        public float DefaultBuyRange;
+        public float SellingPriceFactor;
+        public ShopConstants()
+        {
+            DefaultBuyRange = 4.0f;
+            SellingPriceFactor = 0.9f;
+        }
+    }
+
+    /// <summary>
     /// Contient les constantes concernant les structures.
     /// </summary>
     public class StructureConstants
@@ -105,11 +154,13 @@ namespace Codinsa2015.Server
         public TowerConstants Towers;
         public InhibitorConstants Inhibs;
         public SpawnerConstants Spawners;
+        public ShopConstants Shops;
         public StructureConstants()
         {
             Towers = new TowerConstants();
             Inhibs = new InhibitorConstants();
             Spawners = new SpawnerConstants();
+            Shops = new ShopConstants();
         }
     }
 
@@ -189,6 +240,7 @@ namespace Codinsa2015.Server
         public CreepConstants Creeps;
         public RoleConstants Roles;
         public RewardConstants Rewards;
+        public EventConstants Events;
         /// <summary>
         /// Crée une nouvelle instance de GameConstants avec des constantes par défaut.
         /// </summary>
@@ -199,6 +251,7 @@ namespace Codinsa2015.Server
             Creeps = new CreepConstants();
             Roles = new RoleConstants();
             Rewards = new RewardConstants();
+            Events = new EventConstants();
         }
 
         /// <summary>

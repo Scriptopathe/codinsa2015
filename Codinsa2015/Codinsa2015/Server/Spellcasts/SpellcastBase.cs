@@ -68,7 +68,7 @@ namespace Codinsa2015.Server.Spellcasts
         {
             if (IsDisposing)
                 return;
-
+            
             // Supprime le spell une fois que sa durée est terminée.
             if (m_time > SourceSpell.Description.TargetType.Duration)
             {

@@ -54,7 +54,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Représente les consommables possédés par le héros.
         /// </summary>
-        Consummable[] m_consummables;
+        ConsummableStack[] m_consummables;
     
         #endregion
 
@@ -62,14 +62,14 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient les consommables possédés par ce héros.
         /// </summary>
-        public Consummable[] Consummables
+        public ConsummableStack[] Consummables
         {
             get { return m_consummables; }
         }
         /// <summary>
         /// Obtient le consommable contenu dans le slot 1.
         /// </summary>
-        public Consummable Consummable1
+        public ConsummableStack Consummable1
         {
             get { return m_consummables[0]; }
             protected set { m_consummables[0] = value; }
@@ -77,7 +77,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient le consommable contenu dans le slot 2.
         /// </summary>
-        public Consummable Consummable2
+        public ConsummableStack Consummable2
         {
             get { return m_consummables[1]; }
             protected set { m_consummables[1] = value; }
@@ -237,9 +237,9 @@ namespace Codinsa2015.Server.Entities
             Spells.Add(new Spells.TargettedTowerSpell(this));
             VisionRange = 8;
             BaseMoveSpeed = 2;
-            m_consummables = new Consummable[2] {
-                new WardConsummable(),
-                new UnwardConsummable()
+            m_consummables = new ConsummableStack[2] {
+                new ConsummableStack(this, ConsummableType.Ward),
+                new ConsummableStack(this, ConsummableType.Unward)
             };
         }
 
@@ -268,8 +268,7 @@ namespace Codinsa2015.Server.Entities
         {
             for(int i = 0; i < m_consummables.Length; i++)
             {
-                if (m_consummables[i].Update(time, this))
-                    m_consummables[i] = new EmptyConsummable();
+                m_consummables[i].Update(time);
             }
         }
         #endregion
@@ -281,8 +280,7 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         public void UseConsummable(int id)
         {
-            if(m_consummables[id].Use(this))
-                m_consummables[id] = new EmptyConsummable();
+            m_consummables[id].Use();
         }
         #endregion
 

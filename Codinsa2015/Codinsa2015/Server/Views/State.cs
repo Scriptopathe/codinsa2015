@@ -34,6 +34,7 @@ namespace Codinsa2015.Views
 		Boss = 1280,
 		Miniboss = 2304,
 		AllObjectives = 3576,
+		AllTargettableNeutral = 4088,
 		Checkpoint = 16384,
 		Team1Checkpoint = 16386,
 		Team2CheckPoint = 16388,
@@ -43,9 +44,10 @@ namespace Codinsa2015.Views
 		AllTeam1 = 33530,
 		AllTeam2 = 33532,
 		WardPlacement = 65536,
-		AllSaved = 85496,
 		Ward = 131072,
-		Shop = 262144
+		Shop = 262144,
+		HeroSpawner = 524288,
+		AllSaved = 609784
 	}
 	
 	public enum EntityTypeRelative
@@ -82,7 +84,8 @@ namespace Codinsa2015.Views
 		AllEnnemy = 33532,
 		WardPlacement = 65536,
 		Ward = 131072,
-		Shop = 262144
+		Shop = 262144,
+		HeroSpawner = 524288
 	}
 	
 	public enum StateAlterationSource
@@ -90,9 +93,11 @@ namespace Codinsa2015.Views
 		Consumable = 0,
 		Armor = 1,
 		Weapon = 2,
-		Boots = 3,
-		Self = 4,
-		Spell = 5
+		Amulet = 3,
+		Boots = 4,
+		Self = 5,
+		SpellActive = 6,
+		SpellPassive = 7
 	}
 	
 	public enum StateAlterationType
@@ -130,6 +135,31 @@ namespace Codinsa2015.Views
 		BackwardsCaster = 2
 	}
 	
+	public enum ConsummableType
+	{
+		Empty = 0,
+		Ward = 1,
+		Unward = 2
+	}
+	
+	public enum ConsummableUseResult
+	{
+		Success = 0,
+		SuccessAndDestroyed = 1,
+		Fail = 2,
+		NotUnits = 3
+	}
+	
+	public enum SpellUseResult
+	{
+		Success = 0,
+		InvalidTarget = 1,
+		InvalidTargettingType = 2,
+		OnCooldown = 3,
+		Silenced = 4,
+		OutOfRange = 5
+	}
+	
 	public enum TargettingType
 	{
 		Targetted = 1,
@@ -147,6 +177,14 @@ namespace Codinsa2015.Views
 	public class State
 	{
 
+		public EntityBaseView GetHero(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHero();
+		}	
+		public Vector2 GetPosition(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetPosition();
+		}	
 		public MapView GetMapView(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMapView();
@@ -167,6 +205,34 @@ namespace Codinsa2015.Views
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntitiesInSight();
 		}	
+		public EntityBaseView GetEntityById(int entityId, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntityById(entityId);
+		}	
+		public bool UseSpell(int spellId, SpellCastTargetInfoView target, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseSpell(spellId,target);
+		}	
+		public SceneMode GetMode(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMode();
+		}	
+		public SpellDescriptionView GetSpellCurrentLevelDescription(int spellId, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpellCurrentLevelDescription(spellId);
+		}	
+		public SpellView GetSpell(int spellId, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpell(spellId);
+		}	
+		public List<SpellView> GetSpells(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpells();
+		}	
+		public List<SpellView> GetHeroSpells(int entityId, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHeroSpells(entityId);
+		}	
 		/// <summary>
 		/// Génère le code pour la fonction de traitement des messages.
 		/// </summary>
@@ -177,16 +243,40 @@ namespace Codinsa2015.Views
 			switch(functionId)
 			{
 				case 0:
-					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetMapView(clientId) });
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetHero(clientId) });
 				case 1:
-					Vector2 arg1_0 = (Vector2)o[1][0].ToObject(typeof(Vector2));
-					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { StartMoveTo(arg1_0, clientId) });
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetPosition(clientId) });
 				case 2:
-					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { IsAutoMoving(clientId) });
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetMapView(clientId) });
 				case 3:
-					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { EndMoveTo(clientId) });
+					Vector2 arg3_0 = (Vector2)o[1][0].ToObject(typeof(Vector2));
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { StartMoveTo(arg3_0, clientId) });
 				case 4:
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { IsAutoMoving(clientId) });
+				case 5:
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { EndMoveTo(clientId) });
+				case 6:
 					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetEntitiesInSight(clientId) });
+				case 7:
+					int arg7_0 = o[1].Value<int>(0);
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetEntityById(arg7_0, clientId) });
+				case 8:
+					int arg8_0 = o[1].Value<int>(0);
+					SpellCastTargetInfoView arg8_1 = (SpellCastTargetInfoView)o[1][1].ToObject(typeof(SpellCastTargetInfoView));
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { UseSpell(arg8_0, arg8_1, clientId) });
+				case 9:
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetMode(clientId) });
+				case 10:
+					int arg10_0 = o[1].Value<int>(0);
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetSpellCurrentLevelDescription(arg10_0, clientId) });
+				case 11:
+					int arg11_0 = o[1].Value<int>(0);
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetSpell(arg11_0, clientId) });
+				case 12:
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetSpells(clientId) });
+				case 13:
+					int arg13_0 = o[1].Value<int>(0);
+					return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { GetHeroSpells(arg13_0, clientId) });
 			}
 			return "";
 		}

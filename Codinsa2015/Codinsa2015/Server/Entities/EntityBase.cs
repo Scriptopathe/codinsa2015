@@ -16,6 +16,14 @@ namespace Codinsa2015.Server.Entities
     /// </summary>
     public class EntityBase
     {
+        #region Events / Delegate
+        
+        public delegate void OnDieDelegate(EntityHero killer);
+        /// <summary>
+        /// Event lancé lorsque l'entité meurt.
+        /// </summary>
+        public event OnDieDelegate OnDie;
+        #endregion
         #region Constants
         #endregion
 
@@ -921,6 +929,10 @@ namespace Codinsa2015.Server.Entities
             {
                 GameServer.GetScene().RewardSystem.NotifyUnitDeath(this, killer);
             }
+            
+            // Broadcaste l'information de la mort de l'entité.
+            if(OnDie != null)
+                OnDie(killer);
 
             IsDisposing = true;
         }
