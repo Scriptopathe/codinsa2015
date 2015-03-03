@@ -14,7 +14,7 @@ namespace Codinsa2015.Server.Events
     ///     a la possession du camp..
     ///     - au bout d'un certain temps, le camp repawne, et peut être détruit par les 2 équipes.
     /// </summary>
-    public class EventCamp : GameEvent
+    public class EventMonsterCamp : GameEvent
     {
         /// <summary>
         /// Position de l'event.
@@ -60,7 +60,7 @@ namespace Codinsa2015.Server.Events
         /// <summary>
         /// Crée une nouvelle instance de EventCamp.
         /// </summary>
-        public EventCamp()
+        public EventMonsterCamp()
         {
 
         }
@@ -99,6 +99,9 @@ namespace Codinsa2015.Server.Events
 
                 if (allDead)
                 {
+                    if (m_lastKiller == null)
+                        throw new Exception("Problème ?");
+
                     m_teamOwner = m_lastKiller.Type & Entities.EntityType.Teams;
 
                     // Distribution du timer à la team qui a tué le camp.
@@ -168,9 +171,8 @@ namespace Codinsa2015.Server.Events
             m_monsters.Clear();
             for(int i = 0; i < 3; i++)
             {
-                var monster = new Entities.EntityCampMonster()
+                var monster = new Entities.EntityCampMonster(m_position + offsets[i])
                 {
-                    Position = m_position + offsets[i],
                     Type = Entities.EntityType.Monster,
                 };
                 m_monsters.Add(monster);

@@ -250,7 +250,7 @@ namespace Codinsa2015.Server.Controlers
             if (entity == null)
                 return new Views.EntityBaseView() { ID = -1 };
 
-            if(Hero.Sees(entity))
+            if(Hero.HasSightOn(entity))
             {
                 Views.EntityBaseView view = new Views.EntityBaseView();
                 view.BaseAbilityPower = entity.BaseAbilityPower;

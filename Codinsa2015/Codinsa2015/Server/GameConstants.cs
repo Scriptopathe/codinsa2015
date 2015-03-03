@@ -180,7 +180,7 @@ namespace Codinsa2015.Server
         public float CooldownReduction;
         public EntityConstants()
         {
-
+            VisionRange = 6;
         }
     }
 
@@ -194,11 +194,25 @@ namespace Codinsa2015.Server
         public CreepConstants() : base()
         {
             HP = 100;
-            VisionRange = 5.0f;
+            VisionRange = 8.0f;
             MoveSpeed = 4.0f;
             AttackSpeed = 1.0f;
             AttackDamage = 40;
             AttackRange = 5f;
+            Armor = 10f;
+        }
+    }
+
+    public class CampMonsterConstants : EntityConstants
+    {
+        /// <summary>
+        /// Distance maximale à laquelle cette unité peut s'éloigner de GuardPosition.
+        /// </summary>
+        public float MaxMoveDistance;
+
+        public CampMonsterConstants() 
+        {
+            MaxMoveDistance = 5;
         }
     }
 
@@ -240,6 +254,7 @@ namespace Codinsa2015.Server
         public CreepConstants Creeps;
         public RoleConstants Roles;
         public RewardConstants Rewards;
+        public CampMonsterConstants CampMonsters;
         public EventConstants Events;
         /// <summary>
         /// Crée une nouvelle instance de GameConstants avec des constantes par défaut.
@@ -252,6 +267,7 @@ namespace Codinsa2015.Server
             Roles = new RoleConstants();
             Rewards = new RewardConstants();
             Events = new EventConstants();
+            CampMonsters = new CampMonsterConstants();
         }
 
         /// <summary>

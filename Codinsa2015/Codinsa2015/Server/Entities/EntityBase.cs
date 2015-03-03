@@ -1205,15 +1205,37 @@ namespace Codinsa2015.Server.Entities
         }
         #endregion
 
+        #region Misc
+        /// <summary>
+        /// Indique si oui ou non l'entité est à la position donné (avec une erreur convenablement
+        /// calculée).
+        /// </summary>
+        public bool IsAt(Vector2 position)
+        {
+            float error = GetMoveSpeed() * (float)GameServer.GetTime().ElapsedGameTime.TotalSeconds;
+            return Vector2.DistanceSquared(position, Position) <= error * error;
+        }
+        #endregion
         #region Vision
         /// <summary>
         /// Indique si cette entité voit l'autre entité.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Sees(EntityBase other)
+        public bool HasSightOn(EntityBase other)
         {
             return GameServer.GetMap().Vision.HasSightOn(Type, other);
+        }
+
+        /// <summary>
+        /// Indique si l'entité 'other' est dans la RANGE de vision de cette entité.
+        /// /!\ Cela n'indique pas si cette entité a la vision sur 'other'. Utiliser HasSightOn pour ça.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool IsInVisionRange(EntityBase other)
+        {
+            return Vector2.DistanceSquared(other.Position, Position) <= this.VisionRange * this.VisionRange;
         }
         #endregion
 

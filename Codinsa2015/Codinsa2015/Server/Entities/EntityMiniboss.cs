@@ -165,7 +165,7 @@ namespace Codinsa2015.Server.Entities
             EntityCollection entitiesInRange = GameServer.GetMap().Entities.GetAliveEntitiesInRange(this.Position, AttackRange);
             EntityBase oldAggro = m_currentAgro;
 
-            if (m_currentAgro != null && (m_currentAgro.IsDead || !Sees(m_currentAgro)))
+            if (m_currentAgro != null && (m_currentAgro.IsDead || !HasSightOn(m_currentAgro)))
                 m_currentAgro = null;
 
             // Si la creep n'a pas d'aggro : on cherche la première unité creep en range

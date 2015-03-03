@@ -341,7 +341,7 @@ namespace Codinsa2015.Server
             m_pointOfView = new PointOfView();
             m_pointOfView.UnitSize = 32;
             m_pointOfView.Teams = EntityType.Team1;
-            m_events.Add(EventType.Camps, new Events.EventCamp());
+            m_events.Add(EventType.Camps, new Events.EventMonsterCamp());
             // DEBUG CODE
             m_passability = new bool[50, 50];
             __passabilityDrawRect(new Rectangle(1, 1, 40, 40), true);

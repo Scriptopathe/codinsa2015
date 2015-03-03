@@ -103,7 +103,10 @@ namespace Codinsa2015.Server
                 float dst = Vector2.DistanceSquared(position, CurrentStep);
                 float error = speed * (float)time.ElapsedGameTime.TotalSeconds;
                 if (dst <= error * error)
+                {
                     m_currentPosition++;
+               
+                }
             }
 
 

@@ -76,6 +76,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\IdiotProgrammerException.cs" />
     <Compile Include="Server\Controlers\IAControler.cs" />
     <Compile Include="Server\Controlers\HumanControler.cs" />
     <Compile Include="Server\Controlers\ControlerBase.cs" />

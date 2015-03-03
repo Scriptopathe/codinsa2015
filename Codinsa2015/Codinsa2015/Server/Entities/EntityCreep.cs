@@ -150,7 +150,8 @@ namespace Codinsa2015.Server.Entities
 
             // on s'arrête quand on est en range d'une tour / creep.
             float dstSqr = Vector2.DistanceSquared(m_path.LastPosition(), Position);
-            if (m_currentAgro.Type.HasFlag(EntityType.Checkpoint) || dstSqr > AttackRange * AttackRange * MaxRangeApproach)
+            float range = AttackRange * MaxRangeApproach;
+            if (m_currentAgro.Type.HasFlag(EntityType.Checkpoint) || dstSqr > range * range)
             {
                 Direction = nextPosition - Position;
                 MoveForward(time);
@@ -164,7 +165,7 @@ namespace Codinsa2015.Server.Entities
             EntityCollection entitiesInRange = GameServer.GetMap().Entities.GetAliveEntitiesInRange(this.Position, AttackRange);
             EntityBase oldAggro = m_currentAgro;
 
-            if (m_currentAgro != null && (m_currentAgro.IsDead || !Sees(m_currentAgro)))
+            if (m_currentAgro != null && (m_currentAgro.IsDead || !HasSightOn(m_currentAgro)))
                 m_currentAgro = null;
 
             // Si la creep n'a pas d'aggro : on cherche la première unité creep en range
@@ -217,78 +218,7 @@ namespace Codinsa2015.Server.Entities
                     m_currentCheckpointId = ((EntityCheckpoint)next).CheckpointID;
                 m_currentAgro = next;
             }
-            // Si il y a des creeps en range.
-            /*// Si l'entité qui avait l'aggro meurt, on la remplace
-            if (m_currentAgro != null && m_currentAgro.IsDead)
-                m_currentAgro = null;
-
-            // Si la tour n'a pas d'aggro : on cherche la première unité creep en range
-            if(m_currentAgro == null)
-            {
-                EntityType ennemyCreep = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyCreep, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityBase nearestEnnemyCreep = entitiesInRange.GetEntitiesByType(ennemyCreep).NearestFrom(this.Position);
-                m_currentAgro = nearestEnnemyCreep;
-            }
-
-            // Si on n'en trouve pas : on cherche le premier héros en range.
-            if(m_currentAgro == null)
-            {
-                EntityType ennemyHero = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyPlayer, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityCollection ennemyHeroes = entitiesInRange.GetEntitiesByType(ennemyHero);
-                EntityBase nearestEnnemyHero = ennemyHeroes.NearestFrom(this.Position);
-                m_currentAgro = nearestEnnemyHero;
-            }
-
-            // Si on n'en trouve toujours pas, on cherche la tour ennemie la plus proche.
-            if(m_currentAgro == null)
-            {
-                EntityType ennemyTower = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyTower, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityBase nearestTower = Mobattack.GetMap().Entities.GetEntitiesByType(ennemyTower).NearestFrom(this.Position);
-                m_currentAgro = nearestTower;
-            }
-
-            // Puis l'inhibiteur
-            if (m_currentAgro == null)
-            {
-                EntityType ennemyIdol = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyInhibitor, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityBase nearest = Mobattack.GetMap().Entities.GetEntitiesByType(ennemyIdol).NearestFrom(this.Position);
-                m_currentAgro = nearest;
-            }
-
-            // Puis l'idole
-            if (m_currentAgro == null)
-            {
-                EntityType ennemyIdol = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyIdol, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityBase nearest = Mobattack.GetMap().Entities.GetEntitiesByType(ennemyIdol).NearestFrom(this.Position);
-                m_currentAgro = nearest;
-            }
-
-
-            if(m_currentAgro != null)
-            {
-                // Si la cible a déjà l'aggro sur quelqu'un, on vérifie qu'un des alliés n'est
-                // pas attaqué.
-                // Si un allié est attaqué, la tour aggro le héros qui l'a attaquée.
-                EntityType allyHeroType = EntityTypeConverter.ToAbsolute(EntityTypeRelative.AllyPlayer, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityType ennemyHeroType = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyPlayer, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityCollection allyHeroes = entitiesInRange.GetEntitiesByType(allyHeroType);
-
-                foreach(var kvp in allyHeroes)
-                {
-                    EntityBase allyHero = kvp.Value;
-                    // On regarde si un des héros alliés subit des dégâts
-                    List<StateAlteration> alterations = allyHero.StateAlterations.GetInteractionsByType(StateAlterationType.AttackDamage | StateAlterationType.TrueDamage);
-                    if(alterations.Count != 0)
-                    {
-                        // On vérifie que ces dégâts proviennent d'un héros ennemi.
-                        foreach(StateAlteration alteration in alterations)
-                        {
-                            if (alteration.Source.Type.HasFlag(ennemyHeroType))
-                                m_currentAgro = alteration.Source;
-                        }
-                    }
-                }
-            }*/
+            
 
             // Si l'aggro bouge, on recalcule l'A*.
             if (m_currentAgro != null && Vector2.DistanceSquared(m_currentAgro.Position, m_currentAggroOldPos) > 1)

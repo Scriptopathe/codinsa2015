@@ -35,7 +35,9 @@ namespace Codinsa2015.Server.Spells
         /// Crée une nouvelle instance de FireballSpell.
         /// </summary>
         /// <param name="caster"></param>
-        public FireballSpell(EntityBase caster, float cooldownBase=1.7f)
+        public FireballSpell(EntityBase caster,
+            float cooldownBase=1.7f,
+            EntityTypeRelative allowedTargets = EntityTypeRelative.AllEnnemy | EntityTypeRelative.AllTargettableNeutral)
         {
             SourceCaster = caster;
             Name = "Fireball";
@@ -44,7 +46,7 @@ namespace Codinsa2015.Server.Spells
                 
                 TargetType = new SpellTargetInfo()
                 {
-                    AllowedTargetTypes = EntityTypeRelative.AllEnnemy | EntityTypeRelative.AllTargettableNeutral,
+                    AllowedTargetTypes = allowedTargets,
                     AoeRadius = 0.3f,
                     Range = 6f,
                     Duration = 0.6f,

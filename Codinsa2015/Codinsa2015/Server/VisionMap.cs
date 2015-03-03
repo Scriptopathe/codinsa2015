@@ -107,6 +107,9 @@ namespace Codinsa2015.Server
         public bool HasSightOn(EntityType team1, EntityBase entity2)
         {
             team1 &= EntityType.Teams;
+            if (team1 == 0)
+                throw new Exceptions.IdiotProgrammerException("HasSightOn ne doit être appelé que pour des entités appartenant à une des 2 équipes.");
+
             EntityType team2 = entity2.Type & EntityType.Teams;
             if(team1 == team2)
                 return true;

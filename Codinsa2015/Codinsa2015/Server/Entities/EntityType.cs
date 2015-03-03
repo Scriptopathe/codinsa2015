@@ -134,7 +134,7 @@ namespace Codinsa2015.Server.Entities
         {
             team = team & (EntityType.Team1 | EntityType.Team2);
             if (team != EntityType.Team1 && team != EntityType.Team2)
-                throw new InvalidOperationException();
+                return (EntityTypeRelative)(int)((absolute | EntityType.Teams) ^ EntityType.Teams);
 
             int absInt = (int)absolute;
 
