@@ -11,6 +11,11 @@ namespace Codinsa2015.Server.Entities
     /// </summary>
     public class EntityCampMonster : EntityBase
     {
+        /// <summary>
+        /// Pourcentage de la range d'attaque à laquelle va s'approcher cette unité
+        /// pour attaquer.
+        /// </summary>
+        const float AttackRangeApproach = 0.80f;
         #region Variables
         /// <summary>
         /// Référence vers l'entité ayant l'aggro de cette unité.
@@ -31,7 +36,11 @@ namespace Codinsa2015.Server.Entities
 
         Trajectory m_path;
 
-        
+        /// <summary>
+        /// Indique si cette entité a stoppé sa course car elle était en range d'attaque 
+        /// de l'entité qu'elle a aggro.
+        /// </summary>
+        bool m_stoppedAtAttackRange;
         #endregion
 
         #region Properties
@@ -119,25 +128,31 @@ namespace Codinsa2015.Server.Entities
             if (m_path == null || m_path.TrajectoryUnits.Count == 0)
                 return;
 
-            // On mets à jour la trajectoire.
+            // On met à jour la trajectoire.
             m_path.UpdateStep(Position, GetMoveSpeed(), time);
             Vector2 nextPosition = m_path.CurrentStep;
 
 
             // on s'arrête quand on est en range d'une tour / creep.
             float dstSqr = Vector2.DistanceSquared(m_path.LastPosition(), Position);
-            float range = AttackRange;
+            float range = AttackRange * AttackRangeApproach;
             if (!IsAt(nextPosition))
             {
                 if (m_currentAgro == null || dstSqr > range * range)
                 {
                     Direction = nextPosition - Position;
                     MoveForward(time);
+                    m_stoppedAtAttackRange = false;
+                }
+                else
+                {
+                    m_stoppedAtAttackRange = true;
                 }
             }
             else
             {
                 Position = nextPosition;
+                m_stoppedAtAttackRange = false;
             }
              
         }
@@ -163,7 +178,8 @@ namespace Codinsa2015.Server.Entities
             
 
             // Si l'aggro bouge, on recalcule l'A*.
-            if (m_currentAgro != null && Vector2.DistanceSquared(m_currentAgro.Position, m_currentAggroOldPos) > 1)
+            if (m_currentAgro != null && Vector2.DistanceSquared(m_currentAgro.Position, m_currentAggroOldPos) > 1 && 
+                (m_path == null || m_stoppedAtAttackRange || IsAt(m_path.LastPosition()) ) )
             {
                 m_currentAggroOldPos = m_currentAgro.Position;
                 ComputePath();

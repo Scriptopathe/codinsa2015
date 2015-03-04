@@ -74,6 +74,8 @@ namespace Codinsa2015.Views
 		EnnemyCreep = 516,
 		Boss = 1280,
 		Miniboss = 2304,
+		AllObjectives = 3576,
+		AllTargettableNeutral = 4088,
 		Checkpoint = 16384,
 		AllyCheckpoint = 16386,
 		EnnemyCheckpoint = 16388,
@@ -85,7 +87,8 @@ namespace Codinsa2015.Views
 		WardPlacement = 65536,
 		Ward = 131072,
 		Shop = 262144,
-		HeroSpawner = 524288
+		HeroSpawner = 524288,
+		AllSaved = 609784
 	}
 	
 	public enum StateAlterationSource

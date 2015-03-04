@@ -12,10 +12,10 @@ namespace Codinsa2015.Server.Entities
     public class EntityCreep : EntityBase
     {
         /// <summary>
-        /// Distance max en % du range max à laquelle le creep va s'approcher de l'unité
-        /// qu'il veut attaquer.
+        /// Pourcentage de la range d'attaque à laquelle va s'approcher cette unité
+        /// pour attaquer.
         /// </summary>
-        const float MaxRangeApproach = 0.75f;
+        const float AttackRangeApproach = 0.80f;
         #region Variables
         /// <summary>
         /// Référence vers l'entité ayant l'aggro de la tour.
@@ -150,7 +150,7 @@ namespace Codinsa2015.Server.Entities
 
             // on s'arrête quand on est en range d'une tour / creep.
             float dstSqr = Vector2.DistanceSquared(m_path.LastPosition(), Position);
-            float range = AttackRange * MaxRangeApproach;
+            float range = AttackRange * AttackRangeApproach;
             if (m_currentAgro.Type.HasFlag(EntityType.Checkpoint) || dstSqr > range * range)
             {
                 Direction = nextPosition - Position;

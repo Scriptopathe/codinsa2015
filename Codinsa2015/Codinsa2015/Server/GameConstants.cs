@@ -180,7 +180,7 @@ namespace Codinsa2015.Server
         public float CooldownReduction;
         public EntityConstants()
         {
-            VisionRange = 6;
+            VisionRange = 8;
         }
     }
 
