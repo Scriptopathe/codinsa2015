@@ -240,11 +240,17 @@ namespace Codinsa2015.Server
         /// Distance maximale à laquelle cette unité peut s'éloigner de GuardPosition.
         /// </summary>
         public float MaxMoveDistance;
-
+        public float AttackRange;
         public CampMonsterConstants() 
         {
             MaxMoveDistance = 5;
+            AttackSpeed = 0.75f;
+            AttackDamage = 30;
+            VisionRange = 8;
+            AttackRange = 4;
+            HP = 100;
         }
+
     }
 
     public class MinibossConstants : EntityConstants
@@ -253,9 +259,15 @@ namespace Codinsa2015.Server
         /// Distance maximale à laquelle cette unité peut s'éloigner de GuardPosition.
         /// </summary>
         public float MaxMoveDistance;
+        public float AttackRange;
         public MinibossConstants()
         {
             MaxMoveDistance = 5;
+            AttackSpeed = 0.75f;
+            AttackDamage = 30;
+            VisionRange = 8;
+            AttackRange = 4;
+            HP = 100;
         }
     }
 

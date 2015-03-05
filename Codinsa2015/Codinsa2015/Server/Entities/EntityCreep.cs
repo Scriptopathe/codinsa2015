@@ -57,14 +57,9 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         public EntityCreep() : base()
         {
-            BaseArmor = GameServer.GetScene().Constants.Creeps.Armor;
-            VisionRange = GameServer.GetScene().Constants.Creeps.VisionRange;
-            AttackRange = VisionRange - 2;
-            BaseAttackDamage = 60;
-            BaseMagicResist = 40;
-            BaseMaxHP = 100;
+            LoadEntityConstants(GameServer.GetScene().Constants.Creeps);
+            AttackRange = GameServer.GetScene().Constants.Creeps.AttackRange;
             HP = BaseMaxHP;
-            BaseMoveSpeed = 2f;
             m_currentCheckpointId = -1;
             m_attackSpell = new Spells.FireballSpell(this);
         }

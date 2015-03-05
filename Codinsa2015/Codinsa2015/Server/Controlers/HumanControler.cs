@@ -411,6 +411,13 @@ namespace Codinsa2015.Server.Controlers
                 batch.Draw(Ressources.GetSpellTexture(m_hero.Consummables[i].Model.ConsummableType.ToString()),
                     new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.HeroControler);
 
+                // Affiche le nombre de consommables.
+                if(m_hero.Consummables[i].Count >= 1)
+                {
+                    batch.DrawString(Ressources.Font, "x" + m_hero.Consummables[i].Count, new Vector2(xBase + size - 12, y + size - 12),
+                        Color.Black, 0.0f, Vector2.Zero, 0.5f, SpriteEffects.None, GraphicsHelpers.Z.HeroControler + GraphicsHelpers.Z.FrontStep);
+                }
+
                 // Dessine le cooldown.
                 if(m_hero.Consummables[i].UsingStarted)
                 {

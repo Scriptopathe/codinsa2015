@@ -61,19 +61,14 @@ namespace Codinsa2015.Server.Entities
         public EntityCampMonster(Vector2 guardPosition)
             : base()
         {
-            BaseArmor = GameServer.GetScene().Constants.CampMonsters.Armor;
-            VisionRange = GameServer.GetScene().Constants.CampMonsters.VisionRange;
+            LoadEntityConstants(GameServer.GetScene().Constants.CampMonsters);
+            AttackRange = GameServer.GetScene().Constants.CampMonsters.AttackRange;
             MaxMoveDistance = GameServer.GetScene().Constants.CampMonsters.MaxMoveDistance;
             Type = EntityType.Monster;
-            AttackRange = VisionRange /4;
-            BaseAttackDamage = 60;
-            BaseMagicResist = 40;
-            BaseMaxHP = 100;
             HP = BaseMaxHP;
-            BaseMoveSpeed = 2f;
             GuardPosition = guardPosition;
             Position = GuardPosition;
-            m_attackSpell = new Spells.FireballSpell(this, 1.7f, EntityTypeRelative.Player);
+            m_attackSpell = new Spells.FireballSpell(this, 1.7f, AttackRange+1, EntityTypeRelative.Player);
         }
 
         /// <summary>

@@ -62,10 +62,9 @@ namespace Codinsa2015.Server.Entities
             : base()
         {
             Type = EntityType.Miniboss;
-            BaseArmor = GameServer.GetScene().Constants.Minibosses.Armor;
-            VisionRange = GameServer.GetScene().Constants.Minibosses.VisionRange;
+            LoadEntityConstants(GameServer.GetScene().Constants.Minibosses);
             MaxMoveDistance = GameServer.GetScene().Constants.Minibosses.MaxMoveDistance;
-            AttackRange = VisionRange / 4;
+            AttackRange = GameServer.GetScene().Constants.Minibosses.AttackRange;
             BaseAttackDamage = 60;
             BaseMagicResist = 40;
             BaseMaxHP = 100;
@@ -73,7 +72,7 @@ namespace Codinsa2015.Server.Entities
             BaseMoveSpeed = 2f;
             GuardPosition = guardPosition;
             Position = GuardPosition;
-            m_attackSpell = new Spells.FireballSpell(this, 1.7f, EntityTypeRelative.Player);
+            m_attackSpell = new Spells.FireballSpell(this, 1.7f, AttackRange+1, EntityTypeRelative.Player);
         }
 
         /// <summary>

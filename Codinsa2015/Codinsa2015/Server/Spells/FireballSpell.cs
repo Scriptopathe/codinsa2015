@@ -37,6 +37,7 @@ namespace Codinsa2015.Server.Spells
         /// <param name="caster"></param>
         public FireballSpell(EntityBase caster,
             float cooldownBase=1.7f,
+            float attackRange=6.0f,
             EntityTypeRelative allowedTargets = EntityTypeRelative.AllEnnemy | EntityTypeRelative.AllTargettableNeutral)
         {
             SourceCaster = caster;
@@ -48,7 +49,7 @@ namespace Codinsa2015.Server.Spells
                 {
                     AllowedTargetTypes = allowedTargets,
                     AoeRadius = 0.3f,
-                    Range = 6f,
+                    Range = attackRange,
                     Duration = 0.6f,
                     DieOnCollision = true,
                     Type = TargettingType.Direction
