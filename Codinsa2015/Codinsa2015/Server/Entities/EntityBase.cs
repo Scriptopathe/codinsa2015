@@ -17,8 +17,7 @@ namespace Codinsa2015.Server.Entities
     public class EntityBase
     {
         #region Events / Delegate
-        
-        public delegate void OnDieDelegate(EntityHero killer);
+        public delegate void OnDieDelegate(EntityBase entity, EntityHero killer);
         /// <summary>
         /// Event lancé lorsque l'entité meurt.
         /// </summary>
@@ -932,9 +931,22 @@ namespace Codinsa2015.Server.Entities
             
             // Broadcaste l'information de la mort de l'entité.
             if(OnDie != null)
-                OnDie(killer);
+                OnDie(this, killer);
 
             IsDisposing = true;
+        }
+        /// <summary>
+        /// Resuscite l'unité actuelle.
+        /// Pour qu'elle continue à fonctionner correctement, il faut cependant aussi l'ajouter
+        /// aux entités de la map.
+        /// </summary>
+        public void Resurrect()
+        {
+            IsDisposed = false;
+            IsDisposing = false;
+            HP = GetMaxHP();
+            m_stateAlterations.EndAlterations(StateAlterationSource.SpellActive);
+            m_stateAlterations.EndAlterations(StateAlterationSource.SpellPassive);
         }
         #region Alterations
         /// <summary>

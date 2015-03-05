@@ -8,9 +8,12 @@ namespace Codinsa2015.Server.Events
     /// <summary>
     /// Représente un type d'évènement.
     /// </summary>
-    public enum EventType
+    public enum EventId
     {
         Camps,
+        MinibossWest,
+        MinibossEast,
+        Resurrector,
     }
     /// <summary>
     /// Classe de base de tous les évènements du jeu.

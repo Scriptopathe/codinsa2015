@@ -112,7 +112,9 @@
     <Compile Include="Server\Equip\WardConsummable.cs" />
     <Compile Include="Server\Equip\Weapon.cs" />
     <Compile Include="Server\Events\EventCamp.cs" />
+    <Compile Include="Server\Events\EventMiniboss.cs" />
     <Compile Include="Server\Events\GameEvent.cs" />
+    <Compile Include="Server\Events\PlayerResurrectorEvent.cs" />
     <Compile Include="Server\GameConstants.cs" />
     <Compile Include="Server\GraphicsHelpers\Charset.cs" />
     <Compile Include="Server\GraphicsHelpers\GaussianBlur.cs" />

@@ -7,67 +7,73 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Codinsa2015.Server.Entities
 {
     /// <summary>
-    /// Représente un miniboss.
+    /// Représente un mini-boss.
     /// </summary>
     public class EntityMiniboss : EntityBase
     {
         /// <summary>
-        /// Distance max en % du range max à laquelle le creep va s'approcher de l'unité
-        /// qu'il veut attaquer.
+        /// Pourcentage de la range d'attaque à laquelle va s'approcher cette unité
+        /// pour attaquer.
         /// </summary>
-        const float MaxRangeApproach = 0.75f;
+        const float AttackRangeApproach = 0.80f;
         #region Variables
         /// <summary>
-        /// Référence vers l'entité ayant l'aggro de la tour.
+        /// Référence vers l'entité ayant l'aggro de cette unité.
         /// </summary>
         EntityBase m_currentAgro;
+
         Vector2 m_currentAggroOldPos;
         /// <summary>
-        /// Sort d'attaque de la tour.
+        /// Sort d'attaque de cette unité.
         /// </summary>
         Spells.Spell m_attackSpell;
 
         /// <summary>
-        /// Range du creep, en unités métriques.
+        /// Range de l'unité, en unités métriques.
         /// </summary>
         float AttackRange { get; set; }
 
-        /// <summary>
-        /// Obtient la rangée de checkpoints que devra suivre ce creep.
-        /// </summary>
-        public int Row { get; set; }
-        
 
         Trajectory m_path;
 
         /// <summary>
-        /// Checkpoint actuel de la trajectoire prévue du creep.
+        /// Indique si cette entité a stoppé sa course car elle était en range d'attaque 
+        /// de l'entité qu'elle a aggro.
         /// </summary>
-        int m_currentCheckpointId;
-
+        bool m_stoppedAtAttackRange;
         #endregion
 
         #region Properties
-
+        /// <summary>
+        /// Position gardée par cette unité.
+        /// </summary>
+        public Vector2 GuardPosition { get; set; }
+        /// <summary>
+        /// Distance maximale à laquelle cette unité peut s'éloigner de GuardPosition.
+        /// </summary>
+        public float MaxMoveDistance { get; set; }
         #endregion
 
         #region Methods
         /// <summary>
         /// Crée une nouvelle instance de EntityMiniboss.
         /// </summary>
-        public EntityMiniboss()
+        public EntityMiniboss(Vector2 guardPosition)
             : base()
         {
-            BaseArmor = GameServer.GetScene().Constants.Creeps.Armor;
-            VisionRange = GameServer.GetScene().Constants.Creeps.VisionRange;
-            AttackRange = VisionRange - 2;
+            Type = EntityType.Miniboss;
+            BaseArmor = GameServer.GetScene().Constants.Minibosses.Armor;
+            VisionRange = GameServer.GetScene().Constants.Minibosses.VisionRange;
+            MaxMoveDistance = GameServer.GetScene().Constants.Minibosses.MaxMoveDistance;
+            AttackRange = VisionRange / 4;
             BaseAttackDamage = 60;
             BaseMagicResist = 40;
             BaseMaxHP = 100;
             HP = BaseMaxHP;
             BaseMoveSpeed = 2f;
-            m_currentCheckpointId = -1;
-            m_attackSpell = new Spells.FireballSpell(this);
+            GuardPosition = guardPosition;
+            Position = GuardPosition;
+            m_attackSpell = new Spells.FireballSpell(this, 1.7f, EntityTypeRelative.Player);
         }
 
         /// <summary>
@@ -90,7 +96,7 @@ namespace Codinsa2015.Server.Entities
             if (m_currentAgro != null && !m_currentAgro.Type.HasFlag(EntityType.Checkpoint))
             {
                 float dstSqr = Vector2.DistanceSquared(m_currentAgro.Position, Position);
-                if(dstSqr <= AttackRange * AttackRange )
+                if (dstSqr <= AttackRange * AttackRange)
                 {
                     m_attackSpell.Use(new Spells.SpellCastTargetInfo()
                     {
@@ -107,56 +113,50 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         void ComputePath()
         {
-            if(m_currentAgro != null)
+            if (m_currentAgro != null)
             {
                 m_path = new Trajectory(PathFinder.Astar(this.Position, m_currentAgro.Position));
-                if(m_path.TrajectoryUnits.Count <= 0)
-                {
-                    string ah = "5";
-                }
             }
         }
 
         /// <summary>
-        /// Fait avancer ce creep vers sa destination.
+        /// Fait avancer cette unité vers sa destination.
         /// </summary>
         void Travel(GameTime time)
         {
             // Si on a pas de trajectoire, on return
-            if (m_path == null || m_path.TrajectoryUnits.Count == 0 || m_currentAgro == null)
+            if (m_path == null || m_path.TrajectoryUnits.Count == 0)
                 return;
 
-            // On mets à jour la trajectoire.
+            // On met à jour la trajectoire.
             m_path.UpdateStep(Position, GetMoveSpeed(), time);
-            m_path.Offset = (Row - 1) * new Vector2(0.25f, 0.25f);
             Vector2 nextPosition = m_path.CurrentStep;
 
-            // Si on est trop près d'un sbire, on s'arrête
-            EntityType allyCreepsType = EntityTypeConverter.ToAbsolute(EntityTypeRelative.AllyCreep, Type);
-            EntityCollection allyCreeps = GameServer.GetMap().Entities.GetEntitiesByType(allyCreepsType);
-            foreach(var kvp in allyCreeps)
-            {
-                EntityMiniboss entity = (EntityMiniboss)kvp.Value;
-                if (entity == this || entity.Row != this.Row)
-                    continue;
-
-                // Ce creep est trop près, on s'arrête s'il a le même aggro et est plus proche.
-                if(Vector2.DistanceSquared(entity.Position, Position) <= 4.0f)
-                {
-                    if (entity.ID < this.ID)
-                        return;
-                    
-                }
-            }
 
             // on s'arrête quand on est en range d'une tour / creep.
             float dstSqr = Vector2.DistanceSquared(m_path.LastPosition(), Position);
-            if (m_currentAgro.Type.HasFlag(EntityType.Checkpoint) || dstSqr > AttackRange * AttackRange * MaxRangeApproach)
+            float range = AttackRange * AttackRangeApproach;
+            if (!IsAt(nextPosition))
             {
-                Direction = nextPosition - Position;
-                MoveForward(time);
+                if (m_currentAgro == null || dstSqr > range * range)
+                {
+                    Direction = nextPosition - Position;
+                    MoveForward(time);
+                    m_stoppedAtAttackRange = false;
+                }
+                else
+                {
+                    m_stoppedAtAttackRange = true;
+                }
             }
+            else
+            {
+                Position = nextPosition;
+                m_stoppedAtAttackRange = false;
+            }
+
         }
+
         /// <summary>
         /// Mets à jour l'aggro de la tour.
         /// </summary>
@@ -165,147 +165,41 @@ namespace Codinsa2015.Server.Entities
             EntityCollection entitiesInRange = GameServer.GetMap().Entities.GetAliveEntitiesInRange(this.Position, AttackRange);
             EntityBase oldAggro = m_currentAgro;
 
-            if (m_currentAgro != null && (m_currentAgro.IsDead || !HasSightOn(m_currentAgro)))
+            if (m_currentAgro != null && (m_currentAgro.IsDead || !IsInVisionRange(m_currentAgro)))
+            {
                 m_currentAgro = null;
-
-            // Si la creep n'a pas d'aggro : on cherche la première unité creep en range
-            EntityType ennemyCreepType = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyCreep, this.Type & (EntityType.Team1 | EntityType.Team2));
-            EntityBase nearestEnnemyCreep = entitiesInRange.GetEntitiesByType(ennemyCreepType).NearestFrom(this.Position);
-            if(nearestEnnemyCreep != null)
-                m_currentAgro = nearestEnnemyCreep;
-            
-            // S'il n'y a pas de creep ennemi en range, on regarde si il y a une tour en range.
-            EntityType ennemyTower = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyTower, this.Type & (EntityType.Team1 | EntityType.Team2));
-            EntityBase nearestTower = entitiesInRange.GetEntitiesByType(ennemyTower).NearestFrom(this.Position);
-            if(nearestTower != null)
-                m_currentAgro = nearestTower;
-
-            // Si on n'en trouve pas : on cherche le premier héros en range.
-            EntityType ennemyHero = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyPlayer, this.Type & (EntityType.Team1 | EntityType.Team2));
-            EntityBase nearestEnnemyHero = entitiesInRange.GetEntitiesByType(ennemyHero).NearestFrom(this.Position);
-            if(nearestEnnemyHero != null)
-                m_currentAgro = nearestEnnemyHero;
-
-            // Avance au checkpoint suivant si on a atteint le précédent ou qu'on a rien trouvé à aggro.
-            if (m_currentAgro == null || (m_currentAgro.Type.HasFlag(EntityType.Checkpoint) && HasReachedPosition(m_currentAgro.Position, time, GetMoveSpeed())))
-            {
-                //bool __debugPositionReached = HasReachedPosition(m_currentAgro.Position, time, GetMoveSpeed());
-                EntityType allycp = EntityTypeConverter.ToAbsolute(EntityTypeRelative.AllyCheckpoint, this.Type);
-                EntityCollection checkpoints = GameServer.GetMap().Entities.GetEntitiesByType(allycp);
-
-                // Obtient le checkpoint suivant le plus proche.
-                float minDistanceSqr = float.MaxValue;
-                EntityBase next = m_currentAgro;
-                foreach (var kvp in checkpoints)
-                {
-                    EntityCheckpoint cp = (EntityCheckpoint)kvp.Value;
-
-                    // On ne considère pas les checkpoints qui ne sont pas dans notre rangée.
-                    if (cp.CheckpointRow != Row)
-                        continue;
-
-                    // On prend le + proche des checkpoints suivants.
-                    float dstSqr = Vector2.DistanceSquared(cp.Position, Position);
-                    if ( (cp.CheckpointID > m_currentCheckpointId  ||
-                        (m_currentAgro == null && cp.CheckpointID >= m_currentCheckpointId)) &&
-                        dstSqr < minDistanceSqr)
-                    {
-                        minDistanceSqr = dstSqr;
-                        next = cp;
-                    }
-                }
-                if (next != null)
-                    m_currentCheckpointId = ((EntityCheckpoint)next).CheckpointID;
-                m_currentAgro = next;
-            }
-            // Si il y a des creeps en range.
-            /*// Si l'entité qui avait l'aggro meurt, on la remplace
-            if (m_currentAgro != null && m_currentAgro.IsDead)
-                m_currentAgro = null;
-
-            // Si la tour n'a pas d'aggro : on cherche la première unité creep en range
-            if(m_currentAgro == null)
-            {
-                EntityType ennemyCreep = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyCreep, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityBase nearestEnnemyCreep = entitiesInRange.GetEntitiesByType(ennemyCreep).NearestFrom(this.Position);
-                m_currentAgro = nearestEnnemyCreep;
+                m_path = new Trajectory(PathFinder.Astar(this.Position, this.GuardPosition)) { Offset = new Vector2(-0.5f, -0.5f) };
             }
 
-            // Si on n'en trouve pas : on cherche le premier héros en range.
-            if(m_currentAgro == null)
-            {
-                EntityType ennemyHero = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyPlayer, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityCollection ennemyHeroes = entitiesInRange.GetEntitiesByType(ennemyHero);
-                EntityBase nearestEnnemyHero = ennemyHeroes.NearestFrom(this.Position);
-                m_currentAgro = nearestEnnemyHero;
-            }
+            // Si pas d'aggro : on cherche le premier héros en range qui l'a attaqué.
+            EntityBase aggressiveHero = GetRecentlyAgressiveEntities(0.2f).GetEntitiesByType(EntityType.Player).NearestFrom(this.Position);
+            if (aggressiveHero != null)
+                m_currentAgro = aggressiveHero;
 
-            // Si on n'en trouve toujours pas, on cherche la tour ennemie la plus proche.
-            if(m_currentAgro == null)
-            {
-                EntityType ennemyTower = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyTower, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityBase nearestTower = Mobattack.GetMap().Entities.GetEntitiesByType(ennemyTower).NearestFrom(this.Position);
-                m_currentAgro = nearestTower;
-            }
-
-            // Puis l'inhibiteur
-            if (m_currentAgro == null)
-            {
-                EntityType ennemyIdol = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyInhibitor, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityBase nearest = Mobattack.GetMap().Entities.GetEntitiesByType(ennemyIdol).NearestFrom(this.Position);
-                m_currentAgro = nearest;
-            }
-
-            // Puis l'idole
-            if (m_currentAgro == null)
-            {
-                EntityType ennemyIdol = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyIdol, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityBase nearest = Mobattack.GetMap().Entities.GetEntitiesByType(ennemyIdol).NearestFrom(this.Position);
-                m_currentAgro = nearest;
-            }
-
-
-            if(m_currentAgro != null)
-            {
-                // Si la cible a déjà l'aggro sur quelqu'un, on vérifie qu'un des alliés n'est
-                // pas attaqué.
-                // Si un allié est attaqué, la tour aggro le héros qui l'a attaquée.
-                EntityType allyHeroType = EntityTypeConverter.ToAbsolute(EntityTypeRelative.AllyPlayer, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityType ennemyHeroType = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyPlayer, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityCollection allyHeroes = entitiesInRange.GetEntitiesByType(allyHeroType);
-
-                foreach(var kvp in allyHeroes)
-                {
-                    EntityBase allyHero = kvp.Value;
-                    // On regarde si un des héros alliés subit des dégâts
-                    List<StateAlteration> alterations = allyHero.StateAlterations.GetInteractionsByType(StateAlterationType.AttackDamage | StateAlterationType.TrueDamage);
-                    if(alterations.Count != 0)
-                    {
-                        // On vérifie que ces dégâts proviennent d'un héros ennemi.
-                        foreach(StateAlteration alteration in alterations)
-                        {
-                            if (alteration.Source.Type.HasFlag(ennemyHeroType))
-                                m_currentAgro = alteration.Source;
-                        }
-                    }
-                }
-            }*/
 
             // Si l'aggro bouge, on recalcule l'A*.
-            if (m_currentAgro != null && Vector2.DistanceSquared(m_currentAgro.Position, m_currentAggroOldPos) > 1)
+            if (m_currentAgro != null && Vector2.DistanceSquared(m_currentAgro.Position, m_currentAggroOldPos) > 1 &&
+                (m_path == null || m_stoppedAtAttackRange || IsAt(m_path.LastPosition())))
             {
                 m_currentAggroOldPos = m_currentAgro.Position;
                 ComputePath();
             }
 
-            // Si on change d'aggro, retourne le chemin vers la tour la plus proche.
+            // Si on s'éloigne trop de la position de garde, on lâche l'aggro, et on revient.
+            if (m_currentAgro != null && Vector2.DistanceSquared(GuardPosition, Position) >= MaxMoveDistance * MaxMoveDistance)
+            {
+                m_currentAgro = null;
+                m_path = new Trajectory(PathFinder.Astar(this.Position, this.GuardPosition)) { Offset = new Vector2(-0.5f, -0.5f) };
+            }
+
+            // Si on change d'aggro, on recalcule le chemin.
             if (m_currentAgro != oldAggro)
                 ComputePath();
-
-
         }
+
+
         #endregion
 
-        
+
     }
 }

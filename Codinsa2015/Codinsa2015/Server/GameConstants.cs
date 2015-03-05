@@ -66,10 +66,40 @@ namespace Codinsa2015.Server
         /// lorsqu'il est possédé.
         /// </summary>
         public float CreepSpawnInterval;
+        /// <summary>
+        /// Montant en PA de la récompense attribuée au tueur du camp.
+        /// </summary>
+        public float Reward;
         public MonsterCampEventConstants()
         {
             RespawnTimer = 10;
             CreepSpawnInterval = 5;
+            Reward = 30;
+        }
+    }
+
+    /// <summary>
+    /// Constantes concernant les mini-boss.
+    /// </summary>
+    public class MinibossesEventConstants
+    {
+        /// <summary>
+        /// Range de la vision accordée à l'équipe tuant le mini-boss.
+        /// </summary>
+        public float VisionRange;
+        /// <summary>
+        /// Temps de respawn en secondes du mini-boss après sa mort.
+        /// </summary>
+        public float RespawnTimer;
+        /// <summary>
+        /// Montant en PA de la récompense attribuée au tueur du camp.
+        /// </summary>
+        public float Reward;
+        public MinibossesEventConstants()
+        {
+            VisionRange = 8;
+            RespawnTimer = 5;
+            Reward = 30;
         }
     }
 
@@ -79,10 +109,11 @@ namespace Codinsa2015.Server
     public class EventConstants
     {
         public MonsterCampEventConstants MonsterCamp;
-
+        public MinibossesEventConstants MinibossCamp;
         public EventConstants()
         {
             MonsterCamp = new MonsterCampEventConstants();
+            MinibossCamp = new MinibossesEventConstants();
         }
     }
 
@@ -216,6 +247,18 @@ namespace Codinsa2015.Server
         }
     }
 
+    public class MinibossConstants : EntityConstants
+    {        
+        /// <summary>
+        /// Distance maximale à laquelle cette unité peut s'éloigner de GuardPosition.
+        /// </summary>
+        public float MaxMoveDistance;
+        public MinibossConstants()
+        {
+            MaxMoveDistance = 5;
+        }
+    }
+
     public class RoleConstants
     {
         // Fighter
@@ -255,6 +298,7 @@ namespace Codinsa2015.Server
         public RoleConstants Roles;
         public RewardConstants Rewards;
         public CampMonsterConstants CampMonsters;
+        public MinibossConstants Minibosses;
         public EventConstants Events;
         /// <summary>
         /// Crée une nouvelle instance de GameConstants avec des constantes par défaut.
@@ -268,6 +312,7 @@ namespace Codinsa2015.Server
             Rewards = new RewardConstants();
             Events = new EventConstants();
             CampMonsters = new CampMonsterConstants();
+            Minibosses = new MinibossConstants();
         }
 
         /// <summary>

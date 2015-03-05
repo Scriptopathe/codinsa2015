@@ -50,8 +50,11 @@ namespace Codinsa2015.Server.Entities
         Weapon,
         Amulet,
         Boots,
-        Self,
+        // Altérations provenant d'une compétence activable.
         SpellActive,
+        // Note : les effets SpellPassive sont supprimés à chaque frame.
+        // Ils correspondent à des passifs de sorts d'un héros.
+        // Note : non utilisé
         SpellPassive,
     }
 

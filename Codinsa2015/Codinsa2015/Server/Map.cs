@@ -54,7 +54,7 @@ namespace Codinsa2015.Server
         /// <summary>
         /// Dictionnaire contenant les différents évènements du jeu, addressés par leur type.
         /// </summary>
-        Dictionary<EventType, GameEvent> m_events;
+        Dictionary<EventId, GameEvent> m_events;
         /// <summary>
         /// Rectangle de l'écran sur lequel sera dessinée la map.
         /// </summary>
@@ -337,24 +337,34 @@ namespace Codinsa2015.Server
             m_entities = new EntityCollection();
             m_entitiesAddList = new EntityCollection();
             m_spellcasts = new List<Spellcast>();
-            m_events = new Dictionary<EventType, GameEvent>();
+            m_events = new Dictionary<EventId, GameEvent>();
             m_pointOfView = new PointOfView();
             m_pointOfView.UnitSize = 32;
             m_pointOfView.Teams = EntityType.Team1;
-            m_events.Add(EventType.Camps, new Events.EventMonsterCamp());
+
             // DEBUG CODE
             m_passability = new bool[50, 50];
             __passabilityDrawRect(new Rectangle(1, 1, 40, 40), true);
             __passabilityDrawRect(new Rectangle(3, 4, 20, 2), false);
 
             // TODO : chargement des évents.
-
+            CreateEvents();
 
             // Vision
             Vision = new VisionMap(this);
 
             // Ajout des héros
             Heroes = new List<EntityHero>();
+        }
+
+        /// <summary>
+        /// Crée et ajoute les évènements de la map.
+        /// </summary>
+        void CreateEvents()
+        {
+            m_events.Add(EventId.Camps, new Events.EventMonsterCamp());
+            m_events.Add(EventId.MinibossEast, new Events.EventMiniboss());
+            m_events.Add(EventId.Resurrector, new Events.PlayerResurrectorEvent());
         }
 
         /// <summary>

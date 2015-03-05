@@ -64,7 +64,7 @@ namespace Codinsa2015.Server.Entities
             BaseArmor = GameServer.GetScene().Constants.CampMonsters.Armor;
             VisionRange = GameServer.GetScene().Constants.CampMonsters.VisionRange;
             MaxMoveDistance = GameServer.GetScene().Constants.CampMonsters.MaxMoveDistance;
-            
+            Type = EntityType.Monster;
             AttackRange = VisionRange /4;
             BaseAttackDamage = 60;
             BaseMagicResist = 40;

@@ -6,9 +6,9 @@ using System.Text;
 namespace Default.Namespace
 {
 
-	public class TestMePls
+	public class WorkIfTSerializable<T>
 	{
 
-		public Oktamer test;	
+		T var;	
 	}
 }

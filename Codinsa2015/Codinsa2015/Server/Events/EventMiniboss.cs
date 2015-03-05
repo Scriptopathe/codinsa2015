@@ -6,34 +6,27 @@ using Microsoft.Xna.Framework;
 namespace Codinsa2015.Server.Events
 {
     /// <summary>
-    /// Représente un camp.
-    /// Le comportement du camp est le suivant :
-    ///     - au début, il est neutre : la première équipe qui tue le dernier monstre du camp 
-    ///     s'octroie la possession de ce camp.
-    ///     - le camp va alors faire spawn des entités qui vont push une lane de l'équipe qui
-    ///     a la possession du camp..
-    ///     - au bout d'un certain temps, le camp repawne, et peut être détruit par les 2 équipes.
+    /// Représente un camp de miniboss.
+    /// Le miniboss accorde la vision sur une large zone de la map une fois tué pendant
+    /// une période de temps limitée.
+    /// Après cette période de temps, le mini-boss réapparait.
     /// </summary>
-    public class EventMonsterCamp : GameEvent
+    public class EventMiniboss : GameEvent
     {
         /// <summary>
         /// Position de l'event.
         /// </summary>
         Vector2 m_position;
         /// <summary>
-        /// Offset déterminant le spawn des creeps.
-        /// </summary>
-        Vector2 m_creepSpawnOffset;
-        /// <summary>
-        /// Indique si le camp est actuellement dans l'état détruit.
+        /// Indique si le miniboss est actuellement dans l'état détruit.
         /// </summary>
         bool m_destroyed;
         /// <summary>
-        /// Indique si l'équipe 1 a actuellement accès au timer de ce camp.
+        /// Indique si l'équipe 1 a actuellement accès au timer de respawn du miniboss.
         /// </summary>
         bool m_team1Timer;
         /// <summary>
-        /// Indique si l'équipe 2 a actuellement accès au timer de ce camp.
+        /// Indique si l'équipe 2 a actuellement accès au timer de respawn du miniboss.
         /// </summary>
         bool m_team2Timer;
         /// <summary>
@@ -41,26 +34,25 @@ namespace Codinsa2015.Server.Events
         /// </summary>
         float m_respawnTimer;
         /// <summary>
-        /// Temps restant avec le spawn du prochain creep.
-        /// </summary>
-        float m_creepSpawnTimer;
-        /// <summary>
         /// Représente la team propriétaire du camp.
         /// </summary>
         Entities.EntityType m_teamOwner;
         /// <summary>
-        /// Liste des monstres contrôlés par le camp.
+        /// Monstre contrôlé par l'évènement.
         /// </summary>
-        List<Entities.EntityCampMonster> m_monsters;
+        Entities.EntityMiniboss m_miniboss;
         /// <summary>
-        /// Tueur du dernier monstre.
+        /// Dernier tueur du miniboss.
         /// </summary>
         Entities.EntityHero m_lastKiller;
-
         /// <summary>
-        /// Crée une nouvelle instance de EventCamp.
+        /// Représente la ward libérée une fois le camp tué.
         /// </summary>
-        public EventMonsterCamp()
+        Entities.EntityWard m_ward;
+        /// <summary>
+        /// Crée une nouvelle instance de EventMiniboss.
+        /// </summary>
+        public EventMiniboss()
         {
 
         }
@@ -71,14 +63,12 @@ namespace Codinsa2015.Server.Events
         /// </summary>
         public override void Initialize()
         {
-            m_position = new Vector2(30, 40);
+            m_position = new Vector2(40, 40);
             m_destroyed = true;
             m_team1Timer = true;
             m_team2Timer = true;
             m_teamOwner = 0;
-            m_monsters = new List<Entities.EntityCampMonster>();
             m_lastKiller = null;
-            m_creepSpawnOffset = new Vector2(0, 2);
             m_respawnTimer = 0; // GameServer.GetScene().Constants.Events.MonsterCamp.RespawnTimer;
         }
 
@@ -91,11 +81,7 @@ namespace Codinsa2015.Server.Events
             if (!m_destroyed)
             {
                 // Si tous les monstres du camp sont tués, on donne l'ownership du camp 
-                bool allDead = true;
-                foreach (Entities.EntityCampMonster monster in m_monsters)
-                {
-                    allDead &= monster.IsDead;
-                }
+                bool allDead = m_miniboss.IsDead;
 
                 if (allDead)
                 {
@@ -109,13 +95,16 @@ namespace Codinsa2015.Server.Events
                         m_team1Timer = true;
                     else if (m_teamOwner == Entities.EntityType.Team2)
                         m_team2Timer = true;
+
                     // Attribution de la récompense au tueur
-                    m_lastKiller.PA += GameServer.GetScene().Constants.Events.MonsterCamp.Reward;
+                    m_lastKiller.PA += GameServer.GetScene().Constants.Events.MinibossCamp.Reward;
+
                     // Distribution du timer aux équipes ayant la vision.
                     m_team1Timer |= GameServer.GetMap().Vision.HasVision(Entities.EntityType.Team1, m_position);
                     m_team2Timer |= GameServer.GetMap().Vision.HasVision(Entities.EntityType.Team2, m_position);
-                    m_respawnTimer = GameServer.GetScene().Constants.Events.MonsterCamp.RespawnTimer;
+                    m_respawnTimer = GameServer.GetScene().Constants.Events.MinibossCamp.RespawnTimer;
                     m_destroyed = true;
+                    SpawnWard();
                 }
             }
             else
@@ -124,37 +113,28 @@ namespace Codinsa2015.Server.Events
                 m_respawnTimer -= (float)time.ElapsedGameTime.TotalSeconds;
                 if (m_respawnTimer <= 0)
                 {
+                    if(m_ward != null)
+                        m_ward.Die();
                     SpawnCamp();
                     m_teamOwner = 0;
                     m_destroyed = false;
                 }
             }
 
-            // Si une team a l'ownership du camp, on fait spawn des sbires.
-            if (m_teamOwner != 0)
-            {
-                m_creepSpawnTimer -= (float)time.ElapsedGameTime.TotalSeconds;
-                if (m_creepSpawnTimer <= 0)
-                {
-                    m_creepSpawnTimer = GameServer.GetScene().Constants.Events.MonsterCamp.CreepSpawnInterval;
-                    SpawnCreep();
-                }
-            }
-          
+
         }
 
         /// <summary>
-        /// Fait apparaître un creep.
+        /// Fait apparaître la ward décernée au tueur du mini-boss.
         /// </summary>
-        void SpawnCreep()
+        void SpawnWard()
         {
-            Entities.EntityCreep creep = new Entities.EntityCreep()
+            m_ward = new Entities.EntityWard()
             {
-                Type = Entities.EntityType.Creep | m_teamOwner,
-                Row = 0,
-                Position = m_position + m_creepSpawnOffset
+                Type = Entities.EntityType.Ward | m_teamOwner,
+                Position = m_position,
             };
-            GameServer.GetMap().AddEntity(creep);
+            GameServer.GetMap().AddEntity(m_ward);
         }
 
         /// <summary>
@@ -169,22 +149,13 @@ namespace Codinsa2015.Server.Events
             };
 
             // Crée les 3 monstres du camp.
-            m_monsters.Clear();
-            for(int i = 0; i < 3; i++)
-            {
-                var monster = new Entities.EntityCampMonster(m_position + offsets[i])
-                {
-                    Type = Entities.EntityType.Monster,
-                };
-                m_monsters.Add(monster);
-                GameServer.GetMap().AddEntity(monster);
-                m_monsters[i].OnDie += EventCamp_OnDie;
-            }
+            m_miniboss = new Entities.EntityMiniboss(m_position);
+            m_miniboss.OnDie += EventCamp_OnDie;
+            GameServer.GetMap().AddEntity(m_miniboss);
         }
 
         /// <summary>
-        /// Se produit lorsqu'un des monstre du camp meurt.
-        /// Mémorise le tueur du camp.
+        /// Se produit lorsque le miniboss est tué.
         /// </summary>
         void EventCamp_OnDie(Entities.EntityBase entity, Entities.EntityHero killer)
         {
