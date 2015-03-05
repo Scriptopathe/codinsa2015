@@ -109,6 +109,7 @@ namespace Codinsa2015.Server.Equip
         public ConsummableStack(EntityHero owner, ConsummableType type)
         {
             m_owner = owner;
+            Count = 1;
             Model = GameServer.GetScene().ShopDB.GetConsummableModelByType(type);
             if (Model == null)
                 throw new NotImplementedException("Modèle de consommable " + type + " non implémenté.");
@@ -135,10 +136,13 @@ namespace Codinsa2015.Server.Equip
                         m_currentExecutingConsummable = new UnwardConsummable();
                         break;
                     case ConsummableType.Empty:
-                        m_currentExecutingConsummable = null;
-                        break;
+                        return ConsummableUseResult.NotUnits;
+                    default:
+                        throw new NotImplementedException();
+
                 }
             }
+
 
             ConsummableUseResult res = m_currentExecutingConsummable.Use(m_owner);
             if (res == ConsummableUseResult.SuccessAndDestroyed)

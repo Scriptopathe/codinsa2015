@@ -6,13 +6,20 @@ using Codinsa2015.Server.Entities;
 using Microsoft.Xna.Framework;
 namespace Codinsa2015.Server.Equip
 {
+    [Clank.ViewCreator.Enum("Représente les résultats de transaction possibles après un achat / vente.")]
     public enum ShopTransactionResult
     {
-        InvalidId,
+        ItemDoesNotExist,
+        ItemIsNotAConsummable,
+        NoItemToSell,
         NotEnoughMoney,
         NotInShopRange,
         UnavailableItem,
-        Success
+        ProvidedSlotDoesNotExist,
+        NoSlotAvailableOnHero,
+        EnchantForNoWeapon,
+        StackOverflow,
+        Success,
     }
     /// <summary>
     /// Classe permettant la présentation de divers équipements.
@@ -57,13 +64,23 @@ namespace Codinsa2015.Server.Equip
                 case EquipmentType.Armor: model = (hero.Armor == null ? null : hero.Armor.Model); hero.Armor = null; break;
                 case EquipmentType.Boots: model = (hero.Boots == null ? null : hero.Boots.Model); hero.Boots = null; break;
                 case EquipmentType.Weapon: model = (hero.Weapon == null ? null : hero.Weapon.Model); hero.Weapon = null; break;
-                case EquipmentType.WeaponEnchant: return ShopTransactionResult.InvalidId;
-                case EquipmentType.Consummable: return ShopTransactionResult.InvalidId;
+                case EquipmentType.WeaponEnchant:
+                    if (hero.Weapon == null)
+                        model = null;
+                    else if (hero.Weapon.Enchant == null)
+                        model = null;
+
+                    if(model != null)
+                    {
+                        hero.Weapon.Enchant = null;
+                    }
+                    break;
+                case EquipmentType.Consummable: return ShopTransactionResult.ItemDoesNotExist;
             }
 
             // Vérifie que le héros possède un équipement.
             if (model == null)
-                return ShopTransactionResult.InvalidId;
+                return ShopTransactionResult.NoItemToSell;
 
             // Vérifie la distance au shop.
             float dst = Vector2.Distance(hero.Position, m_owner.Position);
@@ -76,6 +93,7 @@ namespace Codinsa2015.Server.Equip
 
             return ShopTransactionResult.Success;
         }
+
         /// <summary>
         /// Achète un objet d'id donné au shop.
         /// </summary>
@@ -85,7 +103,7 @@ namespace Codinsa2015.Server.Equip
         {
             EquipmentModel equip = GetEquipmentById(equipId);
             if (equip == null)
-                return ShopTransactionResult.InvalidId;
+                return ShopTransactionResult.ItemDoesNotExist;
             
             if (equip.Price > hero.PA)
                 return ShopTransactionResult.NotEnoughMoney;
@@ -94,20 +112,108 @@ namespace Codinsa2015.Server.Equip
             if (dst > m_shopRange)
                 return ShopTransactionResult.NotInShopRange;
 
-            hero.PA -= equip.Price;
 
             // Equipe l'arme au héros.
             switch(equip.Type)
             {
-                case EquipmentType.Amulet: hero.Amulet = new Amulet(hero, (PassiveEquipmentModel)equip); break;
-                case EquipmentType.Armor: hero.Armor = new Armor(hero, (PassiveEquipmentModel)equip); break;
-                case EquipmentType.Boots: hero.Boots = new Boots(hero, (PassiveEquipmentModel)equip); break;
-                case EquipmentType.Weapon: hero.Weapon = new Weapon(hero, (WeaponModel)equip); break;
-            }
+                case EquipmentType.Amulet:
+                    if (hero.Amulet != null)
+                        return ShopTransactionResult.NoSlotAvailableOnHero;
+                    hero.Amulet = new Amulet(hero, (PassiveEquipmentModel)equip); 
+                    break;
+                case EquipmentType.Armor:
+                    if (hero.Armor != null)
+                        return ShopTransactionResult.NoSlotAvailableOnHero;
+                    hero.Armor = new Armor(hero, (PassiveEquipmentModel)equip); 
+                    break;
+                case EquipmentType.Boots:
+                    if (hero.Boots != null)
+                        return ShopTransactionResult.NoSlotAvailableOnHero;
+                    hero.Boots = new Boots(hero, (PassiveEquipmentModel)equip);
+                    break;
+                case EquipmentType.Weapon:
+                    if (hero.Weapon != null)
+                        return ShopTransactionResult.NoSlotAvailableOnHero;
+                    hero.Weapon = new Weapon(hero, (WeaponModel)equip);
+                    break;
+                case EquipmentType.WeaponEnchant:
+                    if(hero.Weapon == null)
+                    {
+                        return ShopTransactionResult.EnchantForNoWeapon;
+                    }
+                    if (hero.Weapon.Enchant != null)
+                        return ShopTransactionResult.NoSlotAvailableOnHero;
 
+                    hero.Weapon.Enchant = (WeaponEnchantModel)equip;
+                    break;
+            }
+            
+            hero.PA -= equip.Price;
             return ShopTransactionResult.Success;
         }
 
+        /// <summary>
+        /// Vends un consommable dans le slot donné du héros donné.
+        /// </summary>
+        public ShopTransactionResult SellConsummable(EntityHero hero, int slot)
+        {
+            // Vérifie la distance au shop.
+            float dst = Vector2.Distance(hero.Position, m_owner.Position);
+            if (dst > m_shopRange)
+                return ShopTransactionResult.NotInShopRange;
+
+            // Slot out of range : erreur
+            if (slot < 0 || slot >= hero.Consummables.Length)
+                return ShopTransactionResult.ProvidedSlotDoesNotExist;
+
+            // Consommable vide ?
+            bool emptySlot = hero.Consummables[slot].Model.ConsummableType == ConsummableType.Empty;
+            if (emptySlot)
+                return ShopTransactionResult.NoItemToSell;
+
+            if (hero.Consummables[slot].Count <= 0)
+                return ShopTransactionResult.NoItemToSell;
+
+            ConsummableModel model = hero.Consummables[slot].Model;
+            hero.PA += model.Price;
+            hero.Consummables[slot].Count--;
+            return ShopTransactionResult.Success;
+        }
+        /// <summary>
+        /// Achète un consommable pour le héros donné, et le place dans le slot donné.
+        /// </summary>
+        public ShopTransactionResult PurchaseConsummable(EntityHero hero, int consummableId, int slot)
+        {
+            EquipmentModel equip = GetEquipmentById(consummableId);
+            if (equip == null || equip.Type != EquipmentType.Consummable)
+                return ShopTransactionResult.ItemDoesNotExist;
+            ConsummableModel model = (ConsummableModel)equip;
+            if (equip.Price > hero.PA)
+                return ShopTransactionResult.NotEnoughMoney;
+
+            float dst = Vector2.Distance(hero.Position, m_owner.Position);
+            if (dst > m_shopRange)
+                return ShopTransactionResult.NotInShopRange;
+            
+            // Slot out of range : erreur
+            if(slot < 0 || slot >= hero.Consummables.Length)
+                return ShopTransactionResult.ProvidedSlotDoesNotExist;
+            bool emptySlot = hero.Consummables[slot].Model.ConsummableType == ConsummableType.Empty;
+
+            // Si un consommable d'un autre type est dans le slot, erreur
+            if (!emptySlot && (hero.Consummables[slot].Model.ConsummableType != model.ConsummableType))
+                return ShopTransactionResult.NoSlotAvailableOnHero;
+
+            // Dépassement de la stack du consommable : erreur
+            if (hero.Consummables[slot].Model.MaxStackSize >= hero.Consummables[slot].Count)
+                return ShopTransactionResult.StackOverflow;
+
+            // Achat !!
+            hero.Consummables[slot].Model = model;
+            hero.Consummables[slot].Count++;
+            hero.PA -= equip.Price;
+            return ShopTransactionResult.Success;
+        }
         /// <summary>
         /// Obtient l'équipement d'id donné.
         /// </summary>

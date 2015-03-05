@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Codinsa2015.Server.Entities;
 namespace Codinsa2015.Server.Equip
 {
     /// <summary>
@@ -42,6 +42,124 @@ namespace Codinsa2015.Server.Equip
             Armors = new List<PassiveEquipmentModel>();
             Boots = new List<PassiveEquipmentModel>();
             Consummables = new List<ConsummableModel>();
+
+
+            // Bottes
+            Equip.PassiveEquipmentModel baseBoots = new Equip.PassiveEquipmentModel();
+            baseBoots.Type = Equip.EquipmentType.Boots;
+            baseBoots.Upgrades = new List<Equip.PassiveEquipmentUpgradeModel>() { 
+                    new Equip.PassiveEquipmentUpgradeModel(
+                        new List<StateAlterationModel>() 
+                        {
+                            
+                            new StateAlterationModel()
+                            {
+                                Type = StateAlterationType.MoveSpeed,
+                                BaseDuration = 1.0f,
+                                FlatValue = 5f,
+                            }
+                        },
+                        0)
+                };
+            Boots.Add(baseBoots);
+
+            // Armure
+            Equip.PassiveEquipmentModel baseArmor = new Equip.PassiveEquipmentModel();
+            baseArmor.Type = Equip.EquipmentType.Armor;
+            baseArmor.Upgrades = new List<Equip.PassiveEquipmentUpgradeModel>() { 
+                    new Equip.PassiveEquipmentUpgradeModel(
+                        new List<StateAlterationModel>() { },
+                        0)
+                };
+            Armors.Add(baseArmor);
+
+            // Arme
+            Equip.WeaponModel model = new Equip.WeaponModel();
+            model.Name = "Arme de base";
+            model.Price = 0;
+            model.Upgrades = new List<Equip.WeaponUpgradeModel>()
+                {
+                    new Equip.WeaponUpgradeModel()
+                    {
+                        Cost = 400,
+                        PassiveAlterations = new List<StateAlterationModel>()
+                        {
+                            new StateAlterationModel()
+                            {
+                                BaseDuration = 1.0f,
+                                Type = StateAlterationType.AttackSpeed,
+                                FlatValue = 1
+                            }
+                        },
+                        Description = new Spells.SpellDescription()
+                        {
+                            BaseCooldown = 8.0f,
+                            CastingTime = 0.1f,
+                            CastingTimeAlterations = new List<StateAlterationModel>()
+                            {
+                                new StateAlterationModel()
+                                {
+                                    BaseDuration = 0.01f,
+                                    Type = StateAlterationType.Root
+                                }
+                            },
+                            
+                            TargetType = new Spells.SpellTargetInfo()
+                            {
+                                Type = Spells.TargettingType.Targetted,
+                                AllowedTargetTypes = EntityTypeRelative.AllEnnemy | EntityTypeRelative.AllTargettableNeutral,
+                                Range = 8,
+                                DieOnCollision = true,
+                                Duration = 1,
+                                AoeRadius = 0.3f
+                            },
+                            OnHitEffects = new List<StateAlterationModel>()
+                            {
+                                new StateAlterationModel()
+                                {
+                                    BaseDuration = 0,
+                                    FlatValue = 25,
+                                    Type = StateAlterationType.AttackDamage,
+                                }
+                            },
+                           
+                        }
+                    }
+                };
+
+            Equip.WeaponEnchantModel enchant = new Equip.WeaponEnchantModel()
+            {
+                Name = "base",
+                Price = 0,
+
+            };
+
+            Equip.ConsummableModel unward = new Equip.ConsummableModel()
+            {
+                ConsummableType = Equip.ConsummableType.Unward,
+                MaxStackSize = 2,
+                Name = "unward",
+                Price = 80,
+            };
+            Equip.ConsummableModel ward = new Equip.ConsummableModel()
+            {
+                ConsummableType = Equip.ConsummableType.Ward,
+                MaxStackSize = 2,
+                Name = "ward",
+                Price = 80,
+            };
+            Equip.ConsummableModel empty = new Equip.ConsummableModel()
+            {
+                ConsummableType = Equip.ConsummableType.Empty,
+                MaxStackSize = 2,
+                Name = "empty",
+                Price = 80
+            };
+            Consummables.Add(unward);
+            Consummables.Add(ward);
+            Consummables.Add(empty);
+            Weapons.Add(model);
+            Enchants.Add(enchant);
         }
 
         /// <summary>
