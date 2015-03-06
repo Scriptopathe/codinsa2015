@@ -76,6 +76,8 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Server\EnhancedGui\GuiButton.cs" />
+    <Compile Include="Server\EnhancedGui\GuiManager.cs" />
     <Compile Include="Exceptions\IdiotProgrammerException.cs" />
     <Compile Include="Server\Controlers\Components\DeveloperConsole.cs" />
     <Compile Include="Server\Controlers\Components\Minimap.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="Server\Controlers\LobbyControler.cs" />
     <Compile Include="Server\Controlers\ShopInterface.cs" />
     <Compile Include="Server\Editor\MapEditorControler.cs" />
+    <Compile Include="Server\EnhancedGui\GuiWidget.cs" />
     <Compile Include="Server\Entities\EntityBase.cs" />
     <Compile Include="Server\Entities\EntityBigBoss.cs" />
     <Compile Include="Server\Entities\EntityCampMonster.cs" />
