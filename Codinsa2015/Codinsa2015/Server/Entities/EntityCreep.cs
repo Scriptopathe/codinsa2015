@@ -74,6 +74,15 @@ namespace Codinsa2015.Server.Entities
             Attack(time);
             Travel(time);
         }
+        
+        /// <summary>
+        /// Applique le buff du big boss à ce creep.
+        /// </summary>
+        public void ApplyBossBuff()
+        {
+            LoadEntityConstants(GameServer.GetScene().Constants.BuffedCreeps);
+            AttackRange = GameServer.GetScene().Constants.BuffedCreeps.AttackRange;
+        }
 
         /// <summary>
         /// Attaque l'ennemi ayant l'agro.

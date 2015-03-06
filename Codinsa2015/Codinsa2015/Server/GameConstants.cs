@@ -102,7 +102,30 @@ namespace Codinsa2015.Server
             Reward = 30;
         }
     }
-
+    /// <summary>
+    /// Constantes concernant le big boss.
+    /// </summary>
+    public class BigBossEventConstants
+    {
+        /// <summary>
+        /// Temps de respawn en secondes du boss après sa mort.
+        /// </summary>
+        public float RespawnTimer;
+        /// <summary>
+        /// Montant en PA de la récompense attribuée au tueur du camp.
+        /// </summary>
+        public float Reward;
+        /// <summary>
+        /// Durée pendant laquelle le buff sur les creeps est actif.
+        /// </summary>
+        public float BuffDuration;
+        public BigBossEventConstants()
+        {
+            RespawnTimer = 30;
+            Reward = 50;
+            BuffDuration = 25;
+        }
+    }
     /// <summary>
     /// Constantes concernant les évènements.
     /// </summary>
@@ -110,10 +133,12 @@ namespace Codinsa2015.Server
     {
         public MonsterCampEventConstants MonsterCamp;
         public MinibossesEventConstants MinibossCamp;
+        public BigBossEventConstants BigBossCamp;
         public EventConstants()
         {
             MonsterCamp = new MonsterCampEventConstants();
             MinibossCamp = new MinibossesEventConstants();
+            BigBossCamp = new BigBossEventConstants();
         }
     }
 
@@ -307,6 +332,7 @@ namespace Codinsa2015.Server
         public VisionConstants Vision;
         public StructureConstants Structures;
         public CreepConstants Creeps;
+        public CreepConstants BuffedCreeps;
         public RoleConstants Roles;
         public RewardConstants Rewards;
         public CampMonsterConstants CampMonsters;
@@ -325,6 +351,7 @@ namespace Codinsa2015.Server
             Events = new EventConstants();
             CampMonsters = new CampMonsterConstants();
             Minibosses = new MinibossConstants();
+            BuffedCreeps = new CreepConstants();
         }
 
         /// <summary>

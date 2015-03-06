@@ -82,8 +82,10 @@
     <Compile Include="Server\Controlers\ControlerBase.cs" />
     <Compile Include="Server\Controlers\PickPhaseControler.cs" />
     <Compile Include="Server\Controlers\LobbyControler.cs" />
+    <Compile Include="Server\Controlers\ShopInterface.cs" />
     <Compile Include="Server\Editor\MapEditorControler.cs" />
     <Compile Include="Server\Entities\EntityBase.cs" />
+    <Compile Include="Server\Entities\EntityBigBoss.cs" />
     <Compile Include="Server\Entities\EntityCampMonster.cs" />
     <Compile Include="Server\Entities\EntityMiniboss.cs" />
     <Compile Include="Server\Entities\EntityHeroSpawner.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="Server\Equip\UnwardConsummable.cs" />
     <Compile Include="Server\Equip\WardConsummable.cs" />
     <Compile Include="Server\Equip\Weapon.cs" />
+    <Compile Include="Server\Events\EventBigBoss.cs" />
     <Compile Include="Server\Events\EventCamp.cs" />
     <Compile Include="Server\Events\EventMiniboss.cs" />
     <Compile Include="Server\Events\GameEvent.cs" />

@@ -433,7 +433,8 @@ namespace Codinsa2015.Server.Editor
         /// Dessine les éléments graphiques du contrôleur.
         /// </summary>
         public void Draw(RemoteSpriteBatch batch)
-        {            
+        {
+            int ts = GameServer.GetMap().UnitSize;
             // Récupère la position de la souris
             Vector2 position = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
             // Dessine le cursor
@@ -452,6 +453,14 @@ namespace Codinsa2015.Server.Editor
                 m_consoleInput.IsVisible = true;
                 m_consoleOutput.IsVisible = true;
             }
+            
+            // Dessine la case survolée
+            var rawpos = GetMousePosUnits();
+            rawpos.X -= rawpos.X % 1;
+            rawpos.Y -= rawpos.Y % 1;
+            var pos = GameServer.GetMap().ToScreenSpace(rawpos);
+            batch.Draw(Ressources.HighlightMark, new Rectangle((int)pos.X, (int)pos.Y, ts, ts), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.Front);
+            
 
             // Dessine le bandeau supérieur
             batch.Draw(Ressources.DummyTexture, new Rectangle(0, 0, (int)GameServer.GetScreenSize().X, 25),
@@ -461,7 +470,8 @@ namespace Codinsa2015.Server.Editor
             DrawMinimap(batch, new Rectangle((int)GameServer.GetScreenSize().X - 200, (int)GameServer.GetScreenSize().Y - 100, 200, 100), GraphicsHelpers.Z.GUI + 2 * GraphicsHelpers.Z.BackStep);
             
             // Dessine des infos de debug.
-            batch.DrawString(Ressources.Font, "RowId = " + m_rowId + " | CheckpointId = " + m_checkpointId, new Vector2(150, 0), Color.White);
+            batch.DrawString(Ressources.Font, "RowId = " + m_rowId + " | CheckpointId = " + m_checkpointId + " | Mouse=" + rawpos.ToString(),
+                new Vector2(150, 0), Color.White, 0.0f, Vector2.Zero, 1.0f, GraphicsHelpers.Z.GUI + 4 * GraphicsHelpers.Z.BackStep);
         }
 
         /// <summary>

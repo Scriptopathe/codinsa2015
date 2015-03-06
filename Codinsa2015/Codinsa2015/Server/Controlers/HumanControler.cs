@@ -445,6 +445,7 @@ namespace Codinsa2015.Server.Controlers
 
         #endregion
 
+
         /// <summary>
         /// Dessine les éléments graphiques du contrôleur à l'écran.
         /// </summary>
@@ -484,7 +485,6 @@ namespace Codinsa2015.Server.Controlers
             }
 
         }
-
 
         /// <summary>
         /// Dessine les éléments de GUI du contrôleur.

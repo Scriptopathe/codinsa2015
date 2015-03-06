@@ -57,6 +57,12 @@ namespace Codinsa2015.Server.Events
         /// </summary>
         Entities.EntityHero m_lastKiller;
 
+
+        /// <summary>
+        /// Obtient ou définit la position de l'évènement.
+        /// </summary>
+        public Vector2 Position { get { return m_position; } set { m_position = value; } }
+
         /// <summary>
         /// Crée une nouvelle instance de EventCamp.
         /// </summary>

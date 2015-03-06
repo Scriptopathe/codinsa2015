@@ -7,11 +7,15 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Codinsa2015.Server.Entities
 {
     /// <summary>
-    /// Représente un creep.
+    /// Représente un spawner de creeps.
     /// </summary>
     public class EntitySpawner : EntityBase
     {
         #region Variables
+        /// <summary>
+        /// Si supérieur à 0, représente le temps restant du buff du big boss sur les creeps.
+        /// </summary>
+        float m_bossBuffTimer;
         float m_timer;
         /// <summary>
         /// Intervalle de temps en secondes entre l'apparition de 2 vagues de
@@ -38,6 +42,19 @@ namespace Codinsa2015.Server.Entities
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Obtient une valeur indiquant si les creeps spawnés par cette entités
+        /// seront renforcés du buff du big boss.
+        /// </summary>
+        public bool HasBossBuff
+        {
+            get
+            {
+                return m_timer > 0;
+            }
+        }
+
 
         #endregion
 
@@ -80,6 +97,12 @@ namespace Codinsa2015.Server.Entities
                             Type = EntityType.Creep | (this.Type & (EntityType.Team1 | EntityType.Team2)),
                             Row = iref % RowCount,
                         };
+                        
+                        if(HasBossBuff)
+                        {
+                            creep.ApplyBossBuff();
+                        }
+
                         GameServer.GetMap().Entities.Add(creep.ID, creep);
                     }), decay);
                     decay += SpawnDecay;
@@ -88,10 +111,21 @@ namespace Codinsa2015.Server.Entities
 
             // Décrémente le timer d'apparition des vagues.
             m_timer -= (float)time.ElapsedGameTime.TotalSeconds;
+
+            if(m_bossBuffTimer > 0)
+                m_bossBuffTimer -= (float)time.ElapsedGameTime.TotalSeconds;
         }
 
 
-
+        /// <summary>
+        /// Applique le buff du big boss sur les creeps pendant la durée
+        /// précisée en secondes.
+        /// </summary>
+        /// <param name="duration"></param>
+        public void BuffCreeps(float duration)
+        {
+            m_bossBuffTimer = duration;
+        }
         #endregion
 
         
