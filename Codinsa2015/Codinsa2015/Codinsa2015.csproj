@@ -77,6 +77,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\IdiotProgrammerException.cs" />
+    <Compile Include="Server\Controlers\Components\DeveloperConsole.cs" />
+    <Compile Include="Server\Controlers\Components\Minimap.cs" />
     <Compile Include="Server\Controlers\IAControler.cs" />
     <Compile Include="Server\Controlers\HumanControler.cs" />
     <Compile Include="Server\Controlers\ControlerBase.cs" />

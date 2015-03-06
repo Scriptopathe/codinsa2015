@@ -111,9 +111,6 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         public override void BindGraphicsClient(GraphicsServer server)
         {
-            /*Graphics.Client.RemoteClient client = new Graphics.Client.RemoteClient();
-            client.Initialize();
-            GraphicsClient = client;*/
             GraphicsClient = new Codinsa2015.Graphics.Client.IntegratedClient(GameServer.Instance.GraphicsDevice, GameServer.Instance.Content);
             GameServer.GetScene().GraphicsServer.CommandIssued += GraphicsClient.ProcessCommand;
         }
@@ -250,6 +247,7 @@ namespace Codinsa2015.Server.Controlers
             else if (position.Y >= GameServer.GetScreenSize().Y - 10)
                 MapEditControler.CurrentMap.ScrollingVector2 = new Vector2(MapEditControler.CurrentMap.ScrollingVector2.X, MapEditControler.CurrentMap.ScrollingVector2.Y + ScrollSpeed);
         }
+
         /// <summary>
         /// Détermine si le joueur a appuyé sur une touche pour warder, et effectue l'action
         /// dans ce cas.
@@ -265,6 +263,7 @@ namespace Codinsa2015.Server.Controlers
                 m_hero.UseConsummable(1);
             }
         }
+
         /// <summary>
         /// Détermine si le joueur a appuyé sur des touches pour lancer des sorts.
         /// </summary>

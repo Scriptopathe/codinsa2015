@@ -7,6 +7,7 @@ using Codinsa2015.Server.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Graphics.Server;
+using Codinsa2015.Server.Controlers.Components;
 namespace Codinsa2015.Server.Editor
 {
     /// <summary>
@@ -20,16 +21,12 @@ namespace Codinsa2015.Server.Editor
         bool m_terraFormingMode = true;
         int m_rowId = 0;
         int m_checkpointId = 0;
-        bool m_displayMinimap = true;
         private Gui.GuiButton m_modeButton;
         int m_brushSize = 2;
-        bool m_minimapDirty = true;
-        Gui.GuiTextInput m_consoleInput;
-        Gui.GuiMultilineTextDisplay m_consoleOutput;
         Controlers.ControlerBase m_baseControler;
         #region Graphics
-        RemoteSpriteBatch m_minimapBatch;
-        RemoteRenderTarget m_minimapTexture;
+        Minimap m_minimap;
+        DeveloperConsole m_console;
         #endregion
         #endregion
 
@@ -51,12 +48,6 @@ namespace Codinsa2015.Server.Editor
             set
             {
                 m_map = value;
-
-                if (m_minimapTexture != null)
-                    m_minimapTexture.Dispose();
-
-                m_minimapTexture = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, value.Size.X, value.Size.Y, RenderTargetUsage.PreserveContents);
-                m_map.OnMapModified += m_map_OnMapModified;
             }
         }
 
@@ -77,6 +68,8 @@ namespace Codinsa2015.Server.Editor
         public MapEditorControler(Controlers.ControlerBase baseControler)
         {
             m_baseControler = baseControler;
+            m_minimap = new Minimap();
+            m_console = new DeveloperConsole(baseControler.GuiManager);
         }
 
 
@@ -85,7 +78,8 @@ namespace Codinsa2015.Server.Editor
         /// </summary>
         public void LoadContent()
         {
-            m_minimapBatch = new RemoteSpriteBatch(GameServer.GetScene().GraphicsServer);
+            m_minimap.LoadContent();
+            m_console.LoadContent();
             CreateGui();
         }
 
@@ -106,36 +100,9 @@ namespace Codinsa2015.Server.Editor
             m_baseControler.GuiManager.AddWidget(m_modeButton);
 
 
-            // Console input
-            m_consoleInput = new Gui.GuiTextInput();
-            m_consoleInput.Position = new Vector2(0, GameServer.GetScreenSize().Y - 25);
-            m_consoleInput.Size = new Point((int)GameServer.GetScreenSize().X - 200, 25);
-            m_consoleInput.TextValidated += m_consoleInput_TextValidated;
 
-            m_baseControler.GuiManager.AddWidget(m_consoleInput);
-
-            // Console output
-            m_consoleOutput = new Gui.GuiMultilineTextDisplay();
-            m_consoleOutput.Position = new Vector2(0, GameServer.GetScreenSize().Y - 100);
-            m_consoleOutput.Size = new Point((int)GameServer.GetScreenSize().X - 200, 75);
-            m_baseControler.GuiManager.AddWidget(m_consoleOutput);
-            GameServer.GetScene().GameInterpreter.OnPuts = new PonyCarpetExtractor.Interpreter.PutsDelegate((string s) => { m_consoleOutput.AppendLine(s); });
-            GameServer.GetScene().GameInterpreter.OnError = new PonyCarpetExtractor.Interpreter.PutsDelegate((string s) => { m_consoleOutput.AppendLine("error: " + s); });
-           
         }
 
-        /// <summary>
-        /// Se produit lorsqu'une commande est entrée dans la console.
-        /// </summary>
-        /// <param name="sender"></param>
-        void m_consoleInput_TextValidated(Gui.GuiTextInput sender)
-        {
-            if(sender.Text == "")
-                m_consoleInput.HasFocus = false;
-
-            GameServer.GetScene().GameInterpreter.Eval(sender.Text);
-            sender.Text = "";
-        }
         /// <summary>
         /// Change le mode du contrôleur.
         /// </summary>
@@ -155,14 +122,14 @@ namespace Codinsa2015.Server.Editor
 
             // Focus de la console.
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.OemComma))
-                m_consoleInput.HasFocus = true;
-            
-            if (m_consoleInput.HasFocus)
+                m_console.HasFocus = true;
+
+            if (m_console.HasFocus)
                 return;
 
             // Affichage de la minimap.
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M))
-                m_displayMinimap = !m_displayMinimap;
+                m_minimap.Visible = !m_minimap.Visible;
 
             // Zoom
             Vector2 mousePosPx = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
@@ -295,13 +262,6 @@ namespace Codinsa2015.Server.Editor
             Vector2 mousePosUnits = ((mousePosPx + CurrentMap.ScrollingVector2) - new Vector2(CurrentMap.Viewport.X, CurrentMap.Viewport.Y)) / GameServer.GetMap().UnitSize;
             return mousePosUnits;
         }
-        /// <summary>
-        /// Affiche la position de la souris sur la console.
-        /// </summary>
-        public void PutsMousePos()
-        {
-            m_consoleOutput.AppendLine("Mouse position : " + GetMousePosUnits().ToString());
-        }
 
         /// <summary>
         /// Affiche un message d'aide.
@@ -327,7 +287,7 @@ namespace Codinsa2015.Server.Editor
                 p.PutWard(new EntityHero() { Type = team });
             }
             else
-                m_consoleOutput.AppendLine("Pas d'emplacement où poser la ward !");
+                m_console.Output.AppendLine("Pas d'emplacement où poser la ward !");
         }
         
         /// <summary>
@@ -443,15 +403,13 @@ namespace Codinsa2015.Server.Editor
             if (!IsEnabled)
             {
                 m_modeButton.Visible = false;
-                m_consoleInput.IsVisible = false;
-                m_consoleInput.HasFocus = false;
-                m_consoleOutput.IsVisible = false;
+                m_console.Visible = false;
+                m_console.HasFocus = false;
             }
             else
             {
                 m_modeButton.Visible = true;
-                m_consoleInput.IsVisible = true;
-                m_consoleOutput.IsVisible = true;
+                m_console.Visible = true;
             }
             
             // Dessine la case survolée
@@ -467,111 +425,18 @@ namespace Codinsa2015.Server.Editor
                 null, new Color(0, 0, 0, 200), 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.GUI + 5 * GraphicsHelpers.Z.BackStep);
             
             // Dessine la minimap
-            DrawMinimap(batch, new Rectangle((int)GameServer.GetScreenSize().X - 200, (int)GameServer.GetScreenSize().Y - 100, 200, 100), GraphicsHelpers.Z.GUI + 2 * GraphicsHelpers.Z.BackStep);
+            m_minimap.Position = new Vector2(GameServer.GetScreenSize().X - 200, GameServer.GetScreenSize().Y - 100);
+            m_minimap.Size = new Vector2(200, 100);
+            m_minimap.Z = GraphicsHelpers.Z.GUI + 2 * GraphicsHelpers.Z.BackStep;
+            m_minimap.CurrentMap = CurrentMap;
+            m_minimap.Draw(batch);
             
             // Dessine des infos de debug.
             batch.DrawString(Ressources.Font, "RowId = " + m_rowId + " | CheckpointId = " + m_checkpointId + " | Mouse=" + rawpos.ToString(),
                 new Vector2(150, 0), Color.White, 0.0f, Vector2.Zero, 1.0f, GraphicsHelpers.Z.GUI + 4 * GraphicsHelpers.Z.BackStep);
         }
 
-        /// <summary>
-        /// Dessine la minimap à l'emplacement donné.
-        /// </summary>
-        void DrawMinimap(RemoteSpriteBatch batch, Rectangle rect, float z)
-        {
-            if (!m_displayMinimap)
-                return;
-
-            int w = CurrentMap.Passability.GetLength(0);
-            int h = CurrentMap.Passability.GetLength(1);
-            int unitX = Math.Max(1, rect.Width / w);
-            int unitY = Math.Max(1, rect.Height / h);
-
-            if(m_displayMinimap && m_minimapDirty)
-            {
-                // Si la taille de la map a a changé, on change la taille de la texture de la minimap.
-                if(m_minimapTexture.Width != CurrentMap.Passability.GetLength(0) || m_minimapTexture.Height != CurrentMap.Passability.GetLength(1))
-                {
-                    m_minimapTexture.Dispose();
-                    m_minimapTexture = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, CurrentMap.Size.X, CurrentMap.Size.Y, RenderTargetUsage.PreserveContents);
-                    
-                    
-                }
-
-                m_minimapBatch.GraphicsDevice.SetRenderTarget(m_minimapTexture);
-                m_minimapBatch.Begin(SpriteSortMode.BackToFront, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
-                m_minimapBatch.GraphicsDevice.Clear(Color.White);
-                // Dessine la minimap sur la texture temporaire.
-                for (int x = 0; x < w; x++)
-                {
-                    for (int y = 0; y < h; y++)
-                    {
-                        Color col = CurrentMap.Passability[x, y] ? Color.White : Color.Red;
-                        col = new Color(col.R / 2, col.G / 2, col.B / 2);
-                        
-                        m_minimapBatch.Draw(Ressources.DummyTexture,
-                            new Rectangle(x, y, 1, 1),
-                            null,
-                            col,
-                            0.0f,
-                            Vector2.Zero, SpriteEffects.None,
-                            z);
-                    }
-                }
-                m_minimapBatch.End();
-                m_minimapBatch.GraphicsDevice.SetRenderTarget(GameServer.GetScene().MainRenderTarget);
-                // Supprime le dirty bit.
-                m_minimapDirty = false;
-            }
-
-
-
-
-            // Dessine la minimap
-            batch.Draw(m_minimapTexture, rect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, z);
-            
-            // Dessine la vision sur la minimap
-            for (int x = 0; x < w; x++)
-            {
-                for (int y = 0; y < h; y++)
-                {
-                    if (m_map.Vision.HasVision(EntityType.Team1, new Vector2(x, y)))
-                    {
-                        Color col = new Color(255, 255, 255, 255);
-                        batch.Draw(Ressources.DummyTexture,
-                            new Rectangle((int)(rect.X + (x / (float)w) * rect.Width),
-                            (int)(rect.Y + (y / (float)h) * rect.Height),
-                            unitX,
-                            unitY), null,
-                            col,
-                            0.0f,
-                            Vector2.Zero, SpriteEffects.None,
-                            z + GraphicsHelpers.Z.FrontStep);
-                    }
-
-                }
-            }
-
-            // Dessine le rectangle indiquant quelle partie de la map est actuellement affichée à l'écran.
-            batch.Draw(Ressources.DummyTexture,
-                new Rectangle((int)(rect.X + (CurrentMap.ScrollingVector2.X / GameServer.GetMap().UnitSize / (float)w) * rect.Width),
-                              (int)(rect.Y + (CurrentMap.ScrollingVector2.Y / GameServer.GetMap().UnitSize / (float)h) * rect.Height),
-                              (int)((CurrentMap.Viewport.Width / (float)(w * GameServer.GetMap().UnitSize)) * rect.Width),
-                              (int)((CurrentMap.Viewport.Height / (float)(h * GameServer.GetMap().UnitSize)) * rect.Height)), null,
-                              new Color(255, 255, 255, 60),
-                              0.0f,
-                              Vector2.Zero, SpriteEffects.None,
-                              z + GraphicsHelpers.Z.FrontStep * 2);
-        }
-
         #region External event handlers
-        /// <summary>
-        /// Dessine 
-        /// </summary>
-        void m_map_OnMapModified()
-        {
-            m_minimapDirty = true;
-        }
         #endregion
         #endregion
     }
