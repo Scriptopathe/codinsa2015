@@ -9,6 +9,7 @@ namespace Codinsa2015.Server.EnhancedGui
 {
     public abstract class GuiWidget
     {
+        private Rectangle m_area;
         /// <summary>
         /// Obtient ou définit une référence vers le manager de ce widget.
         /// </summary>
@@ -20,7 +21,10 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <summary>
         /// Obtient ou définit la zone sur laquelle est établi le widget par rapport à son parent.
         /// </summary>
-        public Rectangle Area { get; set;}
+        public Rectangle Area { get { return m_area; } set { m_area = value; } }
+        public Point Location { get { return m_area.Location; } set { m_area.Location = value; } }
+        public Point Size { get { return new Point(m_area.Width, m_area.Height); } set { m_area.Width = value.X; m_area.Height = value.Y; } }
+
         /// <summary>
         /// Obtient une valeur indiquant si ce contrôle doit être supprimé.
         /// </summary>
@@ -64,6 +68,7 @@ namespace Codinsa2015.Server.EnhancedGui
         }
 
         #region Drawing
+        const float layerDepthStep = 0.000001f;
         protected void Draw(RemoteSpriteBatch batch, RemoteTexture texture, Rectangle dstRect, Rectangle? srcRect, Color color, float rotation, Vector2 origin, int layer)
         {
             dstRect.Location = GetRealPosition(dstRect.Location);
@@ -74,7 +79,7 @@ namespace Codinsa2015.Server.EnhancedGui
                 rotation,
                 origin,
                 Microsoft.Xna.Framework.Graphics.SpriteEffects.None,
-                Manager.ComputeLayerDepth(this) + layer * float.Epsilon);
+                (float)(Manager.ComputeLayerDepth(this) - layer * layerDepthStep));
         }
 
         protected void DrawString(RemoteSpriteBatch batch, RemoteSpriteFont font, string str, Vector2 position, Color color, float rotation, Vector2 origin, float scale, int layer)
@@ -86,14 +91,14 @@ namespace Codinsa2015.Server.EnhancedGui
                 color,
                 rotation,
                 origin, 
-                scale, 
-                Manager.ComputeLayerDepth(this) + layer * float.Epsilon);
+                scale,
+                (float)(Manager.ComputeLayerDepth(this) - layer * layerDepthStep));
         }
 
         protected void DrawRectBox(RemoteSpriteBatch batch, RemoteTexture2D texture, Rectangle rect, Color color, int layer)
         {
             rect.Location = GetRealPosition(rect.Location);
-            Gui.Drawing.DrawRectBox(batch, texture, rect, color, Manager.ComputeLayerDepth(this) + layer * float.Epsilon);
+            Gui.Drawing.DrawRectBox(batch, texture, rect, color, (float)( Manager.ComputeLayerDepth(this) - layer * layerDepthStep));
         }
         /// <summary>
         /// Obtient la position réelle de ce contrôle (non relative à son parent).
@@ -107,6 +112,7 @@ namespace Codinsa2015.Server.EnhancedGui
             {
                 pos.X += parent.Area.X;
                 pos.Y += parent.Area.Y;
+                parent = parent.Parent;
             }
             return pos;
         }
@@ -127,7 +133,7 @@ namespace Codinsa2015.Server.EnhancedGui
         public Rectangle GetRealArea()
         {
             Rectangle area = Area;
-            area.Location = GetRealPosition(area.Location);
+            area.Location = GetRealPosition();
             return area;
         }
 
@@ -162,6 +168,13 @@ namespace Codinsa2015.Server.EnhancedGui
             return Manager.IsHover(this);
         }
 
+        /// <summary>
+        /// Donne le focus à ce contrôle.
+        /// </summary>
+        public void Focus()
+        {
+            Manager.SetFocus(this);
+        }
         /// <summary>
         /// Obtient une valeur indiquant si ce widget a le focus.
         /// </summary>

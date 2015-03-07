@@ -55,6 +55,10 @@ namespace Codinsa2015.Server.Controlers
         /// Obtient une référence vers le gestionnaire de GUI du contrôleur.
         /// </summary>
         public Gui.GuiManager GuiManager { get; set; }
+        /// <summary>
+        /// Obtient une référence vers le gestionnaire de GUI du contrôleur.
+        /// </summary>
+        public EnhancedGui.GuiManager EnhancedGuiManager { get; set; }
         /* ------------------------------------------------------------------
          * IFACE
          * Contient les fonctions auxquelles vont faire appel les IAs.

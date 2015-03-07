@@ -103,6 +103,7 @@ namespace Codinsa2015.Server.Controlers
             Pov = new Server.Map.PointOfView() { Teams = hero.Type, UnitSize = 32 };
             Particles = new Server.Particles.ParticleManager();
             GuiManager = new Gui.GuiManager();
+            EnhancedGuiManager = new EnhancedGui.GuiManager();
             MapEditControler = new Editor.MapEditorControler(this);
         }
 
@@ -160,6 +161,7 @@ namespace Codinsa2015.Server.Controlers
                 Particles.Update(time);
                 // Gui manager
                 GuiManager.Update(time);
+                EnhancedGuiManager.Update(time);
 
                 // Mouvement du héros.
                 var ms = Input.GetMouseState();
@@ -463,6 +465,7 @@ namespace Codinsa2015.Server.Controlers
                 batch.GraphicsDevice.SetRenderTarget(GameServer.GetScene().MainRenderTarget);
                 batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
                 GuiManager.Draw(batch);
+                EnhancedGuiManager.Draw(batch);
                 Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
                 DrawControlerGUI(batch, time);
                 batch.End();

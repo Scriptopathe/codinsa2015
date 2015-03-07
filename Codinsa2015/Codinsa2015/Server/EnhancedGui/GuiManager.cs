@@ -31,7 +31,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <summary>
         /// Layerdepth de base sur laquelle sont placée les composants.
         /// </summary>
-        public float BaseZ
+        public double BaseZ
         {
             get;
             set;
@@ -40,7 +40,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <summary>
         /// Z mini que peut atteindre un composant.
         /// </summary>
-        public float MinZ
+        public double MinZ
         {
             get;
             set;
@@ -56,6 +56,8 @@ namespace Codinsa2015.Server.EnhancedGui
             m_widgets = new List<GuiWidget>();
             m_addList = new List<GuiWidget>();
             m_removeList = new List<GuiWidget>();
+            BaseZ = GraphicsHelpers.Z.GUI;
+            MinZ = GraphicsHelpers.Z.GUI - 0.3f;
         }
 
         /// <summary>
@@ -89,7 +91,7 @@ namespace Codinsa2015.Server.EnhancedGui
 
             // On change le focus uniquement à la fin de la boucle.
             m_focus = newFocus;
-            if (m_focus != newFocus)
+            if (oldFocus != newFocus)
             {
                 oldFocus.OnFocusLost();
                 newFocus.OnFocus();
@@ -147,6 +149,21 @@ namespace Codinsa2015.Server.EnhancedGui
         }
 
         /// <summary>
+        /// Donne le focus au contrôle donné en paramètre.
+        /// </summary>
+        public void SetFocus(GuiWidget widget)
+        {
+            if(widget != m_focus)
+            {
+                if(m_focus != null)
+                    m_focus.OnFocusLost();
+                if(widget != null)
+                    widget.OnFocus();
+            }
+            m_focus = widget;
+        }
+
+        /// <summary>
         /// Indique si le contrôle widget est en possession du focus.
         /// </summary>
         public bool HasFocus(GuiWidget widget)
@@ -163,18 +180,21 @@ namespace Codinsa2015.Server.EnhancedGui
         {
             var ms = Input.GetMouseState();
             Point mp = new Point(ms.X, ms.Y);
-            if (!widget.Area.Contains(mp))
+            if (!widget.GetRealArea().Contains(mp))
                 return false;
 
-            float z = ComputeLayerDepth(widget);
+            double z = ComputeLayerDepth(widget);
 
             foreach(GuiWidget w in m_widgets)
             {
+                if (w == widget)
+                    continue;
                 if (!w.IsVisible)
                     continue;
 
                 // Si le widget w est devant et qu'il contient le point => pas bon.
-                if (ComputeLayerDepth(w) < z && w.GetRealArea().Contains(mp))
+                double wz = ComputeLayerDepth(w);
+                if (wz < z && w.GetRealArea().Contains(mp))
                 {
                     return false;
                 }
@@ -186,15 +206,16 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <summary>
         /// Calcule le z d'un widget.
         /// </summary>
-        public float ComputeLayerDepth(GuiWidget widget)
+        public double ComputeLayerDepth(GuiWidget widget)
         {
-            float current = BaseZ; // 0.5
-            float min = MinZ;      // 0.4
-            float step = (current - min) / (float)byte.MaxValue;
-            foreach(GuiWidget w in GetParentalChain(widget))
+            double current = BaseZ; // 0.5
+            double min = MinZ;      // 0.4
+            double step = (current - min) / (double)16;
+            var parentalChain = GetParentalChain(widget);
+            foreach(GuiWidget w in parentalChain)
             {
                 current -= step * (1+w.Layer);
-                step /= (float)byte.MaxValue;
+                step /= (double)16;
             }
 
             return current;
@@ -211,7 +232,7 @@ namespace Codinsa2015.Server.EnhancedGui
             while (current != null)
             {
                 widgets.Push(current);
-                current = widget.Parent;
+                current = current.Parent;
             }
 
             while (widgets.Count != 0)

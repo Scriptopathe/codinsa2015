@@ -21,9 +21,9 @@ namespace Codinsa2015.Server.GraphicsHelpers
         public const float Entities     = 0.9f;
         public const float Background   = 1.0f;
         public const float Map          = 1.0f;
-        public const float HeroControler = 0.15f;
-        public const float GUI          = 0.1f;
-        public const float Particles    = 0.2f;
+        public const float HeroControler = 0.55f;
+        public const float GUI          = 0.5f;
+        public const float Particles    = 0.6f;
         #endregion
 
     }

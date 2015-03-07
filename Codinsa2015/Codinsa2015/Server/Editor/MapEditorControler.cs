@@ -70,6 +70,7 @@ namespace Codinsa2015.Server.Editor
             m_baseControler = baseControler;
             m_minimap = new Minimap();
             m_console = new DeveloperConsole(baseControler.GuiManager);
+            
         }
 
 
@@ -80,8 +81,34 @@ namespace Codinsa2015.Server.Editor
         {
             m_minimap.LoadContent();
             m_console.LoadContent();
+            EnhancedGui.GuiButton btn = new EnhancedGui.GuiButton(m_baseControler.EnhancedGuiManager);
+            btn.Area = new Rectangle(100, 100, 200, 200);
+            btn.Title = "Back";
+            EnhancedGui.GuiButton btn2 = new EnhancedGui.GuiButton(m_baseControler.EnhancedGuiManager);
+            btn2.Area = new Rectangle(50, 50, 300, 100);
+            btn2.Parent = btn;
+            btn2.Title = "Front";
+            EnhancedGui.GuiMultilineTextDisplay disp = new EnhancedGui.GuiMultilineTextDisplay(m_baseControler.EnhancedGuiManager);
+            disp.Parent = btn2;
+            disp.Location = new Point(50, 50);
+            disp.Size = new Point(200, 200);
+            disp.AppendLine("hahah");
+            EnhancedGui.GuiTextInput inp = new EnhancedGui.GuiTextInput(m_baseControler.EnhancedGuiManager);
+            inp.Parent = btn2;
+            inp.Location = new Point(50, 250);
+            inp.Size = new Point(200, 20);
+            EnhancedGui.GuiMenu menu = new EnhancedGui.GuiMenu(m_baseControler.EnhancedGuiManager);
+            menu.Location = new Point(500, 100);
+            menu.Items = new List<EnhancedGui.GuiMenu.GuiMenuItem>()
+            {
+                new EnhancedGui.GuiMenu.GuiMenuItem("hah"),
+                new EnhancedGui.GuiMenu.GuiMenuItem("hihi")
+            };
+            menu.Focus();
             CreateGui();
         }
+
+  
 
 
         /// <summary>

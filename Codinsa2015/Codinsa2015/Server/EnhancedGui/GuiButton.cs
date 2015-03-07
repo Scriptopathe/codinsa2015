@@ -25,14 +25,6 @@ namespace Codinsa2015.Server.EnhancedGui
         /// </summary>
         int m_mainMarginSize = 8;
         /// <summary>
-        /// Largeur du bouton en pixels.
-        /// </summary>
-        int m_width;
-        /// <summary>
-        /// Hauteur du bouton en pixels.
-        /// </summary>
-        int m_height;
-        /// <summary>
         /// Taille des icones en pixels.
         /// Les icones sont des textures carrées.
         /// </summary>
@@ -91,23 +83,6 @@ namespace Codinsa2015.Server.EnhancedGui
             get { return m_mainMarginSize; }
             set { m_mainMarginSize = value; }
         }
-        /// <summary>
-        /// Obtient ou définit la hauteur du bouton.
-        /// </summary>
-        public int Height
-        {
-            get { return m_height; }
-            set { m_height = value; }
-        }
-
-        /// <summary>
-        /// Obtient ou définit la largeur du bouton
-        /// </summary>
-        public int Width
-        {
-            get { return m_width; }
-            set { m_width = value; }
-        }
 
         /// <summary>
         /// Obtient ou définit le titre du menu.
@@ -157,10 +132,10 @@ namespace Codinsa2015.Server.EnhancedGui
             ButtonHoverBoxTexture = Ressources.MenuItemHover;
             Visible = true;
             IsEnabled = true;
-            Width = 100;
-            Height = 25;
+            Area = new Rectangle(Area.X, Area.Y, 100, 20);
             MainMarginSize = 2;
             Title = "";
+            manager.AddWidget(this);
         }
 
         /// <summary>
@@ -207,8 +182,8 @@ namespace Codinsa2015.Server.EnhancedGui
 
 
             // Dessin de la box
-            RemoteTexture2D t = hover && IsEnabled ? ButtonHoverBoxTexture : ButtonBoxTexture;
-            DrawRectBox(batch, t, new Rectangle(0, 0, Area.Width, Area.Height), Color.White, 0);
+            RemoteTexture2D t = ((hover && !Input.IsLeftClickPressed()) && IsEnabled)? ButtonHoverBoxTexture : ButtonBoxTexture;
+            DrawRectBox(batch, t, new Rectangle(0, 0, Area.Width, Area.Height), Color.White, 4);
 
             // Dessin de l'icone
             if (Icon != null)
@@ -221,7 +196,7 @@ namespace Codinsa2015.Server.EnhancedGui
             // Dessin du texte
             var pos = new Vector2(2 * MainMarginSize + m_iconSize, Area.Height / 2 - tSize.Y / 2);
             Color textColor = IsEnabled ? (hover ? HoverTextColor : EnabledTextColor) : DisabledTextColor;
-            DrawString(batch, Ressources.Font, Title, pos, textColor, 0.0f, Vector2.Zero, 1.0f, 1);
+            DrawString(batch, Ressources.Font, Title, pos, textColor, 0.0f, Vector2.Zero, 1.0f, 8);
 
         }
         #endregion
