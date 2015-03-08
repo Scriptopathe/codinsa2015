@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
+
 namespace Codinsa2015.Server.EnhancedGui
 {
     /// <summary>
@@ -29,7 +29,7 @@ namespace Codinsa2015.Server.EnhancedGui
             /// <summary>
             /// Icône affiché sur cet item.
             /// </summary>
-            public RemoteTexture2D Icon { get; set; }
+            public Texture2D Icon { get; set; }
             /// <summary>
             /// Id de l'event déclenché par cet item.
             /// </summary>
@@ -61,21 +61,21 @@ namespace Codinsa2015.Server.EnhancedGui
                 IsEnabled = true;
             }
 
-            public GuiMenuItem(string text, RemoteTexture2D icon)
+            public GuiMenuItem(string text, Texture2D icon)
             {
                 Text = text;
                 Icon = icon;
                 IsEnabled = true;
             }
 
-            public GuiMenuItem(string text, RemoteTexture2D icon, bool isEnabled)
+            public GuiMenuItem(string text, Texture2D icon, bool isEnabled)
             {
                 Text = text;
                 Icon = icon;
                 IsEnabled = isEnabled;
             }
 
-            public GuiMenuItem(string text, RemoteTexture2D icon, bool isEnabled, ItemSelectedDelegate onItemSelected)
+            public GuiMenuItem(string text, Texture2D icon, bool isEnabled, ItemSelectedDelegate onItemSelected)
             {
                 Text = text;
                 Icon = icon;
@@ -121,7 +121,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <summary>
         /// Obtient ou définit la texture utilisée pour dessiner la boite principale du menu.
         /// </summary>
-        public RemoteTexture2D MenuBoxTexture
+        public Texture2D MenuBoxTexture
         {
             get;
             set;
@@ -130,7 +130,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <summary>
         /// Obtient ou définit la texture utilisée pour dessiner les items du menu.
         /// </summary>
-        public RemoteTexture2D ItemBoxTexture
+        public Texture2D ItemBoxTexture
         {
             get;
             set;
@@ -139,7 +139,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <summary>
         /// Obtient ou définit la texture utilisée pour dessiner les items du menu, lorsque la souris est dessus.
         /// </summary>
-        public RemoteTexture2D ItemHoverBoxTexture
+        public Texture2D ItemHoverBoxTexture
         {
             get;
             set;
@@ -314,7 +314,7 @@ namespace Codinsa2015.Server.EnhancedGui
 
             for (int y = 0; y < Items.Count; y++)
             {
-                RemoteSpriteFont font = Ressources.Font;
+                SpriteFont font = Ressources.Font;
                 Vector2 size = font.MeasureString(Items[y].Text);
                 
                 if(Items[y].Icon != null)
@@ -394,7 +394,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// Dessine les items de ce menu.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(RemoteSpriteBatch batch)
+        public override void Draw(SpriteBatch batch)
         {
             if (!Visible)
                 return;
@@ -430,7 +430,7 @@ namespace Codinsa2015.Server.EnhancedGui
 
                 // Dessin de la box
                 Rectangle pxRect = new Rectangle((int)pos.X, (int)pos.Y, m_itemWidth, m_itemHeight);
-                RemoteTexture2D t = isHover && Items[y].IsEnabled ? ItemHoverBoxTexture : ItemBoxTexture;
+                Texture2D t = isHover && Items[y].IsEnabled ? ItemHoverBoxTexture : ItemBoxTexture;
                 DrawRectBox(batch, t, pxRect, Color.White, 4);
 
                 // Dessin de l'icone

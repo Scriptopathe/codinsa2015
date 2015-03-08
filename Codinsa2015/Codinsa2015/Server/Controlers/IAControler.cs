@@ -8,8 +8,7 @@ using Codinsa2015.Server.Spellcasts;
 using Codinsa2015.Server.Spells;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
-using Codinsa2015.Graphics.Client;
+
 namespace Codinsa2015.Server.Controlers
 {
     /// <summary>
@@ -65,13 +64,6 @@ namespace Codinsa2015.Server.Controlers
         }
 
         /// <summary>
-        /// Lie le client graphique (si existant) du contrôleur au serveur donné.
-        /// </summary>
-        public override void BindGraphicsClient(GraphicsServer server)
-        {
-
-        }
-        /// <summary>
         /// Charges les ressources (graphiques et autres) dont a besoin de contrôleur.
         /// </summary>
         public override void LoadContent()
@@ -101,7 +93,7 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Dessine les éléments graphiques du contrôleur à l'écran.
         /// </summary>
-        public override void Draw(RemoteSpriteBatch batch, GameTime time)
+        public override void Draw(SpriteBatch batch, GameTime time)
         {
             
         }

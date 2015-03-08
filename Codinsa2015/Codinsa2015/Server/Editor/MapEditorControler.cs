@@ -6,7 +6,7 @@ using Codinsa2015.Server;
 using Codinsa2015.Server.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
+
 using Codinsa2015.Server.Controlers.Components;
 using Codinsa2015.Server.EnhancedGui;
 namespace Codinsa2015.Server.Editor
@@ -427,7 +427,7 @@ namespace Codinsa2015.Server.Editor
         /// <summary>
         /// Dessine les éléments graphiques du contrôleur.
         /// </summary>
-        public void Draw(RemoteSpriteBatch batch)
+        public void Draw(SpriteBatch batch)
         {
             int ts = GameServer.GetMap().UnitSize;
             // Récupère la position de la souris
@@ -468,7 +468,7 @@ namespace Codinsa2015.Server.Editor
             
             // Dessine des infos de debug.
             batch.DrawString(Ressources.Font, "RowId = " + m_rowId + " | CheckpointId = " + m_checkpointId + " | Mouse=" + rawpos.ToString(),
-                new Vector2(150, 0), Color.White, 0.0f, Vector2.Zero, 1.0f, GraphicsHelpers.Z.GUI + 4 * GraphicsHelpers.Z.BackStep);
+                new Vector2(150, 0), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GraphicsHelpers.Z.GUI + 4 * GraphicsHelpers.Z.BackStep);
         }
 
         #region External event handlers

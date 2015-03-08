@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Server.Entities;
 using Codinsa2015.Server.Spellcasts;
 using System.IO;
-using Codinsa2015.Graphics.Server;
+
 using Codinsa2015.Server.Events;
 namespace Codinsa2015.Server
 {
@@ -68,13 +68,13 @@ namespace Codinsa2015.Server
         /// <summary>
         /// Render Target des tiles
         /// </summary>
-        RemoteRenderTarget m_tilesRenderTarget;
+        RenderTarget2D m_tilesRenderTarget;
         /// <summary>
         /// Render target des entities.
         /// </summary>
-        RemoteRenderTarget m_entitiesRenderTarget;
-        RemoteRenderTarget m_tmpRenderTarget;
-        RemoteRenderTarget m_tmpRenderTarget2;
+        RenderTarget2D m_entitiesRenderTarget;
+        RenderTarget2D m_tmpRenderTarget;
+        RenderTarget2D m_tmpRenderTarget2;
         /// <summary>
         /// Effet de flou gaussien.
         /// </summary>
@@ -228,14 +228,14 @@ namespace Codinsa2015.Server
                 m_entitiesRenderTarget.Dispose();
                 m_tilesRenderTarget.Dispose();
             }
-            m_entitiesRenderTarget = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, Viewport.Width, Viewport.Height, RenderTargetUsage.PreserveContents);
-            m_tmpRenderTarget = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, Viewport.Width, Viewport.Height);
-            m_tmpRenderTarget2 = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, Viewport.Width, Viewport.Height);
+            m_entitiesRenderTarget = new RenderTarget2D(Ressources.Device, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            m_tmpRenderTarget = new RenderTarget2D(Ressources.Device, Viewport.Width, Viewport.Height);
+            m_tmpRenderTarget2 = new RenderTarget2D(Ressources.Device, Viewport.Width, Viewport.Height);
             SetupTileRenderTarget();
             m_blur.ComputeOffsets(Viewport.Width, Viewport.Height);
         }
 
-        Dictionary<Point, RemoteRenderTarget> m_tilesRenderTargets = new Dictionary<Point, RemoteRenderTarget>();
+        Dictionary<Point, RenderTarget2D> m_tilesRenderTargets = new Dictionary<Point, RenderTarget2D>();
         /// <summary>
         /// Crée le render target des tiles (s'adapted à la taille des cases).
         /// </summary>
@@ -246,7 +246,7 @@ namespace Codinsa2015.Server
                 m_tilesRenderTarget = m_tilesRenderTargets[resolution];
             else
             {
-                m_tilesRenderTarget = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, resolution.X, resolution.Y, RenderTargetUsage.PreserveContents);
+                m_tilesRenderTarget = new RenderTarget2D(Ressources.Device, resolution.X, resolution.Y, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
                 m_tilesRenderTargets.Add(resolution, m_tilesRenderTarget);
             }
         }
@@ -261,7 +261,7 @@ namespace Codinsa2015.Server
         /// </summary>
         /// <param name="time"></param>
         /// <param name="batch"></param>
-        public void Draw(GameTime time, RemoteSpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch)
         {
             batch.GraphicsDevice.SetRenderTarget(m_tilesRenderTarget);
             // batch.GraphicsDevice.Clear(Color.Transparent);
@@ -375,7 +375,7 @@ namespace Codinsa2015.Server
         public void LoadContent()
         {
             // Initialise l'effet de blur.
-            m_blur = new GraphicsHelpers.GaussianBlur(GameServer.GetScene().GraphicsServer);
+            m_blur = new GraphicsHelpers.GaussianBlur(Ressources.Content);
             m_blur.ComputeKernel(4, 2);
 
 

@@ -5,7 +5,6 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Server.Entities;
-using Codinsa2015.Graphics.Server;
 namespace Codinsa2015.Server.Spellcasts
 {
     /// <summary>
@@ -136,7 +135,7 @@ namespace Codinsa2015.Server.Spellcasts
         /// <summary>
         /// Dessine ce sort à l'écran.
         /// </summary>
-        public override void Draw(GameTime time, RemoteSpriteBatch batch)
+        public override void Draw(GameTime time, SpriteBatch batch)
         {
             Point scroll = GameServer.GetMap().Scrolling;
             batch.Draw(Ressources.DummyTexture,

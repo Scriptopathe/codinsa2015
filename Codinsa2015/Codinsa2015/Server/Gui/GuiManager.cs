@@ -5,7 +5,6 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Codinsa2015.Graphics.Server;
 namespace Codinsa2015.Server.Gui
 {
     /// <summary>
@@ -60,7 +59,7 @@ namespace Codinsa2015.Server.Gui
         /// Dessine tous les composants du GuiManager.
         /// </summary>
         /// <param name="batch"></param>
-        public void Draw(RemoteSpriteBatch batch)
+        public void Draw(SpriteBatch batch)
         {
             foreach(GuiWidget widget in m_widgets)
             {

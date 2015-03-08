@@ -5,7 +5,6 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Server.Shapes;
-using Codinsa2015.Graphics.Server;
 namespace Codinsa2015.Server.Entities
 {
     
@@ -1158,7 +1157,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Dessine l'entitié.
         /// </summary>
-        public void Draw(GameTime time, RemoteSpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch)
         {
             Point scroll = GameServer.GetMap().Scrolling;
             Point drawPos = new Point((int)(m_position.X * GameServer.GetMap().UnitSize) - scroll.X, (int)(m_position.Y * GameServer.GetMap().UnitSize) - scroll.Y);
@@ -1180,7 +1179,7 @@ namespace Codinsa2015.Server.Entities
         /// <param name="time">Temps de jeu.</param>
         /// <param name="batch">Batch sur lequel dessiner.</param>
         /// <param name="position">Position à laquelle dessiner l'unité.</param>
-        public virtual void Draw(GameTime time, RemoteSpriteBatch batch, Point position)
+        public virtual void Draw(GameTime time, SpriteBatch batch, Point position)
         {
             Color col;
             if (Type.HasFlag(EntityType.Team1))
@@ -1190,7 +1189,7 @@ namespace Codinsa2015.Server.Entities
             else
                 col = Color.White;
 
-            RemoteTexture2D tex = Ressources.DummyTexture;
+            Texture2D tex = Ressources.DummyTexture;
             if (Type.HasFlag(EntityType.Tower))
                 tex = Ressources.SelectMark;
             else if (Type.HasFlag(EntityType.Spawner))

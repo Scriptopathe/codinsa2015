@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
 namespace Codinsa2015.Server.Controlers
 {
     /// <summary>
@@ -37,16 +36,12 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Dessine les éléments graphique du contrôleur à l'écran.
         /// </summary>
-        public abstract void Draw(RemoteSpriteBatch batch, GameTime time);
+        public abstract void Draw(SpriteBatch batch, GameTime time);
 
         /// <summary>
         /// Charge les ressources graphiques et autres dont a besoin ce contrôleur.
         /// </summary>
         public abstract void LoadContent();
-        /// <summary>
-        /// Lie le client graphique (si existant) du contrôleur au serveur donné.
-        /// </summary>
-        public abstract void BindGraphicsClient(GraphicsServer server);
         /// <summary>
         /// Obtient une référence vers le gestionnaire de particules du contrôleur.
         /// </summary>

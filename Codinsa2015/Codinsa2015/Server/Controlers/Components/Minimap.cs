@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Server.Entities;
-using Codinsa2015.Graphics.Server;
+
 namespace Codinsa2015.Server.Controlers.Components
 {
     /// <summary>
@@ -15,8 +15,8 @@ namespace Codinsa2015.Server.Controlers.Components
     {
         #region Variables
         bool m_isDirty;
-        RemoteSpriteBatch m_minimapBatch;
-        RemoteRenderTarget m_minimapTexture;
+        SpriteBatch m_minimapBatch;
+        RenderTarget2D m_minimapTexture;
         Map m_map;
         #endregion 
 
@@ -76,7 +76,7 @@ namespace Codinsa2015.Server.Controlers.Components
                 if (m_minimapTexture != null)
                     m_minimapTexture.Dispose();
 
-                m_minimapTexture = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, value.Size.X, value.Size.Y, RenderTargetUsage.PreserveContents);
+                m_minimapTexture = new RenderTarget2D(Ressources.Device, value.Size.X, value.Size.Y, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
 
                 m_map.OnMapModified += m_map_OnMapModified;
             }
@@ -96,14 +96,14 @@ namespace Codinsa2015.Server.Controlers.Components
         /// </summary>
         public void LoadContent()
         {
-            m_minimapBatch = new RemoteSpriteBatch(GameServer.GetScene().GraphicsServer);
+            m_minimapBatch = new SpriteBatch(Ressources.Device);
         }
 
         /// <summary>
         /// Dessine la minimap.
         /// </summary>
         /// <param name="batch"></param>
-        public void Draw(RemoteSpriteBatch batch)
+        public void Draw(SpriteBatch batch)
         {
 
             Rectangle rect = new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
@@ -118,7 +118,7 @@ namespace Codinsa2015.Server.Controlers.Components
                 if (m_minimapTexture.Width != CurrentMap.Passability.GetLength(0) || m_minimapTexture.Height != CurrentMap.Passability.GetLength(1))
                 {
                     m_minimapTexture.Dispose();
-                    m_minimapTexture = new RemoteRenderTarget(GameServer.GetScene().GraphicsServer, CurrentMap.Size.X, CurrentMap.Size.Y, RenderTargetUsage.PreserveContents);
+                    m_minimapTexture = new RenderTarget2D(Ressources.Device, CurrentMap.Size.X, CurrentMap.Size.Y, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
 
 
                 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
-using Codinsa2015.Graphics.Server;
+using Microsoft.Xna.Framework.Graphics;
 namespace Codinsa2015.Server.EnhancedGui
 {
     public abstract class GuiWidget
@@ -46,7 +46,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// Dessine le widget.
         /// </summary>
         /// <param name="batch"></param>
-        public abstract void Draw(RemoteSpriteBatch batch);
+        public abstract void Draw(SpriteBatch batch);
         /// <summary>
         /// Supprime le widget.
         /// </summary>
@@ -69,7 +69,7 @@ namespace Codinsa2015.Server.EnhancedGui
 
         #region Drawing
         const float layerDepthStep = 0.000001f;
-        protected void Draw(RemoteSpriteBatch batch, RemoteTexture texture, Rectangle dstRect, Rectangle? srcRect, Color color, float rotation, Vector2 origin, int layer)
+        protected void Draw(SpriteBatch batch, Texture2D texture, Rectangle dstRect, Rectangle? srcRect, Color color, float rotation, Vector2 origin, int layer)
         {
             dstRect.Location = GetRealPosition(dstRect.Location);
             batch.Draw(texture, 
@@ -82,7 +82,7 @@ namespace Codinsa2015.Server.EnhancedGui
                 (float)(Manager.ComputeLayerDepth(this) - layer * layerDepthStep));
         }
 
-        protected void DrawString(RemoteSpriteBatch batch, RemoteSpriteFont font, string str, Vector2 position, Color color, float rotation, Vector2 origin, float scale, int layer)
+        protected void DrawString(SpriteBatch batch, SpriteFont font, string str, Vector2 position, Color color, float rotation, Vector2 origin, float scale, int layer)
         {
             position = v2(GetRealPosition(new Point((int)position.X, (int)position.Y)));
             batch.DrawString(font, 
@@ -92,10 +92,11 @@ namespace Codinsa2015.Server.EnhancedGui
                 rotation,
                 origin, 
                 scale,
+                SpriteEffects.None,
                 (float)(Manager.ComputeLayerDepth(this) - layer * layerDepthStep));
         }
 
-        protected void DrawRectBox(RemoteSpriteBatch batch, RemoteTexture2D texture, Rectangle rect, Color color, int layer)
+        protected void DrawRectBox(SpriteBatch batch, Texture2D texture, Rectangle rect, Color color, int layer)
         {
             rect.Location = GetRealPosition(rect.Location);
             Gui.Drawing.DrawRectBox(batch, texture, rect, color, (float)( Manager.ComputeLayerDepth(this) - layer * layerDepthStep));

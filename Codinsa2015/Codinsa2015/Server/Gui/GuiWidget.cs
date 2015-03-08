@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
 namespace Codinsa2015.Server.Gui
 {
     /// <summary>
@@ -53,7 +52,7 @@ namespace Codinsa2015.Server.Gui
         /// Dessine le widget.
         /// </summary>
         /// <param name="batch"></param>
-        public abstract void Draw(RemoteSpriteBatch batch);
+        public abstract void Draw(SpriteBatch batch);
         /// <summary>
         /// Supprime le widget.
         /// </summary>

@@ -204,6 +204,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Server\GameServer.cs" />
     <Compile Include="Server\Scene.cs" />
+    <Compile Include="Tools\Serializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
@@ -215,10 +216,6 @@
     <ProjectReference Include="..\..\Clank.ViewCreator\Clank.ViewCreator.csproj">
       <Project>{ac6299c5-17cc-4d25-9b2b-b29eb1a896db}</Project>
       <Name>Clank.ViewCreator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Codinsa2015.Graphics\Codinsa2015.Graphics.csproj">
-      <Project>{1b831a6d-c2bd-4072-a3f7-273915e43f64}</Project>
-      <Name>Codinsa2015.Graphics</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\PonyCarpetExtractor\PonyCarpetExtractor.csproj">
       <Project>{f0ce7cad-de71-4eed-9490-aeeb7c1bafe1}</Project>
@@ -252,9 +249,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tools\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

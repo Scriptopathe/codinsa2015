@@ -46,7 +46,6 @@
     <Compile Include="Client\GraphicsClient.cs" />
     <Compile Include="Client\IntegratedClient.cs" />
     <Compile Include="Client\RemoteClient.cs" />
-    <Compile Include="SceneView.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="Server\Command.cs" />
     <Compile Include="Server\CommandCreateObject.cs" />

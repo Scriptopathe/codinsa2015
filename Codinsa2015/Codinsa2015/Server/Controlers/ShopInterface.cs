@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Codinsa2015.Graphics.Server;
 using Codinsa2015.Server.Equip;
 using Codinsa2015.Server.Entities;
+using Microsoft.Xna.Framework.Graphics;
 namespace Codinsa2015.Server.Controlers
 {
     /// <summary>
@@ -56,7 +56,7 @@ namespace Codinsa2015.Server.Controlers
         /// Dessine l'interface du shop.
         /// </summary>
         /// <param name="batch"></param>
-        public void Draw(RemoteSpriteBatch batch)
+        public void Draw(SpriteBatch batch)
         {
 
         }

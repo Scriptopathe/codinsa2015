@@ -8,8 +8,6 @@ using Codinsa2015.Server.Spellcasts;
 using Codinsa2015.Server.Spells;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
-using Codinsa2015.Graphics.Client;
 namespace Codinsa2015.Server.Controlers
 {
     /// <summary>
@@ -76,16 +74,6 @@ namespace Codinsa2015.Server.Controlers
         }
 
         /// <summary>
-        /// Obtient le client graphique que ce contrôleur utilise pour afficher la scène.
-        /// </summary>
-        public GraphicsClient GraphicsClient
-        {
-            get;
-            set;
-        }
-
-
-        /// <summary>
         /// Obtient une valeur indiquant si le contrôleur est en mode édition de map.
         /// </summary>
         public bool EditMode
@@ -112,14 +100,6 @@ namespace Codinsa2015.Server.Controlers
             MapEditControler = new Editor.MapEditorControler(this);
         }
 
-        /// <summary>
-        /// Lie le client graphique (si existant) du contrôleur au serveur donné.
-        /// </summary>
-        public override void BindGraphicsClient(GraphicsServer server)
-        {
-            GraphicsClient = new Codinsa2015.Graphics.Client.IntegratedClient(GameServer.Instance.GraphicsDevice, GameServer.Instance.Content);
-            GameServer.GetScene().GraphicsServer.CommandIssued += GraphicsClient.ProcessCommand;
-        }
         /// <summary>
         /// Charges les ressources (graphiques et autres) dont a besoin de contrôleur.
         /// </summary>
@@ -367,7 +347,7 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Dessine les icones des spells.
         /// </summary>
-        void DrawSpellIcons(RemoteSpriteBatch batch, GameTime time)
+        void DrawSpellIcons(SpriteBatch batch, GameTime time)
         {
             int spellCount = m_hero.Spells.Count;
             int y = (int)GameServer.GetScreenSize().Y - spellIconSize - 5;
@@ -396,7 +376,7 @@ namespace Codinsa2015.Server.Controlers
                     int offsetX = (spellIconSize - (int)stringW.X) / 2;
                     int offsetY = (spellIconSize - (int)stringW.Y) / 2;
 
-                    batch.DrawString(Ressources.Font, cooldown, new Vector2(x + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, GraphicsHelpers.Z.HeroControler + GraphicsHelpers.Z.FrontStep);
+                    batch.DrawString(Ressources.Font, cooldown, new Vector2(x + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GraphicsHelpers.Z.HeroControler + GraphicsHelpers.Z.FrontStep);
                 }
 
             }
@@ -407,7 +387,7 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         /// <param name="batch"></param>
         /// <param name="time"></param>
-        void DrawEquipmentSlots(RemoteSpriteBatch batch, GameTime time)
+        void DrawEquipmentSlots(SpriteBatch batch, GameTime time)
         {
             int y = (int)GameServer.GetScreenSize().Y - spellIconSize/2 - 5;
             int xBase = ((int)GameServer.GetScreenSize().X - ((spellIconSize + padding) * m_hero.Spells.Count)) / 2;
@@ -431,7 +411,7 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         /// <param name="batch"></param>
         /// <param name="time"></param>
-        void DrawConsummableSlots(RemoteSpriteBatch batch, GameTime time)
+        void DrawConsummableSlots(SpriteBatch batch, GameTime time)
         {
             int spellCount = m_hero.Spells.Count;
             int y = (int)GameServer.GetScreenSize().Y - spellIconSize - 5;
@@ -484,7 +464,7 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Dessine les éléments graphiques du contrôleur à l'écran.
         /// </summary>
-        public override void Draw(RemoteSpriteBatch batch, GameTime time)
+        public override void Draw(SpriteBatch batch, GameTime time)
         {
             if(GameServer.GetScene().Mode == SceneMode.Game)
             {
@@ -526,7 +506,7 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         /// <param name="batch"></param>
         /// <param name="time"></param>
-        void DrawControlerGUI(RemoteSpriteBatch batch, GameTime time)
+        void DrawControlerGUI(SpriteBatch batch, GameTime time)
         {
             MapEditControler.Draw(batch);
             DrawSpellIcons(batch, time);

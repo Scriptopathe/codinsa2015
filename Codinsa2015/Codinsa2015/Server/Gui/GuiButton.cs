@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
+
 namespace Codinsa2015.Server.Gui
 {
     /// <summary>
@@ -41,7 +41,7 @@ namespace Codinsa2015.Server.Gui
         /// <summary>
         /// Obtient ou définit la texture utilisée pour dessiner le bouton.
         /// </summary>
-        public RemoteTexture2D ButtonBoxTexture
+        public Texture2D ButtonBoxTexture
         {
             get;
             set;
@@ -50,7 +50,7 @@ namespace Codinsa2015.Server.Gui
         /// <summary>
         /// Obtient ou définit la texture utilisée pour dessiner le bouton, lorsque la souris est dessus.
         /// </summary>
-        public RemoteTexture2D ButtonHoverBoxTexture
+        public Texture2D ButtonHoverBoxTexture
         {
             get;
             set;
@@ -121,7 +121,7 @@ namespace Codinsa2015.Server.Gui
         /// <summary>
         /// Obtient ou définit l'icone du bouton.
         /// </summary>
-        public RemoteTexture2D Icon
+        public Texture2D Icon
         {
             get;
             set;
@@ -203,7 +203,7 @@ namespace Codinsa2015.Server.Gui
         /// Dessine les items de ce menu.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(RemoteSpriteBatch batch)
+        public override void Draw(SpriteBatch batch)
         {
             if (!Visible)
                 return;
@@ -223,7 +223,7 @@ namespace Codinsa2015.Server.Gui
 
             // Dessin de la box
             pxRect = new Rectangle((int)Position.X, (int)Position.Y, m_width, m_height);
-            RemoteTexture2D t = hover && IsEnabled ? ButtonHoverBoxTexture : ButtonBoxTexture;
+            Texture2D t = hover && IsEnabled ? ButtonHoverBoxTexture : ButtonBoxTexture;
             Drawing.DrawRectBox(batch, t, pxRect, Color.White, GraphicsHelpers.Z.GUI);
 
             // Dessin de l'icone

@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
+
 namespace Codinsa2015.Server.EnhancedGui
 {
     /// <summary>
@@ -320,7 +320,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// Dessine les items de ce menu.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(RemoteSpriteBatch batch)
+        public override void Draw(SpriteBatch batch)
         {
             if (!IsVisible)
                 return;

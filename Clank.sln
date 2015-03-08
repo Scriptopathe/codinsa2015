@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PonyCarpetExtractor", "Pony
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codinsa2015.Client", "Codinsa2015.Client\Codinsa2015.Client\Codinsa2015.Client.csproj", "{D4CEBEB4-4CE5-4FCF-A9F7-E3977A9DFB74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codinsa2015.Graphics", "Codinsa2015.Graphics\Codinsa2015.Graphics.csproj", "{1B831A6D-C2BD-4072-A3F7-273915E43F64}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codinsa2015", "Codinsa2015\Codinsa2015\Codinsa2015.csproj", "{69BA97D2-8F6F-4AA4-8870-C5234BCF26BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codinsa2015Content", "Codinsa2015\Codinsa2015Content\Codinsa2015Content.contentproj", "{4F0C9D7F-0FA5-48C2-8298-929BBBF68C6C}"
@@ -107,16 +105,6 @@ Global
 		{D4CEBEB4-4CE5-4FCF-A9F7-E3977A9DFB74}.Release|Mixed Platforms.Build.0 = Release|x86
 		{D4CEBEB4-4CE5-4FCF-A9F7-E3977A9DFB74}.Release|x86.ActiveCfg = Release|x86
 		{D4CEBEB4-4CE5-4FCF-A9F7-E3977A9DFB74}.Release|x86.Build.0 = Release|x86
-		{1B831A6D-C2BD-4072-A3F7-273915E43F64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B831A6D-C2BD-4072-A3F7-273915E43F64}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B831A6D-C2BD-4072-A3F7-273915E43F64}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{1B831A6D-C2BD-4072-A3F7-273915E43F64}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{1B831A6D-C2BD-4072-A3F7-273915E43F64}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{1B831A6D-C2BD-4072-A3F7-273915E43F64}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B831A6D-C2BD-4072-A3F7-273915E43F64}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B831A6D-C2BD-4072-A3F7-273915E43F64}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{1B831A6D-C2BD-4072-A3F7-273915E43F64}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{1B831A6D-C2BD-4072-A3F7-273915E43F64}.Release|x86.ActiveCfg = Release|Any CPU
 		{69BA97D2-8F6F-4AA4-8870-C5234BCF26BE}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{69BA97D2-8F6F-4AA4-8870-C5234BCF26BE}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{69BA97D2-8F6F-4AA4-8870-C5234BCF26BE}.Debug|Mixed Platforms.Build.0 = Debug|x86

@@ -9,8 +9,6 @@ using Codinsa2015.Server.Entities;
 using Codinsa2015.Server.Gui;
 using Codinsa2015.Server.Editor;
 using Codinsa2015.Server.Particles;
-using Codinsa2015.Graphics.Server;
-using Codinsa2015.Graphics.Client;
 namespace Codinsa2015.Server
 {
     /// <summary>
@@ -90,14 +88,9 @@ namespace Codinsa2015.Server
         public PonyCarpetExtractor.Interpreter GameInterpreter { get; set; }
 
         /// <summary>
-        /// Obtient le serveur graphique utilisé par ce contrôleur.
-        /// </summary>
-        public GraphicsServer GraphicsServer { get; set; }
-
-        /// <summary>
         /// Render target principal.
         /// </summary>
-        public RemoteRenderTarget MainRenderTarget { get; set; }
+        public RenderTarget2D MainRenderTarget { get; set; }
 
         /// <summary>
         /// Obtient une référence vers le contrôleur entrain d'effectuer des opérations.
@@ -155,9 +148,6 @@ namespace Codinsa2015.Server
             CommandServer.ClientConnected += CommandServer_ClientConnected;
             CommandServer.CommandReceived += CommandServer_CommandReceived;
 
-            // Serveur graphique.
-            GraphicsServer = new Graphics.Server.GraphicsServer(Graphics.Server.GraphicsServer.CommandExecutionMode.Immediate, GameServer.Instance.Content);
-
             // State
             State = new Views.State();
 
@@ -207,7 +197,7 @@ namespace Codinsa2015.Server
             Controlers.Add(5, humanControler);*/
 
             // Démarre l'attente de connexions.
-            CommandServer.WaitForConnectionsAsync(Codinsa2015.Graphics.Client.RemoteClient.__DEBUG_PORT, "127.0.0.1");
+            CommandServer.WaitForConnectionsAsync(GameClient.__DEBUG_PORT, "127.0.0.1");
         }
 
         /// <summary>
@@ -288,7 +278,8 @@ namespace Codinsa2015.Server
 
             // Charge le ressources de la map.
             Map.LoadContent();
-            MainRenderTarget = new RemoteRenderTarget(GraphicsServer, (int)GameServer.GetScreenSize().X, (int)GameServer.GetScreenSize().Y, RenderTargetUsage.PreserveContents);
+            MainRenderTarget = new RenderTarget2D(GameServer.Instance.GraphicsDevice, (int)GameServer.GetScreenSize().X, (int)GameServer.GetScreenSize().Y, false,
+                SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
         }
 
         /// <summary>
@@ -377,14 +368,6 @@ namespace Codinsa2015.Server
             RewardSystem = new RewardSystem(Map.Heroes);*/
         }
 
-        /// <summary>
-        /// Lie les clients graphiques des contrôleurs au serveur graphique.
-        /// Pré-requis : initialisation des contrôleurs.
-        /// </summary>
-        public void BindGraphicsClients()
-        {
-            foreach(var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.BindGraphicsClient(GraphicsServer); };
-        }
 
         /// <summary>
         /// Charge le contenu de la scène.
@@ -418,7 +401,7 @@ namespace Codinsa2015.Server
         /// <summary>
         /// Dessine le lobby.
         /// </summary>
-        void DrawLobby(GameTime time, RemoteSpriteBatch batch)
+        void DrawLobby(GameTime time, SpriteBatch batch)
         {
             LobbyControler.Draw(time, batch);
         }
@@ -483,12 +466,12 @@ namespace Codinsa2015.Server
         /// <summary>
         /// Dessine la scène en mode "Pick".
         /// </summary>
-        void DrawPickPhase(GameTime time, RemoteSpriteBatch batch)
+        void DrawPickPhase(GameTime time, SpriteBatch batch)
         {
             PickControler.Draw(time, batch); 
 
             lock (ControlerLock)
-                foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Draw(batch, time); GraphicsServer.Flush(); }
+                foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Draw(batch, time); }
         }
         #endregion
         #region Game mode
@@ -546,10 +529,10 @@ namespace Codinsa2015.Server
         /// </summary>
         /// <param name="time"></param>
         /// <param name="batch"></param>
-        void DrawGameMode(GameTime time, RemoteSpriteBatch batch)
+        void DrawGameMode(GameTime time, SpriteBatch batch)
         {
             lock (ControlerLock)
-                foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Draw(batch, time); GraphicsServer.Flush(); }
+                foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Draw(batch, time); }
         }
         #endregion
 
@@ -558,7 +541,7 @@ namespace Codinsa2015.Server
         /// </summary>
         /// <param name="time"></param>
         /// <param name="batch"></param>
-        public void Draw(GameTime time, RemoteSpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch)
         {
             switch(Mode)
             {

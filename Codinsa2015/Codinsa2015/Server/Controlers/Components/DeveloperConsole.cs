@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Server.EnhancedGui;
-using Codinsa2015.Graphics.Server;
+
 namespace Codinsa2015.Server.Controlers.Components
 {
     public class DeveloperConsole

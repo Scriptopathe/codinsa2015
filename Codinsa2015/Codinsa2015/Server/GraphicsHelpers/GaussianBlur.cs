@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
 namespace Codinsa2015.Server.GraphicsHelpers
 {
     /// <summary>
@@ -61,7 +60,7 @@ namespace Codinsa2015.Server.GraphicsHelpers
     /// </summary>
     public class GaussianBlur
     {
-        private RemoteEffect effect;
+        private Effect effect;
         private int radius;
         private float amount;
         private float sigma;
@@ -141,9 +140,9 @@ namespace Codinsa2015.Server.GraphicsHelpers
         /// be already bound to the asset name: 'Effects\GaussianBlur' or
         /// 'GaussianBlur'.
         /// </summary>
-        public GaussianBlur(GraphicsServer server)
+        public GaussianBlur(ContentManager content)
         {
-            effect = new RemoteEffect(server, @"shaders\RadialBlur");
+            effect = content.Load<Effect>(@"shaders\RadialBlur");
 
         }
 
@@ -226,15 +225,15 @@ namespace Codinsa2015.Server.GraphicsHelpers
         /// <param name="renderTargetDst">Stores the output from the vertical blur pass.</param>
         /// <param name="spriteBatch">Used to draw quads for the blur passes.</param>
         /// <returns>The resulting Gaussian blurred image.</returns>
-        public void PerformGaussianBlur(RemoteTexture srcTexture,
-                                             RemoteRenderTarget renderTargetTmp,
-                                             RemoteRenderTarget renderTargetDst,
-                                             RemoteSpriteBatch spriteBatch)
+        public void PerformGaussianBlur(Texture2D srcTexture,
+                                             RenderTarget2D renderTargetTmp,
+                                             RenderTarget2D renderTargetDst,
+                                             SpriteBatch spriteBatch)
         {
             if (effect == null)
                 throw new InvalidOperationException("GaussianBlur.fx effect not loaded.");
 
-            RemoteTexture outputTexture = null;
+            Texture2D outputTexture = null;
             Rectangle destRect1 = new Rectangle(0, 0, renderTargetTmp.Width, renderTargetTmp.Height);
             Rectangle destRect2 = new Rectangle(0, 0, renderTargetDst.Width, renderTargetDst.Height);
 
@@ -254,7 +253,7 @@ namespace Codinsa2015.Server.GraphicsHelpers
             // Vertical
 
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTargetDst);
-            outputTexture = (RemoteTexture)renderTargetTmp;
+            outputTexture = (Texture2D)renderTargetTmp;
 
             effect.Parameters["Texture"].SetValue(renderTargetTmp);
             effect.Parameters["offsets"].SetValue(offsetsVert);

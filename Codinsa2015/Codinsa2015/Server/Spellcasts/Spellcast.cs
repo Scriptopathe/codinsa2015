@@ -5,7 +5,6 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Server.Entities;
-using Codinsa2015.Graphics.Server;
 namespace Codinsa2015.Server.Spellcasts
 {
     public abstract class Spellcast
@@ -44,7 +43,7 @@ namespace Codinsa2015.Server.Spellcasts
         /// <summary>
         /// Dessine ce sort à l'écran.
         /// </summary>
-        public abstract void Draw(GameTime time, RemoteSpriteBatch batch);
+        public abstract void Draw(GameTime time, SpriteBatch batch);
         
         /// <summary>
         /// Applique les effets du sorts à l'entité touchée.

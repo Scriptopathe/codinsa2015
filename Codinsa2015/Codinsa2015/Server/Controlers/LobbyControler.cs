@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Server.Entities;
-using Codinsa2015.Graphics.Server;
+
 namespace Codinsa2015.Server.Controlers
 {
     /// <summary>
@@ -82,7 +82,7 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         /// <param name="role"></param>
         /// <returns></returns>
-        RemoteTexture2D GetIcon(EntityHeroRole role)
+        Texture2D GetIcon(EntityHeroRole role)
         {
             switch(role)
             {
@@ -98,7 +98,7 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Dessine le lobby.
         /// </summary>
-        public void Draw(GameTime time, RemoteSpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch)
         {
             int sw = (int)GameServer.GetScreenSize().X;
             int sh = (int)GameServer.GetScreenSize().Y;
@@ -106,7 +106,7 @@ namespace Codinsa2015.Server.Controlers
 
             // Dessine l'avant plan.
             batch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
-            batch.Server.Clear(Color.LightGray);
+            batch.GraphicsDevice.Clear(Color.LightGray);
             int[] playerCount = new int[2];
 
             lock (m_scene.ControlerLock)
@@ -128,7 +128,7 @@ namespace Codinsa2015.Server.Controlers
                     Vector2 offset = (new Vector2(size.X, rect.Height) - size) / 2;
 
                     batch.Draw(GetIcon(hero.Role), new Rectangle(rect.X + 2, rect.Y + 4, iconSize, iconSize), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                    batch.DrawString(Ressources.CourrierFont, s, new Vector2(rect.X+(iconSize+6), rect.Y) + offset, Color.White, 0.0f, Vector2.Zero, 1f, 0.0f);
+                    batch.DrawString(Ressources.CourrierFont, s, new Vector2(rect.X+(iconSize+6), rect.Y) + offset, Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0f);
                     playerCount[team]++;
                 }
             }
@@ -137,7 +137,7 @@ namespace Codinsa2015.Server.Controlers
             int scale = 6;
             string str = "VS";
             Vector2 strsize = Ressources.CourrierFont.MeasureString(str) * scale;
-            batch.DrawString(Ressources.CourrierFont, str, new Vector2((sw - (int)strsize.X) / 2, (-oy/2 + sh - (int)strsize.Y) / 2), Color.Black, 0.0f, Vector2.Zero, scale, 0.0f);
+            batch.DrawString(Ressources.CourrierFont, str, new Vector2((sw - (int)strsize.X) / 2, (-oy/2 + sh - (int)strsize.Y) / 2), Color.Black, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
 
 
             // Instructions

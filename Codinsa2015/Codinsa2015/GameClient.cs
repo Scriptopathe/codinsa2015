@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Codinsa2015.Server;
-using Codinsa2015.Graphics.Server;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -17,6 +16,7 @@ namespace Codinsa2015
     /// </summary>
     public class GameClient : Microsoft.Xna.Framework.Game
     {
+        public const int __DEBUG_PORT = 5000;
         public static GameClient Instance;
         GraphicsDeviceManager m_graphics;
         GameServer m_server;

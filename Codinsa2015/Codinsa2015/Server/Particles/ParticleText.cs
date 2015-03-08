@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
 namespace Codinsa2015.Server.Particles
 {
     /// <summary>
@@ -30,7 +29,7 @@ namespace Codinsa2015.Server.Particles
         /// <summary>
         /// Obtient ou définit la police utilisée pour afficher le texte.
         /// </summary>
-        public RemoteSpriteFont Font
+        public SpriteFont Font
         {
             get;
             set;
@@ -58,7 +57,7 @@ namespace Codinsa2015.Server.Particles
         /// Dessine la particule à l'écran.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(RemoteSpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset)
+        public override void Draw(SpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset)
         {
             batch.DrawString(Font, Text, CurrentPosition * GameServer.GetMap().UnitSize - viewportOffset - scrollingOffset, CurrentColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GraphicsHelpers.Z.Particles);
         }

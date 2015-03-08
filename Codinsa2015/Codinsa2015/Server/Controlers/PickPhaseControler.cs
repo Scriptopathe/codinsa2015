@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Server.Entities;
-using Codinsa2015.Graphics.Server;
+
 namespace Codinsa2015.Server.Controlers
 {
     /// <summary>
@@ -135,12 +135,12 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Dessine le lobby.
         /// </summary>
-        public void Draw(GameTime time, RemoteSpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch)
         {
             int w = (int)GameServer.GetScreenSize().X;
             int h = (int)GameServer.GetScreenSize().Y;
             batch.Begin();
-            batch.Server.Clear(Color.LightGray);
+            batch.GraphicsDevice.Clear(Color.LightGray);
 
             // Dessine les héros.
             int x = 5;
@@ -165,7 +165,7 @@ namespace Codinsa2015.Server.Controlers
                 float scale = 4.0f;
                 Vector2 sz = Ressources.CourrierFont.MeasureString(s) * scale;
                 x = (w - (int)sz.X)/2;
-                batch.DrawString(Ressources.CourrierFont, s, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, scale, 0.5f);
+                batch.DrawString(Ressources.CourrierFont, s, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.5f);
 
                 y += 70;
                 // Dessine les messages.
@@ -174,11 +174,11 @@ namespace Codinsa2015.Server.Controlers
                 string msg = m_scene.GetControlerByHeroId(GetPickingHeroId()).HeroName + " : choisissez une compétence " + (GetCurrentSpells() == m_activeSpells ? "active" : "passive") + ".";
                 sz = Ressources.CourrierFont.MeasureString(msg) * scale;
                 x = (w - (int)sz.X) / 2;
-                batch.DrawString(Ressources.CourrierFont, msg, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, scale, 0.5f);
+                batch.DrawString(Ressources.CourrierFont, msg, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.5f);
 
                 x = 5;
                 y += 100;
-                batch.DrawString(Ressources.CourrierFont, m_currentMessage, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, 0.5f);
+                batch.DrawString(Ressources.CourrierFont, m_currentMessage, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
             }
 
             // Dessine les icones des compétences proposées.
@@ -188,7 +188,7 @@ namespace Codinsa2015.Server.Controlers
                 Vector2 size = Ressources.CourrierFont.MeasureString(str);
                 y = h - 50;
                 x = (w - (int)size.X) / 2;
-                batch.DrawString(Ressources.CourrierFont, str, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, 0.5f);
+                batch.DrawString(Ressources.CourrierFont, str, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
             }
             else
             {
@@ -228,7 +228,7 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         /// <param name="rect"></param>
         /// <param name="hero"></param>
-        void DrawHero(RemoteSpriteBatch batch, Rectangle rect, EntityHero hero)
+        void DrawHero(SpriteBatch batch, Rectangle rect, EntityHero hero)
         {
             float layerDepth = 0.5f;
             const int iconSize = 16;
@@ -244,7 +244,7 @@ namespace Codinsa2015.Server.Controlers
             x += iconSize + 10;
 
             // Dessine le nom du héros.
-            batch.DrawString(Ressources.CourrierFont, m_scene.GetControlerByHeroId(hero.ID).HeroName, new Vector2(x, y), Color.White, 0.0f, Vector2.Zero, 1.0f, layerDepth);
+            batch.DrawString(Ressources.CourrierFont, m_scene.GetControlerByHeroId(hero.ID).HeroName, new Vector2(x, y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, layerDepth);
 
             y += 25;
             x = rect.X + 20;
@@ -422,7 +422,7 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         /// <param name="role"></param>
         /// <returns></returns>
-        RemoteTexture2D GetIcon(EntityHeroRole role)
+        Texture2D GetIcon(EntityHeroRole role)
         {
             switch (role)
             {

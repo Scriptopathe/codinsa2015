@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
+
 namespace Codinsa2015.Server.EnhancedGui
 {
     /// <summary>
@@ -33,7 +33,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// Obtient ou définit la texture utilisée pour dessiner la barre de titre de la
         /// fenêtre.
         /// </summary>
-        public RemoteTexture2D TitleBarTexture
+        public Texture2D TitleBarTexture
         {
             get;
             set;
@@ -80,7 +80,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <summary>
         /// Obtient ou définit l'icone du bouton.
         /// </summary>
-        public RemoteTexture2D Icon
+        public Texture2D Icon
         {
             get;
             set;
@@ -162,7 +162,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// Dessine les items de ce menu.
         /// </summary>
         /// <param name="batch"></param>
-        public override void Draw(RemoteSpriteBatch batch)
+        public override void Draw(SpriteBatch batch)
         {
             if (!IsVisible || IsHiden)
                 return;
@@ -181,7 +181,7 @@ namespace Codinsa2015.Server.EnhancedGui
             DrawRectBox(batch, Ressources.DummyTexture, new Rectangle(0, 0, Area.Width, Area.Height), BackColor, 4);
 
             // Dessin de la barre de titre.
-            RemoteTexture2D t = TitleBarTexture;
+            Texture2D t = TitleBarTexture;
             DrawRectBox(batch, t, new Rectangle(0, 0, Area.Width, TitleBarHeight), Color.White, 5);
 
             // Dessin de l'icone

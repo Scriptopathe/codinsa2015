@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Codinsa2015.Graphics.Server;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -17,7 +16,7 @@ namespace Codinsa2015.Server
     public class GameServer
     {
         public static GameServer Instance;
-        RemoteSpriteBatch m_spriteBatch;
+        SpriteBatch m_spriteBatch;
         Scene m_scene;
         GameTime m_time;
 
@@ -118,14 +117,12 @@ namespace Codinsa2015.Server
             Content = content;
             Content.RootDirectory = "Content";
 
-            // Lie les clients graphiques au serveur graphique.
-            m_scene.BindGraphicsClients();
             // Charge les ressources (doit être fait après l'appel à BindGraphicsClients()).
-            Server.Ressources.LoadRessources(Content);
+            Server.Ressources.LoadRessources(GraphicsDevice, Content);
             // Charge le contenu de la scène.
             m_scene.LoadContent();
             // Crée le batch principal.
-            m_spriteBatch = new RemoteSpriteBatch(m_scene.GraphicsServer);
+            m_spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 
         /// <summary>

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
 namespace Codinsa2015.Server.Gui
 {
     /// <summary>
@@ -21,7 +20,7 @@ namespace Codinsa2015.Server.Gui
         /// <param name="dstRect"></param>
         /// <param name="color"></param>
         /// <param name="layerDepth"></param>
-        public static void DrawRectBox(RemoteSpriteBatch batch, RemoteTexture2D texture, Rectangle dstRect, Color color, float layerDepth=0.1f)
+        public static void DrawRectBox(SpriteBatch batch, Texture2D texture, Rectangle dstRect, Color color, float layerDepth=0.1f)
         {
             if (texture == null || batch == null)
                 throw new ArgumentNullException();
@@ -86,7 +85,7 @@ namespace Codinsa2015.Server.Gui
         /// <param name="layerDepth"></param>
         /// <param name="position"></param>
         /// <param name="width"></param>
-        public static void DrawGauge(RemoteSpriteBatch batch, RemoteTexture2D gaugeEmpty, RemoteTexture2D gaugeFull, int value, int maxValue, Color color, 
+        public static void DrawGauge(SpriteBatch batch, Texture2D gaugeEmpty, Texture2D gaugeFull, int value, int maxValue, Color color, 
             float layerDepth, Vector2 position, int width, int height)
         {
             float percent = value / (float)maxValue;

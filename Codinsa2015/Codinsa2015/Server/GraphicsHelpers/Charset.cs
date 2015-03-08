@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Graphics.Server;
 namespace Codinsa2015.Server.GraphicsHelpers
 {
     /// <summary>
@@ -22,7 +21,7 @@ namespace Codinsa2015.Server.GraphicsHelpers
         /// <summary>
         /// Obtient ou définit la texture associée à ce charset.
         /// </summary>
-        public RemoteTexture2D Texture
+        public Texture2D Texture
         {
             get;
             set;
@@ -71,7 +70,7 @@ namespace Codinsa2015.Server.GraphicsHelpers
         /// </summary>
         /// <param name="texture"></param>
         /// <param name="frameSize"></param>
-        public Charset(RemoteTexture2D texture, Point frameSize)
+        public Charset(Texture2D texture, Point frameSize)
         {
             Texture = texture;
             FrameSize = frameSize;
