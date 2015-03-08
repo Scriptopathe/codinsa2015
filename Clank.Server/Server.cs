@@ -24,11 +24,6 @@ namespace Clank.Server
         /// Event fired when a message from a client is received by the server.
         /// </summary>
         public event MessageEventHandler MessageReceived;
-        /// <summary>
-        /// Event fired when the engine has to update its state after having received
-        /// messages from the clients.
-        /// </summary>
-        public event UpdateEventHandler EngineUpdate;
         #endregion
 
         #region Variable
@@ -116,7 +111,6 @@ namespace Clank.Server
         {
             m_listenSocket.Close();
         }
-
 
         /// <summary>
         /// Runs one server frame.

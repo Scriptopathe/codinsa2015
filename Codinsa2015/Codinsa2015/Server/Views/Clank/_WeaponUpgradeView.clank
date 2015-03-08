@@ -1,0 +1,21 @@
+# Généré automatiquement (Clank.ViewCreator)
+
+
+state {
+	public serializable class WeaponUpgradeView
+	{
+
+		# Rajoute les statements using et le bon namespace pour la classe state.
+		void getClassMetadata_cs()
+		{
+			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string namespace = "Codinsa2015.Views";
+		}
+		#Obtient la description de l'upgrade
+		public SpellDescriptionView Description;
+		#
+		public List<Entities.StateAlterationModelView> PassiveAlterations;
+		#Obtient le coût de l'upgrade.
+		public float Cost;
+	}
+}

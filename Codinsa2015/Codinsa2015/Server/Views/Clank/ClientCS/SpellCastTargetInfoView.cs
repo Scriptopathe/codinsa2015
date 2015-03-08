@@ -9,13 +9,13 @@ using Microsoft.Xna.Framework;
 namespace Codinsa2015.Views
 {
 
-	public class SpellView
+	public class SpellCastTargetInfoView
 	{
 
 	
-		public float CurrentCooldown;	
-		public int SourceCaster;	
-		public List<SpellDescriptionView> Levels;	
-		public int Level;	
+		public TargettingType Type;	
+		public Vector2 TargetPosition;	
+		public Vector2 TargetDirection;	
+		public int TargetId;	
 	}
 }

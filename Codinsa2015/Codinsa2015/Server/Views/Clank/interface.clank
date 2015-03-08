@@ -12,13 +12,13 @@
     macro
     {
         # Get the entities on sight of the given client.
-        List<EntityView> serv_getEntitiesOnSight(int clientId) { string cs = "Interface.getEntitiesOnSight($(clientId))"; }
+        List<EntityView> serv_getEntitiesOnSight(int clientId) { string cs = "GameServer.GetScene().CurrentControler.getEntitiesOnSight($(clientId))"; }
     
     }
     access
     {
         ########################################################################
-        #
+        # 
         ########################################################################
         public List<EntityView> getEntitiesOnSight()
         {

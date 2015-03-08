@@ -9,13 +9,12 @@ using Microsoft.Xna.Framework;
 namespace Codinsa2015.Views
 {
 
-	public class SpellView
+	public class WeaponUpgradeModelView
 	{
 
 	
-		public float CurrentCooldown;	
-		public int SourceCaster;	
-		public List<SpellDescriptionView> Levels;	
-		public int Level;	
+		public SpellDescriptionView Description;	
+		public List<StateAlterationModelView> PassiveAlterations;	
+		public float Cost;	
 	}
 }

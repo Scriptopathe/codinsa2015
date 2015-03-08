@@ -9,13 +9,11 @@ using Microsoft.Xna.Framework;
 namespace Codinsa2015.Views
 {
 
-	public class SpellView
+	public class StateAlterationParametersView
 	{
 
 	
-		public float CurrentCooldown;	
-		public int SourceCaster;	
-		public List<SpellDescriptionView> Levels;	
-		public int Level;	
+		public Vector2 DashTargetDirection;	
+		public int DashTargetEntity;	
 	}
 }

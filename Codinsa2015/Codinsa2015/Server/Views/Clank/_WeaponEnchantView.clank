@@ -1,0 +1,21 @@
+# Généré automatiquement (Clank.ViewCreator)
+
+
+state {
+	public serializable class WeaponEnchantView
+	{
+
+		# Rajoute les statements using et le bon namespace pour la classe state.
+		void getClassMetadata_cs()
+		{
+			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string namespace = "Codinsa2015.Views";
+		}
+		#Obtient les altértions d'état appliquées à l'impact de l'attaque sur la cible.
+		public List<StateAlterationModelView> OnHitEffects;
+		#Obtient les altérations d'état appliquées lors de l'attaque sur le caster.
+		public List<StateAlterationModelView> CastingEffects;
+		#Obtient les effets passifs appliqués par l'enchantement.
+		public List<StateAlterationModelView> PassiveEffects;
+	}
+}

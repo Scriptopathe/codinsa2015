@@ -1,7 +1,329 @@
-﻿#include stdtypes.clank
+#include stdtypes.clank
 #include XNAMacros.clank
-#include EntityTypeView.clank
-#include EntityView.clank
-#include SpellView.clank
-#include interface.clank
+main
+{
+	#include _EntityBaseView.clank
+	#include _StateAlterationParametersView.clank
+	#include _StateAlterationView.clank
+	#include _StateAlterationModelView.clank
+	#include _PassiveEquipmentUpgradeModelView.clank
+	#include _WeaponUpgradeModelView.clank
+	#include _WeaponEnchantModelView.clank
+	#include _MapView.clank
+	#include _SpellView.clank
+	#include _SpellCastTargetInfoView.clank
+	#include _SpellDescriptionView.clank
+	#include _SpellTargetInfoView.clank
+	state
+	{
+		# Rajoute les statements using et le bon namespace pour la classe state.
+		void getClassMetadata_cs()
+		{
+			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string namespace = "Codinsa2015.Views";
+		}
+		public enum EntityType
+		{
+			Team1 = 2,
+			Team2 = 4,
+			Teams = 6,
+			Structure = 8,
+			Tower = 24,
+			Team1Tower = 26,
+			Team2Tower = 28,
+			Inhibitor = 40,
+			Team1Inhibitor = 42,
+			Team2Inhibitor = 44,
+			Spawner = 72,
+			Team1Spawner = 74,
+			Team2Spawner = 76,
+			Idol = 136,
+			Team1Idol = 138,
+			Team2Idol = 140,
+			Monster = 256,
+			Creep = 512,
+			Team1Creep = 514,
+			Team2Creep = 516,
+			Boss = 1280,
+			Miniboss = 2304,
+			AllObjectives = 3576,
+			AllTargettableNeutral = 4088,
+			Checkpoint = 16384,
+			Team1Checkpoint = 16386,
+			Team2CheckPoint = 16388,
+			Player = 32768,
+			Team1Player = 32770,
+			Team2Player = 32772,
+			AllTeam1 = 33530,
+			AllTeam2 = 33532,
+			WardPlacement = 65536,
+			Ward = 131072,
+			Shop = 262144,
+			HeroSpawner = 524288,
+			AllSaved = 609784
+		}
 
+		public enum EntityTypeRelative
+		{
+			Me = 1,
+			Ally = 2,
+			Ennemy = 4,
+			Structure = 8,
+			Tower = 24,
+			AllyTower = 26,
+			EnnemyTower = 28,
+			Inhibitor = 40,
+			AllyInhibitor = 42,
+			EnnemyInhibitor = 44,
+			Spawner = 72,
+			AllySpawner = 74,
+			EnnemySpawner = 76,
+			Idol = 136,
+			AllyIdol = 138,
+			EnnemyIdol = 140,
+			Monster = 256,
+			Creep = 512,
+			AllyCreep = 514,
+			EnnemyCreep = 516,
+			Boss = 1280,
+			Miniboss = 2304,
+			AllObjectives = 3576,
+			AllTargettableNeutral = 4088,
+			Checkpoint = 16384,
+			AllyCheckpoint = 16386,
+			EnnemyCheckpoint = 16388,
+			Player = 32768,
+			AllyPlayer = 32770,
+			EnnemyPlayer = 32772,
+			AllAlly = 33530,
+			AllEnnemy = 33532,
+			WardPlacement = 65536,
+			Ward = 131072,
+			Shop = 262144,
+			HeroSpawner = 524288,
+			AllSaved = 609784
+		}
+
+		public enum StateAlterationSource
+		{
+			Consumable = 0,
+			Armor = 1,
+			Weapon = 2,
+			Amulet = 3,
+			Boots = 4,
+			SpellActive = 5,
+			SpellPassive = 6
+		}
+
+		public enum StateAlterationType
+		{
+			None = 0,
+			Root = 1,
+			Silence = 2,
+			Interruption = 4,
+			Stun = 7,
+			CDR = 8,
+			MoveSpeed = 16,
+			ArmorBuff = 32,
+			Regen = 64,
+			AttackDamageBuff = 128,
+			MaxHP = 256,
+			MagicDamageBuff = 512,
+			MagicResistBuff = 1024,
+			AttackSpeed = 2048,
+			Dash = 4096,
+			AttackDamage = 8192,
+			MagicDamage = 16384,
+			TrueDamage = 32768,
+			Heal = 65536,
+			Stealth = 131072,
+			Shield = 524288,
+			Sight = 1048576,
+			WardSight = 1048576,
+			TrueSight = 2097152
+		}
+
+		public enum DashDirectionType
+		{
+			TowardsEntity = 0,
+			Direction = 1,
+			BackwardsCaster = 2
+		}
+
+		public enum ConsummableType
+		{
+			Empty = 0,
+			Ward = 1,
+			Unward = 2
+		}
+
+		public enum ConsummableUseResult
+		{
+			Success = 0,
+			SuccessAndDestroyed = 1,
+			Fail = 2,
+			NotUnits = 3
+		}
+
+		public enum ShopTransactionResult
+		{
+			ItemDoesNotExist = 0,
+			ItemIsNotAConsummable = 1,
+			NoItemToSell = 2,
+			NotEnoughMoney = 3,
+			NotInShopRange = 4,
+			UnavailableItem = 5,
+			ProvidedSlotDoesNotExist = 6,
+			NoSlotAvailableOnHero = 7,
+			EnchantForNoWeapon = 8,
+			StackOverflow = 9,
+			Success = 10
+		}
+
+		public enum SpellUseResult
+		{
+			Success = 0,
+			InvalidTarget = 1,
+			InvalidTargettingType = 2,
+			OnCooldown = 3,
+			Silenced = 4,
+			OutOfRange = 5
+		}
+
+		public enum TargettingType
+		{
+			Targetted = 1,
+			Position = 2,
+			Direction = 4
+		}
+
+		public enum SceneMode
+		{
+			Lobby = 0,
+			Pick = 1,
+			Game = 2
+		}
+
+	}
+	macro
+	{
+		# Retourne une vue vers le héros contrôlé par ce contrôleur.
+		EntityBaseView GetHero_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHero()"; }
+		# Retourne la position du héros.
+		Vector2 GetPosition_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetPosition()"; }
+		# Retourne les informations concernant la map actuelle
+		MapView GetMapView_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMapView()"; }
+		# Déplace le joueur vers la position donnée en utilisant l'A*.
+		bool StartMoveTo_macro(int clientId,Vector2 position) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).StartMoveTo($(position))"; }
+		# Indique si le joueur est entrain de se déplacer en utilisant son A*.
+		bool IsAutoMoving_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).IsAutoMoving()"; }
+		# Arrête le déplacement automatique (A*) du joueur.
+		bool EndMoveTo_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).EndMoveTo()"; }
+		# Retourne la liste des entités en vue
+		List<EntityBaseView> GetEntitiesInSight_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntitiesInSight()"; }
+		# Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès refusé)
+		EntityBaseView GetEntityById_macro(int clientId,int entityId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntityById($(entityId))"; }
+		# Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
+		bool UseSpell_macro(int clientId,int spellId,SpellCastTargetInfoView target) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseSpell($(spellId),$(target))"; }
+		# Obtient le mode actuel de la scène.
+		SceneMode GetMode_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMode()"; }
+		# Obtient la description du spell dont l'id est donné en paramètre.
+		SpellDescriptionView GetSpellCurrentLevelDescription_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpellCurrentLevelDescription($(spellId))"; }
+		# Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		SpellView GetSpell_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpell($(spellId))"; }
+		# Obtient la liste des spells du héros contrôlé.
+		List<SpellView> GetSpells_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpells()"; }
+		# Obtient les spells possédés par le héros dont l'id est passé en paramètre.
+		List<SpellView> GetHeroSpells_macro(int clientId,int entityId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHeroSpells($(entityId))"; }
+
+	} # macro
+	access
+	{
+		# Retourne une vue vers le héros contrôlé par ce contrôleur.
+		public EntityBaseView GetHero()
+		{ 
+			return GetHero_macro(clientId);
+		}
+
+		# Retourne la position du héros.
+		public Vector2 GetPosition()
+		{ 
+			return GetPosition_macro(clientId);
+		}
+
+		# Retourne les informations concernant la map actuelle
+		public MapView GetMapView()
+		{ 
+			return GetMapView_macro(clientId);
+		}
+
+		# Déplace le joueur vers la position donnée en utilisant l'A*.
+		public bool StartMoveTo(Vector2 position)
+		{ 
+			return StartMoveTo_macro(clientId,position);
+		}
+
+		# Indique si le joueur est entrain de se déplacer en utilisant son A*.
+		public bool IsAutoMoving()
+		{ 
+			return IsAutoMoving_macro(clientId);
+		}
+
+		# Arrête le déplacement automatique (A*) du joueur.
+		public bool EndMoveTo()
+		{ 
+			return EndMoveTo_macro(clientId);
+		}
+
+		# Retourne la liste des entités en vue
+		public List<EntityBaseView> GetEntitiesInSight()
+		{ 
+			return GetEntitiesInSight_macro(clientId);
+		}
+
+		# Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès refusé)
+		public EntityBaseView GetEntityById(int entityId)
+		{ 
+			return GetEntityById_macro(clientId,entityId);
+		}
+
+		# Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
+		public bool UseSpell(int spellId,SpellCastTargetInfoView target)
+		{ 
+			return UseSpell_macro(clientId,spellId,target);
+		}
+
+		# Obtient le mode actuel de la scène.
+		public SceneMode GetMode()
+		{ 
+			return GetMode_macro(clientId);
+		}
+
+		# Obtient la description du spell dont l'id est donné en paramètre.
+		public SpellDescriptionView GetSpellCurrentLevelDescription(int spellId)
+		{ 
+			return GetSpellCurrentLevelDescription_macro(clientId,spellId);
+		}
+
+		# Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		public SpellView GetSpell(int spellId)
+		{ 
+			return GetSpell_macro(clientId,spellId);
+		}
+
+		# Obtient la liste des spells du héros contrôlé.
+		public List<SpellView> GetSpells()
+		{ 
+			return GetSpells_macro(clientId);
+		}
+
+		# Obtient les spells possédés par le héros dont l'id est passé en paramètre.
+		public List<SpellView> GetHeroSpells(int entityId)
+		{ 
+			return GetHeroSpells_macro(clientId,entityId);
+		}
+
+
+	} # access
+
+} # main

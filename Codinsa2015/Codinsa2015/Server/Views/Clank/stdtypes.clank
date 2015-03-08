@@ -1,32 +1,7 @@
 ﻿# Types standard dans les langages supportés.
 main
 {
-    state
-    {
-        # Integer sérialisable.
-        public serializable class Integer 
-        {
-            public int Value;
-            public constructor Integer new() { }
-            public constructor Integer new(int value) { Value = value; }
-        }
-        
-        # Type "double" sérialisable.
-        public serializable class Double
-        {
-            public float Value;
-            public constructor Double new() { }
-            public constructor Double new(float value) { Value = value; }
-        }
-        
-        public class String
-        {
-            public string Value;
-            public constructor String new() { }
-            public constructor String new(string value) { Value = value; }
-        }
-        
-    }
+
     macro
     {
         # Représente un tableau bidimensionnel. 
