@@ -103,7 +103,7 @@ namespace Codinsa2015.Server
             Content = content;
 
             // Initialisation du module d'input.
-            Server.Input.ModuleInit();
+            Input.ModuleInit();
             // Initialisation de la scène, et chargement des contrôleurs.
             m_scene.Initialize();
         }
@@ -118,7 +118,7 @@ namespace Codinsa2015.Server
             Content.RootDirectory = "Content";
 
             // Charge les ressources (doit être fait après l'appel à BindGraphicsClients()).
-            Server.Ressources.LoadRessources(GraphicsDevice, Content);
+            Ressources.LoadRessources(GraphicsDevice, Content);
             // Charge le contenu de la scène.
             m_scene.LoadContent();
             // Crée le batch principal.

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Codinsa2015.Server.EnhancedGui
+namespace Codinsa2015.EnhancedGui
 {
     /// <summary>
     /// Gestionnaire d'interface graphiques.
@@ -56,8 +56,8 @@ namespace Codinsa2015.Server.EnhancedGui
             m_widgets = new List<GuiWidget>();
             m_addList = new List<GuiWidget>();
             m_removeList = new List<GuiWidget>();
-            BaseZ = GraphicsHelpers.Z.GUI;
-            MinZ = GraphicsHelpers.Z.GUI - 0.3f;
+            BaseZ = 0.5f;
+            MinZ = 0.2f;
         }
 
         /// <summary>

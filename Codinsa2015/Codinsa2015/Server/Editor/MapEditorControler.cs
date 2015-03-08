@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Codinsa2015.Server.Controlers.Components;
-using Codinsa2015.Server.EnhancedGui;
+using Codinsa2015.EnhancedGui;
 namespace Codinsa2015.Server.Editor
 {
     /// <summary>

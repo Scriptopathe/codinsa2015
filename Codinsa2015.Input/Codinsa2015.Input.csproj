@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F6B99C08-D549-46D1-9B94-2F617CA602BE}</ProjectGuid>
+    <ProjectGuid>{84F613A5-6F31-4156-843A-A613901320B1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Codinsa2015.Display</RootNamespace>
-    <AssemblyName>Codinsa2015.Display</AssemblyName>
+    <RootNamespace>Codinsa2015.Input</RootNamespace>
+    <AssemblyName>Codinsa2015.Input</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,11 +31,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
-    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
-    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,34 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntityRenderer.cs" />
-    <Compile Include="MapRenderer.cs" />
-    <Compile Include="SceneRenderer.cs" />
+    <Compile Include="Input.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SceneRendererProperties.cs" />
-    <Compile Include="SpellcastRenderer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Codinsa2015.Client\Codinsa2015.Client\Codinsa2015.Client.csproj">
-      <Project>{d4cebeb4-4ce5-4fcf-a9f7-e3977a9dfb74}</Project>
-      <Name>Codinsa2015.Client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Codinsa2015.Gui\Codinsa2015.Gui.csproj">
-      <Project>{f963b283-5014-4f2e-b274-4329162bf7be}</Project>
-      <Name>Codinsa2015.Gui</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Codinsa2015.Input\Codinsa2015.Input.csproj">
-      <Project>{84f613a5-6f31-4156-843a-a613901320b1}</Project>
-      <Name>Codinsa2015.Input</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Codinsa2015.Ressources\Codinsa2015.Ressources.csproj">
-      <Project>{ec96e98d-1bcb-43f7-8a7e-2beac9be1f47}</Project>
-      <Name>Codinsa2015.Ressources</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Codinsa2015\Codinsa2015\Codinsa2015.csproj">
-      <Project>{69ba97d2-8f6f-4aa4-8870-c5234bcf26be}</Project>
-      <Name>Codinsa2015</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

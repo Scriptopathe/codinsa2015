@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Codinsa2015.Server.Gui
+namespace Codinsa2015.EnhancedGui
 {
     /// <summary>
     /// Représente un bouton dans la GUI.
@@ -24,14 +24,6 @@ namespace Codinsa2015.Server.Gui
         /// Taille de la marge globale du bouton.
         /// </summary>
         int m_mainMarginSize = 8;
-        /// <summary>
-        /// Largeur du bouton en pixels.
-        /// </summary>
-        int m_width;
-        /// <summary>
-        /// Hauteur du bouton en pixels.
-        /// </summary>
-        int m_height;
         /// <summary>
         /// Taille des icones en pixels.
         /// Les icones sont des textures carrées.
@@ -91,23 +83,6 @@ namespace Codinsa2015.Server.Gui
             get { return m_mainMarginSize; }
             set { m_mainMarginSize = value; }
         }
-        /// <summary>
-        /// Obtient ou définit la hauteur du bouton.
-        /// </summary>
-        public int Height
-        {
-            get { return m_height; }
-            set { m_height = value; }
-        }
-
-        /// <summary>
-        /// Obtient ou définit la largeur du bouton
-        /// </summary>
-        public int Width
-        {
-            get { return m_width; }
-            set { m_width = value; }
-        }
 
         /// <summary>
         /// Obtient ou définit le titre du menu.
@@ -134,33 +109,25 @@ namespace Codinsa2015.Server.Gui
             get;
             set;
         }
-        /// <summary>
-        /// Obtient une valeur indiquant si ce bouton est visible.
-        /// </summary>
-        public bool Visible
-        {
-            get;
-            set;
-        }
         #endregion 
 
         #region Methods
         /// <summary>
         /// Crée une nouvelle instance de GuiMenu.
         /// </summary>
-        public GuiButton() : base()
+        public GuiButton(GuiManager manager) : base(manager)
         {
             EnabledTextColor = Color.White;
             DisabledTextColor = Color.Gray;
             HoverTextColor = Color.White;
             ButtonBoxTexture = Ressources.MenuItem;
             ButtonHoverBoxTexture = Ressources.MenuItemHover;
-            Visible = true;
+            IsVisible = true;
             IsEnabled = true;
-            Width = 100;
-            Height = 25;
+            Area = new Rectangle(Area.X, Area.Y, 100, 20);
             MainMarginSize = 2;
             Title = "";
+            manager.AddWidget(this);
         }
 
         /// <summary>
@@ -169,7 +136,7 @@ namespace Codinsa2015.Server.Gui
         /// <param name="time"></param>
         public override void Update(Microsoft.Xna.Framework.GameTime time)
         {
-            if (!Visible)
+            if (!IsVisible)
                 return;
 
             // Retourne si première frame : évite certains artifacts de clic.
@@ -180,22 +147,10 @@ namespace Codinsa2015.Server.Gui
             }
 
             // Gestion du click.
-            bool hover = false;
-            MouseState state = Mouse.GetState();
-            Vector2 pos = Position;
-            Rectangle pxRect = new Rectangle((int)pos.X, (int)pos.Y, m_width, m_height);
-            Point mousePos = new Point(state.X, state.Y);
-            hover = (pxRect.Contains(mousePos));
-  
-            if (Input.IsLeftClickTrigger() && hover)
+            if (IsLeftTrigger())
             {
-                // Envoie un signal indiquant que la sélection a changé si le menu est cliqué.
-                Input.CancelClick();
                 if(Clicked != null)
                     Clicked();
-                
-
-               
             }
         }
 
@@ -205,39 +160,35 @@ namespace Codinsa2015.Server.Gui
         /// <param name="batch"></param>
         public override void Draw(SpriteBatch batch)
         {
-            if (!Visible)
+            if (!IsVisible)
                 return;
 
             // Variables d'état.
             MouseState state = Mouse.GetState();
-            Vector2 pos = Position;
-
+            bool hover = IsHover();
             // Gestion du hover
-            Rectangle pxRect = new Rectangle((int)pos.X, (int)pos.Y, m_width, m_height);
             Point mousePos = new Point(state.X, state.Y);
-            bool hover = (pxRect.Contains(mousePos));
 
             // Taille du texte
             Vector2 tSize = Ressources.Font.MeasureString(Title);
 
 
             // Dessin de la box
-            pxRect = new Rectangle((int)Position.X, (int)Position.Y, m_width, m_height);
-            Texture2D t = hover && IsEnabled ? ButtonHoverBoxTexture : ButtonBoxTexture;
-            Drawing.DrawRectBox(batch, t, pxRect, Color.White, GraphicsHelpers.Z.GUI);
+            Texture2D t = ((hover && !Input.IsLeftClickPressed()) && IsEnabled)? ButtonHoverBoxTexture : ButtonBoxTexture;
+            DrawRectBox(batch, t, new Rectangle(0, 0, Area.Width, Area.Height), Color.White, 4);
 
             // Dessin de l'icone
             if (Icon != null)
             {
-                Rectangle dstRect = new Rectangle(pxRect.X+MainMarginSize, pxRect.Y + (pxRect.Height - m_iconSize) / 2, m_iconSize, m_iconSize);
+                Rectangle dstRect = new Rectangle(MainMarginSize, (Area.Height - m_iconSize) / 2, m_iconSize, m_iconSize);
                 Color color = IsEnabled ? Color.White : new Color(125, 125, 125, 125);
-                batch.Draw(Icon, dstRect, null, color, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.GUI + GraphicsHelpers.Z.FrontStep);
+                Draw(batch, Icon, dstRect, null, color, 0.0f, Vector2.Zero, 1);
             }
 
             // Dessin du texte
-            pos = new Vector2(pxRect.X + 2 * MainMarginSize + m_iconSize, pxRect.Y + pxRect.Height / 2 - tSize.Y / 2);
+            var pos = new Vector2(2 * MainMarginSize + m_iconSize, Area.Height / 2 - tSize.Y / 2);
             Color textColor = IsEnabled ? (hover ? HoverTextColor : EnabledTextColor) : DisabledTextColor;
-            batch.DrawString(Ressources.Font, Title, pos, textColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GraphicsHelpers.Z.GUI + GraphicsHelpers.Z.FrontStep);
+            DrawString(batch, Ressources.Font, Title, pos, textColor, 0.0f, Vector2.Zero, 1.0f, 8);
 
         }
         #endregion

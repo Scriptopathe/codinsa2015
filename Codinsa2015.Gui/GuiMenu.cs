@@ -5,7 +5,8 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Server.Gui
+
+namespace Codinsa2015.EnhancedGui
 {
     /// <summary>
     /// Représente un menu dans la GUI.
@@ -283,8 +284,9 @@ namespace Codinsa2015.Server.Gui
         /// <summary>
         /// Crée une nouvelle instance de GuiMenu.
         /// </summary>
-        public GuiMenu() : base()
+        public GuiMenu(GuiManager manager) : base(manager)
         {
+            manager.AddWidget(this);
             Items = new List<GuiMenuItem>();
             m_hoverItemId = -1;
             Title = "Sans titre";
@@ -352,21 +354,24 @@ namespace Codinsa2015.Server.Gui
                 return;
             }
 
-            m_hoverItemId = -1;
-            MouseState state = Mouse.GetState();
-            for(int y = 0; y < Items.Count; y++)
+            bool hover = IsHover();
+            // Hover
+            if(hover)
             {
-                Vector2 pos = Position + new Vector2(0, y * m_itemHeight);
-                Rectangle pxRect = new Rectangle((int)pos.X, (int)pos.Y, m_itemWidth, m_itemHeight);
-                Point mousePos = new Point(state.X, state.Y);
-                if (pxRect.Contains(mousePos))
+                m_hoverItemId = -1;
+                for (int y = 0; y < Items.Count; y++)
                 {
-                    m_hoverItemId = y;
-
+                    Point pos = new Point(0, y * m_itemHeight);
+                    Rectangle pxRect = new Rectangle((int)pos.X, (int)pos.Y, m_itemWidth, m_itemHeight);
+                    Point mousePos = GetMousePos();
+                    if (pxRect.Contains(mousePos))
+                    {
+                        m_hoverItemId = y;
+                    }
                 }
             }
 
-            if (Input.IsLeftClickTrigger())
+            if (hover && Input.IsLeftClickTrigger())
             {
                 // Envoie un signal indiquant que la sélection a changé si le menu est cliqué.
                 if (m_hoverItemId != -1)
@@ -374,14 +379,15 @@ namespace Codinsa2015.Server.Gui
                     Items[m_hoverItemId].DispatchItemSelectedEvent();
                 }
 
-                Input.CancelClick();
-
                 if (CloseOnClick)
                 {
                     // Supprime le menu.
                     Dispose();
                 }
             }
+
+            // Mise à jour de la taille en fonction des items.
+            Size = new Point(TotalWidth, TotalHeight);
         }
 
         /// <summary>
@@ -393,14 +399,14 @@ namespace Codinsa2015.Server.Gui
             if (!Visible)
                 return;
 
-            Vector2 pos = Position + new Vector2(-m_mainMarginSize, -m_titleBarSize);
+            Vector2 pos = new Vector2(-m_mainMarginSize, -m_titleBarSize);
             Rectangle menuBox = new Rectangle((int)pos.X, (int)pos.Y, m_itemWidth + m_mainMarginSize * 2, m_itemHeight * Items.Count + m_titleBarSize + m_mainMarginSize);
             
             // Dessine la boite principale du menu.
-            Drawing.DrawRectBox(batch, MenuBoxTexture,
+            DrawRectBox(batch, MenuBoxTexture,
                 menuBox,
                 Color.White,
-                GraphicsHelpers.Z.GUI);
+                1);
 
             Vector2 tSize = Ressources.Font.MeasureString(Title);
             pos = (new Vector2(menuBox.X, menuBox.Y) 
@@ -408,39 +414,43 @@ namespace Codinsa2015.Server.Gui
                 - new Vector2(tSize.X/2, tSize.Y/2));
 
             // Dessine le titre du menu.
-            batch.DrawString(Ressources.Font, Title, 
+            DrawString(batch, Ressources.Font, Title, 
                 pos,
                 EnabledTextColor,
                 0.0f,
                 Vector2.Zero, 
                 1.0f,
-                SpriteEffects.None,
-                GraphicsHelpers.Z.GUI + GraphicsHelpers.Z.FrontStep);
+                2);
 
             for (int y = 0; y < Items.Count; y++)
             {
                 bool isHover = m_hoverItemId == y;
-                pos = Position + new Vector2(0, y * m_itemHeight);
+                pos = new Vector2(0, y * m_itemHeight);
                 tSize = Ressources.Font.MeasureString(Items[y].Text);
 
                 // Dessin de la box
                 Rectangle pxRect = new Rectangle((int)pos.X, (int)pos.Y, m_itemWidth, m_itemHeight);
                 Texture2D t = isHover && Items[y].IsEnabled ? ItemHoverBoxTexture : ItemBoxTexture;
-                Drawing.DrawRectBox(batch, t, pxRect, Color.White, GraphicsHelpers.Z.GUI + GraphicsHelpers.Z.FrontStep / 2);
+                DrawRectBox(batch, t, pxRect, Color.White, 4);
 
                 // Dessin de l'icone
                 if(Items[y].Icon != null)
                 {
                     Rectangle dstRect = new Rectangle(pxRect.X + m_itemMarginSize, pxRect.Y + (pxRect.Height - m_iconSize) / 2, m_iconSize, m_iconSize);
                     Color color = Items[y].IsEnabled ? Color.White : new Color(125, 125, 125, 125);
-                    batch.Draw(Items[y].Icon, dstRect, null, color, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.GUI + GraphicsHelpers.Z.FrontStep);
+                    Draw(batch, Items[y].Icon, dstRect, null, color, 0.0f, Vector2.Zero, 6);
                 }
 
                 // Dessin du texte
                 pos = new Vector2(pxRect.X + 2*m_itemMarginSize + m_iconSize, pxRect.Y + pxRect.Height/2 - tSize.Y/2);
                 Color textColor = Items[y].IsEnabled ? (isHover ? HoverTextColor : EnabledTextColor ) : DisabledTextColor;
-                batch.DrawString(Ressources.Font, Items[y].Text, pos, textColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GraphicsHelpers.Z.GUI + GraphicsHelpers.Z.FrontStep);
+                DrawString(batch, Ressources.Font, Items[y].Text, pos, textColor, 0.0f, Vector2.Zero, 1.0f, 8);
             }
+        }
+
+        public override void OnFocusLost()
+        {
+            Dispose();
         }
         #endregion
     }

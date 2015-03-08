@@ -76,9 +76,6 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Server\EnhancedGui\GuiWindow.cs" />
-    <Compile Include="Server\EnhancedGui\GuiButton.cs" />
-    <Compile Include="Server\EnhancedGui\GuiManager.cs" />
     <Compile Include="Exceptions\IdiotProgrammerException.cs" />
     <Compile Include="Server\Controlers\Components\DeveloperConsole.cs" />
     <Compile Include="Server\Controlers\Components\Minimap.cs" />
@@ -89,10 +86,6 @@
     <Compile Include="Server\Controlers\LobbyControler.cs" />
     <Compile Include="Server\Controlers\ShopInterface.cs" />
     <Compile Include="Server\Editor\MapEditorControler.cs" />
-    <Compile Include="Server\EnhancedGui\GuiMenu.cs" />
-    <Compile Include="Server\EnhancedGui\GuiMultilineTextDisplay.cs" />
-    <Compile Include="Server\EnhancedGui\GuiTextInput.cs" />
-    <Compile Include="Server\EnhancedGui\GuiWidget.cs" />
     <Compile Include="Server\Entities\EntityBase.cs" />
     <Compile Include="Server\Entities\EntityBigBoss.cs" />
     <Compile Include="Server\Entities\EntityCampMonster.cs" />
@@ -131,28 +124,6 @@
     <Compile Include="Server\GraphicsHelpers\Charset.cs" />
     <Compile Include="Server\GraphicsHelpers\GaussianBlur.cs" />
     <Compile Include="Server\GraphicsHelpers\Z.cs" />
-    <Compile Include="Server\Gui\Drawing.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Gui\GuiButton.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Gui\GuiManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Gui\GuiMenu.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Gui\GuiMultilineTextDisplay.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Gui\GuiTextInput.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Gui\GuiWidget.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Input.cs" />
     <Compile Include="Server\Map.cs" />
     <Compile Include="Server\MapFIle.cs" />
     <Compile Include="Server\Net\CommandServer.cs" />
@@ -162,7 +133,6 @@
     <Compile Include="Server\Particles\ParticleManager.cs" />
     <Compile Include="Server\Particles\ParticleText.cs" />
     <Compile Include="Server\Particles\ParticleTexture.cs" />
-    <Compile Include="Server\Ressources.cs" />
     <Compile Include="Server\RewardSystem.cs" />
     <Compile Include="Server\Scheduler.cs" />
     <Compile Include="Server\Shapes\CircleShape.cs" />
@@ -216,6 +186,18 @@
     <ProjectReference Include="..\..\Clank.ViewCreator\Clank.ViewCreator.csproj">
       <Project>{ac6299c5-17cc-4d25-9b2b-b29eb1a896db}</Project>
       <Name>Clank.ViewCreator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Codinsa2015.Gui\Codinsa2015.Gui.csproj">
+      <Project>{f963b283-5014-4f2e-b274-4329162bf7be}</Project>
+      <Name>Codinsa2015.Gui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Codinsa2015.Input\Codinsa2015.Input.csproj">
+      <Project>{84f613a5-6f31-4156-843a-a613901320b1}</Project>
+      <Name>Codinsa2015.Input</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Codinsa2015.Ressources\Codinsa2015.Ressources.csproj">
+      <Project>{ec96e98d-1bcb-43f7-8a7e-2beac9be1f47}</Project>
+      <Name>Codinsa2015.Ressources</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\PonyCarpetExtractor\PonyCarpetExtractor.csproj">
       <Project>{f0ce7cad-de71-4eed-9490-aeeb7c1bafe1}</Project>

@@ -118,9 +118,9 @@ namespace Codinsa2015.Server.Controlers
 
                     Rectangle rect = GetDrawRect(playerCount[team], team);
                     if (m_scene.Controlers[hero.ID].Hero.ID == m_controlledId)
-                        Gui.Drawing.DrawRectBox(batch, Ressources.MenuItemHover, rect, Color.White, 0.2f);
+                        EnhancedGui.Drawing.DrawRectBox(batch, Ressources.MenuItemHover, rect, Color.White, 0.2f);
                     else
-                        Gui.Drawing.DrawRectBox(batch, Ressources.MenuItem, rect, Color.White, 0.2f);
+                        EnhancedGui.Drawing.DrawRectBox(batch, Ressources.MenuItem, rect, Color.White, 0.2f);
 
 
                     string s = kvp.Value.HeroName + " (" + kvp.Value.GetType().Name.Replace("Controler", "") + ")";

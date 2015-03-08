@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Codinsa2015.Server.EnhancedGui;
+using Codinsa2015.EnhancedGui;
 
 namespace Codinsa2015.Server.Controlers.Components
 {

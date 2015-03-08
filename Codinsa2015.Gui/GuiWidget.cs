@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Server.EnhancedGui
+namespace Codinsa2015.EnhancedGui
 {
     public abstract class GuiWidget
     {
@@ -99,7 +99,7 @@ namespace Codinsa2015.Server.EnhancedGui
         protected void DrawRectBox(SpriteBatch batch, Texture2D texture, Rectangle rect, Color color, int layer)
         {
             rect.Location = GetRealPosition(rect.Location);
-            Gui.Drawing.DrawRectBox(batch, texture, rect, color, (float)( Manager.ComputeLayerDepth(this) - layer * layerDepthStep));
+            EnhancedGui.Drawing.DrawRectBox(batch, texture, rect, color, (float)( Manager.ComputeLayerDepth(this) - layer * layerDepthStep));
         }
         /// <summary>
         /// Obtient la position réelle de ce contrôle (non relative à son parent).

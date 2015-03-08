@@ -235,7 +235,7 @@ namespace Codinsa2015.Server.Controlers
             const int spellSize = 32;
 
             var texture = IsMyTurn(hero.ID) ? Ressources.MenuItemHover : Ressources.MenuItem;
-            Gui.Drawing.DrawRectBox(batch, texture, rect, Color.White, layerDepth+0.1f);
+            EnhancedGui.Drawing.DrawRectBox(batch, texture, rect, Color.White, layerDepth+0.1f);
 
             int x = rect.X + 20;
             int y = rect.Y + 20;

@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Server;
 using Codinsa2015.Server.Entities;
-using Codinsa2015.Server.Gui;
 using Codinsa2015.Server.Editor;
 using Codinsa2015.Server.Particles;
 namespace Codinsa2015.Server

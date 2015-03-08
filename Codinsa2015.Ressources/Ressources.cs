@@ -5,8 +5,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-namespace Codinsa2015.Server
+namespace Codinsa2015
 {
+
     /// <summary>
     /// Classe ayant la responsabilité de s'occuper des ressources du jeu.
     /// </summary>
@@ -151,28 +152,28 @@ namespace Codinsa2015.Server
             Content = content;
             Device = device;
 
-            IconMage = content.Load<Texture2D>("textures/icons/mage");
-            IconFighter = content.Load<Texture2D>("textures/icons/fighter");
-            IconTank = content.Load<Texture2D>("textures/icons/tank");
-            DummyTexture = content.Load<Texture2D>("textures/dummy");
-            Font = content.Load<SpriteFont>("textfont");
-            NumbersFont = content.Load<SpriteFont>("numbers_font");
-            CourrierFont = content.Load<SpriteFont>("courrier-16pt");
-            SelectMark = content.Load<Texture2D>("textures/select_mark");
-            MenuItem = content.Load<Texture2D>("textures/gui/menu_item");
-            MenuItemHover = content.Load<Texture2D>("textures/gui/menu_item_hover");
-            Menu = content.Load<Texture2D>("textures/gui/menu");
-            Cursor = content.Load<Texture2D>("textures/gui/cursor");
-            HighlightMark = content.Load<Texture2D>("textures/highlight_mark");
-            CanMoveMark = content.Load<Texture2D>("textures/canmove_mark");
-            TextBox = content.Load<Texture2D>("textures/gui/textbox");
-            LifebarEmpty = content.Load<Texture2D>("textures/gui/lifebar_empty");
-            LifebarFull = content.Load<Texture2D>("textures/gui/lifebar_full");
-            LavaTexture = content.Load<Texture2D>("textures/lava");
+            IconMage = content.Load<Texture2D>( "textures/icons/mage");
+            IconFighter = content.Load<Texture2D>( "textures/icons/fighter");
+            IconTank = content.Load<Texture2D>( "textures/icons/tank");
+            DummyTexture = content.Load<Texture2D>( "textures/dummy");
+            Font = content.Load<SpriteFont>( "textfont");
+            NumbersFont = content.Load<SpriteFont>( "numbers_font");
+            CourrierFont = content.Load<SpriteFont>( "courrier-16pt");
+            SelectMark = content.Load<Texture2D>( "textures/select_mark");
+            MenuItem = content.Load<Texture2D>( "textures/gui/menu_item");
+            MenuItemHover = content.Load<Texture2D>( "textures/gui/menu_item_hover");
+            Menu = content.Load<Texture2D>( "textures/gui/menu");
+            Cursor = content.Load<Texture2D>( "textures/gui/cursor");
+            HighlightMark = content.Load<Texture2D>( "textures/highlight_mark");
+            CanMoveMark = content.Load<Texture2D>( "textures/canmove_mark");
+            TextBox = content.Load<Texture2D>( "textures/gui/textbox");
+            LifebarEmpty = content.Load<Texture2D>( "textures/gui/lifebar_empty");
+            LifebarFull = content.Load<Texture2D>( "textures/gui/lifebar_full");
+            LavaTexture = content.Load<Texture2D>( "textures/lava");
             // Effet de la map
-            WallTexture = content.Load<Texture2D>("textures/wall");
-            WallBorderTexture = content.Load<Texture2D>("textures/border");
-            GrassTexture = content.Load<Texture2D>("textures/grass");
+            WallTexture = content.Load<Texture2D>( "textures/wall");
+            WallBorderTexture = content.Load<Texture2D>( "textures/border");
+            GrassTexture = content.Load<Texture2D>( "textures/grass");
             MapEffect = content.Load<Effect>("shaders/mapshader");
             MapEffect.Parameters["xBorderTexture"].SetValue(WallBorderTexture);
             MapEffect.Parameters["xWallTexture"].SetValue(WallTexture);
@@ -186,4 +187,6 @@ namespace Codinsa2015.Server
         }
 
     }
+    
+
 }

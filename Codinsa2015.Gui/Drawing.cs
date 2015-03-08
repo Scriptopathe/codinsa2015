@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Server.Gui
+namespace Codinsa2015.EnhancedGui
 {
     /// <summary>
     /// Contient des routines pour le dessin d'éléments de la GUI.

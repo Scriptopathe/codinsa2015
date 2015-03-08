@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Codinsa2015.Server.EnhancedGui
+namespace Codinsa2015.EnhancedGui
 {
     /// <summary>
     /// Représente une fenêtre dans la GUI.
