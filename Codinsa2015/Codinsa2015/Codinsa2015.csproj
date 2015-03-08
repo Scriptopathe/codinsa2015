@@ -76,6 +76,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Server\EnhancedGui\GuiWindow.cs" />
     <Compile Include="Server\EnhancedGui\GuiButton.cs" />
     <Compile Include="Server\EnhancedGui\GuiManager.cs" />
     <Compile Include="Exceptions\IdiotProgrammerException.cs" />

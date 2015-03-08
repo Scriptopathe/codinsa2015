@@ -33,6 +33,12 @@ namespace Codinsa2015.Server.Controlers
 
         #region Properties
         public int ScrollSpeed = 16;
+
+        /// <summary>
+        /// Fenêtre invisible permettant de déterminer si le jeu a peut récupérer les entrées
+        /// clavier / souris, ou si elles sont dédiées à un autre composant de la GUI.
+        /// </summary>
+        public EnhancedGui.GuiWindow GameWindow { get; set; }
         /// <summary>
         /// Obtient ou définit le héros contrôlé.
         /// </summary>
@@ -102,7 +108,6 @@ namespace Codinsa2015.Server.Controlers
             m_hero = hero;
             Pov = new Server.Map.PointOfView() { Teams = hero.Type, UnitSize = 32 };
             Particles = new Server.Particles.ParticleManager();
-            GuiManager = new Gui.GuiManager();
             EnhancedGuiManager = new EnhancedGui.GuiManager();
             MapEditControler = new Editor.MapEditorControler(this);
         }
@@ -120,6 +125,12 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         public override void LoadContent()
         {
+            GameWindow = new EnhancedGui.GuiWindow(EnhancedGuiManager);
+            GameWindow.IsHiden = true;
+            GameWindow.BackColor = new Color(0, 0, 0, 50);
+            GameWindow.Layer = -1;
+            GameWindow.IsMoveable = false;
+
             MapEditControler.LoadContent();
             MapEditControler.CurrentMap = GameServer.GetScene().Map;
             MapEditControler.OnMapLoaded += GameServer.GetScene().Map.Load;
@@ -137,6 +148,9 @@ namespace Codinsa2015.Server.Controlers
         {
             if(GameServer.GetScene().Mode == SceneMode.Game)
             {
+                GameWindow.IsVisible = true;
+                GameWindow.Area = Map.Viewport;
+
                 // Passage du mode d'édition au mode normal.
                 if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.LeftControl) && !Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightAlt))
                     EditMode = !EditMode;
@@ -159,64 +173,25 @@ namespace Codinsa2015.Server.Controlers
 
                 // Particules / etc
                 Particles.Update(time);
+
                 // Gui manager
-                GuiManager.Update(time);
                 EnhancedGuiManager.Update(time);
 
-                // Mouvement du héros.
+                if (GameWindow.HasFocus())
+                {
+                    GameWindow.IsHiden = true;
+                    UpdateGameInput();
+                }
+                else
+                    GameWindow.IsHiden = false;
+
+
                 var ms = Input.GetMouseState();
-                Vector2 pos = GameServer.GetMap().ToMapSpace(new Vector2(ms.X, ms.Y));
-                if (Input.IsRightClickPressed() && GameServer.GetMap().GetPassabilityAt(pos))
-                {
-
-                    float dst = Vector2.Distance(pos, Hero.Position);
-                    // Obtient les entités targettables par le héros à portée.
-                    var entities = GameServer.GetMap().Entities.GetEntitiesInSight(Hero.Type).
-                        GetAliveEntitiesInRange(pos, 1).Where(delegate(KeyValuePair<int, EntityBase> kvp)
-                        {
-                            EntityType ennemyteam = (Hero.Type & EntityType.Teams) ^ EntityType.Teams;
-                            return kvp.Value.Type.HasFlag(ennemyteam) || EntityType.AllTargettableNeutral.HasFlag(kvp.Value.Type);
-                        }).ToList();
-
-                    // Utilise l'arme sur le héros.
-                    if(entities.Count != 0)
-                    {
-                        if (Hero.Weapon.Use(Hero, entities.First().Value) == SpellUseResult.Success)
-                        {
-                            m_hero.EndMoveTo();
-                            m_hero.Path = null;
-                        }
-                    }
-
-                    // Si on effectue une auto attaque
-                    if(entities.Count == 0  || 
-                        dst > Hero.Weapon.GetAttackSpell().TargetType.Range)
-                        m_hero.Path = new Trajectory(new List<Vector2>() { pos });
-                    
-                    
-                }
-
-                if (m_hero.Path != null && m_hero.IsBlockedByWall)
-                {
-                    m_hero.StartMoveTo(m_hero.Path.LastPosition());
-                }
-
-                // Vision range
-                if (ms.ScrollWheelValue - __oldScroll < 0)
-                    m_hero.VisionRange--;
-                else if (ms.ScrollWheelValue - __oldScroll > 0)
-                    m_hero.VisionRange++;
-
-                // Mise à jour des spells.
-                UpdateSpells();
-
-                // Utilisation des consommables.
-                UpdateConsummable();
-
                 __oldScroll = ms.ScrollWheelValue;
             }
             else
             {
+                GameWindow.IsVisible = false;
                 // MODE : PICK
                 var ms = Input.GetMouseState();
                 GameServer.GetScene().PickControler.SetVirtualMousePos(new Vector2(ms.X, ms.Y));
@@ -266,6 +241,65 @@ namespace Codinsa2015.Server.Controlers
             }
         }
 
+        /// <summary>
+        /// Mets à jour l'état du contrôleur en fonction des entrées du joueur humain.
+        /// </summary>
+        void UpdateGameInput()
+        {
+            UpdateHeroMovement();
+            UpdateSpells();
+            UpdateConsummable();
+        }
+
+        /// <summary>
+        /// Mets à jour le déplacement du héros en fonction des entrées du joueur humain.
+        /// </summary>
+        void UpdateHeroMovement()
+        {
+            // Mouvement du héros.
+            var ms = Input.GetMouseState();
+            Vector2 pos = GameServer.GetMap().ToMapSpace(new Vector2(ms.X, ms.Y));
+            if (Input.IsRightClickPressed() && GameServer.GetMap().GetPassabilityAt(pos))
+            {
+
+                float dst = Vector2.Distance(pos, Hero.Position);
+                // Obtient les entités targettables par le héros à portée.
+                var entities = GameServer.GetMap().Entities.GetEntitiesInSight(Hero.Type).
+                    GetAliveEntitiesInRange(pos, 1).Where(delegate(KeyValuePair<int, EntityBase> kvp)
+                    {
+                        EntityType ennemyteam = (Hero.Type & EntityType.Teams) ^ EntityType.Teams;
+                        return kvp.Value.Type.HasFlag(ennemyteam) || EntityType.AllTargettableNeutral.HasFlag(kvp.Value.Type);
+                    }).ToList();
+
+                // Utilise l'arme sur le héros.
+                if (entities.Count != 0)
+                {
+                    if (Hero.Weapon.Use(Hero, entities.First().Value) == SpellUseResult.Success)
+                    {
+                        m_hero.EndMoveTo();
+                        m_hero.Path = null;
+                    }
+                }
+
+                // Si on effectue une auto attaque
+                if (entities.Count == 0 ||
+                    dst > Hero.Weapon.GetAttackSpell().TargetType.Range)
+                    m_hero.Path = new Trajectory(new List<Vector2>() { pos });
+
+
+            }
+
+            if (m_hero.Path != null && m_hero.IsBlockedByWall)
+            {
+                m_hero.StartMoveTo(m_hero.Path.LastPosition());
+            }
+
+            // Vision range
+            if (ms.ScrollWheelValue - __oldScroll < 0)
+                m_hero.VisionRange--;
+            else if (ms.ScrollWheelValue - __oldScroll > 0)
+                m_hero.VisionRange++;
+        }
         /// <summary>
         /// Détermine si le joueur a appuyé sur des touches pour lancer des sorts.
         /// </summary>
@@ -464,7 +498,6 @@ namespace Codinsa2015.Server.Controlers
                 // Dessine les GUI, particules etc...
                 batch.GraphicsDevice.SetRenderTarget(GameServer.GetScene().MainRenderTarget);
                 batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
-                GuiManager.Draw(batch);
                 EnhancedGuiManager.Draw(batch);
                 Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
                 DrawControlerGUI(batch, time);

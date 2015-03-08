@@ -9,17 +9,14 @@ using Codinsa2015.Graphics.Server;
 namespace Codinsa2015.Server.EnhancedGui
 {
     /// <summary>
-    /// Représente un bouton dans la GUI.
+    /// Représente une fenêtre dans la GUI.
     /// </summary>
-    public class GuiButton : GuiWidget
+    public class GuiWindow : GuiWidget
     {
         #region Delegate / Events / Classes
-        public delegate void ButtonClickedDelegate();
-        public event ButtonClickedDelegate Clicked;
         #endregion
 
         #region Variables
-        bool firstFrame = true;
         /// <summary>
         /// Taille de la marge globale du bouton.
         /// </summary>
@@ -29,45 +26,32 @@ namespace Codinsa2015.Server.EnhancedGui
         /// Les icones sont des textures carrées.
         /// </summary>
         int m_iconSize = 16;
-
+        Point m_oldMousePos;
+        
+        bool m_isAnchored;
         /// <summary>
-        /// Obtient ou définit la texture utilisée pour dessiner le bouton.
+        /// Obtient ou définit la texture utilisée pour dessiner la barre de titre de la
+        /// fenêtre.
         /// </summary>
-        public RemoteTexture2D ButtonBoxTexture
+        public RemoteTexture2D TitleBarTexture
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Obtient ou définit la texture utilisée pour dessiner le bouton, lorsque la souris est dessus.
+        /// Color du background de la fenêtre.
         /// </summary>
-        public RemoteTexture2D ButtonHoverBoxTexture
+        public Color BackColor
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Couleur du texte lorsque le bouton est désactivé.
+        /// Couleur du texte de la barre de titre.
         /// </summary>
-        public Color DisabledTextColor
-        {
-            get;
-            set;
-        }
-        /// <summary>
-        /// Couleur du texte.
-        /// </summary>
-        public Color EnabledTextColor
-        {
-            get;
-            set;
-        }
-        /// <summary>
-        /// Couleur du texte lorsque le bouton est en surbrillance.
-        /// </summary>
-        public Color HoverTextColor
+        public Color TextColor
         {
             get;
             set;
@@ -101,10 +85,26 @@ namespace Codinsa2015.Server.EnhancedGui
             get;
             set;
         }
+
+        public int TitleBarHeight
+        {
+            get;
+            set;
+        }
+
         /// <summary>
-        /// Obtient ou définit une valeur indiquant si ce bouton est clicable.
+        /// Indique si cette fenêtre est cachée (mais toujours prise en compte par la GUI).
         /// </summary>
-        public bool IsEnabled
+        public bool IsHiden
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Obtient ou définit une valeur indiquant si cette fenêtre est déplaçable.
+        /// </summary>
+        public bool IsMoveable
         {
             get;
             set;
@@ -115,18 +115,17 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <summary>
         /// Crée une nouvelle instance de GuiMenu.
         /// </summary>
-        public GuiButton(GuiManager manager) : base(manager)
+        public GuiWindow(GuiManager manager) : base(manager)
         {
-            EnabledTextColor = Color.White;
-            DisabledTextColor = Color.Gray;
-            HoverTextColor = Color.White;
-            ButtonBoxTexture = Ressources.MenuItem;
-            ButtonHoverBoxTexture = Ressources.MenuItemHover;
-            IsVisible = true;
-            IsEnabled = true;
+            TextColor = Color.Gray;
+            TitleBarTexture = Ressources.MenuItem;
+            TitleBarHeight = 16;
+            IsMoveable = true;
             Area = new Rectangle(Area.X, Area.Y, 100, 20);
+            BackColor = Color.Black;
             MainMarginSize = 2;
             Title = "";
+            IsHiden = false;
             manager.AddWidget(this);
         }
 
@@ -136,21 +135,26 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <param name="time"></param>
         public override void Update(Microsoft.Xna.Framework.GameTime time)
         {
-            if (!IsVisible)
+            if (!IsVisible || IsHiden || !IsMoveable)
                 return;
 
-            // Retourne si première frame : évite certains artifacts de clic.
-            if(firstFrame)
-            {
-                firstFrame = false;
-                return;
-            }
-
+            var ms = Input.GetMouseState();
             // Gestion du click.
             if (IsLeftTrigger())
             {
-                if(Clicked != null)
-                    Clicked();
+                m_oldMousePos = new Point(ms.X, ms.Y);
+                m_isAnchored = true;
+            }
+
+            if(Input.IsLeftClickReleased())
+            {
+                m_isAnchored = false;
+            }
+
+            if(m_isAnchored)
+            {
+                Location = new Point(Location.X + (ms.X - m_oldMousePos.X), Location.Y + (ms.Y - m_oldMousePos.Y));
+                m_oldMousePos = new Point(ms.X, ms.Y);
             }
         }
 
@@ -160,7 +164,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <param name="batch"></param>
         public override void Draw(RemoteSpriteBatch batch)
         {
-            if (!IsVisible)
+            if (!IsVisible || IsHiden)
                 return;
 
             // Variables d'état.
@@ -174,20 +178,23 @@ namespace Codinsa2015.Server.EnhancedGui
 
 
             // Dessin de la box
-            RemoteTexture2D t = ((hover && !Input.IsLeftClickPressed()) && IsEnabled)? ButtonHoverBoxTexture : ButtonBoxTexture;
-            DrawRectBox(batch, t, new Rectangle(0, 0, Area.Width, Area.Height), Color.White, 4);
+            DrawRectBox(batch, Ressources.DummyTexture, new Rectangle(0, 0, Area.Width, Area.Height), BackColor, 4);
+
+            // Dessin de la barre de titre.
+            RemoteTexture2D t = TitleBarTexture;
+            DrawRectBox(batch, t, new Rectangle(0, 0, Area.Width, TitleBarHeight), Color.White, 5);
 
             // Dessin de l'icone
             if (Icon != null)
             {
-                Rectangle dstRect = new Rectangle(MainMarginSize, (Area.Height - m_iconSize) / 2, m_iconSize, m_iconSize);
-                Color color = IsEnabled ? Color.White : new Color(125, 125, 125, 125);
-                Draw(batch, Icon, dstRect, null, color, 0.0f, Vector2.Zero, 1);
+                Rectangle dstRect = new Rectangle(MainMarginSize, (TitleBarHeight - m_iconSize) / 2, m_iconSize, m_iconSize);
+                Color color = true ? Color.White : new Color(125, 125, 125, 125);
+                Draw(batch, Icon, dstRect, null, color, 0.0f, Vector2.Zero, 6);
             }
 
             // Dessin du texte
-            var pos = new Vector2(2 * MainMarginSize + m_iconSize, Area.Height / 2 - tSize.Y / 2);
-            Color textColor = IsEnabled ? (hover ? HoverTextColor : EnabledTextColor) : DisabledTextColor;
+            var pos = new Vector2(2 * MainMarginSize + m_iconSize, TitleBarHeight / 2 - tSize.Y / 2);
+            Color textColor = TextColor;
             DrawString(batch, Ressources.Font, Title, pos, textColor, 0.0f, Vector2.Zero, 1.0f, 8);
 
         }

@@ -20,6 +20,7 @@ namespace Codinsa2015.Server
         static MouseState s_lastFrameMouseState;
         static MouseState s_thisMouseState;
         static List<Keys> s_triggeredKeys;
+        static List<Keys> s_releasedKeys;
         static bool s_clickCanceled;
         static object s_focus;
 
@@ -80,7 +81,10 @@ namespace Codinsa2015.Server
             s_thisMouseState = Mouse.GetState();
 
             s_triggeredKeys = ComputeTriggerKeys();
+            s_releasedKeys = ComputeReleasedKeys();
             s_clickCanceled = false;
+
+
         }
         /// <summary>
         /// Obtient la liste des touches qui ont été appuyées durant cette frame. 
@@ -99,6 +103,25 @@ namespace Codinsa2015.Server
             s_clickCanceled = true;   
         }
 
+        /// <summary>
+        /// Calcule et obtient la liste des touches qui ont été relâchées durant cette frame.
+        /// </summary>
+        /// <returns></returns>
+        static List<Keys> ComputeReleasedKeys()
+        {
+            Keys[] thisKeys = s_thisState.GetPressedKeys();
+            Keys[] oldKeys = s_lastFrameState.GetPressedKeys();
+            List<Keys> released = new List<Keys>();
+            foreach (Keys key in oldKeys)
+            {
+                if (!thisKeys.Contains(key))
+                {
+                    released.Add(key);
+                }
+            }
+
+            return released;
+        }
         /// <summary>
         /// Calcule et obtient la liste des touches qui ont été appuyées durant cette frame.
         /// </summary>
@@ -135,6 +158,15 @@ namespace Codinsa2015.Server
         }
 
         /// <summary>
+        /// Checks if a key is released.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool IsReleased(Keys key)
+        {
+            return s_lastFrameState.IsKeyDown(key) && s_thisState.IsKeyUp(key);
+        }
+        /// <summary>
         /// Checks for a trigger.
         /// </summary>
         public static bool IsGamepadTrigger(Buttons key)
@@ -156,6 +188,14 @@ namespace Codinsa2015.Server
         public static Vector2 GetRightStickState()
         {
             return s_thisGamepadState.ThumbSticks.Right;
+        }
+        public static bool IsLeftClickReleased()
+        {
+            return (s_thisMouseState.LeftButton == ButtonState.Released) && (s_lastFrameMouseState.LeftButton == ButtonState.Pressed);
+        }
+        public static bool IsRightClickReleased()
+        {
+            return (s_thisMouseState.RightButton == ButtonState.Released) && (s_lastFrameMouseState.RightButton == ButtonState.Pressed);
         }
         public static bool IsLeftClickPressed()
         {

@@ -32,7 +32,7 @@ namespace Codinsa2015.Server.EnhancedGui
         /// <summary>
         /// Obtient le layer sur lequel est situé ce composant.
         /// </summary>
-        public byte Layer { get; set; }
+        public short Layer { get; set; }
         /// <summary>
         /// Obtient une valeur indiquant si ce widget est visible ou non.
         /// </summary>

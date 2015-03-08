@@ -67,7 +67,10 @@ namespace Codinsa2015.Server.EnhancedGui
         public void Update(GameTime time)
         {
             List<GuiWidget> toDelete = new List<GuiWidget>();
-            GuiWidget newFocus = m_focus;
+
+            // Focus : null par défaut si un click est effectué (sera changé si un élément est cliqué)
+            // sinon, on garde l'ancien focus.
+            GuiWidget newFocus = (Input.IsLeftClickTrigger()) ? null : m_focus;
 
             // Ajoute / Supprime les widgets à ajouter / supprimer.
             foreach (GuiWidget widget in m_addList)
@@ -79,7 +82,7 @@ namespace Codinsa2015.Server.EnhancedGui
 
             foreach (GuiWidget widget in m_widgets)
             {
-                if (widget.IsHover() && (Input.IsLeftClickTrigger() || Input.IsRightClickTrigger()))
+                if (widget.IsHover() && Input.IsLeftClickTrigger())
                     newFocus = widget;
 
                 widget.Update(time);
@@ -93,8 +96,10 @@ namespace Codinsa2015.Server.EnhancedGui
             m_focus = newFocus;
             if (oldFocus != newFocus)
             {
-                oldFocus.OnFocusLost();
-                newFocus.OnFocus();
+                if(oldFocus != null)
+                    oldFocus.OnFocusLost();
+                if(newFocus != null)
+                    newFocus.OnFocus();
             }
 
             // Supprime les widgets à supprimer.

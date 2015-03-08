@@ -61,7 +61,7 @@ namespace Codinsa2015.Server.Controlers
         {
             m_hero = hero;
             Particles = new Particles.ParticleManager();
-            GuiManager = new Gui.GuiManager();
+            EnhancedGuiManager = new EnhancedGui.GuiManager();
         }
 
         /// <summary>

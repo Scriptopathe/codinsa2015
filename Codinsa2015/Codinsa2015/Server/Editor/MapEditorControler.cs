@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Graphics.Server;
 using Codinsa2015.Server.Controlers.Components;
+using Codinsa2015.Server.EnhancedGui;
 namespace Codinsa2015.Server.Editor
 {
     /// <summary>
@@ -21,9 +22,9 @@ namespace Codinsa2015.Server.Editor
         bool m_terraFormingMode = true;
         int m_rowId = 0;
         int m_checkpointId = 0;
-        private Gui.GuiButton m_modeButton;
+        private GuiButton m_modeButton;
         int m_brushSize = 2;
-        Controlers.ControlerBase m_baseControler;
+        Controlers.HumanControler m_baseControler;
         #region Graphics
         Minimap m_minimap;
         DeveloperConsole m_console;
@@ -65,11 +66,11 @@ namespace Codinsa2015.Server.Editor
         /// <summary>
         /// Crée une nouvelle instance de MapEditorControler associé à la map donnée.
         /// </summary>
-        public MapEditorControler(Controlers.ControlerBase baseControler)
+        public MapEditorControler(Controlers.HumanControler baseControler)
         {
             m_baseControler = baseControler;
             m_minimap = new Minimap();
-            m_console = new DeveloperConsole(baseControler.GuiManager);
+            m_console = new DeveloperConsole(baseControler.EnhancedGuiManager);
             
         }
 
@@ -81,7 +82,9 @@ namespace Codinsa2015.Server.Editor
         {
             m_minimap.LoadContent();
             m_console.LoadContent();
-            EnhancedGui.GuiButton btn = new EnhancedGui.GuiButton(m_baseControler.EnhancedGuiManager);
+            /* GUI TESTING */
+            /*
+            EnhancedGui.GuiWindow btn = new EnhancedGui.GuiWindow(m_baseControler.EnhancedGuiManager);
             btn.Area = new Rectangle(100, 100, 200, 200);
             btn.Title = "Back";
             EnhancedGui.GuiButton btn2 = new EnhancedGui.GuiButton(m_baseControler.EnhancedGuiManager);
@@ -104,7 +107,7 @@ namespace Codinsa2015.Server.Editor
                 new EnhancedGui.GuiMenu.GuiMenuItem("hah"),
                 new EnhancedGui.GuiMenu.GuiMenuItem("hihi")
             };
-            menu.Focus();
+            menu.Focus();*/
             CreateGui();
         }
 
@@ -116,15 +119,13 @@ namespace Codinsa2015.Server.Editor
         /// </summary>
         void CreateGui()
         {
-            m_modeButton = new Gui.GuiButton()
+            m_modeButton = new GuiButton(m_baseControler.EnhancedGuiManager)
             {
-                Position = new Vector2(0, 0),
+                Location = new Point(0, 0),
                 Title = "Land",
-                Width = 150, 
-                Height = 25
+                Size = new Point(150, 25)
             };
             m_modeButton.Clicked += OnChangeMode;
-            m_baseControler.GuiManager.AddWidget(m_modeButton);
 
 
 
@@ -147,122 +148,129 @@ namespace Codinsa2015.Server.Editor
             if (!IsEnabled)
                 return;
 
-            // Focus de la console.
-            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.OemComma))
-                m_console.HasFocus = true;
+            bool processGameInput = m_baseControler.GameWindow.HasFocus();
 
             if (m_console.HasFocus)
                 return;
 
             // Affichage de la minimap.
-            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M))
+            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M) && processGameInput)
                 m_minimap.Visible = !m_minimap.Visible;
 
             // Zoom
             Vector2 mousePosPx = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
             Vector2 mousePosUnits = GetMousePosUnits();
 
-            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Add))
+            if(processGameInput)
             {
-                GameServer.GetMap().UnitSize *= 2;
-                GameServer.GetMap().ScrollingVector2 *= 2;
-            }
-            else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Subtract))
-            {
-                GameServer.GetMap().UnitSize /= 2;
-                GameServer.GetMap().ScrollingVector2 /= 2;
-            }
-
-            // Terraforming
-            if (m_terraFormingMode && mousePosPx.Y > 25)
-            { 
-                // Ajout de matière
-                if (Input.IsLeftClickPressed())
+                // Modif de la taille du brush.
+                if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Add))
                 {
-                    for (int i = 0; i < m_brushSize; i++)
-                        for (int j = 0; j < m_brushSize; j++)
-                            CurrentMap.SetPassabilityAt(mousePosUnits + new Vector2(i, j), false);
+                    GameServer.GetMap().UnitSize *= 2;
+                    GameServer.GetMap().ScrollingVector2 *= 2;
                 }
-                else if (Input.IsRightClickPressed())
+                else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Subtract))
                 {
-                    for (int i = 0; i < m_brushSize; i++)
-                        for (int j = 0; j < m_brushSize; j++ )
-                            CurrentMap.SetPassabilityAt(mousePosUnits + new Vector2(i, j), true);
+                    GameServer.GetMap().UnitSize /= 2;
+                    GameServer.GetMap().ScrollingVector2 /= 2;
                 }
-                else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.O))
-                    m_brushSize++;
-                else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.I))
-                    m_brushSize--;
-            }
-            // Edition d'entités.
-            else if(!m_terraFormingMode)
-            {
-                if (Input.IsRightClickTrigger())
+
+                // Terraforming
+                if (m_terraFormingMode && mousePosPx.Y > 25)
                 {
-
-                    Entities.EntityCollection entitiesInRange = CurrentMap.Entities.GetAliveEntitiesInRange(mousePosUnits, 1f);
-
-                    Gui.GuiMenu menu = new Gui.GuiMenu();
-                    menu.Position = mousePosPx;
-                    menu.Title = "Menu";
-                    foreach (EntityBase entity in entitiesInRange.Values)
+                    // Ajout de matière
+                    if (Input.IsLeftClickPressed())
                     {
-                        Gui.GuiMenu.GuiMenuItem item = new Gui.GuiMenu.GuiMenuItem("Remove " + entity.Type.ToString());
-                        item.ItemSelected += new Gui.GuiMenu.ItemSelectedDelegate(() =>
+                        for (int i = 0; i < m_brushSize; i++)
+                            for (int j = 0; j < m_brushSize; j++)
+                                CurrentMap.SetPassabilityAt(mousePosUnits + new Vector2(i, j), false);
+                    }
+                    else if (Input.IsRightClickPressed())
+                    {
+                        for (int i = 0; i < m_brushSize; i++)
+                            for (int j = 0; j < m_brushSize; j++)
+                                CurrentMap.SetPassabilityAt(mousePosUnits + new Vector2(i, j), true);
+                    }
+                    else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.O))
+                        m_brushSize++;
+                    else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.I))
+                        m_brushSize--;
+                }
+
+                // Edition d'entités.
+                else if (!m_terraFormingMode)
+                {
+                    if (Input.IsRightClickTrigger())
+                    {
+
+                        Entities.EntityCollection entitiesInRange = CurrentMap.Entities.GetAliveEntitiesInRange(mousePosUnits, 1f);
+                        if (entitiesInRange.Count != 0)
                         {
-                            CurrentMap.Entities.Remove(entity.ID);
-                            entity.Dispose();
-                        });
-                        item.IsEnabled = true;
-                        menu.AddItem(item);
-                        GameServer.GetScene().CurrentControler.GuiManager.AddWidget(menu);
+                            GuiMenu menu = new GuiMenu(m_baseControler.EnhancedGuiManager);
+                            menu.Location = new Point((int)mousePosPx.X, (int)mousePosPx.Y);
+                            menu.Title = "Menu";
+                            foreach (EntityBase entity in entitiesInRange.Values)
+                            {
+                                GuiMenu.GuiMenuItem item = new GuiMenu.GuiMenuItem("Remove " + entity.Type.ToString());
+                                item.ItemSelected += new GuiMenu.ItemSelectedDelegate(() =>
+                                {
+                                    CurrentMap.Entities.Remove(entity.ID);
+                                    entity.Dispose();
+                                });
+                                item.IsEnabled = true;
+                                menu.AddItem(item);
+                            }
+                            menu.Focus();
+                        }
+                    }
+
+                    // Ajout d'éléments de jeu.
+                    Entities.EntityType team = Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Q) ? Entities.EntityType.Team2 : Entities.EntityType.Team1;
+                    if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.T))
+                    {
+                        AddTower(team, mousePosUnits);
+                    }
+                    else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.R))
+                    {
+                        AddSpawner(team, mousePosUnits);
+                    }
+                    else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Y))
+                    {
+                        AddCheckpoint(team, mousePosUnits);
+                    }
+                    else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.U))
+                    {
+                        AddWardPlace(mousePosUnits);
+                    }
+                    else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.W))
+                    {
+                        PutWard(team, mousePosUnits);
+
+                    }
+                    if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad1))
+                    {
+                        m_checkpointId = 0;
+                        m_rowId = 0;
+                    }
+                    else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad2))
+                    {
+                        m_checkpointId = 0;
+                        m_rowId = 1;
+                    }
+                    else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad3))
+                    {
+                        m_checkpointId = 0;
+                        m_rowId = 2;
+                    }
+                    else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad4))
+                    {
+                        m_checkpointId = 0;
+                        m_rowId = 3;
                     }
                 }
-
-                // Ajout d'éléments de jeu.
-                Entities.EntityType team = Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Q) ? Entities.EntityType.Team2 : Entities.EntityType.Team1;
-                if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.T))
-                {
-                    AddTower(team, mousePosUnits);
-                }
-                else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.R))
-                {
-                    AddSpawner(team, mousePosUnits);
-                }
-                else if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Y))
-                {
-                    AddCheckpoint(team, mousePosUnits);
-                }
-                else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.U))
-                {
-                    AddWardPlace(mousePosUnits);
-                }
-                else if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.W))
-                {
-                    PutWard(team, mousePosUnits);
-
-                }
-                if(Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad1))
-                {
-                    m_checkpointId = 0;
-                    m_rowId = 0;
-                }
-                else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad2))
-                {
-                    m_checkpointId = 0;
-                    m_rowId = 1;
-                }
-                else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad3))
-                {
-                    m_checkpointId = 0;
-                    m_rowId = 2;
-                }
-                else if (Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.NumPad4))
-                {
-                    m_checkpointId = 0;
-                    m_rowId = 3;
-                }
             }
+            
+            
 
             // Sauvegarde
             if( Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M))
@@ -429,13 +437,13 @@ namespace Codinsa2015.Server.Editor
             
             if (!IsEnabled)
             {
-                m_modeButton.Visible = false;
+                m_modeButton.IsVisible = false;
                 m_console.Visible = false;
                 m_console.HasFocus = false;
             }
             else
             {
-                m_modeButton.Visible = true;
+                m_modeButton.IsVisible = true;
                 m_console.Visible = true;
             }
             
@@ -444,7 +452,7 @@ namespace Codinsa2015.Server.Editor
             rawpos.X -= rawpos.X % 1;
             rawpos.Y -= rawpos.Y % 1;
             var pos = GameServer.GetMap().ToScreenSpace(rawpos);
-            batch.Draw(Ressources.HighlightMark, new Rectangle((int)pos.X, (int)pos.Y, ts, ts), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.Front);
+            batch.Draw(Ressources.HighlightMark, new Rectangle((int)pos.X, (int)pos.Y, ts, ts), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.GUI);
             
 
             // Dessine le bandeau supérieur
