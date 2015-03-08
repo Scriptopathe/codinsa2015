@@ -2,7 +2,7 @@
 
 
 state {
-	public serializable class WeaponUpgradeModelView
+	public serializable class VisionMapView
 	{
 
 		# Rajoute les statements using et le bon namespace pour la classe state.
@@ -11,11 +11,7 @@ state {
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
-		#Obtient la description de l'upgrade
-		public SpellDescriptionView Description;
-		#
-		public List<StateAlterationModelView> PassiveAlterations;
-		#Obtient le coût de l'upgrade.
-		public float Cost;
+		#Représente la vision qu'ont les 2 équipes sur l'ensemble de la map.
+		public Matrix<VisionFlags> Vision;
 	}
 }

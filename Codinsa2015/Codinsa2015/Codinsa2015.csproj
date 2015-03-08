@@ -166,6 +166,7 @@
     <Compile Include="Server\RewardSystem.cs" />
     <Compile Include="Server\Scheduler.cs" />
     <Compile Include="Server\Shapes\CircleShape.cs" />
+    <Compile Include="Server\Shapes\GenericShape.cs" />
     <Compile Include="Server\Shapes\RectangleShape.cs" />
     <Compile Include="Server\Spellcasts\SpellcastBase.cs" />
     <Compile Include="Server\Spellcasts\Spellcast.cs" />
@@ -181,7 +182,10 @@
     <Compile Include="Server\Spells\Spell.cs" />
     <Compile Include="Server\Spells\SpellTargetInfo.cs" />
     <Compile Include="Server\Views\EntityBaseView.cs" />
+    <Compile Include="Server\Views\GenericShapeView.cs" />
     <Compile Include="Server\Views\MapView.cs" />
+    <Compile Include="Server\Views\PassiveEquipmentUpgradeModelView.cs" />
+    <Compile Include="Server\Views\SpellcastBaseView.cs" />
     <Compile Include="Server\Views\SpellCastTargetInfoView.cs" />
     <Compile Include="Server\Views\SpellDescriptionView.cs" />
     <Compile Include="Server\Views\SpellTargetInfoView.cs" />
@@ -190,6 +194,9 @@
     <Compile Include="Server\Views\StateAlterationModelView.cs" />
     <Compile Include="Server\Views\StateAlterationParametersView.cs" />
     <Compile Include="Server\Views\StateAlterationView.cs" />
+    <Compile Include="Server\Views\VisionMapView.cs" />
+    <Compile Include="Server\Views\WeaponEnchantModelView.cs" />
+    <Compile Include="Server\Views\WeaponUpgradeModelView.cs" />
     <Compile Include="Server\VisionMap.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="Server\PathFinding.cs" />

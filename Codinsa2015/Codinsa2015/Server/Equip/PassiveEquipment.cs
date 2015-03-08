@@ -16,7 +16,7 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Obtient les altérations d'état appliquées passivement par cet équipement.
         /// </summary>
-        [Clank.ViewCreator.Export("List<Entities.StateAlterationModelView>", "Obtient les altérations d'état appliquées passivement par cet équipement.")]
+        [Clank.ViewCreator.Export("List<StateAlterationModelView>", "Obtient les altérations d'état appliquées passivement par cet équipement.")]
         public List<Entities.StateAlterationModel> PassiveAlterations { get; set; }
 
         /// <summary>

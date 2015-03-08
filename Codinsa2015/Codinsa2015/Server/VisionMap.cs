@@ -12,6 +12,7 @@ namespace Codinsa2015.Server
     /// - la vision simple : ne révèle que les unités qui ne sont pas actuellement en stealth
     /// - la vision pure (true vision) : révèle aussi les unités en stealth.
     /// </summary>
+    [Clank.ViewCreator.Enum("Indique l'état de la vision que chaque équipe peut avoir sur une certaine zone.")]
     public enum VisionFlags
     {
         None              = 0x0000,
@@ -46,17 +47,17 @@ namespace Codinsa2015.Server
         }
         #region Variables
         const float Sqrt2 = 1.41f;
-        
-        Map m_map;
         VisionFlags[,] m_vision;
+        Map m_map;
         #endregion
 
         #region Properties
-        /// <summary>
-        /// Obtient ou définit la map associée à cette vision map.
-        /// </summary>
-        public Map TheMap { get { return m_map; } set { m_map = value; m_vision = new VisionFlags[m_map.Size.X, m_map.Size.Y]; } }
 
+        /// <summary>
+        /// Représente la vision qu'ont les 2 équipes sur l'ensemble de la map.
+        /// </summary>
+        [Clank.ViewCreator.Export("Matrix<VisionFlags>", "Représente la vision qu'ont les 2 équipes sur l'ensemble de la map.")]
+        public VisionFlags[,] Vision { get { return m_vision; } }
         #endregion
 
         #region Methods
@@ -66,7 +67,25 @@ namespace Codinsa2015.Server
         /// <param name="map"></param>
         public VisionMap(Map map)
         {
-            TheMap = map;
+            SetMap(map);
+        }
+
+        /// <summary>
+        /// Définit la map utilisée par cette VisionMap.
+        /// </summary>
+        /// <param name="map"></param>
+        public void SetMap(Map map)
+        {
+            m_map = map;
+            SetSize(new Point(map.Passability.GetLength(0), map.Passability.GetLength(1)));
+        }
+        /// <summary>
+        /// Modifie la taille de la vision map.
+        /// </summary>
+        /// <param name="size"></param>
+        public void SetSize(Point size)
+        {
+            m_vision = new VisionFlags[size.X, size.Y];
         }
 
         /// <summary>
@@ -250,7 +269,7 @@ namespace Codinsa2015.Server
         /// <summary>
         /// Mets à jour la carte de vision.
         /// </summary>
-        public void Update(GameTime time)
+        public void Update(GameTime time, EntityCollection entities)
         {
             for (int x = 0; x < m_vision.GetLength(0); x++)
                 for (int y = 0; y < m_vision.GetLength(1); y++)
@@ -258,7 +277,7 @@ namespace Codinsa2015.Server
 
             
 
-            foreach (EntityBase entity in m_map.Entities.Values)
+            foreach (EntityBase entity in entities.Values)
             {
                 int team = (int)(entity.Type & (EntityType.Team1 | EntityType.Team2));
 

@@ -19,7 +19,7 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Obtient les altérations d'état appliquées passivement par cette arme.
         /// </summary>
-        [Clank.ViewCreator.Export("List<Entities.StateAlterationModelView>", "")]
+        [Clank.ViewCreator.Export("List<StateAlterationModelView>", "")]
         public List<Entities.StateAlterationModel> PassiveAlterations { get; set; }
 
         /// <summary>

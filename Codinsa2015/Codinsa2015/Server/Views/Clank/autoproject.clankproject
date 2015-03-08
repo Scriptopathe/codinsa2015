@@ -11,10 +11,14 @@
     <string>_WeaponUpgradeModelView.clank</string>
     <string>_WeaponEnchantModelView.clank</string>
     <string>_MapView.clank</string>
+    <string>_CircleShapeView.clank</string>
+    <string>_GenericShapeView.clank</string>
+    <string>_SpellcastBaseView.clank</string>
     <string>_SpellView.clank</string>
     <string>_SpellCastTargetInfoView.clank</string>
     <string>_SpellDescriptionView.clank</string>
     <string>_SpellTargetInfoView.clank</string>
+    <string>_VisionMapView.clank</string>
     <string>main.clank</string>
     <string>stdtypes.clank</string>
     <string>XNAMacros.clank</string>

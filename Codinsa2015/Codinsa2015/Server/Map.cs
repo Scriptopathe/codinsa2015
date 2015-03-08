@@ -29,7 +29,8 @@ namespace Codinsa2015.Server
             public int UnitSize;
         }
 
-        const int TILE_SCALE = 16;
+
+        const int TILE_SCALE = 8;
         const int BLUR_PASSES = 0;
 
         #region Variables
@@ -169,6 +170,7 @@ namespace Codinsa2015.Server
             get { return m_entities; }
             set { m_entities = value; }
         }
+
         /// <summary>
         /// Passabilité de la map pour chaque case :
         /// - true veut dire passable
@@ -178,7 +180,7 @@ namespace Codinsa2015.Server
         public bool[,] Passability
         {
             get { return m_passability; }
-            set { m_passability = value; Vision.TheMap = this; }
+            set { m_passability = value; Vision.SetSize(new Point(this.Passability.GetLength(0), this.Passability.GetLength(1))); }
         }
         /// <summary>
         /// Scrolling de la map (en px).
@@ -392,7 +394,7 @@ namespace Codinsa2015.Server
         public void Update(GameTime time)
         {
             // Mise à jour de la vision.
-            Vision.Update(time);
+            Vision.Update(time, Entities);
 
             // Mise à jour des entités
             List<int> entitiesToDelete = new List<int>();
@@ -620,7 +622,7 @@ namespace Codinsa2015.Server
             }
 
             Entities = newEntities;
-            Vision.TheMap = this;
+            Vision.SetMap(this);
             if(OnMapModified != null)
                 OnMapModified();
         }

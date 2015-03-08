@@ -10,10 +10,14 @@ main
 	#include _WeaponUpgradeModelView.clank
 	#include _WeaponEnchantModelView.clank
 	#include _MapView.clank
+	#include _CircleShapeView.clank
+	#include _GenericShapeView.clank
+	#include _SpellcastBaseView.clank
 	#include _SpellView.clank
 	#include _SpellCastTargetInfoView.clank
 	#include _SpellDescriptionView.clank
 	#include _SpellTargetInfoView.clank
+	#include _VisionMapView.clank
 	state
 	{
 		# Rajoute les statements using et le bon namespace pour la classe state.
@@ -180,6 +184,12 @@ main
 			Success = 10
 		}
 
+		public enum GenericShapeType
+		{
+			Circle = 0,
+			Rectangle = 1
+		}
+
 		public enum SpellUseResult
 		{
 			Success = 0,
@@ -195,6 +205,17 @@ main
 			Targetted = 1,
 			Position = 2,
 			Direction = 4
+		}
+
+		public enum VisionFlags
+		{
+			None = 0,
+			Team1Vision = 1,
+			Team2Vision = 2,
+			Team1TrueVision = 5,
+			Team2TrueVision = 10,
+			Team1WardSight = 17,
+			Team2WardSight = 18
 		}
 
 		public enum SceneMode

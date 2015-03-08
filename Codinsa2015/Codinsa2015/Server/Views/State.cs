@@ -98,9 +98,8 @@ namespace Codinsa2015.Views
 		Weapon = 2,
 		Amulet = 3,
 		Boots = 4,
-		Self = 5,
-		SpellActive = 6,
-		SpellPassive = 7
+		SpellActive = 5,
+		SpellPassive = 6
 	}
 	
 	public enum StateAlterationType
@@ -153,6 +152,27 @@ namespace Codinsa2015.Views
 		NotUnits = 3
 	}
 	
+	public enum ShopTransactionResult
+	{
+		ItemDoesNotExist = 0,
+		ItemIsNotAConsummable = 1,
+		NoItemToSell = 2,
+		NotEnoughMoney = 3,
+		NotInShopRange = 4,
+		UnavailableItem = 5,
+		ProvidedSlotDoesNotExist = 6,
+		NoSlotAvailableOnHero = 7,
+		EnchantForNoWeapon = 8,
+		StackOverflow = 9,
+		Success = 10
+	}
+	
+	public enum GenericShapeType
+	{
+		Circle = 0,
+		Rectangle = 1
+	}
+	
 	public enum SpellUseResult
 	{
 		Success = 0,
@@ -168,6 +188,17 @@ namespace Codinsa2015.Views
 		Targetted = 1,
 		Position = 2,
 		Direction = 4
+	}
+	
+	public enum VisionFlags
+	{
+		None = 0,
+		Team1Vision = 1,
+		Team2Vision = 2,
+		Team1TrueVision = 5,
+		Team2TrueVision = 10,
+		Team1WardSight = 17,
+		Team2WardSight = 18
 	}
 	
 	public enum SceneMode

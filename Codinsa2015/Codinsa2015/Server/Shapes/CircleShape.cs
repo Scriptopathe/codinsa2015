@@ -13,10 +13,12 @@ namespace Codinsa2015.Server.Shapes
         /// <summary>
         /// Position du centre du cercle.
         /// </summary>
+        [Clank.ViewCreator.Export("Vector2", "Position du centre du cercle.")]
         public override Vector2 Position { get; set; }
         /// <summary>
         /// Rayon du cercle.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Rayon du cercle.")]
         public float Radius { get; set; }
 
 

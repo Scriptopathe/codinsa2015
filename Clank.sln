@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codinsa2015Content", "Codin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clank.ViewCreator", "Clank.ViewCreator\Clank.ViewCreator.csproj", "{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codinsa2015.Rendering", "Codinsa2015.Display\Codinsa2015.Rendering.csproj", "{F6B99C08-D549-46D1-9B94-2F617CA602BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +143,16 @@ Global
 		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{AC6299C5-17CC-4D25-9B2B-B29EB1A896DB}.Release|x86.ActiveCfg = Release|Any CPU
+		{F6B99C08-D549-46D1-9B94-2F617CA602BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6B99C08-D549-46D1-9B94-2F617CA602BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6B99C08-D549-46D1-9B94-2F617CA602BE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F6B99C08-D549-46D1-9B94-2F617CA602BE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F6B99C08-D549-46D1-9B94-2F617CA602BE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F6B99C08-D549-46D1-9B94-2F617CA602BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6B99C08-D549-46D1-9B94-2F617CA602BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6B99C08-D549-46D1-9B94-2F617CA602BE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F6B99C08-D549-46D1-9B94-2F617CA602BE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F6B99C08-D549-46D1-9B94-2F617CA602BE}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

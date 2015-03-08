@@ -14,6 +14,7 @@ namespace Codinsa2015.Server.Spellcasts
     /// </summary>
     public class SpellcastBase : Spellcast
     {
+        #region Variables
         /// <summary>
         /// Forme du sort.
         /// </summary>
@@ -39,6 +40,16 @@ namespace Codinsa2015.Server.Spellcasts
         /// désormais ignorer.
         /// </summary>
         List<EntityBase> m_entityIgnoreList;
+        #endregion
+
+        #region Exports
+        /// <summary>
+        /// Obtient ou définit la shape utilisée par ce spell cast.
+        /// </summary>
+        [Clank.ViewCreator.Export("GenericShapeView", "Shape utilisée par ce spell cast.")]
+        public Shapes.CircleShape Shape { get { return m_shape; } set { m_shape = value; } }
+        #endregion
+
         #region Methods
         /// <summary>
         /// Crée une nouvelle instance de SpellcastFireball.
