@@ -133,21 +133,6 @@ namespace Codinsa2015.Server.Spellcasts
         }
 
         /// <summary>
-        /// Dessine ce sort à l'écran.
-        /// </summary>
-        public override void Draw(GameTime time, SpriteBatch batch)
-        {
-            Point scroll = GameServer.GetMap().Scrolling;
-            batch.Draw(Ressources.DummyTexture,
-                new Rectangle((int)(m_shape.Position.X * GameServer.GetMap().UnitSize) - scroll.X, (int)(m_shape.Position.Y * GameServer.GetMap().UnitSize) - scroll.Y, (int)(m_shape.Radius * 2 * GameServer.GetMap().UnitSize), (int)(m_shape.Radius * 2 * GameServer.GetMap().UnitSize)),
-                null, 
-                Color.Violet,
-                0.0f,
-                new Vector2(m_shape.Radius * GameServer.GetMap().UnitSize, m_shape.Radius * GameServer.GetMap().UnitSize),
-                SpriteEffects.None, 0.0f);
-        }
-
-        /// <summary>
         /// Applique les effets du sorts à l'entité touchée.
         /// </summary>
         public override void OnCollide(EntityBase entity)

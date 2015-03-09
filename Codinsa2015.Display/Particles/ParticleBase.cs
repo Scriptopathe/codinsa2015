@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Server.Particles
+namespace Codinsa2015.Rendering.Particles
 {
     /// <summary>
     /// Classe représentant une particule gérant les effets :
@@ -245,15 +245,18 @@ namespace Codinsa2015.Server.Particles
             get;
             set;
         }
+
+        public ParticleManager Manager { get; private set; }
         #endregion
 
         #region Methods
         /// <summary>
         /// Crée une nouvelle instance de ParticleText.
         /// </summary>
-        public ParticleBase()
+        public ParticleBase(ParticleManager mgr)
         {
-            GameTime time = GameServer.GetTime();
+            GameTime time = mgr.MapRdr.SceneRenderer.GetTime();
+            Manager = mgr;
             CreationTime = new GameTime(time.TotalGameTime, time.ElapsedGameTime, time.IsRunningSlowly);
             DurationSeconds = 2.0f;
             FadeBaseColor = new Color(255, 255, 255, 255);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Codinsa2015.Server.GraphicsHelpers
+namespace Codinsa2015.Rendering.GraphicsHelpers
 {
     /// <summary>
     /// Contient des informations sur le z-layer à utiliser pour différents types d'objets graphiques.

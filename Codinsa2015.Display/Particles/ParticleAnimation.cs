@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Server.Particles
+namespace Codinsa2015.Rendering.Particles
 {
     /// <summary>
     /// Classe représentant une particule gérant les effets et affichant une texture.
@@ -38,8 +38,8 @@ namespace Codinsa2015.Server.Particles
         /// <summary>
         /// Crée une nouvelle instance de ParticleText.
         /// </summary>
-        public ParticleAnimation(GameTime time, Vector2 startPos, Vector2 endPos)
-            : base()
+        public ParticleAnimation(ParticleManager mgr, GameTime time, Vector2 startPos, Vector2 endPos)
+            : base(mgr)
         {
             StartPosition = startPos;
             CurrentPosition = startPos;

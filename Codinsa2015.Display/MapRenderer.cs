@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Display
+namespace Codinsa2015.Rendering
 {
     /// <summary>
     /// Classe contenant toutes les vues nécessaires pour que le renderer puisse effectuer un
@@ -27,6 +27,10 @@ namespace Codinsa2015.Display
         #endregion
 
         #region Variables
+        /// <summary>
+        /// Rectangle sur lequel va être dessinée la map.
+        /// </summary>
+        Rectangle m_viewport;
         /// <summary>
         /// Référence vers le renderer chargé de dessiner les entités.
         /// </summary>
@@ -52,10 +56,14 @@ namespace Codinsa2015.Display
         /// <summary>
         /// Effet de flou gaussien.
         /// </summary>
-        Codinsa2015.Server.GraphicsHelpers.GaussianBlur m_blur;
+        GraphicsHelpers.GaussianBlur m_blur;
         #endregion
 
         #region properties
+        /// <summary>
+        /// Obtient une référence vers le Scene Renderer parent de ce Map Renderer.
+        /// </summary>
+        public SceneRenderer SceneRenderer { get { return m_sceneRenderer; } }
         /// <summary>
         /// Indique les équipes desquelles la vision doit être affichée.
         /// </summary>
@@ -123,11 +131,12 @@ namespace Codinsa2015.Display
             }
         }
         /// <summary>
-        /// Obtient le rectangle sur lequel va être dessiné la map.
+        /// Obtient ou définit le rectangle sur lequel va être dessiné la map.
         /// </summary>
         public Rectangle Viewport
         {
-            get { return m_sceneRenderer.Viewport; }
+            get { return m_viewport; }
+            set { m_viewport = value; }
         }
 
         public Vector2 ScrollingVector2 
@@ -151,12 +160,26 @@ namespace Codinsa2015.Display
 
         #region Setup
         /// <summary>
+        /// Charge les ressources nécessaires pour ce map renderer.
+        /// </summary>
+        public void LoadContent()
+        {
+            m_blur = new GraphicsHelpers.GaussianBlur(Ressources.Content);
+            m_blur.ComputeKernel(1, 1);
+        }
+
+        /// <summary>
         /// Crée les render targets.
         /// </summary>
         void SetupRenderTargets()
         {
             if (m_entitiesRenderTarget != null)
             {
+                // Si on a pas besoin de recreer le render target => on return.
+                if (m_entitiesRenderTarget.Width == Viewport.Width && m_entitiesRenderTarget.Height == Viewport.Height)
+                    return;
+
+                // Sinon on supprime tout
                 m_entitiesRenderTarget.Dispose();
                 m_tilesRenderTarget.Dispose();
             }
@@ -188,8 +211,11 @@ namespace Codinsa2015.Display
         Vector2 __oldScroll;
         float __oldUnitSize;
         float __xShaderTime;
-        public void Draw(GameTime time, SpriteBatch batch, RenderTarget2D output)
+        public void Draw(SpriteBatch batch, GameTime time, RenderTarget2D output)
         {
+            // Effectue une setup des render target
+            SetupRenderTargets();
+
             batch.GraphicsDevice.SetRenderTarget(m_tilesRenderTarget);
             // batch.GraphicsDevice.Clear(Color.Transparent);
             batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
@@ -225,7 +251,7 @@ namespace Codinsa2015.Display
                 case DataMode.Direct:
                     foreach (var kvp in Map.Entities) 
                     {
-                        m_entityRenderer.Draw(time, batch, kvp.Value.Position, (Views.EntityType)kvp.Value.Type);
+                        m_entityRenderer.Draw(batch, time, kvp.Value.Position, (Views.EntityType)kvp.Value.Type);
                     }
                     foreach (var cast in Map.Spellcasts) 
                     {
@@ -250,7 +276,7 @@ namespace Codinsa2015.Display
                 case DataMode.Remote:
                     foreach(var entity in MapView.Entities)
                     {
-                        m_entityRenderer.Draw(time, batch, entity.Position, entity.Type);
+                        m_entityRenderer.Draw(batch, time, entity.Position, entity.Type);
                     }
                     foreach(var cast in MapView.SpellCasts)
                     {
@@ -280,12 +306,12 @@ namespace Codinsa2015.Display
 
             // Dessine les tiles avec le shader
             batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, Ressources.MapEffect);
-            batch.Draw(m_tilesRenderTarget, Viewport, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Codinsa2015.Server.GraphicsHelpers.Z.Map);
+            batch.Draw(m_tilesRenderTarget, Viewport, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.Map);
             batch.End();
 
             // Dessine les entités.
             batch.Begin();
-            batch.Draw(m_entitiesRenderTarget, Viewport, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Codinsa2015.Server.GraphicsHelpers.Z.Entities);
+            batch.Draw(m_entitiesRenderTarget, Viewport, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.Entities);
             batch.End();
 
 
@@ -294,6 +320,30 @@ namespace Codinsa2015.Display
             __oldUnitSize = UnitSize;
         }
 
+        #endregion
+
+        #region Utils
+        /// <summary>
+        /// Obtient la position dans l'espace de l'écran à partir d'une position
+        /// en unités métriques. 
+        /// (prends en compte viewport, scrolling, scaling).
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 ToScreenSpace(Vector2 mapPos)
+        {
+            return mapPos * UnitSize - ScrollingVector2 + new Vector2(Viewport.X, Viewport.Y);
+        }
+
+        /// <summary>
+        /// Obtient la position dans l'espace de la map (unités métriques) à
+        /// partir d'une position à l'écran.
+        /// </summary>
+        /// <param name="screenSpacePos"></param>
+        /// <returns></returns>
+        public Vector2 ToMapSpace(Vector2 screenSpacePos)
+        {
+            return (screenSpacePos + ScrollingVector2 - new Vector2(Viewport.X, Viewport.Y)) / UnitSize;
+        }
         #endregion
     }
 }

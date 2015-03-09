@@ -59,7 +59,6 @@ namespace Codinsa2015.Server.Controlers
         public IAControler(EntityHero hero) : base(hero)
         {
             m_hero = hero;
-            Particles = new Particles.ParticleManager();
             EnhancedGuiManager = new EnhancedGui.GuiManager();
         }
 

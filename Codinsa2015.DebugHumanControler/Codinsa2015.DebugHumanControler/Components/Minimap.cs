@@ -5,8 +5,8 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Server.Entities;
-
-namespace Codinsa2015.Server.Controlers.Components
+using Codinsa2015.Rendering;
+namespace Codinsa2015.DebugHumanControler.Components
 {
     /// <summary>
     /// Représente un composant capable d'afficher la minimap.
@@ -17,7 +17,7 @@ namespace Codinsa2015.Server.Controlers.Components
         bool m_isDirty;
         SpriteBatch m_minimapBatch;
         RenderTarget2D m_minimapTexture;
-        Map m_map;
+        MapRenderer m_map;
         #endregion 
 
         #region Properties
@@ -57,28 +57,29 @@ namespace Codinsa2015.Server.Controlers.Components
             set;
         }
 
+
         /// <summary>
         /// Obtient ou définit la map affichée.
         /// </summary>
-        public Map CurrentMap
+        public Codinsa2015.Server.Map CurrentMap
         {
             get
             {
-                return m_map;
+                return m_map.Map;
             }
             set
             {
-                if (m_map == value)
+                if (m_map.Map == value && m_minimapTexture != null)
                     return;
 
-                m_map = value;
+                m_map.Map = value;
 
                 if (m_minimapTexture != null)
                     m_minimapTexture.Dispose();
 
                 m_minimapTexture = new RenderTarget2D(Ressources.Device, value.Size.X, value.Size.Y, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
 
-                m_map.OnMapModified += m_map_OnMapModified;
+                m_map.Map.OnMapModified += m_map_OnMapModified;
             }
         }
         #endregion
@@ -86,8 +87,9 @@ namespace Codinsa2015.Server.Controlers.Components
         /// <summary>
         /// Crée une nouvelle instance de la minimap.
         /// </summary>
-        public Minimap()
+        public Minimap(MapRenderer maprdr)
         {
+            m_map = maprdr;
             m_isDirty = true;
         }
         
@@ -105,7 +107,7 @@ namespace Codinsa2015.Server.Controlers.Components
         /// <param name="batch"></param>
         public void Draw(SpriteBatch batch)
         {
-
+            RenderTarget2D mainRenderTarget = m_map.SceneRenderer.MainRenderTarget;
             Rectangle rect = new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
             int w = CurrentMap.Passability.GetLength(0);
             int h = CurrentMap.Passability.GetLength(1);
@@ -144,7 +146,7 @@ namespace Codinsa2015.Server.Controlers.Components
                     }
                 }
                 m_minimapBatch.End();
-                m_minimapBatch.GraphicsDevice.SetRenderTarget(GameServer.GetScene().MainRenderTarget);
+                m_minimapBatch.GraphicsDevice.SetRenderTarget(mainRenderTarget);
                 // Supprime le dirty bit.
                 m_isDirty = false;
             }
@@ -158,7 +160,7 @@ namespace Codinsa2015.Server.Controlers.Components
             {
                 for (int y = 0; y < h; y++)
                 {
-                    if (m_map.Vision.HasVision(EntityType.Team1, new Vector2(x, y)))
+                    if (m_map.Map.Vision.HasVision(EntityType.Team1, new Vector2(x, y)))
                     {
                         Color col = new Color(255, 255, 255, 255);
                         batch.Draw(Ressources.DummyTexture,
@@ -169,7 +171,7 @@ namespace Codinsa2015.Server.Controlers.Components
                             col,
                             0.0f,
                             Vector2.Zero, SpriteEffects.None,
-                            Z + GraphicsHelpers.Z.FrontStep);
+                            Z + Rendering.GraphicsHelpers.Z.FrontStep);
                     }
 
                 }
@@ -179,15 +181,16 @@ namespace Codinsa2015.Server.Controlers.Components
                 return;
 
             // Dessine le rectangle indiquant quelle partie de la map est actuellement affichée à l'écran.
+            Vector2 scrolling = m_map.ScrollingVector2;
             batch.Draw(Ressources.DummyTexture,
-                new Rectangle((int)(rect.X + (CurrentMap.ScrollingVector2.X / GameServer.GetMap().UnitSize / (float)w) * rect.Width),
-                              (int)(rect.Y + (CurrentMap.ScrollingVector2.Y / GameServer.GetMap().UnitSize / (float)h) * rect.Height),
-                              (int)((CurrentMap.Viewport.Width / (float)(w * GameServer.GetMap().UnitSize)) * rect.Width),
-                              (int)((CurrentMap.Viewport.Height / (float)(h * GameServer.GetMap().UnitSize)) * rect.Height)), null,
+                new Rectangle((int)(rect.X + (m_map.ScrollingVector2.X / m_map.UnitSize / (float)w) * rect.Width),
+                              (int)(rect.Y + (m_map.ScrollingVector2.Y / m_map.UnitSize / (float)h) * rect.Height),
+                              (int)((m_map.Viewport.Width / (float)(w * m_map.UnitSize)) * rect.Width),
+                              (int)((m_map.Viewport.Height / (float)(h * m_map.UnitSize)) * rect.Height)), null,
                               new Color(255, 255, 255, 60),
                               0.0f,
                               Vector2.Zero, SpriteEffects.None,
-                              Z + GraphicsHelpers.Z.FrontStep * 2);
+                              Z + Rendering.GraphicsHelpers.Z.FrontStep * 2);
         }
 
         /// <summary>

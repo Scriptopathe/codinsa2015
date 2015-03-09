@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Microsoft.Xna.Framework;
 namespace Codinsa2015
 {
 #if WINDOWS || XBOX
@@ -26,14 +26,19 @@ namespace Codinsa2015
                 }
             }
 
-            using (GameClient game = new GameClient())
+            Server.GameServer serv = new Server.GameServer();
+            serv.Initialize();
+            int gameTime = 0;
+            int oldGameTime = 0;
+            while(true)
             {
-                game.Run();
+                GameTime time = new GameTime(
+                    new TimeSpan(0, 0, 0, 0, gameTime), 
+                    new TimeSpan(0, 0, 0, 0, gameTime - oldGameTime));
+                serv.Update(time);
+                oldGameTime = gameTime;
+                gameTime += 1000/60;
             }
-
-            // todo :
-            // - dash : projection en arriere etc... (direction -> mais blocage)
-            // - aggro des creeps
         }
     }
 #endif

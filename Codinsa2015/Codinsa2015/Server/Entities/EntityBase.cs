@@ -1154,57 +1154,9 @@ namespace Codinsa2015.Server.Entities
             return dstSquare <= dst * dst;
         }
         #endregion
-        /// <summary>
-        /// Dessine l'entitié.
-        /// </summary>
-        public void Draw(GameTime time, SpriteBatch batch)
-        {
-            Point scroll = GameServer.GetMap().Scrolling;
-            Point drawPos = new Point((int)(m_position.X * GameServer.GetMap().UnitSize) - scroll.X, (int)(m_position.Y * GameServer.GetMap().UnitSize) - scroll.Y);
-
-            if (drawPos.X > GameServer.GetMap().Viewport.Right || drawPos.Y > GameServer.GetMap().Viewport.Bottom 
-                || drawPos.X < GameServer.GetMap().Viewport.Left - GameServer.GetMap().UnitSize || drawPos.Y < GameServer.GetMap().Viewport.Top - GameServer.GetMap().UnitSize)
-                return;
-
-
-            Draw(time, batch, drawPos);
-        }
+       
 
         protected float __angle;
-        /// <summary>
-        /// Dessine l'entité à la position donnée.
-        /// 
-        /// Cette méthode doit être réécrite pour chaque type d'entité.
-        /// </summary>
-        /// <param name="time">Temps de jeu.</param>
-        /// <param name="batch">Batch sur lequel dessiner.</param>
-        /// <param name="position">Position à laquelle dessiner l'unité.</param>
-        public virtual void Draw(GameTime time, SpriteBatch batch, Point position)
-        {
-            Color col;
-            if (Type.HasFlag(EntityType.Team1))
-                col = Color.Blue;
-            else if (Type.HasFlag(EntityType.Team2))
-                col = Color.Red;
-            else
-                col = Color.White;
-
-            Texture2D tex = Ressources.DummyTexture;
-            if (Type.HasFlag(EntityType.Tower))
-                tex = Ressources.SelectMark;
-            else if (Type.HasFlag(EntityType.Spawner))
-                tex = Ressources.TextBox;
-            else if (Type.HasFlag(EntityType.WardPlacement))
-                tex = Ressources.SelectMark;
-
-            int s = GameServer.GetMap().UnitSize / 2;
-            if (Type.HasFlag(EntityType.Checkpoint))
-                s /= 4;
-
-            col.A = (byte)((GameServer.GetMap().Vision.HasVision((Type & EntityType.Teams) ^ EntityType.Teams, Position)) ? 255 : 100);
-            batch.Draw(tex, 
-                new Rectangle(position.X, position.Y, s, s), null, col, __angle, new Vector2(s, s), SpriteEffects.None, 0.0f);
-        }
 
         /// <summary>
         /// Supprime cette entité de la map.

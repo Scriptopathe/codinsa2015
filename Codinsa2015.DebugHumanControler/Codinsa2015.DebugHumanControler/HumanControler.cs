@@ -8,16 +8,22 @@ using Codinsa2015.Server.Spellcasts;
 using Codinsa2015.Server.Spells;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Server.Controlers
+using Codinsa2015.Rendering;
+using ZLayer = Codinsa2015.Rendering.GraphicsHelpers.Z;
+namespace Codinsa2015.DebugHumanControler
 {
     /// <summary>
     /// Classe abstraite de contrôleur.
     /// 
     /// Un contrôleur permet de contrôler un seul héros.
     /// </summary>
-    public class HumanControler : ControlerBase
+    public class HumanControler : Codinsa2015.Server.Controlers.ControlerBase
     {
         #region Variables
+        /// <summary>
+        /// Obtient le client associé à ce contrôleur.
+        /// </summary>
+        GameClient m_client;
         /// <summary>
         /// Héros contrôlé par cette instance de contrôleur.
         /// </summary>
@@ -46,28 +52,20 @@ namespace Codinsa2015.Server.Controlers
             set { m_hero = value; }
         }
 
-        /// <summary>
-        /// Obtient le point de vue de ce contrôleur sur la map.
-        /// </summary>
-        public Map.PointOfView Pov
-        {
-            get;
-            set;
-        }
 
 
         /// <summary>
         /// Obtient une référence vers la map contrôlée.
         /// </summary>
-        public Map Map
+        public MapRenderer MapRdr
         {
-            get { return GameServer.GetScene().Map; }
+            get { return m_client.Renderer.MapRdr; }
         }
 
         /// <summary>
         /// Représente le contrôleur d'édition de la map.
         /// </summary>
-        Editor.MapEditorControler MapEditControler
+        MapEditorControler MapEditControler
         {
             get;
             set;
@@ -90,14 +88,13 @@ namespace Codinsa2015.Server.Controlers
         /// Crée un nouveau contrôleur ayant le contrôle sur le héros donné.
         /// </summary>
         /// <param name="hero"></param>
-        public HumanControler(EntityHero hero) : base(hero)
+        public HumanControler(GameClient client, EntityHero hero) : base(hero)
         {
+            m_client = client;
             EditMode = false;
             m_hero = hero;
-            Pov = new Server.Map.PointOfView() { Teams = hero.Type, UnitSize = 32 };
-            Particles = new Server.Particles.ParticleManager();
             EnhancedGuiManager = new EnhancedGui.GuiManager();
-            MapEditControler = new Editor.MapEditorControler(this);
+            MapEditControler = new MapEditorControler(this);
         }
 
         /// <summary>
@@ -112,7 +109,6 @@ namespace Codinsa2015.Server.Controlers
             GameWindow.IsMoveable = false;
 
             MapEditControler.LoadContent();
-            MapEditControler.CurrentMap = GameServer.GetScene().Map;
             MapEditControler.OnMapLoaded += GameServer.GetScene().Map.Load;
         }
         #endregion
@@ -129,7 +125,7 @@ namespace Codinsa2015.Server.Controlers
             if(GameServer.GetScene().Mode == SceneMode.Game)
             {
                 GameWindow.IsVisible = true;
-                GameWindow.Area = Map.Viewport;
+                GameWindow.Area = MapRdr.Viewport;
 
                 // Passage du mode d'édition au mode normal.
                 if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.LeftControl) && !Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.RightAlt))
@@ -145,14 +141,12 @@ namespace Codinsa2015.Server.Controlers
                     UpdateMouseScrolling();
 
                 // Change le point de vue de la map.
-                Map.Pov = Pov;
+                MapRdr.Scrolling = new Point(0, 0);
 
                 // Mise à jour du contrôleur de la map.
                 MapEditControler.IsEnabled = EditMode;
                 MapEditControler.Update(time);
 
-                // Particules / etc
-                Particles.Update(time);
 
                 // Gui manager
                 EnhancedGuiManager.Update(time);
@@ -196,13 +190,13 @@ namespace Codinsa2015.Server.Controlers
             
             // Fait bouger l'écran quand on est au bord.
             if (position.X <= 10)
-                MapEditControler.CurrentMap.ScrollingVector2 = new Vector2(MapEditControler.CurrentMap.ScrollingVector2.X - ScrollSpeed, MapEditControler.CurrentMap.ScrollingVector2.Y);
+                MapRdr.ScrollingVector2 = new Vector2(MapRdr.ScrollingVector2.X - ScrollSpeed, MapRdr.ScrollingVector2.Y);
             else if (position.X >= GameServer.GetScreenSize().X - 10)
-                MapEditControler.CurrentMap.ScrollingVector2 = new Vector2(MapEditControler.CurrentMap.ScrollingVector2.X + ScrollSpeed, MapEditControler.CurrentMap.ScrollingVector2.Y);
+                MapRdr.ScrollingVector2 = new Vector2(MapRdr.ScrollingVector2.X + ScrollSpeed, MapRdr.ScrollingVector2.Y);
             if (position.Y <= 10)
-                MapEditControler.CurrentMap.ScrollingVector2 = new Vector2(MapEditControler.CurrentMap.ScrollingVector2.X, MapEditControler.CurrentMap.ScrollingVector2.Y - ScrollSpeed);
+                MapRdr.ScrollingVector2 = new Vector2(MapRdr.ScrollingVector2.X, MapRdr.ScrollingVector2.Y - ScrollSpeed);
             else if (position.Y >= GameServer.GetScreenSize().Y - 10)
-                MapEditControler.CurrentMap.ScrollingVector2 = new Vector2(MapEditControler.CurrentMap.ScrollingVector2.X, MapEditControler.CurrentMap.ScrollingVector2.Y + ScrollSpeed);
+                MapRdr.ScrollingVector2 = new Vector2(MapRdr.ScrollingVector2.X, MapRdr.ScrollingVector2.Y + ScrollSpeed);
         }
 
         /// <summary>
@@ -238,7 +232,7 @@ namespace Codinsa2015.Server.Controlers
         {
             // Mouvement du héros.
             var ms = Input.GetMouseState();
-            Vector2 pos = GameServer.GetMap().ToMapSpace(new Vector2(ms.X, ms.Y));
+            Vector2 pos = MapRdr.ToMapSpace(new Vector2(ms.X, ms.Y));
             if (Input.IsRightClickPressed() && GameServer.GetMap().GetPassabilityAt(pos))
             {
 
@@ -296,7 +290,7 @@ namespace Codinsa2015.Server.Controlers
                 spellUsed = 3;
 
             var ms = Input.GetMouseState();
-            Vector2 pos = GameServer.GetMap().ToMapSpace(new Vector2(ms.X, ms.Y));
+            Vector2 pos = MapRdr.ToMapSpace(new Vector2(ms.X, ms.Y));
 
             // Utilise le sort correspondant.
             if(spellUsed != -1 && m_hero.Spells.Count > spellUsed)
@@ -360,7 +354,7 @@ namespace Codinsa2015.Server.Controlers
                 // Dessine l'icone du sort
                 Color col = isOnCooldown ? Color.Gray : Color.White;
                 batch.Draw(Ressources.GetSpellTexture(m_hero.Spells[i].Name),
-                           new Rectangle(x, y, spellIconSize, spellIconSize), null, col, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.HeroControler);
+                           new Rectangle(x, y, spellIconSize, spellIconSize), null, col, 0.0f, Vector2.Zero, SpriteEffects.None, ZLayer.HeroControler);
 
                 // Dessine le cooldown du sort.
                 if (isOnCooldown)
@@ -376,7 +370,7 @@ namespace Codinsa2015.Server.Controlers
                     int offsetX = (spellIconSize - (int)stringW.X) / 2;
                     int offsetY = (spellIconSize - (int)stringW.Y) / 2;
 
-                    batch.DrawString(Ressources.Font, cooldown, new Vector2(x + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GraphicsHelpers.Z.HeroControler + GraphicsHelpers.Z.FrontStep);
+                    batch.DrawString(Ressources.Font, cooldown, new Vector2(x + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, ZLayer.HeroControler + ZLayer.FrontStep);
                 }
 
             }
@@ -399,7 +393,7 @@ namespace Codinsa2015.Server.Controlers
 
                 // Dessine le slot du consommable.
                 batch.Draw(Ressources.GetSpellTexture(m_hero.Consummables[i].Model.Name),
-                    new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.HeroControler);
+                    new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, ZLayer.HeroControler);
 
                 xBase += size + padding;
             }
@@ -424,13 +418,13 @@ namespace Codinsa2015.Server.Controlers
 
                 // Dessine le slot du consommable.
                 batch.Draw(Ressources.GetSpellTexture(m_hero.Consummables[i].Model.ConsummableType.ToString()),
-                    new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.HeroControler);
+                    new Rectangle(xBase, y, size, size), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, ZLayer.HeroControler);
 
                 // Affiche le nombre de consommables.
                 if(m_hero.Consummables[i].Count >= 1)
                 {
                     batch.DrawString(Ressources.Font, "x" + m_hero.Consummables[i].Count, new Vector2(xBase + size - 12, y + size - 12),
-                        Color.Black, 0.0f, Vector2.Zero, 0.5f, SpriteEffects.None, GraphicsHelpers.Z.HeroControler + GraphicsHelpers.Z.FrontStep);
+                        Color.Black, 0.0f, Vector2.Zero, 0.5f, SpriteEffects.None, ZLayer.HeroControler + ZLayer.FrontStep);
                 }
 
                 // Dessine le cooldown.
@@ -447,7 +441,7 @@ namespace Codinsa2015.Server.Controlers
                     int offsetX = (size - (int)stringW.X) / 2;
                     int offsetY = (size - (int)stringW.Y) / 2;
 
-                    batch.DrawString(Ressources.Font, cooldown, new Vector2(xBase + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GraphicsHelpers.Z.HeroControler + GraphicsHelpers.Z.FrontStep);
+                    batch.DrawString(Ressources.Font, cooldown, new Vector2(xBase + offsetX, y + offsetY), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, ZLayer.HeroControler + ZLayer.FrontStep);
                 }
 
 
@@ -466,20 +460,13 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         public override void Draw(SpriteBatch batch, GameTime time)
         {
+            RenderTarget2D mainRenderTarget = MapRdr.SceneRenderer.MainRenderTarget;
             if(GameServer.GetScene().Mode == SceneMode.Game)
             {
-                // Change le point de vue de la map.
-                Map.Pov = Pov;
-
-                // Dessine la map sur le main render target.
-                MapEditControler.CurrentMap.Draw(time, batch);
-
-
                 // Dessine les GUI, particules etc...
-                batch.GraphicsDevice.SetRenderTarget(GameServer.GetScene().MainRenderTarget);
+                batch.GraphicsDevice.SetRenderTarget(mainRenderTarget);
                 batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
                 EnhancedGuiManager.Draw(batch);
-                Particles.Draw(batch, new Vector2(Map.Viewport.X, Map.Viewport.Y), Map.ScrollingVector2);
                 DrawControlerGUI(batch, time);
                 batch.End();
 
@@ -487,7 +474,7 @@ namespace Codinsa2015.Server.Controlers
                 // Dessine le render target principal sur le back buffer.
                 batch.GraphicsDevice.SetRenderTarget(null);
                 batch.Begin();
-                batch.Draw(GameServer.GetScene().MainRenderTarget, Vector2.Zero, Color.White);
+                batch.Draw(mainRenderTarget, Vector2.Zero, Color.White);
                 batch.End();
             }
             else
@@ -495,7 +482,7 @@ namespace Codinsa2015.Server.Controlers
                 // PICKS
                 var ms = Input.GetMouseState();
                 batch.Begin();
-                batch.Draw(Ressources.Cursor, new Rectangle((int)ms.X, (int)ms.Y, 32, 32), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.Front);
+                batch.Draw(Ressources.Cursor, new Rectangle((int)ms.X, (int)ms.Y, 32, 32), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, ZLayer.Front);
                 batch.End();
             }
 

@@ -39,11 +39,6 @@ namespace Codinsa2015.Server.Spellcasts
         /// Mets à jour ce sort.
         /// </summary>
         public abstract void Update(GameTime time);
-
-        /// <summary>
-        /// Dessine ce sort à l'écran.
-        /// </summary>
-        public abstract void Draw(GameTime time, SpriteBatch batch);
         
         /// <summary>
         /// Applique les effets du sorts à l'entité touchée.

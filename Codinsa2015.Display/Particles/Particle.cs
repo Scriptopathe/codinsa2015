@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Server.Particles
+namespace Codinsa2015.Rendering.Particles
 {
     /// <summary>
     /// Classe abstraite de base représentant une particule.

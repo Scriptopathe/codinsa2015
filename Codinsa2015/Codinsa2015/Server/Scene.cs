@@ -6,8 +6,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.Server;
 using Codinsa2015.Server.Entities;
-using Codinsa2015.Server.Editor;
-using Codinsa2015.Server.Particles;
 namespace Codinsa2015.Server
 {
     /// <summary>
@@ -28,7 +26,9 @@ namespace Codinsa2015.Server
         public const bool SKIP_PICKS = true;
         public const bool LOAD_DB_FILE = false;
         #region Variables
-
+        #region Error handling
+        bool __initDone = false;
+        #endregion
         /// <summary>
         /// Queue de commandes reçues.
         /// </summary>
@@ -87,11 +87,6 @@ namespace Codinsa2015.Server
         public PonyCarpetExtractor.Interpreter GameInterpreter { get; set; }
 
         /// <summary>
-        /// Render target principal.
-        /// </summary>
-        public RenderTarget2D MainRenderTarget { get; set; }
-
-        /// <summary>
         /// Obtient une référence vers le contrôleur entrain d'effectuer des opérations.
         /// </summary>
         public Server.Controlers.ControlerBase CurrentControler { get; set; }
@@ -126,6 +121,16 @@ namespace Codinsa2015.Server
             m_commands = new Queue<Tuple<int, string>>();
             m_clientIdToControlerId = new Dictionary<int, int>();
 
+            // Charge les constantes du jeu.
+            LoadConstants();
+            LoadDB();
+
+            // State
+            State = new Views.State();
+
+            // Controleurs.
+            Controlers = new Dictionary<int, Server.Controlers.ControlerBase>();
+
             if (!SKIP_PICKS)
             {
                 LobbyControler = new Server.Controlers.LobbyControler(this);
@@ -147,11 +152,6 @@ namespace Codinsa2015.Server
             CommandServer.ClientConnected += CommandServer_ClientConnected;
             CommandServer.CommandReceived += CommandServer_CommandReceived;
 
-            // State
-            State = new Views.State();
-
-            // Controleurs.
-            Controlers = new Dictionary<int, Server.Controlers.ControlerBase>();
 
             if (SKIP_PICKS)
             {
@@ -170,10 +170,10 @@ namespace Codinsa2015.Server
         void InitializeLobby()
         {
             // Charge le contrôleur humain.
-            Entities.EntityHero hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
+            /*Entities.EntityHero hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
             Server.Controlers.HumanControler humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Test" };
             m_clientIdToControlerId.Add(hero.ID, 0);
-            Controlers.Add(0, humanControler);
+            Controlers.Add(0, humanControler);*/
 
             /*hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
             humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Joueur intégré" };
@@ -196,32 +196,29 @@ namespace Codinsa2015.Server
             Controlers.Add(5, humanControler);*/
 
             // Démarre l'attente de connexions.
-            CommandServer.WaitForConnectionsAsync(GameClient.__DEBUG_PORT, "127.0.0.1");
+            CommandServer.WaitForConnectionsAsync(GameServer.__DEBUG_PORT, "127.0.0.1");
         }
+
 
         /// <summary>
         /// Initialise le mode de jeu de la scène.
         /// </summary>
         void InitializeGameMode()
         {
-            // Charge les constantes du jeu.
-            LoadConstants();
-            LoadDB();
-
             if(SKIP_PICKS)
             {
                 // Charge le contrôleur humain.
-                Entities.EntityHero hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
+                /*Entities.EntityHero hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
                 Server.Controlers.HumanControler humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Test" };
                 m_clientIdToControlerId.Add(hero.ID, 0);
-                Controlers.Add(0, humanControler);
+                Controlers.Add(0, humanControler);*/
             }
             // Initialise l'interpréteur de commandes.
             InitializeInterpreter();
 
             // Création de la map.
             Map = new Map();
-
+            Map.Initialize();
             // Création de l'event scheduler.
             EventSheduler = new Scheduler();
 
@@ -229,29 +226,24 @@ namespace Codinsa2015.Server
             // Charge les variables dans l'interpréteur.
             GameInterpreter.MainContext.LocalVariables.Add("map", new PonyCarpetExtractor.ExpressionTree.Mutable(GameServer.GetMap()));
             GameInterpreter.MainContext.LocalVariables.Add("scene", new PonyCarpetExtractor.ExpressionTree.Mutable(GameServer.GetScene()));
-            GameInterpreter.MainContext.LocalVariables.Add("ctrl", new PonyCarpetExtractor.ExpressionTree.Mutable(Controlers[0]));
+            // GameInterpreter.MainContext.LocalVariables.Add("ctrl", new PonyCarpetExtractor.ExpressionTree.Mutable(Controlers[0]));
             GameInterpreter.Eval("print = function(arg) { Interpreter.Puts(arg); };");
-
-            if(!SKIP_PICKS)
-            {
-                // Chargement du content du jeu.
-                LoadGameContent();
-            }
 
 
             // Chargement des héros à partir des contrôleurs loggués.
             LoadPlayers();
-
+            __initDone = true;
             // Création du système de récompenses.
             RewardSystem = new RewardSystem(Map.Heroes);
 
             // Démarre le serveur de commandes.
             CommandServer.Start();
 
+            
             // DEBUG
-            Map.Heroes[0].Weapon = new Equip.Weapon(Map.Heroes[0], GameServer.GetScene().ShopDB.Weapons.First());
+            /*Map.Heroes[0].Weapon = new Equip.Weapon(Map.Heroes[0], GameServer.GetScene().ShopDB.Weapons.First());
             Map.Heroes[0].Armor = new Equip.Armor(Map.Heroes[0], GameServer.GetScene().ShopDB.Armors.First());
-            Map.Heroes[0].Boots = new Equip.Boots(Map.Heroes[0], GameServer.GetScene().ShopDB.Boots.First());
+            Map.Heroes[0].Boots = new Equip.Boots(Map.Heroes[0], GameServer.GetScene().ShopDB.Boots.First());*/
         }
 
         /// <summary>
@@ -259,26 +251,18 @@ namespace Codinsa2015.Server
         /// </summary>
         void LoadPlayers()
         {
+            Map.Heroes.Clear();
             foreach(var kvp in Controlers)
             {
                 var ctrl = kvp.Value;
+
                 Map.Heroes.Add(ctrl.Hero);
+
+                if (Map.Entities.ContainsKey(ctrl.Hero.ID))
+                    Map.Entities.Remove(ctrl.Hero.ID);
+
                 Map.Entities.Add(ctrl.Hero.ID, ctrl.Hero);
             }
-        }
-        /// <summary>
-        /// Charge les ressources graphiques du jeu.
-        /// </summary>
-        void LoadGameContent()
-        {
-            // Charge le content des contrôleurs.
-            lock (ControlerLock)
-                foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.LoadContent(); }
-
-            // Charge le ressources de la map.
-            Map.LoadContent();
-            MainRenderTarget = new RenderTarget2D(GameServer.Instance.GraphicsDevice, (int)GameServer.GetScreenSize().X, (int)GameServer.GetScreenSize().Y, false,
-                SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
         }
 
         /// <summary>
@@ -368,19 +352,6 @@ namespace Codinsa2015.Server
         }
 
 
-        /// <summary>
-        /// Charge le contenu de la scène.
-        /// </summary>
-        public void LoadContent()
-        {
-            if(SKIP_PICKS)
-            {
-                // Chargement du content du jeu.
-                LoadGameContent();
-            }
-
-        }
-
         #region Lobby
         /// <summary>
         /// Mets à jour la scène en mode "Lobby".
@@ -413,16 +384,28 @@ namespace Codinsa2015.Server
         {
             // Crée le héros lié à ce client.
             EntityHero hero = new EntityHero() { Type = EntityType.Team2Player, HP = 5000, Position = new Vector2(15, 15) };
+            AddHero(clientId, hero, new Controlers.IAControler(hero) { HeroName = name } );
+        }
 
+        /// <summary>
+        /// Ajoute un héro à la scène.
+        /// /!\ Cet appel doit survenir avant l'appel à initialize.
+        /// </summary>
+        /// <param name="hero"></param>
+        public void AddHero(int clientId, Entities.EntityHero hero, Controlers.ControlerBase controler)
+        {
+            if (__initDone)
+                throw new Exceptions.IdiotProgrammerException("L'appel à AddHero est impossible quand la phase de jeu a été initialisée");
+            
             // Génère un id de contrôleur.
             int controlerId = hero.ID;
-            
+
             // Mappe l'id du client à l'id du contrôleur.
             m_clientIdToControlerId[clientId] = controlerId;
-            
+
             // Enregistre le contrôleur.
             lock (ControlerLock)
-                Controlers.Add(controlerId, new Controlers.IAControler(hero) { HeroName = name });
+                Controlers.Add(controlerId, controler);
         }
         #endregion
 

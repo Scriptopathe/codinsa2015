@@ -62,6 +62,10 @@
       <Project>{ec96e98d-1bcb-43f7-8a7e-2beac9be1f47}</Project>
       <Name>Codinsa2015.Ressources</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PonyCarpetExtractor\PonyCarpetExtractor.csproj">
+      <Project>{f0ce7cad-de71-4eed-9490-aeeb7c1bafe1}</Project>
+      <Name>PonyCarpetExtractor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

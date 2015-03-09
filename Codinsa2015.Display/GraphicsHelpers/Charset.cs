@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Server.GraphicsHelpers
+namespace Codinsa2015.Rendering.GraphicsHelpers
 {
     /// <summary>
     /// Représente une ressource graphique permettant d'obtenir des frames d'animation de personnage

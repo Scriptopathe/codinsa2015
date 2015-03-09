@@ -16,28 +16,8 @@ namespace Codinsa2015.Server
     /// </summary>
     public class Map
     {
-        /// <summary>
-        /// Représente une façon de voir la map.
-        /// </summary>
-        public class PointOfView
-        {
-            /// <summary>
-            /// Obtient ou définit la / les teams pour lesquelles la vision sera affichée.
-            /// </summary>
-            public EntityType Teams;
-            public Point Scrolling;
-            public int UnitSize;
-        }
-
-
-        const int TILE_SCALE = 8;
-        const int BLUR_PASSES = 0;
 
         #region Variables
-        /// <summary>
-        /// Représente les paramètres de point de vue de la map.
-        /// </summary>
-        PointOfView m_pointOfView;
         /// <summary>
         /// Passabilité de la map pour chaque case :
         /// - true veut dire passable
@@ -65,20 +45,6 @@ namespace Codinsa2015.Server
         /// </summary>
         EntityCollection m_entitiesAddList;
 
-        /// <summary>
-        /// Render Target des tiles
-        /// </summary>
-        RenderTarget2D m_tilesRenderTarget;
-        /// <summary>
-        /// Render target des entities.
-        /// </summary>
-        RenderTarget2D m_entitiesRenderTarget;
-        RenderTarget2D m_tmpRenderTarget;
-        RenderTarget2D m_tmpRenderTarget2;
-        /// <summary>
-        /// Effet de flou gaussien.
-        /// </summary>
-        GraphicsHelpers.GaussianBlur m_blur;
         #endregion
 
         #region Events
@@ -96,27 +62,6 @@ namespace Codinsa2015.Server
 
         #region Properties
         /// <summary>
-        /// Obtient ou définit le point de vue en cours de la map.
-        /// </summary>
-        public PointOfView Pov
-        {
-            get { return m_pointOfView; }
-            set
-            {
-                m_pointOfView = value;
-                Scrolling = m_pointOfView.Scrolling; // auto adjust scrolling
-                SetupTileRenderTarget();
-            }
-        }
-        /// <summary>
-        /// Taille d'une unité métrique en pixels.
-        /// </summary>
-        public int UnitSize
-        {
-            get { return m_pointOfView.UnitSize; }
-            set { m_pointOfView.UnitSize = value; SetupTileRenderTarget(); }
-        }
-        /// <summary>
         /// Retourne la liste des héros.
         /// </summary>
         public List<EntityHero> Heroes
@@ -133,24 +78,6 @@ namespace Codinsa2015.Server
             {
                 return new Point(m_passability.GetLength(0), m_passability.GetLength(1));
             }
-        }
-        /// <summary>
-        /// Obtient la taille de la map en pixels.
-        /// </summary>
-        public Vector2 SizePixels
-        {
-            get
-            {
-                return new Vector2(m_passability.GetLength(0) * UnitSize, m_passability.GetLength(1) * UnitSize);
-            }
-        }
-        /// <summary>
-        /// Rectangle de l'écran sur lequel sera dessinée la map.
-        /// </summary>
-        public Rectangle Viewport
-        {
-            get { return m_viewport; }
-            set { m_viewport = value; SetupRenderTargets(); }
         }
 
         /// <summary>
@@ -182,28 +109,7 @@ namespace Codinsa2015.Server
             get { return m_passability; }
             set { m_passability = value; Vision.SetSize(new Point(this.Passability.GetLength(0), this.Passability.GetLength(1))); }
         }
-        /// <summary>
-        /// Scrolling de la map (en px).
-        /// </summary>
-        public Point Scrolling
-        {
-            get { return m_pointOfView.Scrolling; }
-            set 
-            {
-                Vector2 valueVect = new Vector2(value.X, value.Y);
-                Vector2 pos = Vector2.Max(new Vector2(0, 0), Vector2.Min(valueVect, SizePixels - new Vector2(Viewport.Width, Viewport.Height)));
-                m_pointOfView.Scrolling = new Point((int)pos.X, (int)pos.Y);
-            }
-        }
 
-        /// <summary>
-        /// Scrolling de la map (en px).
-        /// </summary>
-        public Vector2 ScrollingVector2
-        {
-            get { return new Vector2(Scrolling.X, Scrolling.Y); }
-            set { Scrolling = new Point((int)value.X, (int)value.Y); }
-        }
 
         /// <summary>
         /// Obtient ou définit la carte de vision de cette map.
@@ -217,119 +123,6 @@ namespace Codinsa2015.Server
         #endregion
 
         
-        #region Graphics
-        /// <summary>
-        /// Crée les render targets.
-        /// </summary>
-        void SetupRenderTargets()
-        {
-            if(m_entitiesRenderTarget != null)
-            {
-                m_entitiesRenderTarget.Dispose();
-                m_tilesRenderTarget.Dispose();
-            }
-            m_entitiesRenderTarget = new RenderTarget2D(Ressources.Device, Viewport.Width, Viewport.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            m_tmpRenderTarget = new RenderTarget2D(Ressources.Device, Viewport.Width, Viewport.Height);
-            m_tmpRenderTarget2 = new RenderTarget2D(Ressources.Device, Viewport.Width, Viewport.Height);
-            SetupTileRenderTarget();
-            m_blur.ComputeOffsets(Viewport.Width, Viewport.Height);
-        }
-
-        Dictionary<Point, RenderTarget2D> m_tilesRenderTargets = new Dictionary<Point, RenderTarget2D>();
-        /// <summary>
-        /// Crée le render target des tiles (s'adapted à la taille des cases).
-        /// </summary>
-        void SetupTileRenderTarget()
-        {
-            Point resolution = new Point(Viewport.Width / TILE_SCALE, Viewport.Height / TILE_SCALE);
-            if (m_tilesRenderTargets.ContainsKey(resolution))
-                m_tilesRenderTarget = m_tilesRenderTargets[resolution];
-            else
-            {
-                m_tilesRenderTarget = new RenderTarget2D(Ressources.Device, resolution.X, resolution.Y, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-                m_tilesRenderTargets.Add(resolution, m_tilesRenderTarget);
-            }
-        }
-
-        public const bool SMOOTH_LIGHT = true;
-        float __xShaderTime = 0.0f;
-        Vector2 __oldScroll;
-        int __oldUnitSize;
-
-        /// <summary>
-        /// Dessine la map ainsi que les entités qu'elle contient.
-        /// </summary>
-        /// <param name="time"></param>
-        /// <param name="batch"></param>
-        public void Draw(GameTime time, SpriteBatch batch)
-        {
-            batch.GraphicsDevice.SetRenderTarget(m_tilesRenderTarget);
-            // batch.GraphicsDevice.Clear(Color.Transparent);
-            batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
-            // Dessin de debug de la map.
-            int beginX = Math.Max(0, Scrolling.X / UnitSize);
-            int beginY = Math.Max(0, Scrolling.Y / UnitSize);
-            int endX = Math.Min(beginX + (Viewport.Width / UnitSize + 1), m_passability.GetLength(0));
-            int endY = Math.Min(beginY + (Viewport.Height / UnitSize + 1), m_passability.GetLength(1));
-
-            int smoothAlpha = (__oldScroll == ScrollingVector2  && UnitSize == __oldUnitSize) ? 25 : 255;
-            for (int x = beginX; x < endX; x++)
-            {
-                for (int y = beginY; y < endY; y++)
-                {
-                    Point drawPos = new Point(x * UnitSize - Scrolling.X, y * UnitSize - Scrolling.Y);
-                    int r = m_passability[x, y] ? 0 : 255;
-                    int b = Vision.HasVision(Pov.Teams, new Vector2(x, y)) ? 255 : 0;
-                    int a = SMOOTH_LIGHT ? smoothAlpha : 255;
-                    batch.Draw(Ressources.DummyTexture, new Rectangle(drawPos.X / TILE_SCALE, drawPos.Y / TILE_SCALE, UnitSize / TILE_SCALE, UnitSize / TILE_SCALE), new Color(r, 0, b, a));
-                    
-                }
-            }
-            batch.End();
-
-            // Dessin des entités
-            batch.GraphicsDevice.SetRenderTarget(m_entitiesRenderTarget);
-            batch.GraphicsDevice.Clear(Color.Transparent);
-            batch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied);
-            foreach (var kvp in m_entities) { kvp.Value.Draw(time, batch); }
-            foreach (Spellcast cast in m_spellcasts) { cast.Draw(time, batch); }
-            batch.End();
-
-
-            // Blur
-            /*for (int i = 0; i < BLUR_PASSES; i++)
-            {
-                m_blur.PerformGaussianBlur(m_tilesRenderTarget, m_tmpRenderTarget, m_tmpRenderTarget2, batch);
-                m_blur.PerformGaussianBlur(m_tmpRenderTarget2, m_tmpRenderTarget, m_tilesRenderTarget, batch);
-            }*/
-
-            // Dessin du tout
-            batch.GraphicsDevice.SetRenderTarget(GameServer.GetScene().MainRenderTarget);
-            batch.GraphicsDevice.Clear(Color.DarkGray);
-            Ressources.MapEffect.Parameters["xSourceTexture"].SetValue(m_tilesRenderTarget);
-            Ressources.MapEffect.Parameters["scrolling"].SetValue(new Vector2(Scrolling.X / (float)Viewport.Width, Scrolling.Y / (float)Viewport.Height));
-            Ressources.MapEffect.Parameters["xPixelSize"].SetValue(new Vector2(1.0f / Viewport.Width, 1.0f / Viewport.Height));
-            Ressources.MapEffect.Parameters["xUnitSize"].SetValue(UnitSize);
-            __xShaderTime += 0.0005f;
-            Ressources.MapEffect.Parameters["xTime"].SetValue(__xShaderTime);
-
-            // Dessine les tiles avec le shader
-            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, Ressources.MapEffect);
-            batch.Draw(m_tilesRenderTarget, Viewport, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.Map);
-            batch.End();
-
-            // Dessine les entités.
-            batch.Begin();
-            batch.Draw(m_entitiesRenderTarget, Viewport, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.Entities);
-            batch.End();
-
-
-
-            __oldScroll = ScrollingVector2;
-            __oldUnitSize = UnitSize;
-        }
-        #endregion
-
         #region Methods
         /// <summary>
         /// Crée une nouvelle instance de Map.
@@ -340,9 +133,6 @@ namespace Codinsa2015.Server
             m_entitiesAddList = new EntityCollection();
             m_spellcasts = new List<Spellcast>();
             m_events = new Dictionary<EventId, GameEvent>();
-            m_pointOfView = new PointOfView();
-            m_pointOfView.UnitSize = 32;
-            m_pointOfView.Teams = EntityType.Team1;
 
             // DEBUG CODE
             m_passability = new bool[50, 50];
@@ -370,19 +160,10 @@ namespace Codinsa2015.Server
         }
 
         /// <summary>
-        /// Charge les ressources graphiques dont a besoin la map.
+        /// Initialise les évents de la map une fois que tout le reste est prêt.
         /// </summary>
-        public void LoadContent()
+        public void Initialize()
         {
-            // Initialise l'effet de blur.
-            m_blur = new GraphicsHelpers.GaussianBlur(Ressources.Content);
-            m_blur.ComputeKernel(4, 2);
-
-
-            // Création du viewport
-            Viewport = new Rectangle(0, 25, (int)GameServer.GetScreenSize().X, (int)GameServer.GetScreenSize().Y - 125);
-            Scrolling = new Point();
-
             // Initialisation des évents
             foreach (var kvp in m_events)
                 kvp.Value.Initialize();
@@ -468,29 +249,6 @@ namespace Codinsa2015.Server
         
         #endregion
         
-        #region Positions
-        /// <summary>
-        /// Obtient la position dans l'espace de l'écran à partir d'une position
-        /// en unités métriques. 
-        /// (prends en compte viewport, scrolling, scaling).
-        /// </summary>
-        /// <returns></returns>
-        public Vector2 ToScreenSpace(Vector2 mapPos)
-        {
-            return mapPos * UnitSize - ScrollingVector2 + new Vector2(Viewport.X, Viewport.Y);
-        }
-
-        /// <summary>
-        /// Obtient la position dans l'espace de la map (unités métriques) à
-        /// partir d'une position à l'écran.
-        /// </summary>
-        /// <param name="screenSpacePos"></param>
-        /// <returns></returns>
-        public Vector2 ToMapSpace(Vector2 screenSpacePos)
-        {
-            return (screenSpacePos + ScrollingVector2 - new Vector2(Viewport.X, Viewport.Y)) / UnitSize;
-        }
-        #endregion
         
         #region API
         /// <summary>
@@ -626,11 +384,6 @@ namespace Codinsa2015.Server
             if(OnMapModified != null)
                 OnMapModified();
         }
-        #endregion
-
-
-        #region View
-
         #endregion
     }
 

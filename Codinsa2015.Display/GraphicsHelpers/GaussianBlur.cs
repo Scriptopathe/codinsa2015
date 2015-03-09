@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Server.GraphicsHelpers
+namespace Codinsa2015.Rendering.GraphicsHelpers
 {
     /// <summary>
     /// A Gaussian blur filter kernel class. A Gaussian blur filter kernel is

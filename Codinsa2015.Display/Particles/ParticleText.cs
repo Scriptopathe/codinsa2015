@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Server.Particles
+namespace Codinsa2015.Rendering.Particles
 {
     /// <summary>
     /// Classe représentant une particule gérant les effets et affichant uniquement du texte.
@@ -40,8 +40,8 @@ namespace Codinsa2015.Server.Particles
         /// <summary>
         /// Crée une nouvelle instance de ParticleText.
         /// </summary>
-        public ParticleText()
-            : base()
+        public ParticleText(ParticleManager mgr)
+            : base(mgr)
         {
             Font = Ressources.Font;
             Text = "";
@@ -59,7 +59,8 @@ namespace Codinsa2015.Server.Particles
         /// <param name="batch"></param>
         public override void Draw(SpriteBatch batch, Vector2 viewportOffset, Vector2 scrollingOffset)
         {
-            batch.DrawString(Font, Text, CurrentPosition * GameServer.GetMap().UnitSize - viewportOffset - scrollingOffset, CurrentColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GraphicsHelpers.Z.Particles);
+            int unitSize = Manager.MapRdr.UnitSize;
+            batch.DrawString(Font, Text, CurrentPosition * unitSize - viewportOffset - scrollingOffset, CurrentColor, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GraphicsHelpers.Z.Particles);
         }
         /// <summary>
         /// Libère la mémoire utilisée par cette particule.

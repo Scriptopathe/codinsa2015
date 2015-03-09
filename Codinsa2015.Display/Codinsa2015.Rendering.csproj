@@ -7,8 +7,8 @@
     <ProjectGuid>{F6B99C08-D549-46D1-9B94-2F617CA602BE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Codinsa2015.Display</RootNamespace>
-    <AssemblyName>Codinsa2015.Display</AssemblyName>
+    <RootNamespace>Codinsa2015.Rendering</RootNamespace>
+    <AssemblyName>Codinsa2015.Rendering</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,7 +44,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityRenderer.cs" />
+    <Compile Include="GraphicsHelpers\Charset.cs" />
+    <Compile Include="GraphicsHelpers\GaussianBlur.cs" />
+    <Compile Include="GraphicsHelpers\Z.cs" />
     <Compile Include="MapRenderer.cs" />
+    <Compile Include="Particles\Particle.cs" />
+    <Compile Include="Particles\ParticleAnimation.cs" />
+    <Compile Include="Particles\ParticleBase.cs" />
+    <Compile Include="Particles\ParticleManager.cs" />
+    <Compile Include="Particles\ParticleText.cs" />
+    <Compile Include="Particles\ParticleTexture.cs" />
     <Compile Include="SceneRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneRendererProperties.cs" />

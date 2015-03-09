@@ -43,10 +43,6 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         public abstract void LoadContent();
         /// <summary>
-        /// Obtient une référence vers le gestionnaire de particules du contrôleur.
-        /// </summary>
-        public Particles.ParticleManager Particles { get; set; }
-        /// <summary>
         /// Obtient une référence vers le gestionnaire de GUI du contrôleur.
         /// </summary>
         public EnhancedGui.GuiManager EnhancedGuiManager { get; set; }

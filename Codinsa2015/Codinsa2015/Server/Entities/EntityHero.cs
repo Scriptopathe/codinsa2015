@@ -249,7 +249,6 @@ namespace Codinsa2015.Server.Entities
         protected override void DoUpdate(GameTime time)
         {
             base.DoUpdate(time);
-            UpdatePAParticle();
             UpdateConsummables(time);
 
             if(Weapon != null)
@@ -285,22 +284,6 @@ namespace Codinsa2015.Server.Entities
         #endregion
 
         #region DEBUG
-        /// <summary>
-        /// Mets à jour les particules des PA.
-        /// </summary>
-        void UpdatePAParticle()
-        {
-            if (__paDiff > 2)
-                GameServer.GetScene().CurrentControler.Particles.Add(new Particles.ParticleText()
-                {
-                    CurrentColor = Color.White,
-                    MoveFunction = Particles.ParticleBase.MoveLine((this.Position + new Vector2(0, -1))),
-                    DurationSeconds = 2f,
-                    StartPosition = this.Position,
-                    Text = (__paDiff < 0 ? "" : "+") + ((int)__paDiff).ToString()
-                });
-            __paDiff = 0;
-        }
         #endregion
 
     }

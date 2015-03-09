@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Display
+namespace Codinsa2015.Rendering
 {
     /// <summary>
     /// Classe chargée du rendu de spellcasts.

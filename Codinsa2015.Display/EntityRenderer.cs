@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Display
+namespace Codinsa2015.Rendering
 {
     /// <summary>
     /// Classe chargée de faire le rendu d'entités.
@@ -39,7 +39,7 @@ namespace Codinsa2015.Display
         /// <param name="time">Temps de jeu.</param>
         /// <param name="batch">Batch sur lequel dessiner.</param>
         /// <param name="drawPos">Position à laquelle dessiner l'unité.</param>
-        public virtual void Draw(GameTime time, SpriteBatch batch, Vector2 entityPosition,
+        public virtual void Draw(SpriteBatch batch, GameTime time, Vector2 entityPosition,
             Views.EntityType type)
         {
             Point scroll = m_mapRenderer.Scrolling;

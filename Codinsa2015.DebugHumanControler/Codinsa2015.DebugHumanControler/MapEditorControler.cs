@@ -6,10 +6,11 @@ using Codinsa2015.Server;
 using Codinsa2015.Server.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
-using Codinsa2015.Server.Controlers.Components;
+using Codinsa2015.DebugHumanControler.Components;
 using Codinsa2015.EnhancedGui;
-namespace Codinsa2015.Server.Editor
+using Codinsa2015.Rendering;
+using ZLayer = Codinsa2015.Rendering.GraphicsHelpers.Z;
+namespace Codinsa2015.DebugHumanControler
 {
     /// <summary>
     /// Contrôleur de l'éditeur de map.
@@ -18,13 +19,12 @@ namespace Codinsa2015.Server.Editor
     {
         
         #region Variables
-        Map m_map;
         bool m_terraFormingMode = true;
         int m_rowId = 0;
         int m_checkpointId = 0;
         private GuiButton m_modeButton;
         int m_brushSize = 2;
-        Controlers.HumanControler m_baseControler;
+        HumanControler m_baseControler;
         #region Graphics
         Minimap m_minimap;
         DeveloperConsole m_console;
@@ -40,15 +40,11 @@ namespace Codinsa2015.Server.Editor
         /// <summary>
         /// Obtient ou définit la map en cours.
         /// </summary>
-        public Map CurrentMap
+        public Codinsa2015.Server.Map CurrentMap
         {
             get
             {
-                return m_map;
-            }
-            set
-            {
-                m_map = value;
+                return m_baseControler.MapRdr.Map;
             }
         }
 
@@ -66,10 +62,10 @@ namespace Codinsa2015.Server.Editor
         /// <summary>
         /// Crée une nouvelle instance de MapEditorControler associé à la map donnée.
         /// </summary>
-        public MapEditorControler(Controlers.HumanControler baseControler)
+        public MapEditorControler(HumanControler baseControler)
         {
             m_baseControler = baseControler;
-            m_minimap = new Minimap();
+            m_minimap = new Minimap(baseControler.MapRdr);
             m_console = new DeveloperConsole(baseControler.EnhancedGuiManager);
             
         }
@@ -166,13 +162,13 @@ namespace Codinsa2015.Server.Editor
                 // Modif de la taille du brush.
                 if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Add))
                 {
-                    GameServer.GetMap().UnitSize *= 2;
-                    GameServer.GetMap().ScrollingVector2 *= 2;
+                    m_baseControler.MapRdr.UnitSize *= 2;
+                    m_baseControler.MapRdr.ScrollingVector2 *= 2;
                 }
                 else if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Subtract))
                 {
-                    GameServer.GetMap().UnitSize /= 2;
-                    GameServer.GetMap().ScrollingVector2 /= 2;
+                    m_baseControler.MapRdr.UnitSize /= 2;
+                    m_baseControler.MapRdr.ScrollingVector2 /= 2;
                 }
 
                 // Terraforming
@@ -203,7 +199,7 @@ namespace Codinsa2015.Server.Editor
                     if (Input.IsRightClickTrigger())
                     {
 
-                        Entities.EntityCollection entitiesInRange = CurrentMap.Entities.GetAliveEntitiesInRange(mousePosUnits, 1f);
+                        Server.Entities.EntityCollection entitiesInRange = CurrentMap.Entities.GetAliveEntitiesInRange(mousePosUnits, 1f);
                         if (entitiesInRange.Count != 0)
                         {
                             GuiMenu menu = new GuiMenu(m_baseControler.EnhancedGuiManager);
@@ -225,7 +221,7 @@ namespace Codinsa2015.Server.Editor
                     }
 
                     // Ajout d'éléments de jeu.
-                    Entities.EntityType team = Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Q) ? Entities.EntityType.Team2 : Entities.EntityType.Team1;
+                    Server.Entities.EntityType team = Input.IsPressed(Microsoft.Xna.Framework.Input.Keys.Q) ? Server.Entities.EntityType.Team2 : Server.Entities.EntityType.Team1;
                     if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.T))
                     {
                         AddTower(team, mousePosUnits);
@@ -294,7 +290,7 @@ namespace Codinsa2015.Server.Editor
         public Vector2 GetMousePosUnits()
         {
             Vector2 mousePosPx = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
-            Vector2 mousePosUnits = ((mousePosPx + CurrentMap.ScrollingVector2) - new Vector2(CurrentMap.Viewport.X, CurrentMap.Viewport.Y)) / GameServer.GetMap().UnitSize;
+            Vector2 mousePosUnits = ((mousePosPx + m_baseControler.MapRdr.ScrollingVector2) - new Vector2(m_baseControler.MapRdr.Viewport.X, m_baseControler.MapRdr.Viewport.Y)) / m_baseControler.MapRdr.UnitSize;
             return mousePosUnits;
         }
 
@@ -314,7 +310,7 @@ namespace Codinsa2015.Server.Editor
         /// <param name="team"></param>
         public void PutWard(EntityType team, Vector2 placementPosition)
         {
-            EntityWardPlacement p = m_map.Entities.GetEntitiesByType(EntityType.WardPlacement).
+            EntityWardPlacement p = m_baseControler.MapRdr.Map.Entities.GetEntitiesByType(EntityType.WardPlacement).
                                     GetAliveEntitiesInRange(placementPosition, 1).
                                     NearestFrom(placementPosition) as EntityWardPlacement;
             if (p != null)
@@ -332,11 +328,11 @@ namespace Codinsa2015.Server.Editor
         /// <param name="position"></param>
         public void AddTower(EntityType team, Vector2 position)
         {
-            Entities.EntityBase entity = new Entities.EntityTower()
-            {
-                Position = position,
-                Type = Entities.EntityType.Tower | team,
-            };
+            Server.Entities.EntityBase entity = new Server.Entities.EntityTower()
+             {
+                 Position = position,
+                 Type = Server.Entities.EntityType.Tower | team,
+             };
             CurrentMap.Entities.Add(entity.ID, entity);
         }
         /// <summary>
@@ -345,7 +341,7 @@ namespace Codinsa2015.Server.Editor
         /// <param name="position"></param>
         public void AddWardPlace(Vector2 position)
         {
-            Entities.EntityBase entity = new EntityWardPlacement()
+            Server.Entities.EntityBase entity = new EntityWardPlacement()
             {
                 Position = position,
                 Type = EntityType.WardPlacement,
@@ -358,10 +354,10 @@ namespace Codinsa2015.Server.Editor
         /// </summary>
         public void AddCheckpoint(EntityType team, Vector2 position)
         {
-            Entities.EntityBase entity = new Entities.EntityCheckpoint()
+            Server.Entities.EntityBase entity = new Server.Entities.EntityCheckpoint()
             {
                 Position = position,
-                Type = Entities.EntityType.Checkpoint | team,
+                Type = Server.Entities.EntityType.Checkpoint | team,
                 CheckpointID = m_checkpointId,
                 CheckpointRow = m_rowId,
             };
@@ -374,11 +370,11 @@ namespace Codinsa2015.Server.Editor
         /// </summary>
         public void AddSpawner(EntityType team, Vector2 position)
         {
-            Entities.EntityBase entity = new Entities.EntitySpawner()
+            Server.Entities.EntityBase entity = new Server.Entities.EntitySpawner()
             {
                 Position = position,
                 SpawnPosition = position,
-                Type = Entities.EntityType.Spawner | team,
+                Type = Server.Entities.EntityType.Spawner | team,
             };
             CurrentMap.Entities.Add(entity.ID, entity);
         }
@@ -390,7 +386,7 @@ namespace Codinsa2015.Server.Editor
         /// <param name="position"></param>
         public void AddHeroSpawner(EntityType team, Vector2 position)
         {
-            Entities.EntityBase entity = new EntityHeroSpawner()
+            Server.Entities.EntityBase entity = new EntityHeroSpawner()
             {
                 Position = position,
                 Type = EntityType.HeroSpawner | team,
@@ -429,11 +425,11 @@ namespace Codinsa2015.Server.Editor
         /// </summary>
         public void Draw(SpriteBatch batch)
         {
-            int ts = GameServer.GetMap().UnitSize;
+            int ts = m_baseControler.MapRdr.UnitSize;
             // Récupère la position de la souris
             Vector2 position = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
             // Dessine le cursor
-            batch.Draw(Ressources.Cursor, new Rectangle((int)position.X, (int)position.Y, 32, 32), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.Front);
+            batch.Draw(Ressources.Cursor, new Rectangle((int)position.X, (int)position.Y, 32, 32), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, ZLayer.Front);
             
             if (!IsEnabled)
             {
@@ -451,24 +447,24 @@ namespace Codinsa2015.Server.Editor
             var rawpos = GetMousePosUnits();
             rawpos.X -= rawpos.X % 1;
             rawpos.Y -= rawpos.Y % 1;
-            var pos = GameServer.GetMap().ToScreenSpace(rawpos);
-            batch.Draw(Ressources.HighlightMark, new Rectangle((int)pos.X, (int)pos.Y, ts, ts), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.GUI);
+            var pos = m_baseControler.MapRdr.ToScreenSpace(rawpos);
+            batch.Draw(Ressources.HighlightMark, new Rectangle((int)pos.X, (int)pos.Y, ts, ts), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, ZLayer.GUI);
             
 
             // Dessine le bandeau supérieur
             batch.Draw(Ressources.DummyTexture, new Rectangle(0, 0, (int)GameServer.GetScreenSize().X, 25),
-                null, new Color(0, 0, 0, 200), 0.0f, Vector2.Zero, SpriteEffects.None, GraphicsHelpers.Z.GUI + 5 * GraphicsHelpers.Z.BackStep);
+                null, new Color(0, 0, 0, 200), 0.0f, Vector2.Zero, SpriteEffects.None, ZLayer.GUI + 5 * ZLayer.BackStep);
             
             // Dessine la minimap
             m_minimap.Position = new Vector2(GameServer.GetScreenSize().X - 200, GameServer.GetScreenSize().Y - 100);
             m_minimap.Size = new Vector2(200, 100);
-            m_minimap.Z = GraphicsHelpers.Z.GUI + 2 * GraphicsHelpers.Z.BackStep;
+            m_minimap.Z = ZLayer.GUI + 2 * ZLayer.BackStep;
             m_minimap.CurrentMap = CurrentMap;
             m_minimap.Draw(batch);
             
             // Dessine des infos de debug.
             batch.DrawString(Ressources.Font, "RowId = " + m_rowId + " | CheckpointId = " + m_checkpointId + " | Mouse=" + rawpos.ToString(),
-                new Vector2(150, 0), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GraphicsHelpers.Z.GUI + 4 * GraphicsHelpers.Z.BackStep);
+                new Vector2(150, 0), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, ZLayer.GUI + 4 * ZLayer.BackStep);
         }
 
         #region External event handlers

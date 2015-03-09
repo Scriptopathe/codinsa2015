@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Codinsa2015.Server.Particles
+namespace Codinsa2015.Rendering.Particles
 {
     /// <summary>
     /// Classe permettant la gestion de particules.
@@ -23,15 +23,16 @@ namespace Codinsa2015.Server.Particles
         #endregion
 
         #region Properties
-
+        public MapRenderer MapRdr { get; set; }
         #endregion
 
         #region Methods
         /// <summary>
         /// Crée une nouvelle instance de ParticleManager.
         /// </summary>
-        public ParticleManager()
+        public ParticleManager(MapRenderer maprdr)
         {
+            MapRdr = maprdr;
             m_particlesToDelete = new List<Particle>();
             m_particles = new List<Particle>();
         }

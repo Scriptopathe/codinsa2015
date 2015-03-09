@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Codinsa2015.Server;
@@ -9,7 +9,9 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-namespace Codinsa2015
+using Codinsa2015.Rendering;
+using Codinsa2015.Server.Entities;
+namespace Codinsa2015.DebugHumanControler
 {
     /// <summary>
     /// This is the main type for your game
@@ -19,16 +21,19 @@ namespace Codinsa2015
         public const int __DEBUG_PORT = 5000;
         public static GameClient Instance;
         GraphicsDeviceManager m_graphics;
+        SpriteBatch m_batch;
         GameServer m_server;
-
-
+        SceneRenderer m_renderer;
+        HumanControler m_controler;
+        public GameServer Server { get { return m_server; } }
+        public SceneRenderer Renderer { get { return m_renderer; } }
 
         public GameClient()
         {
             Instance = this;
             m_graphics = new GraphicsDeviceManager(this);
             m_server = new GameServer();
-
+            m_renderer = new SceneRenderer(DataMode.Direct);
             Content.RootDirectory = "Content";
             m_graphics.PreferredBackBufferWidth = (int)GameServer.GetScreenSize().X;
             m_graphics.PreferredBackBufferHeight = (int)GameServer.GetScreenSize().Y;
@@ -44,10 +49,26 @@ namespace Codinsa2015
         /// </summary>
         protected override void Initialize()
         {
-            m_server.Initialize(GraphicsDevice, Content);
+
+            SetupPlayer();
+            m_server.Initialize();
             m_graphics.GraphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
 
+
             base.Initialize();
+        }
+
+        /// <summary>
+        /// Initialise le joueur.
+        /// </summary>
+        void SetupPlayer()
+        {
+            EntityHero hero = new EntityHero();
+            hero.Position = new Vector2(10, 10);
+            hero.Role = EntityHeroRole.Fighter;
+            hero.Type = EntityType.Player | EntityType.Team1;
+            m_controler = new HumanControler(this, hero);
+            m_server.GetSrvScene().AddHero(3000, hero, m_controler);
         }
 
         /// <summary>
@@ -56,12 +77,19 @@ namespace Codinsa2015
         /// </summary>
         protected override void LoadContent()
         {
-            Content = content;
             Content.RootDirectory = "Content";
 
-            // Charge les ressources (doit être fait après l'appel à BindGraphicsClients()).
+            // Charge les ressources (doit être fait après l'appel à BindGraphicsClients()).$
+            
             Ressources.LoadRessources(GraphicsDevice, Content);
-            m_server.LoadContent(Content);
+            m_batch = new SpriteBatch(Ressources.Device);
+
+            m_renderer.Viewport = new Rectangle(0, 0, (int)GameServer.GetScreenSize().X, (int)GameServer.GetScreenSize().Y);
+            m_renderer.Server = m_server;
+            m_renderer.LoadContent();
+
+            m_controler.LoadContent();
+
         }
 
         /// <summary>
@@ -86,6 +114,8 @@ namespace Codinsa2015
 
             // Mise à jour du serveur.
             m_server.Update(gameTime);
+            m_controler.Update(gameTime);
+            Input.Update();
             base.Update(gameTime);
         }
 
@@ -96,9 +126,9 @@ namespace Codinsa2015
         protected override void Draw(GameTime gameTime)
         {
             // Dessine le contenu du serveur.
-            m_server.Draw(gameTime);
             base.Draw(gameTime);
+            Renderer.Draw(m_batch, gameTime);
+            m_controler.Draw(m_batch, gameTime);
         }
     }
 }
-*/

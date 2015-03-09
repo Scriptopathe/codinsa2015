@@ -21,7 +21,7 @@ namespace Codinsa2015.Client
             }*/
             
             string str = Console.ReadLine();
-            TCPHelper.Initialize(Codinsa2015.Graphics.Client.RemoteClient.__DEBUG_PORT, "127.0.0.1", str);
+            TCPHelper.Initialize(Codinsa2015.Server.GameServer.__DEBUG_PORT, "127.0.0.1", str);
             State state = new State();
             Console.WriteLine("Client started...");
             List<Views.SpellView> spells = state.GetSpells();

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.EnhancedGui;
 
-namespace Codinsa2015.Server.Controlers.Components
+namespace Codinsa2015.DebugHumanControler.Components
 {
     public class DeveloperConsole
     {
@@ -70,12 +70,13 @@ namespace Codinsa2015.Server.Controlers.Components
         /// </summary>
         public void LoadContent()
         {
-            int width = (int)(GameServer.GetScreenSize().X/2);
+            int width = 600;//(int)(GameServer.GetScreenSize().X/2);
+            int screenHeight = 800;
             const int h1 = 75;
             const int h2 = 25;
             const int bar = 25;
             m_window = new GuiWindow(Manager);
-            m_window.Location = new Point(0, (int)(GameServer.GetScreenSize().Y - 125));
+            m_window.Location = new Point(0, (int)(screenHeight - 125));
             m_window.Size = new Point(width, h1 + h2 + bar);
             m_window.Title = "Developer Console";
             // Console input
@@ -90,8 +91,8 @@ namespace Codinsa2015.Server.Controlers.Components
             m_consoleOutput.Parent = m_window;
             m_consoleOutput.Location = new Point(0, bar);
             m_consoleOutput.Size = new Point(width, h1);
-            GameServer.GetScene().GameInterpreter.OnPuts = new PonyCarpetExtractor.Interpreter.PutsDelegate((string s) => { m_consoleOutput.AppendLine(s); });
-            GameServer.GetScene().GameInterpreter.OnError = new PonyCarpetExtractor.Interpreter.PutsDelegate((string s) => { m_consoleOutput.AppendLine("error: " + s); });
+            Server.GameServer.GetScene().GameInterpreter.OnPuts = new PonyCarpetExtractor.Interpreter.PutsDelegate((string s) => { m_consoleOutput.AppendLine(s); });
+            Server.GameServer.GetScene().GameInterpreter.OnError = new PonyCarpetExtractor.Interpreter.PutsDelegate((string s) => { m_consoleOutput.AppendLine("error: " + s); });
         }
 
         /// <summary>
@@ -103,7 +104,7 @@ namespace Codinsa2015.Server.Controlers.Components
             /*if (sender.Text == "")
                 m_consoleInput.HasFocus = false;*/
 
-            GameServer.GetScene().GameInterpreter.Eval(sender.Text);
+            Server.GameServer.GetScene().GameInterpreter.Eval(sender.Text);
             sender.Text = "";
         }
     }
