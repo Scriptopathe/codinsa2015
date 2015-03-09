@@ -459,7 +459,6 @@ namespace Codinsa2015.DebugHumanControler
             m_minimap.Position = new Vector2(Ressources.ScreenSize.X - 200, Ressources.ScreenSize.Y - 100);
             m_minimap.Size = new Vector2(200, 100);
             m_minimap.Z = ZLayer.GUI + 2 * ZLayer.BackStep;
-            m_minimap.CurrentMap = CurrentMap;
             m_minimap.Draw(batch);
             
             // Dessine des infos de debug.

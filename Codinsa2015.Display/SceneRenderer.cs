@@ -168,7 +168,6 @@ namespace Codinsa2015.Rendering
         {
 
             // Setup du map renderer
-            MapRdr.Map = GameServer.GetSrvScene().Map;
             MapRdr.UnitSize = 32;
             MapRdr.VisionDisplayed = EntityType.Team1;
             MapRdr.Viewport = new Rectangle(0, 25, Viewport.Width, Viewport.Height - 125);

@@ -67,20 +67,6 @@ namespace Codinsa2015.DebugHumanControler.Components
             {
                 return m_map.Map;
             }
-            set
-            {
-                if (m_map.Map == value && m_minimapTexture != null)
-                    return;
-
-                m_map.Map = value;
-
-                if (m_minimapTexture != null)
-                    m_minimapTexture.Dispose();
-
-                m_minimapTexture = new RenderTarget2D(Ressources.Device, value.Size.X, value.Size.Y, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-
-                m_map.Map.OnMapModified += m_map_OnMapModified;
-            }
         }
         #endregion
 
@@ -102,11 +88,31 @@ namespace Codinsa2015.DebugHumanControler.Components
         }
 
         /// <summary>
+        /// Mets à jour la texture de la map si des changements sont survenus.
+        /// </summary>
+        void SetupTexture()
+        {
+            int w = CurrentMap.Passability.GetLength(0);
+            int h = CurrentMap.Passability.GetLength(1);
+
+            if (m_minimapTexture != null)
+            {
+                if (m_minimapTexture.Width == w && m_minimapTexture.Height == h)
+                    return;
+                m_minimapTexture.Dispose();
+            }
+
+            m_minimapTexture = new RenderTarget2D(Ressources.Device, w, h, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+
+            m_map.Map.OnMapModified += m_map_OnMapModified;
+        }
+        /// <summary>
         /// Dessine la minimap.
         /// </summary>
         /// <param name="batch"></param>
         public void Draw(SpriteBatch batch)
         {
+            SetupTexture();
             RenderTarget2D mainRenderTarget = m_map.SceneRenderer.MainRenderTarget;
             Rectangle rect = new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
             int w = CurrentMap.Passability.GetLength(0);

@@ -93,7 +93,7 @@ namespace Codinsa2015.Rendering
         /// <summary>
         /// Si le en mode Direct => map qui sera dessinée.
         /// </summary>
-        public Codinsa2015.Server.Map Map { get; set; }
+        public Codinsa2015.Server.Map Map { get { return m_sceneRenderer.GameServer.GetSrvScene().Map; } }
 
         /// <summary>
         /// Obtient la passabilité de la map.
