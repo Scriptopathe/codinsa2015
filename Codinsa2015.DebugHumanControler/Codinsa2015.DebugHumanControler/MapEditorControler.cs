@@ -452,11 +452,11 @@ namespace Codinsa2015.DebugHumanControler
             
 
             // Dessine le bandeau supérieur
-            batch.Draw(Ressources.DummyTexture, new Rectangle(0, 0, (int)GameServer.GetScreenSize().X, 25),
+            batch.Draw(Ressources.DummyTexture, new Rectangle(0, 0, (int)Ressources.ScreenSize.X, 25),
                 null, new Color(0, 0, 0, 200), 0.0f, Vector2.Zero, SpriteEffects.None, ZLayer.GUI + 5 * ZLayer.BackStep);
             
             // Dessine la minimap
-            m_minimap.Position = new Vector2(GameServer.GetScreenSize().X - 200, GameServer.GetScreenSize().Y - 100);
+            m_minimap.Position = new Vector2(Ressources.ScreenSize.X - 200, Ressources.ScreenSize.Y - 100);
             m_minimap.Size = new Vector2(200, 100);
             m_minimap.Z = ZLayer.GUI + 2 * ZLayer.BackStep;
             m_minimap.CurrentMap = CurrentMap;

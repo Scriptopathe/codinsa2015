@@ -35,18 +35,25 @@ namespace Codinsa2015.Server.Controlers
         /// Obtient la date de dernière réponse du contrôleur dont c'est le tour.
         /// </summary>
         DateTime m_lastControlerUpdate;
-        /// <summary>
-        /// Position de la "souris" virtuelle.
-        /// La souris virtuelle est utilisée par le contrôleur humain pour intéragir avec ce contrôleur.
-        /// </summary>
-        Vector2 m_virtualMousePos;
 
         string m_currentMessage = "";
         #endregion
 
         #region Properties
-
-        
+        public List<List<EntityHero>> GetHeroes() { return m_heroes; }
+        public List<Spells.Spell> GetActiveSpells() { return m_activeSpells; }
+        public List<Spells.Spell> GetPassiveSpells() { return m_passiveSpells; }
+        public int GetPickTurn() { return m_pickTurn; }
+        public string CurrentMessage
+        {
+            get { return m_currentMessage; }
+            set { m_currentMessage = value; }
+        }
+        public DateTime LastControlerUpdate 
+        { 
+            get { return m_lastControlerUpdate; }
+            set { m_lastControlerUpdate = value; }
+        }
         #endregion
 
         #region Methods
@@ -122,7 +129,7 @@ namespace Codinsa2015.Server.Controlers
         /// Obtient la valeur de timeout actuelle en secondes.
         /// </summary>
         /// <returns></returns>
-        float GetCurrentTimeoutSeconds()
+        public float GetCurrentTimeoutSeconds()
         {
             bool controlerIsIA = m_scene.GetControlerByHeroId(GetPickingHeroId()) is Controlers.IAControler;
             if (controlerIsIA)
@@ -131,149 +138,14 @@ namespace Codinsa2015.Server.Controlers
                 return HumanTimeoutSeconds;
         }
 
-#if false
-        /// <summary>
-        /// Dessine le lobby.
-        /// </summary>
-        public void Draw(GameTime time, SpriteBatch batch)
-        {
-            int w = (int)GameServer.GetScreenSize().X;
-            int h = (int)GameServer.GetScreenSize().Y;
-            batch.Begin();
-            batch.GraphicsDevice.Clear(Color.LightGray);
-
-            // Dessine les héros.
-            int x = 5;
-            int y;
-            for (int team = 0; team <= 1; team++)
-            {
-                y = 20;
-                foreach (var hero in m_heroes[team])
-                {
-                    DrawHero(batch, new Rectangle(x, y, w/2 - 10, 100), hero);
-                    y += 110;
-                }
-                x += w / 2;
-            }
-
-            // Dessine les diverses informations sur l'état de la phase de picks.
-            if (!IsReadyToGo())
-            {
-                // Dessine le temps restant.
-                y = h - 300;
-                string s = ((int)(GetCurrentTimeoutSeconds() - (DateTime.Now - m_lastControlerUpdate).TotalSeconds)).ToString();
-                float scale = 4.0f;
-                Vector2 sz = Ressources.CourrierFont.MeasureString(s) * scale;
-                x = (w - (int)sz.X)/2;
-                batch.DrawString(Ressources.CourrierFont, s, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.5f);
-
-                y += 70;
-                // Dessine les messages.
-                x = 5;
-                scale = 1.0f;
-                string msg = m_scene.GetControlerByHeroId(GetPickingHeroId()).HeroName + " : choisissez une compétence " + (GetCurrentSpells() == m_activeSpells ? "active" : "passive") + ".";
-                sz = Ressources.CourrierFont.MeasureString(msg) * scale;
-                x = (w - (int)sz.X) / 2;
-                batch.DrawString(Ressources.CourrierFont, msg, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.5f);
-
-                x = 5;
-                y += 100;
-                batch.DrawString(Ressources.CourrierFont, m_currentMessage, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-            }
-
-            // Dessine les icones des compétences proposées.
-            if(IsReadyToGo())
-            {
-                string str = "Appuyez sur entrée pour démarer le jeu.";
-                Vector2 size = Ressources.CourrierFont.MeasureString(str);
-                y = h - 50;
-                x = (w - (int)size.X) / 2;
-                batch.DrawString(Ressources.CourrierFont, str, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-            }
-            else
-            {
-                x = 5;
-                foreach (Spells.Spell spell in GetCurrentSpells())
-                {
-                    const int spellSize = 32;
-                    y = h - spellSize - 4;
-                    Rectangle dstRect = new Rectangle(x, y, spellSize, spellSize);
-
-                    // Effet de surbrillance si un sort est survollé.
-                    Color color = Color.White;
-                    if (dstRect.Contains(new Point((int)m_virtualMousePos.X, (int)m_virtualMousePos.Y)))
-                    {
-                        color = Color.Red;
-                    }
-
-                    batch.Draw(Ressources.GetSpellTexture(spell.Name),
-                               dstRect,
-                               null,
-                               color,
-                               0.0f,
-                               Vector2.Zero,
-                               SpriteEffects.None,
-                               0.5f);
-                    x += spellSize + 4;
-                }
-            }
-
-
-            batch.End();
-        }
-
-
-        /// <summary>
-        /// Dessine le slot du héros donné à la position donnée.
-        /// </summary>
-        /// <param name="rect"></param>
-        /// <param name="hero"></param>
-        void DrawHero(SpriteBatch batch, Rectangle rect, EntityHero hero)
-        {
-            float layerDepth = 0.5f;
-            const int iconSize = 16;
-            const int spellSize = 32;
-
-            var texture = IsMyTurn(hero.ID) ? Ressources.MenuItemHover : Ressources.MenuItem;
-            EnhancedGui.Drawing.DrawRectBox(batch, texture, rect, Color.White, layerDepth+0.1f);
-
-            int x = rect.X + 20;
-            int y = rect.Y + 20;
-            // Dessine l'icone du rôle du héros
-            batch.Draw(GetIcon(hero.Role), new Rectangle(x, y, iconSize, iconSize), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, layerDepth);
-            x += iconSize + 10;
-
-            // Dessine le nom du héros.
-            batch.DrawString(Ressources.CourrierFont, m_scene.GetControlerByHeroId(hero.ID).HeroName, new Vector2(x, y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, layerDepth);
-
-            y += 25;
-            x = rect.X + 20;
-            // Dessine les sorts du héros.
-            for (int i = 0; i < hero.Spells.Count; i++ )
-            {
-                Rectangle iconRect = new Rectangle(x, y, spellSize, spellSize);
-                batch.Draw(
-                    Ressources.GetSpellTexture(hero.Spells[i].Name),
-                    iconRect,
-                    null,
-                    Color.White,
-                    0.0f,
-                    Vector2.Zero,
-                    SpriteEffects.None,
-                    layerDepth);
-
-                x += spellSize + 4;
-            }
-        }
-#endif
-
         #endregion
+
         #region Mechanics
         /// <summary>
         /// Obtient le héros dont c'est actuellement le tour.
         /// </summary>
         /// <returns></returns>
-        int GetPickingHeroId()
+        public int GetPickingHeroId()
         {
             int heroesCount = m_heroes[0].Count * 2;
             int turnId = m_pickTurn / heroesCount;
@@ -303,7 +175,7 @@ namespace Codinsa2015.Server.Controlers
         /// Obtient la liste des spells actuellement proposés.
         /// </summary>
         /// <returns></returns>
-        List<Spells.Spell> GetCurrentSpells()
+        public List<Spells.Spell> GetCurrentSpells()
         {
             int heroesCount = m_heroes[0].Count * 2;
             int turnId = m_pickTurn / heroesCount;
@@ -322,46 +194,6 @@ namespace Codinsa2015.Server.Controlers
         #endregion
 
         #region API
-        /// <summary>
-        /// Définit la position de la souris virtuelle.
-        /// </summary>
-        /// <param name="pos"></param>
-        public void SetVirtualMousePos(Vector2 pos)
-        {
-            m_virtualMousePos = pos;
-        }
-
-        /// <summary>
-        /// Emule un click sur la souris virtuelle.
-        /// </summary>
-        public void VirtualMouseClick(int controlerId)
-        {
-            if (IsReadyToGo())
-                return;
-
-            // Sélectionne le sort donné.
-            int h = (int)GameServer.GetScreenSize().Y;
-            int x = 5;
-            int spellId = 0;
-            foreach (Spells.Spell spell in GetCurrentSpells())
-            {
-                const int spellSize = 32;
-                int y = h - spellSize - 4;
-                Rectangle dstRect = new Rectangle(x, y, spellSize, spellSize);
-
-                // Effet de surbrillance si un sort est survollé.
-                Color color = Color.White;
-                if (dstRect.Contains(new Point((int)m_virtualMousePos.X, (int)m_virtualMousePos.Y)))
-                {
-                    PickSpell(controlerId, spellId);
-                    m_lastControlerUpdate = DateTime.Now;
-                    break;
-                }
-
-                x += spellSize + 4;
-                spellId++;
-            }
-        }
 
         /// <summary>
         /// Retourne vrai si c'est le tour du héro dont l'id est donné.
@@ -376,8 +208,16 @@ namespace Codinsa2015.Server.Controlers
         /// Si ce n'est pas le tour du héros donné, ou que le spell dont l'id est donné n'existe pas,
         /// retourne false.
         /// </summary>
-        public bool PickSpell(int heroId, int spellId)
+        public bool PickSpell(int heroId, int spellId, int clientId)
         {
+            // Vérification : l'appel de fonction doit venir du client correspondant au
+            // héros.
+            if ((m_scene.GetControlerByHeroId(heroId) != m_scene.GetControler(clientId)) &&
+                clientId != GameServer.__INTERNAl_CLIENT_ID)
+            {
+                return false;
+            }
+
             if (heroId != GetPickingHeroId() || IsReadyToGo())
                 return false;
 
@@ -412,30 +252,7 @@ namespace Codinsa2015.Server.Controlers
             return m_pickTurn / heroesCount >= 3;
         }
 
-        #region Click API
-
-        #endregion
         #endregion
 
-        #region Misc
-        /// <summary>
-        /// Obtient l'icone du rôle donné.
-        /// </summary>
-        /// <param name="role"></param>
-        /// <returns></returns>
-        Texture2D GetIcon(EntityHeroRole role)
-        {
-            switch (role)
-            {
-                case EntityHeroRole.Fighter:
-                    return Ressources.IconFighter;
-                case EntityHeroRole.Mage:
-                    return Ressources.IconMage;
-                case EntityHeroRole.Tank:
-                    return Ressources.IconTank;
-            }
-            return Ressources.IconTank;
-        }
-        #endregion
     }
 }

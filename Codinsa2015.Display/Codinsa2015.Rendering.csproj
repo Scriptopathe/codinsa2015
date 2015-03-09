@@ -55,6 +55,7 @@
     <Compile Include="Particles\ParticleManager.cs" />
     <Compile Include="Particles\ParticleText.cs" />
     <Compile Include="Particles\ParticleTexture.cs" />
+    <Compile Include="PickPhaseRenderer.cs" />
     <Compile Include="SceneRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneRendererProperties.cs" />

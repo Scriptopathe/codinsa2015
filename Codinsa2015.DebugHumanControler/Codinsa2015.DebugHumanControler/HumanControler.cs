@@ -38,6 +38,11 @@ namespace Codinsa2015.DebugHumanControler
         /// Contrôleur du lobby.
         /// </summary>
         LobbyControler m_lobbyControler;
+        /// <summary>
+        /// Contrôleur de la phase de picks.
+        /// </summary>
+        PickPhaseControler m_pickPhaseControler;
+
         #endregion
 
         #region Properties
@@ -110,6 +115,8 @@ namespace Codinsa2015.DebugHumanControler
             EnhancedGuiManager = new EnhancedGui.GuiManager();
             MapEditControler = new MapEditorControler(this);
             m_lobbyControler = new LobbyControler(client);
+            m_pickPhaseControler = new PickPhaseControler(client);
+            HeroName = "Nameless Hero !";
         }
 
         /// <summary>
@@ -122,6 +129,7 @@ namespace Codinsa2015.DebugHumanControler
             GameWindow.BackColor = new Color(0, 0, 0, 50);
             GameWindow.Layer = -1;
             GameWindow.IsMoveable = false;
+            
             
             MapEditControler.LoadContent();
             MapEditControler.OnMapLoaded += new MapEditorControler.MapLoadedDelegate((MapFile file) =>
@@ -181,16 +189,10 @@ namespace Codinsa2015.DebugHumanControler
                 var ms = Input.GetMouseState();
                 __oldScroll = ms.ScrollWheelValue;
             }
-            else
+            else if(GameServer.GetScene().Mode == SceneMode.Pick)
             {
                 GameWindow.IsVisible = false;
-                // MODE : PICK
-                var ms = Input.GetMouseState();
-                GameServer.GetScene().PickControler.SetVirtualMousePos(new Vector2(ms.X, ms.Y));
-
-                if (Input.IsLeftClickTrigger())
-                    GameServer.GetScene().PickControler.VirtualMouseClick(Hero.ID);
-
+                m_pickPhaseControler.Update(time);
             }
             
         }
@@ -215,18 +217,18 @@ namespace Codinsa2015.DebugHumanControler
         {
             // Récupère la position de la souris, et la garde sur le bord.
             Vector2 position = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
-            Vector2 position2 = Vector2.Max(Vector2.Zero, Vector2.Min(GameServer.GetScreenSize(), position));
+            Vector2 position2 = Vector2.Max(Vector2.Zero, Vector2.Min(Ressources.ScreenSize, position));
             if(position != position2)
                 Input.SetMousePosition((int)position2.X, (int)position2.Y);
             
             // Fait bouger l'écran quand on est au bord.
             if (position.X <= 10)
                 MapRdr.ScrollingVector2 = new Vector2(MapRdr.ScrollingVector2.X - ScrollSpeed, MapRdr.ScrollingVector2.Y);
-            else if (position.X >= GameServer.GetScreenSize().X - 10)
+            else if (position.X >= Ressources.ScreenSize.X - 10)
                 MapRdr.ScrollingVector2 = new Vector2(MapRdr.ScrollingVector2.X + ScrollSpeed, MapRdr.ScrollingVector2.Y);
             if (position.Y <= 10)
                 MapRdr.ScrollingVector2 = new Vector2(MapRdr.ScrollingVector2.X, MapRdr.ScrollingVector2.Y - ScrollSpeed);
-            else if (position.Y >= GameServer.GetScreenSize().Y - 10)
+            else if (position.Y >= Ressources.ScreenSize.Y - 10)
                 MapRdr.ScrollingVector2 = new Vector2(MapRdr.ScrollingVector2.X, MapRdr.ScrollingVector2.Y + ScrollSpeed);
         }
 
@@ -375,8 +377,8 @@ namespace Codinsa2015.DebugHumanControler
         void DrawSpellIcons(SpriteBatch batch, GameTime time)
         {
             int spellCount = m_hero.Spells.Count;
-            int y = (int)GameServer.GetScreenSize().Y - spellIconSize - 5;
-            int xBase = ((int)GameServer.GetScreenSize().X - ((spellIconSize + padding) * spellCount)) / 2;
+            int y = (int)Ressources.ScreenSize.Y - spellIconSize - 5;
+            int xBase = ((int)Ressources.ScreenSize.X - ((spellIconSize + padding) * spellCount)) / 2;
             for (int i = 0; i < spellCount; i++)
             {
                 bool isOnCooldown = m_hero.Spells[i].CurrentCooldown > 0;
@@ -414,8 +416,8 @@ namespace Codinsa2015.DebugHumanControler
         /// <param name="time"></param>
         void DrawEquipmentSlots(SpriteBatch batch, GameTime time)
         {
-            int y = (int)GameServer.GetScreenSize().Y - spellIconSize/2 - 5;
-            int xBase = ((int)GameServer.GetScreenSize().X - ((spellIconSize + padding) * m_hero.Spells.Count)) / 2;
+            int y = (int)Ressources.ScreenSize.Y - spellIconSize/2 - 5;
+            int xBase = ((int)Ressources.ScreenSize.X - ((spellIconSize + padding) * m_hero.Spells.Count)) / 2;
             int size = spellIconSize / 2;
             xBase -= (size + padding) * m_hero.Consummables.Length;
             for (int i = 0; i < m_hero.Consummables.Length; i++)
@@ -439,8 +441,8 @@ namespace Codinsa2015.DebugHumanControler
         void DrawConsummableSlots(SpriteBatch batch, GameTime time)
         {
             int spellCount = m_hero.Spells.Count;
-            int y = (int)GameServer.GetScreenSize().Y - spellIconSize - 5;
-            int xBase = ((int)GameServer.GetScreenSize().X - ((spellIconSize + padding) * spellCount)) / 2;
+            int y = (int)Ressources.ScreenSize.Y - spellIconSize - 5;
+            int xBase = ((int)Ressources.ScreenSize.X - ((spellIconSize + padding) * spellCount)) / 2;
             int size = spellIconSize / 2;
             xBase -= (size + padding) * m_hero.Consummables.Length;
             for (int i = 0; i < m_hero.Consummables.Length;i++)

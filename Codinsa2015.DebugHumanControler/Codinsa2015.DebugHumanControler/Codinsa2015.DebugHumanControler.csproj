@@ -78,6 +78,7 @@
     <Compile Include="HumanControler.cs" />
     <Compile Include="LobbyControler.cs" />
     <Compile Include="MapEditorControler.cs" />
+    <Compile Include="PickPhaseControler.cs" />
     <Compile Include="Placeholder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

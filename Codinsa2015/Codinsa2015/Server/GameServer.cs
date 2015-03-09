@@ -17,19 +17,11 @@ namespace Codinsa2015.Server
     {
         public static int __DEBUG_PORT = 5000;
         public static GameServer Instance;
+        public static int __INTERNAl_CLIENT_ID = -42;
         Scene m_scene;
         GameTime m_time;
 
 
-        /// <summary>
-        /// Obtient la taille de l'écran.
-        /// TODO : supprimer cette fonction.
-        /// </summary>
-        /// <returns></returns>
-        public static Vector2 GetScreenSize()
-        {
-            return new Vector2(1366, 768 + 100);//new Vector2(800, 600 + 100);//new Vector2(1366, 768 + 100);
-        }
 
         /// <summary>
         /// Obtient le temps de jeu actuel.

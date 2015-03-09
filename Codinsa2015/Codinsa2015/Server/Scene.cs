@@ -521,11 +521,16 @@ namespace Codinsa2015.Server
         /// </summary>
         public Controlers.ControlerBase GetControler(int clientId)
         {
+            if (!m_clientIdToControlerId.ContainsKey(clientId))
+                return null;
             return Controlers[m_clientIdToControlerId[clientId]];
         }
 
         public Controlers.ControlerBase GetControlerByHeroId(int heroId)
         {
+            if (!Controlers.ContainsKey(heroId))
+                return null;
+
             return Controlers[heroId];
         }
         #endregion

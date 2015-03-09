@@ -27,6 +27,7 @@ namespace Codinsa2015.DebugHumanControler
         HumanControler m_controler;
         public GameServer Server { get { return m_server; } }
         public SceneRenderer Renderer { get { return m_renderer; } }
+        public HumanControler Controler { get { return m_controler; } }
         /// <summary>
         /// Obtient la taille de l'écran.
         /// </summary>
@@ -73,7 +74,7 @@ namespace Codinsa2015.DebugHumanControler
             hero.Role = EntityHeroRole.Fighter;
             hero.Type = EntityType.Player | EntityType.Team1;
             m_controler = new HumanControler(this, hero);
-            m_server.GetSrvScene().AddHero(3000, hero, m_controler);
+            m_server.GetSrvScene().AddHero(GameServer.__INTERNAl_CLIENT_ID, hero, m_controler);
         }
 
         /// <summary>

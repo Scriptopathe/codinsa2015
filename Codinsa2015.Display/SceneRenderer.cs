@@ -46,6 +46,11 @@ namespace Codinsa2015.Rendering
         LobbyRenderer m_lobbyRenderer;
 
         /// <summary>
+        /// Renderer de la phase de picks.
+        /// </summary>
+        PickPhaseRenderer m_pickPhaseRenderer;
+
+        /// <summary>
         /// Render target principal de la scène.
         /// </summary>
         RenderTarget2D m_mainRenderTarget;
@@ -131,6 +136,7 @@ namespace Codinsa2015.Rendering
         {
             m_mapRenderer = new MapRenderer(this);
             m_lobbyRenderer = new LobbyRenderer(this);
+            m_pickPhaseRenderer = new PickPhaseRenderer(this);
         }
 
         /// <summary>
@@ -167,6 +173,12 @@ namespace Codinsa2015.Rendering
             MapRdr.VisionDisplayed = EntityType.Team1;
             MapRdr.Viewport = new Rectangle(0, 25, Viewport.Width, Viewport.Height - 125);
             MapRdr.LoadContent();
+
+            // Setup du lobby renderer
+            m_lobbyRenderer.LoadContent();
+
+            // Setup du Pick Phase renderer
+            m_pickPhaseRenderer.LoadContent();
         }
 
         /// <summary>
@@ -191,7 +203,7 @@ namespace Codinsa2015.Rendering
                     m_lobbyRenderer.Draw(batch, time, m_mainRenderTarget);
                     break;
                 case SceneMode.Pick:
-                    DrawPickPhase();
+                    m_pickPhaseRenderer.Draw(batch, time, m_mainRenderTarget);
                     break;
             }
 
@@ -201,13 +213,6 @@ namespace Codinsa2015.Rendering
         #region Draw
 
 
-        /// <summary>
-        /// Dessine la scène pendant la phase de pick.
-        /// </summary>
-        void DrawPickPhase()
-        {
-
-        }
         #endregion
         #endregion
     }
