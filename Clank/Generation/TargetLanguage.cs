@@ -66,12 +66,12 @@ namespace Clank.Core.Generation
         /// <summary>
         /// Convertit une liste de GenerationTarget en string.
         /// </summary>
-        public static string TargetsToString(List<GenerationTarget> targets)
+        public static string TargetsToString(List<GenerationTarget> targets, char separator = '\n')
         {
             StringBuilder builer = new StringBuilder();
             foreach(var target in targets)
             {
-                builer.Append(target.ToString() + (target == targets.Last() ? "" : "|"));
+                builer.Append(target.ToString() + (target == targets.Last() ? "" : separator.ToString()));
             }
             return builer.ToString();
         }
@@ -83,10 +83,10 @@ namespace Clank.Core.Generation
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public static List<GenerationTarget> TargetsFromString(string str)
+        public static List<GenerationTarget> TargetsFromString(string str, char separator='\n')
         {
             List<GenerationTarget> targets = new List<GenerationTarget>();
-            string[] parts = str.Split('|');
+            string[] parts = str.Split(separator);
             foreach(string part in parts)
             {
                 targets.Add(FromString(part));

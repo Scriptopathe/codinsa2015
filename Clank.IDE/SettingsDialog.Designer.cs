@@ -59,20 +59,22 @@
             // 
             this.m_targetServerTB.Location = new System.Drawing.Point(92, 10);
             this.m_targetServerTB.Name = "m_targetServerTB";
-            this.m_targetServerTB.Size = new System.Drawing.Size(249, 20);
+            this.m_targetServerTB.Size = new System.Drawing.Size(439, 20);
             this.m_targetServerTB.TabIndex = 2;
             // 
             // m_targetClientTB
             // 
+            this.m_targetClientTB.AcceptsReturn = true;
             this.m_targetClientTB.Location = new System.Drawing.Point(92, 35);
+            this.m_targetClientTB.Multiline = true;
             this.m_targetClientTB.Name = "m_targetClientTB";
-            this.m_targetClientTB.Size = new System.Drawing.Size(249, 20);
+            this.m_targetClientTB.Size = new System.Drawing.Size(439, 111);
             this.m_targetClientTB.TabIndex = 3;
             // 
             // m_cancelButton
             // 
             this.m_cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.m_cancelButton.Location = new System.Drawing.Point(185, 61);
+            this.m_cancelButton.Location = new System.Drawing.Point(375, 152);
             this.m_cancelButton.Name = "m_cancelButton";
             this.m_cancelButton.Size = new System.Drawing.Size(75, 23);
             this.m_cancelButton.TabIndex = 4;
@@ -82,7 +84,7 @@
             // button2
             // 
             this.button2.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button2.Location = new System.Drawing.Point(266, 61);
+            this.button2.Location = new System.Drawing.Point(456, 152);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 5;
@@ -95,7 +97,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
-            this.ClientSize = new System.Drawing.Size(349, 92);
+            this.ClientSize = new System.Drawing.Size(534, 187);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.m_cancelButton);
             this.Controls.Add(this.m_targetClientTB);

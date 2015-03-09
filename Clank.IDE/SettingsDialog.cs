@@ -22,12 +22,12 @@ namespace Clank.IDE
             {
                 ProjectSettings settings = new ProjectSettings();
                 settings.ServerTarget = Core.Generation.GenerationTarget.FromString(m_targetServerTB.Text);
-                settings.ClientTargets = Core.Generation.GenerationTarget.TargetsFromString(m_targetClientTB.Text);
+                settings.ClientTargets = Core.Generation.GenerationTarget.TargetsFromString(m_targetClientTB.Text, '\n');
                 return settings;
             }
             set
             {
-                m_targetClientTB.Text = Core.Generation.GenerationTarget.TargetsToString(value.ClientTargets);
+                m_targetClientTB.Text = Core.Generation.GenerationTarget.TargetsToString(value.ClientTargets, '\n');
                 m_targetServerTB.Text = value.ServerTarget.ToString();
             }
         }
