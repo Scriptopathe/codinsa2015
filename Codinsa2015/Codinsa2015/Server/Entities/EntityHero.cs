@@ -7,6 +7,10 @@ using Codinsa2015.Server.Spells;
 using Codinsa2015.Server.Equip;
 namespace Codinsa2015.Server.Entities
 {
+    /// <summary>
+    /// Enumère les différents rôles des héros.
+    /// </summary>
+    [Clank.ViewCreator.Enum("Enumère les différents rôles des héros.")]
     public enum EntityHeroRole
     {
         Fighter     = 0,

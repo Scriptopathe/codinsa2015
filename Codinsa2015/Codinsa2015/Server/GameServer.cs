@@ -20,6 +20,17 @@ namespace Codinsa2015.Server
         Scene m_scene;
         GameTime m_time;
 
+
+        /// <summary>
+        /// Obtient la taille de l'écran.
+        /// TODO : supprimer cette fonction.
+        /// </summary>
+        /// <returns></returns>
+        public static Vector2 GetScreenSize()
+        {
+            return new Vector2(1366, 768 + 100);//new Vector2(800, 600 + 100);//new Vector2(1366, 768 + 100);
+        }
+
         /// <summary>
         /// Obtient le temps de jeu actuel.
         /// </summary>
@@ -28,6 +39,7 @@ namespace Codinsa2015.Server
         {
             return Instance.m_time;
         }
+
 
         /// <summary>
         /// Obtient le temps de jeu actuel.
@@ -46,14 +58,7 @@ namespace Codinsa2015.Server
         {
             return m_scene;
         }
-        /// <summary>
-        /// Obtient la taille de l'écran.
-        /// </summary>
-        /// <returns></returns>
-        public static Vector2 GetScreenSize()
-        {
-            return new Vector2(1366, 768 + 100);//new Vector2(800, 600 + 100);//new Vector2(1366, 768 + 100);
-        }
+
 
         /// <summary>
         /// Retourne la scène associée à ce jeu.

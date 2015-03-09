@@ -16,6 +16,7 @@ namespace Codinsa2015
         public static ContentManager Content;
         public static GraphicsDevice Device;
         public static Texture2D DummyTexture;
+        public static Vector2 ScreenSize { get; set; }
         public static string MapFilename = "Content/map.txt";
 
         #region ByName

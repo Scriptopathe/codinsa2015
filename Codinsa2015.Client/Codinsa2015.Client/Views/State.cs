@@ -9,6 +9,14 @@ using Microsoft.Xna.Framework;
 namespace Codinsa2015.Views.Client
 {
 
+	public enum EntityHeroRole
+	{
+		Fighter = 0,
+		Mage = 1,
+		Tank = 2,
+		Max = 2
+	}
+	
 	public enum EntityType
 	{
 		Team1 = 2,

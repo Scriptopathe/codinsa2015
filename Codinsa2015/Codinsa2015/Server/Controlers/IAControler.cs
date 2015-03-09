@@ -46,7 +46,13 @@ namespace Codinsa2015.Server.Controlers
         }
 
 
-
+        /// <summary>
+        /// Obtient les permissions de ce contrôleur.
+        /// </summary>
+        public override ControlerPermissions GetPermissions()
+        {
+            return ControlerPermissions.Player;
+        }
         #endregion
 
         #region Methods

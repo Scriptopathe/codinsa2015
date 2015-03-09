@@ -41,6 +41,11 @@ namespace Codinsa2015.Rendering
         MapRenderer m_mapRenderer;
 
         /// <summary>
+        /// Renderer du lobby
+        /// </summary>
+        LobbyRenderer m_lobbyRenderer;
+
+        /// <summary>
         /// Render target principal de la scène.
         /// </summary>
         RenderTarget2D m_mainRenderTarget;
@@ -62,6 +67,11 @@ namespace Codinsa2015.Rendering
         /// </summary>
         public DataMode Mode { get; set; }
 
+
+        /// <summary>
+        /// Obtient le temps de jeu sur le serveur local ou distant.
+        /// </summary>
+        /// <returns></returns>
         public GameTime GetTime()
         {
             switch(Mode)
@@ -69,18 +79,35 @@ namespace Codinsa2015.Rendering
                 case DataMode.Remote:
                     throw new NotImplementedException();
                 case DataMode.Direct:
-                    return Server.GetSrvTime();
+                    return GameServer.GetSrvTime();
                 default:
                     throw new NotImplementedException();
             }
         }
+        /// <summary>
+        /// Obtient le mode actuel de la scène sur le serveur local ou distant.
+        /// </summary>
+        /// <returns></returns>
+        public Views.SceneMode GetSceneMode()
+        {
+            switch (Mode)
+            {
+                case DataMode.Remote:
+                    throw new NotImplementedException();
+                case DataMode.Direct:
+                    return (Views.SceneMode)GameServer.GetSrvScene().Mode;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
         #endregion
 
         #region State
         /// <summary>
         /// Si en mode Direct, instance du serveur qui tourne actuellement.
         /// </summary>
-        public Server.GameServer Server { get; set; }
+        public Server.GameServer GameServer { get; set; }
         /// <summary>
         /// Si en mode Remote, instance du serveur distant.
         /// </summary>
@@ -103,6 +130,7 @@ namespace Codinsa2015.Rendering
         public SceneRenderer(DataMode mode)
         {
             m_mapRenderer = new MapRenderer(this);
+            m_lobbyRenderer = new LobbyRenderer(this);
         }
 
         /// <summary>
@@ -134,7 +162,7 @@ namespace Codinsa2015.Rendering
         {
 
             // Setup du map renderer
-            MapRdr.Map = Server.GetSrvScene().Map;
+            MapRdr.Map = GameServer.GetSrvScene().Map;
             MapRdr.UnitSize = 32;
             MapRdr.VisionDisplayed = EntityType.Team1;
             MapRdr.Viewport = new Rectangle(0, 25, Viewport.Width, Viewport.Height - 125);
@@ -150,17 +178,17 @@ namespace Codinsa2015.Rendering
                 throw new Exception("Appel à UpdateRemoteState manquant pour un renderer en mode Remote.");
 
             if (Mode == DataMode.Direct)
-                m_sceneMode = (Views.SceneMode)Server.GetSrvScene().Mode; // TODO adapter auto au serveur.
+                m_sceneMode = (Views.SceneMode)GameServer.GetSrvScene().Mode; // TODO adapter auto au serveur.
             else
                 throw new NotImplementedException();
 
             switch (m_sceneMode)
             {
                 case SceneMode.Game:
-                    DrawGameMode(batch, time);
+                    m_mapRenderer.Draw(batch, time, m_mainRenderTarget);
                     break;
                 case SceneMode.Lobby:
-                    DrawLobby();
+                    m_lobbyRenderer.Draw(batch, time, m_mainRenderTarget);
                     break;
                 case SceneMode.Pick:
                     DrawPickPhase();
@@ -171,21 +199,7 @@ namespace Codinsa2015.Rendering
         }
 
         #region Draw
-        /// <summary>
-        /// Dessine la scène lorsqu'elle est en mode "jeu".
-        /// </summary>
-        void DrawGameMode(SpriteBatch batch, GameTime time)
-        {
-            MapRdr.Draw(batch, time, m_mainRenderTarget);
-        }
 
-        /// <summary>
-        /// Dessine la scène pendant le lobby.
-        /// </summary>
-        void DrawLobby()
-        {
-
-        }
 
         /// <summary>
         /// Dessine la scène pendant la phase de pick.

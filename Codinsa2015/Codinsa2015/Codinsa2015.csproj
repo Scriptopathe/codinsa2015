@@ -79,8 +79,8 @@
     <Compile Include="Exceptions\IdiotProgrammerException.cs" />
     <Compile Include="Server\Controlers\IAControler.cs" />
     <Compile Include="Server\Controlers\ControlerBase.cs" />
-    <Compile Include="Server\Controlers\PickPhaseControler.cs" />
     <Compile Include="Server\Controlers\LobbyControler.cs" />
+    <Compile Include="Server\Controlers\PickPhaseControler.cs" />
     <Compile Include="Server\Controlers\ShopInterface.cs" />
     <Compile Include="Server\Entities\EntityBase.cs" />
     <Compile Include="Server\Entities\EntityBigBoss.cs" />

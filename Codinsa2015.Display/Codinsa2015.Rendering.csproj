@@ -47,6 +47,7 @@
     <Compile Include="GraphicsHelpers\Charset.cs" />
     <Compile Include="GraphicsHelpers\GaussianBlur.cs" />
     <Compile Include="GraphicsHelpers\Z.cs" />
+    <Compile Include="LobbyRenderer.cs" />
     <Compile Include="MapRenderer.cs" />
     <Compile Include="Particles\Particle.cs" />
     <Compile Include="Particles\ParticleAnimation.cs" />

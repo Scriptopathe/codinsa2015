@@ -26,6 +26,14 @@ main
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
+		public enum EntityHeroRole
+		{
+			Fighter = 0,
+			Mage = 1,
+			Tank = 2,
+			Max = 2
+		}
+
 		public enum EntityType
 		{
 			Team1 = 2,

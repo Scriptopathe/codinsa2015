@@ -27,7 +27,14 @@ namespace Codinsa2015.DebugHumanControler
         HumanControler m_controler;
         public GameServer Server { get { return m_server; } }
         public SceneRenderer Renderer { get { return m_renderer; } }
-
+        /// <summary>
+        /// Obtient la taille de l'écran.
+        /// </summary>
+        /// <returns></returns>
+        static Vector2 GetScreenSize()
+        {
+            return new Vector2(1366, 768 + 100);//new Vector2(800, 600 + 100);//new Vector2(1366, 768 + 100);
+        }
         public GameClient()
         {
             Instance = this;
@@ -35,8 +42,8 @@ namespace Codinsa2015.DebugHumanControler
             m_server = new GameServer();
             m_renderer = new SceneRenderer(DataMode.Direct);
             Content.RootDirectory = "Content";
-            m_graphics.PreferredBackBufferWidth = (int)GameServer.GetScreenSize().X;
-            m_graphics.PreferredBackBufferHeight = (int)GameServer.GetScreenSize().Y;
+            m_graphics.PreferredBackBufferWidth = (int)GameClient.GetScreenSize().X;
+            m_graphics.PreferredBackBufferHeight = (int)GameClient.GetScreenSize().Y;
             m_graphics.SynchronizeWithVerticalRetrace = false;
             m_graphics.IsFullScreen = false;
         }
@@ -53,8 +60,6 @@ namespace Codinsa2015.DebugHumanControler
             SetupPlayer();
             m_server.Initialize();
             m_graphics.GraphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
-
-
             base.Initialize();
         }
 
@@ -80,12 +85,13 @@ namespace Codinsa2015.DebugHumanControler
             Content.RootDirectory = "Content";
 
             // Charge les ressources (doit être fait après l'appel à BindGraphicsClients()).$
-            
             Ressources.LoadRessources(GraphicsDevice, Content);
+            Ressources.ScreenSize = GetScreenSize();
+
             m_batch = new SpriteBatch(Ressources.Device);
 
-            m_renderer.Viewport = new Rectangle(0, 0, (int)GameServer.GetScreenSize().X, (int)GameServer.GetScreenSize().Y);
-            m_renderer.Server = m_server;
+            m_renderer.Viewport = new Rectangle(0, 0, (int)GameClient.GetScreenSize().X, (int)GameClient.GetScreenSize().Y);
+            m_renderer.GameServer = m_server;
             m_renderer.LoadContent();
 
             m_controler.LoadContent();
@@ -114,8 +120,11 @@ namespace Codinsa2015.DebugHumanControler
 
             // Mise à jour du serveur.
             m_server.Update(gameTime);
-            m_controler.Update(gameTime);
+            m_controler.ClientUpdate(gameTime);
+
+            // Mise à jour des entrées claviers.
             Input.Update();
+
             base.Update(gameTime);
         }
 
@@ -127,8 +136,19 @@ namespace Codinsa2015.DebugHumanControler
         {
             // Dessine le contenu du serveur.
             base.Draw(gameTime);
+
+            // Dessin de la map
             Renderer.Draw(m_batch, gameTime);
+
+            // Dessin des éléments du contrôleur.
             m_controler.Draw(m_batch, gameTime);
+
+
+            // Dessine le render target principal sur le back buffer.
+            m_batch.GraphicsDevice.SetRenderTarget(null);
+            m_batch.Begin();
+            m_batch.Draw(Renderer.MainRenderTarget, Vector2.Zero, Color.White);
+            m_batch.End();
         }
     }
 }

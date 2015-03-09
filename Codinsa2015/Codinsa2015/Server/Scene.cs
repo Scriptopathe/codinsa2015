@@ -23,7 +23,7 @@ namespace Codinsa2015.Server
     /// </summary>
     public class Scene
     {
-        public const bool SKIP_PICKS = true;
+        public const bool SKIP_PICKS = false;
         public const bool LOAD_DB_FILE = false;
         #region Variables
         #region Error handling
@@ -92,15 +92,16 @@ namespace Codinsa2015.Server
         public Server.Controlers.ControlerBase CurrentControler { get; set; }
 
         /// <summary>
-        /// Représente le contrôleur utilisé pour la phase du lobby.
-        /// </summary>
-        public Server.Controlers.LobbyControler LobbyControler { get; set; }
-
-        /// <summary>
         /// Représente le contrôleur utilisé pour la phase de picks.
         /// </summary>
         public Server.Controlers.PickPhaseControler PickControler { get; set; }
 
+        /// <summary>
+        /// Représente le contrôleur utilisé lors de la phase de lobby.
+        /// Ce contrôleur ne contient qu'un état utilisé par les clients distants 
+        /// pour l'afficher.
+        /// </summary>
+        public Server.Controlers.LobbyControler LobbyControler { get; set; }
         /// <summary>
         /// Obtient une référence vers l'état du serveur.
         /// </summary>
@@ -125,6 +126,9 @@ namespace Codinsa2015.Server
             LoadConstants();
             LoadDB();
 
+            // Initialise l'interpréteur de commandes.
+            InitializeInterpreter();
+
             // State
             State = new Views.State();
 
@@ -133,12 +137,45 @@ namespace Codinsa2015.Server
 
             if (!SKIP_PICKS)
             {
-                LobbyControler = new Server.Controlers.LobbyControler(this);
                 Mode = SceneMode.Lobby;
             }
             else
             {
                 Mode = SceneMode.Game;
+            }
+        }
+
+        /// <summary>
+        /// Charge les constantes de jeu.
+        /// </summary>
+        void LoadConstants()
+        {
+            if (System.IO.File.Exists("constants.xml"))
+            {
+                Constants = GameConstants.LoadFromFile("constants.xml");
+            }
+            else
+            {
+                Constants = new GameConstants();
+                Constants.Save("constants.xml");
+            }
+        }
+
+        /// <summary>
+        /// Charge la base de données du jeu.
+        /// </summary>
+        void LoadDB()
+        {
+            if (LOAD_DB_FILE && System.IO.File.Exists("shopdb.xml"))
+            {
+                ShopDB = Equip.ShopDatabase.Load("shopdb.xml");
+            }
+            else
+            {
+                ShopDB = new Equip.ShopDatabase();
+
+                if (LOAD_DB_FILE)
+                    ShopDB.Save("shopdb.xml");
             }
         }
 
@@ -169,6 +206,7 @@ namespace Codinsa2015.Server
         /// </summary>
         void InitializeLobby()
         {
+            LobbyControler = new Server.Controlers.LobbyControler();
             // Charge le contrôleur humain.
             /*Entities.EntityHero hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
             Server.Controlers.HumanControler humanControler = new Server.Controlers.HumanControler(hero) { HeroName = "Test" };
@@ -213,8 +251,6 @@ namespace Codinsa2015.Server
                 m_clientIdToControlerId.Add(hero.ID, 0);
                 Controlers.Add(0, humanControler);*/
             }
-            // Initialise l'interpréteur de commandes.
-            InitializeInterpreter();
 
             // Création de la map.
             Map = new Map();
@@ -265,39 +301,7 @@ namespace Codinsa2015.Server
             }
         }
 
-        /// <summary>
-        /// Charge les constantes de jeu.
-        /// </summary>
-        void LoadConstants()
-        {
-            if (System.IO.File.Exists("constants.xml"))
-            {
-                Constants = GameConstants.LoadFromFile("constants.xml");
-            }
-            else
-            {
-                Constants = new GameConstants();
-                Constants.Save("constants.xml");
-            }
-        }
 
-        /// <summary>
-        /// Charge la base de données du jeu.
-        /// </summary>
-        void LoadDB()
-        {
-            if (LOAD_DB_FILE && System.IO.File.Exists("shopdb.xml"))
-            {
-                ShopDB = Equip.ShopDatabase.Load("shopdb.xml");
-            }
-            else
-            {
-                ShopDB = new Equip.ShopDatabase();
-
-                if(LOAD_DB_FILE)
-                    ShopDB.Save("shopdb.xml");
-            }
-        }
         /// <summary>
         /// Initialise l'interpreteur de commandes.
         /// </summary>
@@ -341,14 +345,6 @@ namespace Codinsa2015.Server
         public void LoadMap(Map map)
         {
             throw new NotImplementedException();
-            /*
-            Map = map;
-            Controlers.Clear();
-
-            // DEBUG
-            Controlers.Add(0, new Server.Controlers.HumanControler(Map.Heroes[0]));
-            GameInterpreter.MainContext.LocalVariables["map"] = new PonyCarpetExtractor.ExpressionTree.Mutable(GameServer.GetMap());
-            RewardSystem = new RewardSystem(Map.Heroes);*/
         }
 
 
@@ -359,8 +355,6 @@ namespace Codinsa2015.Server
         /// <param name="time"></param>
         void UpdateLobby(GameTime time)
         {
-            LobbyControler.Update(time);
-
             if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Enter))
             {
                 Mode = SceneMode.Pick;
@@ -368,13 +362,6 @@ namespace Codinsa2015.Server
             }
         }
 
-        /// <summary>
-        /// Dessine le lobby.
-        /// </summary>
-        void DrawLobby(GameTime time, SpriteBatch batch)
-        {
-            LobbyControler.Draw(time, batch);
-        }
 
         /// <summary>
         /// Callback appelé lorsqu'un client se connecte au serveur.
@@ -445,16 +432,7 @@ namespace Codinsa2015.Server
             }
         }
 
-        /// <summary>
-        /// Dessine la scène en mode "Pick".
-        /// </summary>
-        void DrawPickPhase(GameTime time, SpriteBatch batch)
-        {
-            PickControler.Draw(time, batch); 
 
-            lock (ControlerLock)
-                foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Draw(batch, time); }
-        }
         #endregion
         #region Game mode
         /// <summary>
@@ -506,38 +484,7 @@ namespace Codinsa2015.Server
 
         }
 
-        /// <summary>
-        /// Dessine la scène en mode "Game".
-        /// </summary>
-        /// <param name="time"></param>
-        /// <param name="batch"></param>
-        void DrawGameMode(GameTime time, SpriteBatch batch)
-        {
-            lock (ControlerLock)
-                foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Draw(batch, time); }
-        }
         #endregion
-
-        /// <summary>
-        /// Dessine la scène.
-        /// </summary>
-        /// <param name="time"></param>
-        /// <param name="batch"></param>
-        public void Draw(GameTime time, SpriteBatch batch)
-        {
-            switch(Mode)
-            {
-                case SceneMode.Game:
-                    DrawGameMode(time, batch);
-                    break;
-                case SceneMode.Lobby:
-                    DrawLobby(time, batch);
-                    break;
-                case SceneMode.Pick:
-                    DrawPickPhase(time, batch);
-                    break;
-            }
-        }
 
         /// <summary>
         /// Mets à jour la scène.

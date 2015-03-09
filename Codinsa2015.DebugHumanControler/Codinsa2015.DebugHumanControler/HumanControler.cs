@@ -33,6 +33,11 @@ namespace Codinsa2015.DebugHumanControler
         /// Indique si le contrôleur doit capturer la souris (l'empêcher de sortir des bords + scrolling).
         /// </summary>
         bool m_captureMouse = true;
+
+        /// <summary>
+        /// Contrôleur du lobby.
+        /// </summary>
+        LobbyControler m_lobbyControler;
         #endregion
 
         #region Properties
@@ -79,6 +84,15 @@ namespace Codinsa2015.DebugHumanControler
             get;
             set;
         }
+
+        /// <summary>
+        /// Obtient les permissions de ce contrôleur.
+        /// </summary>
+        public override Codinsa2015.Server.Controlers.ControlerPermissions GetPermissions()
+        {
+            return Codinsa2015.Server.Controlers.ControlerPermissions.Admin;
+        }
+
         #endregion
 
         #region Methods
@@ -95,6 +109,7 @@ namespace Codinsa2015.DebugHumanControler
             m_hero = hero;
             EnhancedGuiManager = new EnhancedGui.GuiManager();
             MapEditControler = new MapEditorControler(this);
+            m_lobbyControler = new LobbyControler(client);
         }
 
         /// <summary>
@@ -107,9 +122,12 @@ namespace Codinsa2015.DebugHumanControler
             GameWindow.BackColor = new Color(0, 0, 0, 50);
             GameWindow.Layer = -1;
             GameWindow.IsMoveable = false;
-
+            
             MapEditControler.LoadContent();
-            MapEditControler.OnMapLoaded += GameServer.GetScene().Map.Load;
+            MapEditControler.OnMapLoaded += new MapEditorControler.MapLoadedDelegate((MapFile file) =>
+            {
+                GameServer.GetScene().Map.Load(file);
+            });
         }
         #endregion
 
@@ -175,6 +193,19 @@ namespace Codinsa2015.DebugHumanControler
 
             }
             
+        }
+
+        /// <summary>
+        /// Cette fonction est appelée par le client après l'update serveur du contrôleur.
+        /// Elle sert à pouvoir exécuter des updates dans le lobby.
+        /// </summary>
+        public void ClientUpdate(GameTime time)
+        {
+            if (GameServer.GetScene().Mode == SceneMode.Lobby)
+            {
+                // TODO : ce code ne sera pas exécuté si ce contrôleur
+                m_lobbyControler.Update(time);
+            }
         }
 
         /// <summary>
@@ -468,13 +499,6 @@ namespace Codinsa2015.DebugHumanControler
                 batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
                 EnhancedGuiManager.Draw(batch);
                 DrawControlerGUI(batch, time);
-                batch.End();
-
-
-                // Dessine le render target principal sur le back buffer.
-                batch.GraphicsDevice.SetRenderTarget(null);
-                batch.Begin();
-                batch.Draw(mainRenderTarget, Vector2.Zero, Color.White);
                 batch.End();
             }
             else

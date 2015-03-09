@@ -131,7 +131,7 @@ namespace Codinsa2015.Server.Controlers
                 return HumanTimeoutSeconds;
         }
 
-
+#if false
         /// <summary>
         /// Dessine le lobby.
         /// </summary>
@@ -265,8 +265,9 @@ namespace Codinsa2015.Server.Controlers
                 x += spellSize + 4;
             }
         }
-        #endregion
+#endif
 
+        #endregion
         #region Mechanics
         /// <summary>
         /// Obtient le héros dont c'est actuellement le tour.

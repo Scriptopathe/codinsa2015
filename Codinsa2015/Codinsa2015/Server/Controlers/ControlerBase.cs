@@ -6,6 +6,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Codinsa2015.Server.Controlers
 {
+    public enum ControlerPermissions
+    {
+        // Donne le droit d'appeler les fonctions prévues pour les IA
+        Player      = 0x0001,
+        // Donnes tous les droits.
+        Admin       = 0x0002 | Player
+    }
     /// <summary>
     /// Classe abstraite de contrôleur.
     /// 
@@ -42,6 +49,12 @@ namespace Codinsa2015.Server.Controlers
         /// Charge les ressources graphiques et autres dont a besoin ce contrôleur.
         /// </summary>
         public abstract void LoadContent();
+
+        /// <summary>
+        /// Obtient les permissions de ce contrôleur.
+        /// </summary>
+        /// <returns></returns>
+        public abstract ControlerPermissions GetPermissions();
         /// <summary>
         /// Obtient une référence vers le gestionnaire de GUI du contrôleur.
         /// </summary>

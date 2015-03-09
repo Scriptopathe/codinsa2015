@@ -76,6 +76,7 @@
     <Compile Include="Components\Minimap.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="HumanControler.cs" />
+    <Compile Include="LobbyControler.cs" />
     <Compile Include="MapEditorControler.cs" />
     <Compile Include="Placeholder.cs" />
     <Compile Include="Program.cs" />
