@@ -370,7 +370,7 @@ namespace Codinsa2015.Server
         void CommandServer_ClientConnected(int clientId, string name)
         {
             // Crée le héros lié à ce client.
-            EntityHero hero = new EntityHero() { Type = EntityType.Team2Player, HP = 5000, Position = new Vector2(15, 15) };
+            EntityHero hero = new EntityHero() { Type = EntityType.Team2Player, HP = 5000, Position = new Vector2(15 + clientId * 5, 15) };
             AddHero(clientId, hero, new Controlers.IAControler(hero) { HeroName = name } );
         }
 
@@ -536,4 +536,6 @@ namespace Codinsa2015.Server
         #endregion
         #endregion
     }
+
+
 }

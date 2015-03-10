@@ -13,6 +13,11 @@ namespace Codinsa2015.DebugHumanControler
         GameClient m_client;
 
         /// <summary>
+        /// Obtient une valeur indiquant si ce contrôleur est en mode spectateur.
+        /// </summary>
+        public bool IsInSpectateMode { get; set; }
+
+        /// <summary>
         /// Crée une nouvelle instance de PickPhaseControler.
         /// </summary>
         /// <param name="client"></param>
@@ -26,9 +31,10 @@ namespace Codinsa2015.DebugHumanControler
         /// </summary>
         public void Update(GameTime time)
         {
-            if (Input.IsLeftClickTrigger())
+            if (Input.IsLeftClickTrigger() && !IsInSpectateMode)
                 OnMouseClicked();
         }
+
         /// <summary>
         /// Emule un click sur la souris virtuelle.
         /// </summary>

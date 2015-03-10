@@ -19,15 +19,25 @@ namespace Codinsa2015.DebugHumanControler
     public class GameClient : Microsoft.Xna.Framework.Game
     {
         public const int __DEBUG_PORT = 5000;
+
+        #region Variables
         public static GameClient Instance;
         GraphicsDeviceManager m_graphics;
         SpriteBatch m_batch;
         GameServer m_server;
         SceneRenderer m_renderer;
         HumanControler m_controler;
+        bool m_spectateMode;
+        #endregion
+
+        #region Properties
+        public bool SpectateMode { get { return m_spectateMode; } }
         public GameServer Server { get { return m_server; } }
         public SceneRenderer Renderer { get { return m_renderer; } }
         public HumanControler Controler { get { return m_controler; } }
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Obtient la taille de l'écran.
         /// </summary>
@@ -36,12 +46,14 @@ namespace Codinsa2015.DebugHumanControler
         {
             return new Vector2(1366, 768 + 100);//new Vector2(800, 600 + 100);//new Vector2(1366, 768 + 100);
         }
-        public GameClient()
+
+        public GameClient(bool spectateMode=true)
         {
             Instance = this;
             m_graphics = new GraphicsDeviceManager(this);
             m_server = new GameServer();
             m_renderer = new SceneRenderer(DataMode.Direct);
+            m_spectateMode = spectateMode;
             Content.RootDirectory = "Content";
             m_graphics.PreferredBackBufferWidth = (int)GameClient.GetScreenSize().X;
             m_graphics.PreferredBackBufferHeight = (int)GameClient.GetScreenSize().Y;
@@ -57,24 +69,32 @@ namespace Codinsa2015.DebugHumanControler
         /// </summary>
         protected override void Initialize()
         {
-
-            SetupPlayer();
+            SetupControler();
             m_server.Initialize();
             m_graphics.GraphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
             base.Initialize();
         }
 
         /// <summary>
-        /// Initialise le joueur.
+        /// Initialise le contrôleur.
         /// </summary>
-        void SetupPlayer()
+        void SetupControler()
         {
-            EntityHero hero = new EntityHero();
-            hero.Position = new Vector2(10, 10);
-            hero.Role = EntityHeroRole.Fighter;
-            hero.Type = EntityType.Player | EntityType.Team1;
-            m_controler = new HumanControler(this, hero);
-            m_server.GetSrvScene().AddHero(GameServer.__INTERNAl_CLIENT_ID, hero, m_controler);
+            if (!SpectateMode)
+            {
+                EntityHero hero = new EntityHero();
+                hero.Position = new Vector2(10, 10);
+                hero.Role = EntityHeroRole.Fighter;
+                hero.Type = EntityType.Player | EntityType.Team1;
+                m_controler = new HumanControler(this, hero);
+                m_server.GetSrvScene().AddHero(GameServer.__INTERNAl_CLIENT_ID, hero, m_controler);
+            }
+            else
+            {
+                m_controler = new HumanControler(this, null);
+            }
+
+            m_controler.IsInSpectateMode = SpectateMode;
         }
 
         /// <summary>
@@ -121,6 +141,12 @@ namespace Codinsa2015.DebugHumanControler
 
             // Mise à jour du serveur.
             m_server.Update(gameTime);
+
+            // Si on n'a pas ajouté le contrôleur au serveur, l'update ne se fait
+            // pas automatiquement => on la fait manuellement.
+            if (SpectateMode)
+                m_controler.Update(gameTime);
+
             m_controler.ClientUpdate(gameTime);
 
             // Mise à jour des entrées claviers.
@@ -151,5 +177,6 @@ namespace Codinsa2015.DebugHumanControler
             m_batch.Draw(Renderer.MainRenderTarget, Vector2.Zero, Color.White);
             m_batch.End();
         }
+        #endregion
     }
 }

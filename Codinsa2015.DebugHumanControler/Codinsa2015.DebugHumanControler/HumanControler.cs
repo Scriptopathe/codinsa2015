@@ -33,7 +33,7 @@ namespace Codinsa2015.DebugHumanControler
         /// Indique si le contrôleur doit capturer la souris (l'empêcher de sortir des bords + scrolling).
         /// </summary>
         bool m_captureMouse = true;
-
+        bool m_spectateMode = false;
         /// <summary>
         /// Contrôleur du lobby.
         /// </summary>
@@ -47,6 +47,19 @@ namespace Codinsa2015.DebugHumanControler
 
         #region Properties
         public int ScrollSpeed = 16;
+
+        /// <summary>
+        /// Obtient une valeur indiquant si ce contrôleur est en mode spectateur.
+        /// </summary>
+        public bool IsInSpectateMode
+        {
+            get { return m_spectateMode; }
+            set
+            {
+                m_spectateMode = value;
+                m_pickPhaseControler.IsInSpectateMode = value;
+            }
+        }
 
         /// <summary>
         /// Fenêtre invisible permettant de déterminer si le jeu a peut récupérer les entrées
@@ -166,8 +179,6 @@ namespace Codinsa2015.DebugHumanControler
                 if (m_captureMouse)
                     UpdateMouseScrolling();
 
-                // Change le point de vue de la map.
-                MapRdr.Scrolling = new Point(0, 0);
 
                 // Mise à jour du contrôleur de la map.
                 MapEditControler.IsEnabled = EditMode;
@@ -180,7 +191,8 @@ namespace Codinsa2015.DebugHumanControler
                 if (GameWindow.HasFocus())
                 {
                     GameWindow.IsHiden = true;
-                    UpdateGameInput();
+                    if(!IsInSpectateMode)
+                        UpdateGameInput();
                 }
                 else
                     GameWindow.IsHiden = false;
@@ -522,9 +534,12 @@ namespace Codinsa2015.DebugHumanControler
         void DrawControlerGUI(SpriteBatch batch, GameTime time)
         {
             MapEditControler.Draw(batch);
-            DrawSpellIcons(batch, time);
-            DrawConsummableSlots(batch, time);
-            DrawEquipmentSlots(batch, time);
+            if(m_hero != null)
+            {
+                DrawSpellIcons(batch, time);
+                DrawConsummableSlots(batch, time);
+                DrawEquipmentSlots(batch, time);
+            }
         }
         #endregion
 
