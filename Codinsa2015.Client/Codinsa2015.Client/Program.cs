@@ -43,18 +43,20 @@ namespace Codinsa2015.Client
 
                     Views.SpellDescriptionView spell = state.GetSpellCurrentLevelDescription(spellId);
                     Views.EntityBaseView e = state.GetEntityById(1);
-                    Vector2 position = state.GetPosition();
-
+                    var positionView = state.GetPosition();
+                    Vector2 position = new Vector2(positionView.X, positionView.Y);
+                    Vector2 entityPosition = new Vector2(entity.Position.X, entity.Position.Y);
                     Console.WriteLine("Using spell n° " + spellId + ", targetting type = " + spell.TargetType.Type);
                     switch(spell.TargetType.Type)
                     {
                         case Views.TargettingType.Direction:
-                            Vector2 dir = entity.Position - position;
+                            Vector2 dir = entityPosition - position;
                             dir.Normalize();
-                            if (entity.Position == position)
+                            if (entityPosition == position)
                                 dir = new Vector2(1, 0);
 
-                            state.UseSpell(spellId, new Views.SpellCastTargetInfoView() { TargetDirection = dir, Type = Views.TargettingType.Direction });
+                            Views.Vector2 dirView = new Views.Vector2(dir.X, dir.Y);
+                            state.UseSpell(spellId, new Views.SpellCastTargetInfoView() { TargetDirection = dirView, Type = Views.TargettingType.Direction });
                             break;
 
                         case Views.TargettingType.Position:

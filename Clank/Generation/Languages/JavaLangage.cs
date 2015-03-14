@@ -142,6 +142,10 @@ namespace Clank.Core.Generation.Languages
             {
                 return comment + GenerateConditionalStatement((ConditionalStatement)instruction);
             }
+            else if(instruction is PlaceholderInstruction)
+            {
+                return comment;
+            }
             throw new NotImplementedException();
         }
 

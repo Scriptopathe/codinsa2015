@@ -29,12 +29,7 @@ namespace Codinsa2015.Rendering
         /// Viewport de rendu de la scène.
         /// </summary>
         Rectangle m_viewport;
-
-        /// <summary>
-        /// Mode dans lequel se trouve la scène.
-        /// </summary>
-        Codinsa2015.Views.SceneMode m_sceneMode;
-        
+                
         /// <summary>
         /// Renderer de la map.
         /// </summary>
@@ -98,7 +93,7 @@ namespace Codinsa2015.Rendering
             switch (Mode)
             {
                 case DataMode.Remote:
-                    throw new NotImplementedException();
+                    return ServerRemote.SceneMode;
                 case DataMode.Direct:
                     return (Views.SceneMode)GameServer.GetSrvScene().Mode;
                 default:
@@ -116,7 +111,7 @@ namespace Codinsa2015.Rendering
         /// <summary>
         /// Si en mode Remote, instance du serveur distant.
         /// </summary>
-        public Views.Client.State ServerRemote { get; set; }
+        public ServerStateSnapshot ServerRemote { get; set; }
         /// <summary>
         /// Obtient le render target principal sur lequel doit être dessiné la scène.
         /// </summary>
@@ -143,11 +138,10 @@ namespace Codinsa2015.Rendering
         /// Mets à jour l'état de la scène à partir de l'objet state communiquant avec
         /// le serveur.
         /// </summary>
-        /// <param name="state"></param>
-        public void UpdateRemoteState(Codinsa2015.Views.Client.State state)
+        public void UpdateRemoteState()
         {
             __dirty = false;
-            throw new NotImplementedException();
+            ServerRemote.UpdateSnapshot();
         }
 
         /// <summary>
@@ -188,12 +182,8 @@ namespace Codinsa2015.Rendering
             if (Mode == DataMode.Remote && __dirty)
                 throw new Exception("Appel à UpdateRemoteState manquant pour un renderer en mode Remote.");
 
-            if (Mode == DataMode.Direct)
-                m_sceneMode = (Views.SceneMode)GameServer.GetSrvScene().Mode; // TODO adapter auto au serveur.
-            else
-                throw new NotImplementedException();
 
-            switch (m_sceneMode)
+            switch (GetSceneMode())
             {
                 case SceneMode.Game:
                     m_mapRenderer.Draw(batch, time, m_mainRenderTarget);

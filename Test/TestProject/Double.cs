@@ -17,5 +17,11 @@ namespace Default.Namespace
 		{
 			Value = value;
 		}	
+	public static Double Deserialize(InputStream input) {
+		Double _obj =  new Double();
+		float _obj.Value = Single.Parse(input.ReadLine());
+		return _obj
+	}
+
 	}
 }

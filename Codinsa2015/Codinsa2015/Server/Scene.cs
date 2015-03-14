@@ -32,7 +32,7 @@ namespace Codinsa2015.Server
         /// <summary>
         /// Queue de commandes reçues.
         /// </summary>
-        Queue<Tuple<int, string>> m_commands;
+        Queue<Tuple<int, byte[]>> m_commands;
 
         /// <summary>
         /// Dictionnaire mappant les clientId provenant du serveur aux id des controlers
@@ -119,7 +119,7 @@ namespace Codinsa2015.Server
         /// </summary>
         public Scene() 
         {
-            m_commands = new Queue<Tuple<int, string>>();
+            m_commands = new Queue<Tuple<int, byte[]>>();
             m_clientIdToControlerId = new Dictionary<int, int>();
 
             // Charge les constantes du jeu.
@@ -441,10 +441,10 @@ namespace Codinsa2015.Server
         /// <param name="clientId"></param>
         /// <param name="command"></param>
         /// <returns></returns>
-        void CommandServer_CommandReceived(int clientId, string command)
+        void CommandServer_CommandReceived(int clientId, byte[] command)
         {
             lock(CommandLock)
-                m_commands.Enqueue(new Tuple<int, string>(clientId, command));
+                m_commands.Enqueue(new Tuple<int, byte[]>(clientId, command));
         }
 
         /// <summary>

@@ -30,6 +30,7 @@ namespace Codinsa2015
             serv.Initialize();
             int gameTime = 0;
             int oldGameTime = 0;
+            Console.WriteLine("Server started");
             while(true)
             {
                 GameTime time = new GameTime(

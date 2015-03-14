@@ -1,0 +1,43 @@
+
+class EntityBaseView
+{
+
+public: 
+	float GetMagicResist;
+	float GetAbilityPower;
+	float GetCooldownReduction;
+	float GetMoveSpeed;
+	float GetAttackSpeed;
+	float GetAttackDamage;
+	float GetArmor;
+	float GetHP;
+	float GetMaxHP;
+	vector<StateAlterationView> StateAlterations;
+	float BaseArmor;
+	Vector2 Direction;
+	Vector2 Position;
+	float ShieldPoints;
+	float HP;
+	float BaseMaxHP;
+	float BaseMoveSpeed;
+	bool IsDead;
+	EntityType Type;
+	int ID;
+	float BaseAttackDamage;
+	float BaseCooldownReduction;
+	float BaseAttackSpeed;
+	float BaseAbilityPower;
+	float BaseMagicResist;
+	bool IsRooted;
+	bool IsSilenced;
+	bool IsStuned;
+	bool IsStealthed;
+	bool HasTrueVision;
+	bool HasWardVision;
+	float VisionRange;
+	Value serialize();
+
+	static EntityBaseView deserialize(Value& val);
+private: 
+
+};

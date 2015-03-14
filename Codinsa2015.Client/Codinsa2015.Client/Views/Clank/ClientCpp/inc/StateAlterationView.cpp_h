@@ -1,0 +1,16 @@
+
+class StateAlterationView
+{
+
+public: 
+	int Source;
+	StateAlterationSource SourceType;
+	StateAlterationModelView Model;
+	StateAlterationParametersView Parameters;
+	float RemainingTime;
+	Value serialize();
+
+	static StateAlterationView deserialize(Value& val);
+private: 
+
+};

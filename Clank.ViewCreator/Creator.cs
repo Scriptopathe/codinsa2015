@@ -145,7 +145,7 @@ namespace Clank.ViewCreator
             b.AppendLine("\t\t# Rajoute les statements using et le bon namespace pour la classe state.");
             b.AppendLine("\t\tvoid getClassMetadata_cs()");
             b.AppendLine("\t\t{");
-            b.AppendLine("\t\t\tstring usingStatements = \"using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;\";");
+            b.AppendLine("\t\t\tstring usingStatements = \"\"");
             b.AppendLine("\t\t\tstring namespace = \"Codinsa2015.Views\";");
             b.AppendLine("\t\t}");
 

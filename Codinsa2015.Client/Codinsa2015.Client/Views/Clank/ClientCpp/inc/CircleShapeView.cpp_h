@@ -1,0 +1,13 @@
+
+class CircleShapeView
+{
+
+public: 
+	Vector2 Position;
+	float Radius;
+	Value serialize();
+
+	static CircleShapeView deserialize(Value& val);
+private: 
+
+};

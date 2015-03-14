@@ -1,0 +1,12 @@
+
+class VisionMapView
+{
+
+public: 
+	vector<vector<VisionFlags>> Vision;
+	Value serialize();
+
+	static VisionMapView deserialize(Value& val);
+private: 
+
+};

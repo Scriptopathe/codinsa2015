@@ -1,0 +1,15 @@
+
+class SpellView
+{
+
+public: 
+	float CurrentCooldown;
+	int SourceCaster;
+	vector<SpellDescriptionView> Levels;
+	int Level;
+	Value serialize();
+
+	static SpellView deserialize(Value& val);
+private: 
+
+};

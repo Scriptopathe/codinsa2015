@@ -59,6 +59,7 @@
     <Compile Include="SceneRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneRendererProperties.cs" />
+    <Compile Include="ServerStateSnapshot.cs" />
     <Compile Include="SpellcastRenderer.cs" />
   </ItemGroup>
   <ItemGroup>

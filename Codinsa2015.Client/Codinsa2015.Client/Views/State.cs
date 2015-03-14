@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 
 
 namespace Codinsa2015.Views.Client
@@ -221,185 +219,257 @@ namespace Codinsa2015.Views.Client
 
 		public EntityBaseView GetHero()
 		{
-			// Send
-			List<object> args = new List<object>() { };
-			int funcId = 0;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return (EntityBaseView)o[0].ToObject(typeof(EntityBaseView));
+			Console.WriteLine("[GetHero]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)0).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			EntityBaseView returnValue = EntityBaseView.Deserialize(input);
+			return (EntityBaseView)returnValue;
 		}
 	
 		public Vector2 GetPosition()
 		{
-			// Send
-			List<object> args = new List<object>() { };
-			int funcId = 1;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return (Vector2)o[0].ToObject(typeof(Vector2));
+			Console.WriteLine("[GetPosition]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)1).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			Vector2 returnValue = Vector2.Deserialize(input);
+			return (Vector2)returnValue;
 		}
 	
 		public MapView GetMapView()
 		{
-			// Send
-			List<object> args = new List<object>() { };
-			int funcId = 2;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return (MapView)o[0].ToObject(typeof(MapView));
+			Console.WriteLine("[GetMapView]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)2).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			MapView returnValue = MapView.Deserialize(input);
+			return (MapView)returnValue;
 		}
 	
 		public bool StartMoveTo(Vector2 position)
 		{
-			// Send
-			List<object> args = new List<object>() { position};
-			int funcId = 3;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return o.Value<bool>(0);
+			Console.WriteLine("[StartMoveTo]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)3).ToString());
+			position.Serialize(output);
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			bool returnValue = Int32.Parse(input.ReadLine()) == 0 ? false : true;
+			return (bool)returnValue;
 		}
 	
 		public bool IsAutoMoving()
 		{
-			// Send
-			List<object> args = new List<object>() { };
-			int funcId = 4;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return o.Value<bool>(0);
+			Console.WriteLine("[IsAutoMoving]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)4).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			bool returnValue = Int32.Parse(input.ReadLine()) == 0 ? false : true;
+			return (bool)returnValue;
 		}
 	
 		public bool EndMoveTo()
 		{
-			// Send
-			List<object> args = new List<object>() { };
-			int funcId = 5;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return o.Value<bool>(0);
+			Console.WriteLine("[EndMoveTo]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)5).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			bool returnValue = Int32.Parse(input.ReadLine()) == 0 ? false : true;
+			return (bool)returnValue;
 		}
 	
 		public List<EntityBaseView> GetEntitiesInSight()
 		{
-			// Send
-			List<object> args = new List<object>() { };
-			int funcId = 6;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return (List<EntityBaseView>)o[0].ToObject(typeof(List<EntityBaseView>));
+			Console.WriteLine("[GetEntitiesInSight]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)6).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			List<EntityBaseView> returnValue = new List<EntityBaseView>();
+			int returnValue_count = Int32.Parse(input.ReadLine());
+			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+				EntityBaseView returnValue_e = EntityBaseView.Deserialize(input);
+				returnValue.Add((EntityBaseView)returnValue_e);
+			}
+			return (List<EntityBaseView>)returnValue;
 		}
 	
 		public EntityBaseView GetEntityById(int entityId)
 		{
-			// Send
-			List<object> args = new List<object>() { entityId};
-			int funcId = 7;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return (EntityBaseView)o[0].ToObject(typeof(EntityBaseView));
+			Console.WriteLine("[GetEntityById]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)7).ToString());
+			output.WriteLine(((int)entityId).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			EntityBaseView returnValue = EntityBaseView.Deserialize(input);
+			return (EntityBaseView)returnValue;
 		}
 	
 		public bool UseSpell(int spellId,SpellCastTargetInfoView target)
 		{
-			// Send
-			List<object> args = new List<object>() { spellId,target};
-			int funcId = 8;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return o.Value<bool>(0);
+			Console.WriteLine("[UseSpell]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)8).ToString());
+			output.WriteLine(((int)spellId).ToString());
+			target.Serialize(output);
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			bool returnValue = Int32.Parse(input.ReadLine()) == 0 ? false : true;
+			return (bool)returnValue;
 		}
 	
 		public SceneMode GetMode()
 		{
-			// Send
-			List<object> args = new List<object>() { };
-			int funcId = 9;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return o.Value<SceneMode>(0);
+			Console.WriteLine("[GetMode]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)9).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			int returnValue = Int32.Parse(input.ReadLine());
+			return (SceneMode)returnValue;
 		}
 	
 		public SpellDescriptionView GetSpellCurrentLevelDescription(int spellId)
 		{
-			// Send
-			List<object> args = new List<object>() { spellId};
-			int funcId = 10;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return (SpellDescriptionView)o[0].ToObject(typeof(SpellDescriptionView));
+			Console.WriteLine("[GetSpellCurrentLevelDescription]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)10).ToString());
+			output.WriteLine(((int)spellId).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			SpellDescriptionView returnValue = SpellDescriptionView.Deserialize(input);
+			return (SpellDescriptionView)returnValue;
 		}
 	
 		public SpellView GetSpell(int spellId)
 		{
-			// Send
-			List<object> args = new List<object>() { spellId};
-			int funcId = 11;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return (SpellView)o[0].ToObject(typeof(SpellView));
+			Console.WriteLine("[GetSpell]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)11).ToString());
+			output.WriteLine(((int)spellId).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			SpellView returnValue = SpellView.Deserialize(input);
+			return (SpellView)returnValue;
 		}
 	
 		public List<SpellView> GetSpells()
 		{
-			// Send
-			List<object> args = new List<object>() { };
-			int funcId = 12;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return (List<SpellView>)o[0].ToObject(typeof(List<SpellView>));
+			Console.WriteLine("[GetSpells]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)12).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			List<SpellView> returnValue = new List<SpellView>();
+			int returnValue_count = Int32.Parse(input.ReadLine());
+			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+				SpellView returnValue_e = SpellView.Deserialize(input);
+				returnValue.Add((SpellView)returnValue_e);
+			}
+			return (List<SpellView>)returnValue;
 		}
 	
 		public List<SpellView> GetHeroSpells(int entityId)
 		{
-			// Send
-			List<object> args = new List<object>() { entityId};
-			int funcId = 13;
-			List<object> obj = new List<object>() { funcId, args };
-			TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-			// Receive
-			string str = TCPHelper.Receive();
-			Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-			return (List<SpellView>)o[0].ToObject(typeof(List<SpellView>));
+			Console.WriteLine("[GetHeroSpells]");
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)13).ToString());
+			output.WriteLine(((int)entityId).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);
+			List<SpellView> returnValue = new List<SpellView>();
+			int returnValue_count = Int32.Parse(input.ReadLine());
+			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+				SpellView returnValue_e = SpellView.Deserialize(input);
+				returnValue.Add((SpellView)returnValue_e);
+			}
+			return (List<SpellView>)returnValue;
 		}
 	
+		public static State Deserialize(System.IO.StreamReader input) {
+			State _obj =  new State();
+			return _obj;
+		}
+
+		public void Serialize(System.IO.StreamWriter output) {
+		}
+
 	}
 }

@@ -31,40 +31,57 @@ namespace Codinsa2015
         /// <param name="data"></param>
         public static void Send(string data)
         {
-            s_socket.Send(Encoding.UTF8.GetBytes(data.Length.ToString() + "\n" + data));
+            Send(Encoding.UTF8.GetBytes(data));
         }
-
+        /// <summary>
+        /// Envoie une commande dans le socket.
+        /// </summary>
+        /// <param name="data"></param>
+        public static void Send(byte[] data)
+        {
+            var tosend = Encoding.UTF8.GetString(data);
+#if DEBUG
+            Console.WriteLine("sent " + data.Length.ToString() + "bytes:\n" + Encoding.UTF8.GetString(data));
+#endif
+            s_socket.Send(Encoding.UTF8.GetBytes(data.Length.ToString() + "\n"));
+            s_socket.Send(data);
+        }
         /// <summary>
         /// Recoit une commande depuis le socket.
         /// </summary>
         /// <returns></returns>
-        public static string Receive()
+        public static byte[] Receive()
         {
             // Représente le caractère '\n'.
             byte last = Encoding.UTF8.GetBytes(new char[] { '\n' })[0];
 
             // Récupère le nombre de données à lire
-            string dataLengthStr = "";
+            List<byte> dataBytes = new List<byte>();
             while(true)
             {
                 int bytes = s_socket.Receive(s_smallBuffer);
                 if (s_smallBuffer[0] == last)
                     break;
-                dataLengthStr += Encoding.UTF8.GetString(s_smallBuffer);
+                dataBytes.Add(s_smallBuffer[0]);
             }
 
 
-            string data = "";
-            int dataLength = int.Parse(dataLengthStr);
+            int dataLength = int.Parse(Encoding.UTF8.GetString(dataBytes.ToArray()));
+            dataBytes.Clear();
             int totalBytes = 0;
             while(totalBytes < dataLength)
             {
                 int bytes = s_socket.Receive(s_buffer, Math.Min(dataLength - totalBytes, s_buffer.Length), SocketFlags.None);
                 totalBytes += bytes;
-                data += Encoding.UTF8.GetString(s_buffer, 0, bytes);
+                for(int i = 0; i < bytes; i++)
+                {
+                    dataBytes.Add(s_buffer[i]);
+                }
             }
-
-            return data;
+#if DEBUG
+            Console.WriteLine("received " + dataLength.ToString() + " bytes: " + Encoding.UTF8.GetString(dataBytes.ToArray()));
+#endif
+            return dataBytes.ToArray();
         }
     }
 }

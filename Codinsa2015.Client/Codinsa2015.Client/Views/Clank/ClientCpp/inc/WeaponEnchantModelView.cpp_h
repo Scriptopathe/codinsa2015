@@ -1,0 +1,14 @@
+
+class WeaponEnchantModelView
+{
+
+public: 
+	vector<StateAlterationModelView> OnHitEffects;
+	vector<StateAlterationModelView> CastingEffects;
+	vector<StateAlterationModelView> PassiveEffects;
+	Value serialize();
+
+	static WeaponEnchantModelView deserialize(Value& val);
+private: 
+
+};

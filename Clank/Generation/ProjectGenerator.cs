@@ -209,8 +209,13 @@ namespace Clank.Core.Generation
                     builder.Clear();
 
                     if (!m_languagesTable.ContainsKey(clientTarget.LanguageIdentifier))
-                        throw new Exception("Le langage sélectionné pour le client '" + serverTarget.LanguageIdentifier + "' n'est pas implémenté");
+                    {
 
+                        
+                        logHandler(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, 
+                            "Le langage sélectionné pour le client '" + clientTarget.LanguageIdentifier + "' n'est pas implémenté. Compilation pour ce langage annulée", 0, 0, "compiler"));
+                        continue;
+                    }
                     Generation.Languages.ILanguageGenerator clientGen = m_languagesTable[clientTarget.LanguageIdentifier];
                     clientGen.SetProject(project); 
                     

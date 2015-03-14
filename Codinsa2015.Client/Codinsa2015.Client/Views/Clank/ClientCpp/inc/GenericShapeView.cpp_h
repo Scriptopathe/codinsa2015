@@ -1,0 +1,15 @@
+
+class GenericShapeView
+{
+
+public: 
+	Vector2 Position;
+	float Radius;
+	Vector2 Size;
+	GenericShapeType ShapeType;
+	Value serialize();
+
+	static GenericShapeView deserialize(Value& val);
+private: 
+
+};

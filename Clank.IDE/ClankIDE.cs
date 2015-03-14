@@ -311,7 +311,14 @@ namespace Clank.IDE
             foreach(var file in files)
             {
                 string path = Path.GetDirectoryName(m_project.SavePath) + "\\" + file.Name;
-                File.WriteAllText(path, file.Content);
+                try
+                {
+                    File.WriteAllText(path, file.Content);
+                }
+                catch(IOException e)
+                {
+                    m_handlerFunction(new Core.Tools.EventLog.Entry(Core.Tools.EventLog.EntryType.Error, "Le fichier '" + path + "' n'a pas pu être écrit (" + e.Message +")"));
+                }
             }
 
         }

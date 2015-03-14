@@ -17,6 +17,75 @@ namespace Codinsa2015.Rendering
         public Views.VisionMapView VisionMap { get; set; }
         public List<Views.SpellcastBaseView> SpellCasts { get; set; }
     }
+
+    /// <summary>
+    /// Représente une table de passabilité qui peut avoir 2 représentations internes mais qui n'expose qu'une interface.
+    /// </summary>
+    public class PassabilityTable
+    {
+        public DataMode Mode { get; set; }
+        public bool[,] DirectData { get; set; }
+        public List<List<bool>> RemoteData { get; set; }
+
+        public static implicit operator bool[,](PassabilityTable table)
+        {
+            return table.DirectData;
+        }
+
+        public static implicit operator List<List<bool>>(PassabilityTable table)
+        {
+            return table.RemoteData;
+        }
+
+        public bool this[int x, int y]
+        {
+            get
+            {
+                switch (Mode)
+                {
+                    case DataMode.Direct: return DirectData[x, y]; break;
+                    case DataMode.Remote: return RemoteData[x][y]; break;
+                }
+                throw new NotImplementedException();
+            }
+            set
+            {
+                switch (Mode)
+                {
+                    case DataMode.Direct: DirectData[x, y] = value; break;
+                    case DataMode.Remote: RemoteData[x][y] = value; break;
+                }
+                throw new NotImplementedException();
+            }
+        }
+
+        public int GetLength(int dimension)
+        {
+            switch(Mode)
+            {
+                case DataMode.Direct:
+                    return DirectData.GetLength(dimension);
+                case DataMode.Remote:
+                    if (dimension == 0)
+                        return RemoteData.Count;
+                    else
+                        return RemoteData[0].Count;
+            }
+            throw new NotImplementedException();
+        }
+
+        public PassabilityTable(bool[,] directData)
+        {
+            Mode = DataMode.Direct;
+            DirectData = directData;
+        }
+
+        public PassabilityTable(List<List<bool>> remoteData)
+        {
+            Mode = DataMode.Remote;
+            RemoteData = remoteData;
+        }
+    }
     /// <summary>
     /// Classe gérant le rendu d'une MapView.
     /// </summary>
@@ -98,15 +167,15 @@ namespace Codinsa2015.Rendering
         /// <summary>
         /// Obtient la passabilité de la map.
         /// </summary>
-        bool[,] Passability { 
+        PassabilityTable Passability { 
             get
             {
                 switch(m_sceneRenderer.Mode)
                 {
                     case DataMode.Direct:
-                        return Map.Passability;
+                        return new PassabilityTable(Map.Passability);
                     case DataMode.Remote:
-                        return MapView.Map.Passability;
+                        return new PassabilityTable(MapView.Map.Passability);
                     default:
                         throw new NotImplementedException();
                 }
@@ -125,7 +194,7 @@ namespace Codinsa2015.Rendering
                     return Map.Vision.HasVision((Server.Entities.EntityType)teams, position);
                 case DataMode.Remote:
                     teams &= (Views.EntityType.Team1 | Views.EntityType.Team2);
-                    return (MapView.VisionMap.Vision[(int)position.X, (int)position.Y] & (Views.VisionFlags)teams) != 0;
+                    return (MapView.VisionMap.Vision[(int)position.X][(int)position.Y] & (Views.VisionFlags)teams) != 0;
                 default:
                     throw new NotImplementedException();
             }

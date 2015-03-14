@@ -10,5 +10,11 @@ namespace Default.Namespace
 	{
 
 		WorkIfTSerializable<T> var;	
+	public static NonSerializableClass Deserialize(InputStream input) {
+		NonSerializableClass _obj =  new NonSerializableClass();
+		WorkIfTSerializable<T> _obj.var = WorkIfTSerializable<T>.Deserialize(input)
+		return _obj
+	}
+
 	}
 }

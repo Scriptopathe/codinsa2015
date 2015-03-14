@@ -1,0 +1,16 @@
+
+class SpellDescriptionView
+{
+
+public: 
+	float BaseCooldown;
+	float CastingTime;
+	vector<StateAlterationModelView> CastingTimeAlterations;
+	SpellTargetInfoView TargetType;
+	vector<StateAlterationModelView> OnHitEffects;
+	Value serialize();
+
+	static SpellDescriptionView deserialize(Value& val);
+private: 
+
+};

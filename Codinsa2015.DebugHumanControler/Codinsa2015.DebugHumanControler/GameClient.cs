@@ -47,7 +47,7 @@ namespace Codinsa2015.DebugHumanControler
             return new Vector2(1366, 768 + 100);//new Vector2(800, 600 + 100);//new Vector2(1366, 768 + 100);
         }
 
-        public GameClient(bool spectateMode=true)
+        public GameClient(bool spectateMode=false)
         {
             Instance = this;
             m_graphics = new GraphicsDeviceManager(this);

@@ -1,0 +1,13 @@
+
+class PassiveEquipmentUpgradeModelView
+{
+
+public: 
+	vector<StateAlterationModelView> PassiveAlterations;
+	float Cost;
+	Value serialize();
+
+	static PassiveEquipmentUpgradeModelView deserialize(Value& val);
+private: 
+
+};

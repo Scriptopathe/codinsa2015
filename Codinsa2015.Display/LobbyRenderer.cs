@@ -83,7 +83,10 @@ namespace Codinsa2015.Rendering
                     }
 
                     break;
+
                 case DataMode.Remote:
+
+
                     throw new NotImplementedException();
             }
 

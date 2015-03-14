@@ -10,7 +10,7 @@ main
             # Nom de la matrice dans les différents langages.
             string name()
             {
-                string cs = "$(T)[,]";
+                string cs = "List<List<$(T)>>";
                 string cpp = "vector<vector<$(T)>>";
                 string java = "ArrayList<ArrayList<$(T)>>";
             }
@@ -21,7 +21,7 @@ main
             # Retourne l'élément à la case (x, y).
             T get(int x, int y)
             {
-                string cs = "@self[$(x), $(y)]";
+                string cs = "@self[$(x)][$(y)]";
                 string cpp = "@self.at($(x)).at($(y))";
                 string java = "@self.get($(x)).get($(y))";
             }
@@ -29,14 +29,14 @@ main
             # Crée une nouvelle instance de matrice avec les paramètres de taille donnés.
             constructor Matrix<T> new(int width, int height)
             {
-                string cs = "new $(T)[$(width), $(height)]";
+                string cs = "new List<List<$(T)>>()";
                 string cpp = "vector<vector<$(T)>>($(width), vector<$(T)>($(height), 0))";
                 string java = "new ArrayList<ArrayList<$(T)>>()";
             }
             
             constructor Matrix<T> new()
             {
-                string cs = "new $(T)()";
+                string cs = "new List<List<$(T)>>()";
                 string cpp = "$(T)()";
                 string java = "new ArrayList<ArrayList<$(T)>>()";
             }

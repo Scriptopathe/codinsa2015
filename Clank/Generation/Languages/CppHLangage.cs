@@ -201,6 +201,10 @@ namespace Clank.Core.Generation.Languages
             {
                 return comment + GenerateRemoteFunctionWrapper((Model.Language.Macros.RemoteFunctionWrapper)instruction);
             }
+            else if(instruction is PlaceholderInstruction)
+            {
+                return comment;
+            }
             throw new NotImplementedException();
         }
 

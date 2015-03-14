@@ -140,10 +140,6 @@ namespace Codinsa2015.Server.Controlers
 
             return true;
         }
-
-
-
-
         
         /// <summary>
         /// Retourne une vue vers le héros contrôlé par ce contrôleur.
@@ -161,12 +157,12 @@ namespace Codinsa2015.Server.Controlers
         /// Retourne la position du héros.
         /// </summary>
         [Clank.ViewCreator.Access(controlerAccessStr, "Retourne la position du héros.")]
-        public Vector2 GetPosition()
+        public Views.Vector2 GetPosition()
         {
             if (GameServer.GetScene().Mode != SceneMode.Game)
-                return new Vector2(-1, -1);
+                return new Views.Vector2(-1, -1);
 
-            return Hero.Position;
+            return V2ToView(Hero.Position);
         }
 
         /// <summary>
@@ -180,7 +176,17 @@ namespace Codinsa2015.Server.Controlers
                 return new Views.MapView();
 
             Views.MapView view = new Views.MapView();
-            view.Passability = GetMap().Passability;
+            List<List<bool>> passability = new List<List<bool>>();
+            bool[,] mappass = GetMap().Passability;
+            for (int x = 0; x < mappass.GetLength(0); x++)
+            {
+                passability.Add(new List<bool>());
+                for(int y = 0; y < mappass.GetLength(1); y++)
+                {
+                    passability[x].Add(mappass[x, y]);
+                }
+            }
+            view.Passability = passability;
             return view;
         }
 
@@ -188,12 +194,12 @@ namespace Codinsa2015.Server.Controlers
         /// Déplace le joueur vers la position donnée en utilisant l'A*.
         /// </summary>
         [Clank.ViewCreator.Access(controlerAccessStr, "Déplace le joueur vers la position donnée en utilisant l'A*.")]
-        public bool StartMoveTo(Vector2 position)
+        public bool StartMoveTo(Views.Vector2 position)
         {
             if (GameServer.GetScene().Mode != SceneMode.Game)
                 return false;
 
-            return Hero.StartMoveTo(position);
+            return Hero.StartMoveTo(ViewToV2(position));
         }
 
         /// <summary>
@@ -265,7 +271,7 @@ namespace Codinsa2015.Server.Controlers
                 view.BaseMagicResist = entity.BaseMagicResist;
                 view.BaseMaxHP = entity.BaseMaxHP;
                 view.BaseMoveSpeed = entity.BaseMoveSpeed;
-                view.Direction = entity.Direction;
+                view.Direction = V2ToView(entity.Direction);
                 view.GetAbilityPower = entity.GetAbilityPower();
                 view.GetArmor = entity.GetArmor();
                 view.GetAttackDamage = entity.GetAttackDamage();
@@ -283,7 +289,7 @@ namespace Codinsa2015.Server.Controlers
                 view.IsSilenced = entity.IsSilenced;
                 view.IsStealthed = entity.IsStealthed;
                 view.IsStuned = entity.IsStuned;
-                view.Position = entity.Position;
+                view.Position = V2ToView(entity.Position);
                 view.ShieldPoints = entity.ShieldPoints;
                 view.StateAlterations = entity.StateAlterations.ToView();
                 view.Type = (Views.EntityType)entity.Type;
@@ -313,8 +319,8 @@ namespace Codinsa2015.Server.Controlers
 
             return Hero.Spells[spellId].Use(new Spells.SpellCastTargetInfo()
             {
-                TargetDirection = target.TargetDirection,
-                TargetPosition = target.TargetPosition,
+                TargetDirection = ViewToV2(target.TargetDirection),
+                TargetPosition = ViewToV2(target.TargetPosition),
                 TargetId = target.TargetId,
                 Type = (Codinsa2015.Server.Spells.TargettingType)target.Type,
                 AlterationParameters = new Entities.StateAlterationParameters()
@@ -407,5 +413,19 @@ namespace Codinsa2015.Server.Controlers
             return spells;
         }
         #endregion
+
+
+        #region XNA macros
+        Views.Vector2 V2ToView(Vector2 xnaVector)
+        {
+            return new Views.Vector2() { X = xnaVector.X, Y = xnaVector.Y };
+        }
+        Vector2 ViewToV2(Views.Vector2 viewVector)
+        {
+            return new Vector2(viewVector.X, viewVector.Y);
+        }
+        #endregion
     }
+
+    
 }

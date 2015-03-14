@@ -1,0 +1,14 @@
+
+class WeaponUpgradeModelView
+{
+
+public: 
+	SpellDescriptionView Description;
+	vector<StateAlterationModelView> PassiveAlterations;
+	float Cost;
+	Value serialize();
+
+	static WeaponUpgradeModelView deserialize(Value& val);
+private: 
+
+};

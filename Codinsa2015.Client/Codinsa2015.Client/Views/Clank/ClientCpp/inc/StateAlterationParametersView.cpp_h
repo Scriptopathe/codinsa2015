@@ -1,0 +1,13 @@
+
+class StateAlterationParametersView
+{
+
+public: 
+	Vector2 DashTargetDirection;
+	int DashTargetEntity;
+	Value serialize();
+
+	static StateAlterationParametersView deserialize(Value& val);
+private: 
+
+};

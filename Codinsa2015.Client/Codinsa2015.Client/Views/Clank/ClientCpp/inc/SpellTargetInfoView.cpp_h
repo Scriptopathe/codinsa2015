@@ -1,0 +1,17 @@
+
+class SpellTargetInfoView
+{
+
+public: 
+	TargettingType Type;
+	float Range;
+	float Duration;
+	float AoeRadius;
+	bool DieOnCollision;
+	EntityTypeRelative AllowedTargetTypes;
+	Value serialize();
+
+	static SpellTargetInfoView deserialize(Value& val);
+private: 
+
+};

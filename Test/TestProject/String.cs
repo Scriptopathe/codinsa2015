@@ -17,5 +17,11 @@ namespace Default.Namespace
 		{
 			Value = value;
 		}	
+	public static String Deserialize(InputStream input) {
+		String _obj =  new String();
+		string _obj.Value = input.Readline()
+		return _obj
+	}
+
 	}
 }

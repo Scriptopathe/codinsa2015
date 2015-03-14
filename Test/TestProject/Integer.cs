@@ -17,5 +17,11 @@ namespace Default.Namespace
 		{
 			Value = value;
 		}	
+	public static Integer Deserialize(InputStream input) {
+		Integer _obj =  new Integer();
+		int _obj.Value = Int32.Parse(input.ReadLine());
+		return _obj
+	}
+
 	}
 }

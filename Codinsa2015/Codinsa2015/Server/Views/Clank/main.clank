@@ -1,4 +1,4 @@
-#include stdtypes.clank
+﻿#include stdtypes.clank
 #include XNAMacros.clank
 main
 {
@@ -23,7 +23,7 @@ main
 		# Rajoute les statements using et le bon namespace pour la classe state.
 		void getClassMetadata_cs()
 		{
-			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string usingStatements = "";
 			string namespace = "Codinsa2015.Views";
 		}
 		public enum EntityHeroRole

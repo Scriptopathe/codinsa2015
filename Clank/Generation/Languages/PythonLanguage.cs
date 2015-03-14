@@ -10,10 +10,10 @@ namespace Clank.Core.Generation.Languages
     /// Cette classe prend en charge la traduction du code d'un arbre abstrait 
     /// vers le langage de programmation de destination.
     /// </summary>
-    [LanguageGenerator("Python")]
+    [LanguageGenerator("python")]
     public class PythonGenerator : ILanguageGenerator
     {
-        public const string LANG_KEY = "Python";
+        public const string LANG_KEY = "python";
         #region Variables
         Clank.Core.Model.ProjectFile m_project;
         #endregion
@@ -125,6 +125,10 @@ namespace Clank.Core.Generation.Languages
             else if(instruction is ConditionalStatement)
             {
                 return comment + GenerateConditionalStatement((ConditionalStatement)instruction);
+            }
+            else if(instruction is PlaceholderInstruction)
+            {
+                return comment;
             }
             throw new NotImplementedException();
         }
@@ -578,7 +582,6 @@ namespace Clank.Core.Generation.Languages
         /// <returns></returns>
         string GenerateEnumInstruction(EnumDeclaration decl)
         {
-            throw new NotImplementedException();
             StringBuilder builder = new StringBuilder();
             builder.Append("public enum " + decl.Name + "\n{\n");
             foreach (var kvp in decl.Members)

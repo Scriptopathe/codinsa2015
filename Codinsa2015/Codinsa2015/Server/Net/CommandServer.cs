@@ -15,7 +15,7 @@ namespace Codinsa2015.Server.Net
     {
         #region Delegates / events
         public delegate void ClientConnectedDelegate(int clientId, string nickname);
-        public delegate void CommandReceivedDelegate(int clientId, string command);
+        public delegate void CommandReceivedDelegate(int clientId, byte[] command);
 
         /// <summary>
         /// Event lancé lorsqu'un client se connecte.
@@ -91,7 +91,7 @@ namespace Codinsa2015.Server.Net
                             m_buffer.Add(id, new byte[512]);
                         }
 
-                        string name = Receive(id);
+                        string name = Encoding.UTF8.GetString(Receive(id));
                         if (ClientConnected != null)
                             ClientConnected(id, name);
 
@@ -155,7 +155,7 @@ namespace Codinsa2015.Server.Net
         #endregion
 
         #region Send / Receive
-        public void Send(int clientId, string data)
+        public void Send(int clientId, byte[] data)
         {
             Send(m_idToSocket[clientId], data);
         }
@@ -163,11 +163,12 @@ namespace Codinsa2015.Server.Net
         /// Envoie une commande dans le socket.
         /// </summary>
         /// <param name="data"></param>
-        public void Send(Socket s, string data)
+        public void Send(Socket s, byte[] data)
         {
             try
             {
-                s.Send(Encoding.UTF8.GetBytes(data.Length.ToString() + "\n" + data));
+                s.Send(Encoding.UTF8.GetBytes(data.Length.ToString() + "\n"));
+                s.Send(data);
             }
             catch(SocketException e)
             {
@@ -175,41 +176,54 @@ namespace Codinsa2015.Server.Net
             }
         }
 
-        public string Receive(int clientId) { return Receive(m_idToSocket[clientId], clientId); }
+        public byte[] Receive(int clientId) { return Receive(m_idToSocket[clientId], clientId); }
         /// <summary>
         /// Recoit une commande depuis le socket.
         /// </summary>
         /// <returns></returns>
-        public string Receive(Socket s, int clientId)
+        public byte[] Receive(Socket s, int clientId)
         {
             // Représente le caractère '\n'.
             byte last = Encoding.UTF8.GetBytes(new char[] { '\n' })[0];
 
             // Récupère le nombre de données à lire
-            string dataLengthStr = "";
-            byte[] buff = m_smallBuffer[clientId];
-            buff[0] = 0;
+#if DEBUG
+            List<byte> allBytes = new List<byte>();
+#endif
+            List<byte> dataBytes = new List<byte>();
             while (true)
             {
-                int bytes = s.Receive(buff);
-                if (buff[0] == last)
+                int bytes = s.Receive(m_smallBuffer[clientId]);
+                if (m_smallBuffer[clientId][0] == last)
                     break;
-                dataLengthStr += Encoding.UTF8.GetString(buff);
+                dataBytes.Add(m_smallBuffer[clientId][0]);
+#if DEBUG
+                allBytes.Add(m_smallBuffer[clientId][0]);
+#endif
             }
 
 
-            buff = m_buffer[clientId];
-            string data = "";
-            int dataLength = int.Parse(dataLengthStr);
+            int dataLength = int.Parse(Encoding.UTF8.GetString(dataBytes.ToArray()));
+            dataBytes.Clear();
             int totalBytes = 0;
             while (totalBytes < dataLength)
             {
-                int bytes = s.Receive(buff, Math.Min(dataLength - totalBytes, buff.Length), SocketFlags.None);
+                int bytes = s.Receive(m_buffer[clientId], Math.Min(dataLength - totalBytes, m_buffer[clientId].Length), SocketFlags.None);
                 totalBytes += bytes;
-                data += Encoding.UTF8.GetString(buff, 0, bytes);
+                for (int i = 0; i < bytes; i++)
+                {
+                    dataBytes.Add(m_buffer[clientId][i]);
+#if DEBUG
+                    allBytes.Add(m_buffer[clientId][i]);
+#endif
+                }
             }
 
-            return data;
+#if DEBUG
+            string data = Encoding.UTF8.GetString(allBytes.ToArray());
+
+#endif
+            return dataBytes.ToArray();
         }
         #endregion
     }

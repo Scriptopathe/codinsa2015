@@ -45,7 +45,7 @@ namespace Clank.Core.Generation
                 string[] parts = str.Split(':');
                 GenerationTarget target = new GenerationTarget();
                 target.LanguageIdentifier = parts[0];
-                target.OutputDirectory = parts[1].Trim('"');
+                target.OutputDirectory = parts[1].Replace("\r", "").Replace("\n", "").Trim('"');
                 return target;
             }
             else
@@ -86,7 +86,7 @@ namespace Clank.Core.Generation
         public static List<GenerationTarget> TargetsFromString(string str, char separator='\n')
         {
             List<GenerationTarget> targets = new List<GenerationTarget>();
-            string[] parts = str.Split(separator);
+            string[] parts = str.Split(new char[] { separator }, StringSplitOptions.RemoveEmptyEntries);
             foreach(string part in parts)
             {
                 targets.Add(FromString(part));

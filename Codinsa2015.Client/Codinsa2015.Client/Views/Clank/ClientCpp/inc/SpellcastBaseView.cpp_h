@@ -1,0 +1,12 @@
+
+class SpellcastBaseView
+{
+
+public: 
+	GenericShapeView Shape;
+	Value serialize();
+
+	static SpellcastBaseView deserialize(Value& val);
+private: 
+
+};
