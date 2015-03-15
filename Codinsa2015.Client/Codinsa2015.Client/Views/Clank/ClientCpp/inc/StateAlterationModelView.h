@@ -1,3 +1,6 @@
+#pragma once
+#include "Common.h"
+
 
 class StateAlterationModelView
 {
@@ -23,9 +26,9 @@ public:
 	float StructureBonus;
 	float MonsterBonus;
 	float CreepBonus;
-	Value serialize();
+	void serialize(std::ostream& output);
 
-	static StateAlterationModelView deserialize(Value& val);
+	static StateAlterationModelView deserialize(std::istream& input);
 private: 
 
 };

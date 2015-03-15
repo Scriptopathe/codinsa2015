@@ -1,34 +1,20 @@
-Value CircleShapeView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/CircleShapeView.h"
+void CircleShapeView::serialize(std::ostream& output) {
 	// Position
-	Value Position_temp = this->Position.serialize();
-
-	root0["Position"] = Position_temp;
+	this->Position.serialize(output);
 	// Radius
-	Value Radius_temp = Value(this->Radius);
-
-	root0["Radius"] = Radius_temp;
-	return root0;
-
+	output << ((float)this->Radius) << '\n';
 }
 
-static CircleShapeView CircleShapeView::deserialize(Value& val)
-{
-	CircleShapeView obj0 = CircleShapeView();
+CircleShapeView CircleShapeView::deserialize(std::istream& input) {
+	CircleShapeView _obj = CircleShapeView();
 	// Position
-	Vector2 Position = Vector2::deserialize(val["Position"]);
-
-	obj0.Position = Position;
-
+	Vector2 _obj_Position = Vector2::deserialize(input);
+	_obj.Position = (::Vector2)_obj_Position;
 	// Radius
-	float Radius = val["Radius"].asDouble();
-
-	obj0.Radius = Radius;
-
-	return obj0;
-
+	float _obj_Radius; input >> _obj_Radius; input.ignore(1000, '\n');
+	_obj.Radius = (float)_obj_Radius;
+	return _obj;
 }
-
 
 

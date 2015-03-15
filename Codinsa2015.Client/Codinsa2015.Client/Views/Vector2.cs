@@ -10,6 +10,7 @@ namespace Codinsa2015.Views
 	public class Vector2
 	{
 
+static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public Vector2()
 		{

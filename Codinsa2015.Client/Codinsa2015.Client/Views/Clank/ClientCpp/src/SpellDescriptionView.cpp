@@ -1,85 +1,55 @@
-Value SpellDescriptionView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/SpellDescriptionView.h"
+void SpellDescriptionView::serialize(std::ostream& output) {
 	// BaseCooldown
-	Value BaseCooldown_temp = Value(this->BaseCooldown);
-
-	root0["BaseCooldown"] = BaseCooldown_temp;
+	output << ((float)this->BaseCooldown) << '\n';
 	// CastingTime
-	Value CastingTime_temp = Value(this->CastingTime);
-
-	root0["CastingTime"] = CastingTime_temp;
+	output << ((float)this->CastingTime) << '\n';
 	// CastingTimeAlterations
-	Value CastingTimeAlterations_temp = Value(arrayValue);
-	auto CastingTimeAlterations_temp_iterator = this->CastingTimeAlterations;
-	for(auto CastingTimeAlterations_temp_it = CastingTimeAlterations_temp_iterator.begin();CastingTimeAlterations_temp_it != CastingTimeAlterations_temp_iterator.end();CastingTimeAlterations_temp_it++)
-	{
-		Value CastingTimeAlterations_temp_item = (*CastingTimeAlterations_temp_it).serialize();
-		CastingTimeAlterations_temp.append(CastingTimeAlterations_temp_item);
+	output << this->CastingTimeAlterations.size() << '\n';
+	for(int CastingTimeAlterations_it = 0; CastingTimeAlterations_it < this->CastingTimeAlterations.size(); CastingTimeAlterations_it++) {
+		this->CastingTimeAlterations[CastingTimeAlterations_it].serialize(output);
 	}
 
-	root0["CastingTimeAlterations"] = CastingTimeAlterations_temp;
 	// TargetType
-	Value TargetType_temp = this->TargetType.serialize();
-
-	root0["TargetType"] = TargetType_temp;
+	this->TargetType.serialize(output);
 	// OnHitEffects
-	Value OnHitEffects_temp = Value(arrayValue);
-	auto OnHitEffects_temp_iterator = this->OnHitEffects;
-	for(auto OnHitEffects_temp_it = OnHitEffects_temp_iterator.begin();OnHitEffects_temp_it != OnHitEffects_temp_iterator.end();OnHitEffects_temp_it++)
-	{
-		Value OnHitEffects_temp_item = (*OnHitEffects_temp_it).serialize();
-		OnHitEffects_temp.append(OnHitEffects_temp_item);
+	output << this->OnHitEffects.size() << '\n';
+	for(int OnHitEffects_it = 0; OnHitEffects_it < this->OnHitEffects.size(); OnHitEffects_it++) {
+		this->OnHitEffects[OnHitEffects_it].serialize(output);
 	}
-
-	root0["OnHitEffects"] = OnHitEffects_temp;
-	return root0;
 
 }
 
-static SpellDescriptionView SpellDescriptionView::deserialize(Value& val)
-{
-	SpellDescriptionView obj0 = SpellDescriptionView();
+SpellDescriptionView SpellDescriptionView::deserialize(std::istream& input) {
+	SpellDescriptionView _obj = SpellDescriptionView();
 	// BaseCooldown
-	float BaseCooldown = val["BaseCooldown"].asDouble();
-
-	obj0.BaseCooldown = BaseCooldown;
-
+	float _obj_BaseCooldown; input >> _obj_BaseCooldown; input.ignore(1000, '\n');
+	_obj.BaseCooldown = (float)_obj_BaseCooldown;
 	// CastingTime
-	float CastingTime = val["CastingTime"].asDouble();
-
-	obj0.CastingTime = CastingTime;
-
+	float _obj_CastingTime; input >> _obj_CastingTime; input.ignore(1000, '\n');
+	_obj.CastingTime = (float)_obj_CastingTime;
 	// CastingTimeAlterations
-	vector<StateAlterationModelView> CastingTimeAlterations = vector<StateAlterationModelView>();
-	auto CastingTimeAlterations_iterator = val["CastingTimeAlterations"];
-	for(auto CastingTimeAlterations_it = CastingTimeAlterations_iterator.begin();CastingTimeAlterations_it != CastingTimeAlterations_iterator.end(); CastingTimeAlterations_it++)
-	{
-		StateAlterationModelView CastingTimeAlterations_item = StateAlterationModelView::deserialize((*CastingTimeAlterations_it));
-		CastingTimeAlterations.push_back(CastingTimeAlterations_item);
+	std::vector<StateAlterationModelView> _obj_CastingTimeAlterations = std::vector<StateAlterationModelView>();
+	int _obj_CastingTimeAlterations_count; input >> _obj_CastingTimeAlterations_count; input.ignore(1000, '\n');
+	for(int _obj_CastingTimeAlterations_i = 0; _obj_CastingTimeAlterations_i < _obj_CastingTimeAlterations_count; _obj_CastingTimeAlterations_i++) {
+		StateAlterationModelView _obj_CastingTimeAlterations_e = StateAlterationModelView::deserialize(input);
+		_obj_CastingTimeAlterations.push_back((StateAlterationModelView)_obj_CastingTimeAlterations_e);
 	}
 
-	obj0.CastingTimeAlterations = CastingTimeAlterations;
-
+	_obj.CastingTimeAlterations = (::std::vector<StateAlterationModelView>)_obj_CastingTimeAlterations;
 	// TargetType
-	SpellTargetInfoView TargetType = SpellTargetInfoView::deserialize(val["TargetType"]);
-
-	obj0.TargetType = TargetType;
-
+	SpellTargetInfoView _obj_TargetType = SpellTargetInfoView::deserialize(input);
+	_obj.TargetType = (::SpellTargetInfoView)_obj_TargetType;
 	// OnHitEffects
-	vector<StateAlterationModelView> OnHitEffects = vector<StateAlterationModelView>();
-	auto OnHitEffects_iterator = val["OnHitEffects"];
-	for(auto OnHitEffects_it = OnHitEffects_iterator.begin();OnHitEffects_it != OnHitEffects_iterator.end(); OnHitEffects_it++)
-	{
-		StateAlterationModelView OnHitEffects_item = StateAlterationModelView::deserialize((*OnHitEffects_it));
-		OnHitEffects.push_back(OnHitEffects_item);
+	std::vector<StateAlterationModelView> _obj_OnHitEffects = std::vector<StateAlterationModelView>();
+	int _obj_OnHitEffects_count; input >> _obj_OnHitEffects_count; input.ignore(1000, '\n');
+	for(int _obj_OnHitEffects_i = 0; _obj_OnHitEffects_i < _obj_OnHitEffects_count; _obj_OnHitEffects_i++) {
+		StateAlterationModelView _obj_OnHitEffects_e = StateAlterationModelView::deserialize(input);
+		_obj_OnHitEffects.push_back((StateAlterationModelView)_obj_OnHitEffects_e);
 	}
 
-	obj0.OnHitEffects = OnHitEffects;
-
-	return obj0;
-
+	_obj.OnHitEffects = (::std::vector<StateAlterationModelView>)_obj_OnHitEffects;
+	return _obj;
 }
-
 
 

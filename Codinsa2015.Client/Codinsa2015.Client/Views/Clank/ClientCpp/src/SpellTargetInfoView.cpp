@@ -1,70 +1,40 @@
-Value SpellTargetInfoView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/SpellTargetInfoView.h"
+void SpellTargetInfoView::serialize(std::ostream& output) {
 	// Type
-	Value Type_temp = Value(this->Type);
-
-	root0["Type"] = Type_temp;
+	output << ((int)this->Type) << '\n';
 	// Range
-	Value Range_temp = Value(this->Range);
-
-	root0["Range"] = Range_temp;
+	output << ((float)this->Range) << '\n';
 	// Duration
-	Value Duration_temp = Value(this->Duration);
-
-	root0["Duration"] = Duration_temp;
+	output << ((float)this->Duration) << '\n';
 	// AoeRadius
-	Value AoeRadius_temp = Value(this->AoeRadius);
-
-	root0["AoeRadius"] = AoeRadius_temp;
+	output << ((float)this->AoeRadius) << '\n';
 	// DieOnCollision
-	Value DieOnCollision_temp = Value(this->DieOnCollision);
-
-	root0["DieOnCollision"] = DieOnCollision_temp;
+	output << (this->DieOnCollision ? 1 : 0) << '\n';
 	// AllowedTargetTypes
-	Value AllowedTargetTypes_temp = Value(this->AllowedTargetTypes);
-
-	root0["AllowedTargetTypes"] = AllowedTargetTypes_temp;
-	return root0;
-
+	output << ((int)this->AllowedTargetTypes) << '\n';
 }
 
-static SpellTargetInfoView SpellTargetInfoView::deserialize(Value& val)
-{
-	SpellTargetInfoView obj0 = SpellTargetInfoView();
+SpellTargetInfoView SpellTargetInfoView::deserialize(std::istream& input) {
+	SpellTargetInfoView _obj = SpellTargetInfoView();
 	// Type
-	TargettingType Type = val["Type"].asInt();
-
-	obj0.Type = Type;
-
+	int _obj_Type; input >> _obj_Type; input.ignore(1000, '\n');
+	_obj.Type = (::TargettingType)_obj_Type;
 	// Range
-	float Range = val["Range"].asDouble();
-
-	obj0.Range = Range;
-
+	float _obj_Range; input >> _obj_Range; input.ignore(1000, '\n');
+	_obj.Range = (float)_obj_Range;
 	// Duration
-	float Duration = val["Duration"].asDouble();
-
-	obj0.Duration = Duration;
-
+	float _obj_Duration; input >> _obj_Duration; input.ignore(1000, '\n');
+	_obj.Duration = (float)_obj_Duration;
 	// AoeRadius
-	float AoeRadius = val["AoeRadius"].asDouble();
-
-	obj0.AoeRadius = AoeRadius;
-
+	float _obj_AoeRadius; input >> _obj_AoeRadius; input.ignore(1000, '\n');
+	_obj.AoeRadius = (float)_obj_AoeRadius;
 	// DieOnCollision
-	bool DieOnCollision = val["DieOnCollision"].asBool();
-
-	obj0.DieOnCollision = DieOnCollision;
-
+	bool _obj_DieOnCollision; input >> _obj_DieOnCollision; input.ignore(1000, '\n');
+	_obj.DieOnCollision = (bool)_obj_DieOnCollision;
 	// AllowedTargetTypes
-	EntityTypeRelative AllowedTargetTypes = val["AllowedTargetTypes"].asInt();
-
-	obj0.AllowedTargetTypes = AllowedTargetTypes;
-
-	return obj0;
-
+	int _obj_AllowedTargetTypes; input >> _obj_AllowedTargetTypes; input.ignore(1000, '\n');
+	_obj.AllowedTargetTypes = (::EntityTypeRelative)_obj_AllowedTargetTypes;
+	return _obj;
 }
-
 
 

@@ -1,3 +1,8 @@
+#pragma once
+#include "Common.h"
+#include "StateAlterationView.h"
+#include "Vector2.h"
+
 
 class EntityBaseView
 {
@@ -12,7 +17,7 @@ public:
 	float GetArmor;
 	float GetHP;
 	float GetMaxHP;
-	vector<StateAlterationView> StateAlterations;
+	std::vector<StateAlterationView> StateAlterations;
 	float BaseArmor;
 	Vector2 Direction;
 	Vector2 Position;
@@ -35,9 +40,9 @@ public:
 	bool HasTrueVision;
 	bool HasWardVision;
 	float VisionRange;
-	Value serialize();
+	void serialize(std::ostream& output);
 
-	static EntityBaseView deserialize(Value& val);
+	static EntityBaseView deserialize(std::istream& input);
 private: 
 
 };

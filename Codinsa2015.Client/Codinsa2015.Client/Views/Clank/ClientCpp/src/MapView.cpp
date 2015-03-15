@@ -1,49 +1,33 @@
-Value MapView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/MapView.h"
+void MapView::serialize(std::ostream& output) {
 	// Passability
-	Value Passability_temp = Value(arrayValue);
-	auto Passability_temp_iterator = this->Passability;
-	for(auto Passability_temp_it = Passability_temp_iterator.begin();Passability_temp_it != Passability_temp_iterator.end();Passability_temp_it++)
-	{
-		Value Passability_temp_item = Value(arrayValue);
-		auto Passability_temp_item_iterator = (*Passability_temp_it);
-		for(auto Passability_temp_item_it = Passability_temp_item_iterator.begin();Passability_temp_item_it != Passability_temp_item_iterator.end();Passability_temp_item_it++)
-		{
-			Value Passability_temp_item_item = Value((*Passability_temp_item_it));
-			Passability_temp_item.append(Passability_temp_item_item);
+	output << this->Passability.size() << '\n';
+	for(int Passability_it = 0; Passability_it < this->Passability.size(); Passability_it++) {
+		output << this->Passability[Passability_it].size() << '\n';
+		for(int PassabilityPassability_it_it = 0; PassabilityPassability_it_it < this->Passability[Passability_it].size(); PassabilityPassability_it_it++) {
+			output << (this->Passability[Passability_it][PassabilityPassability_it_it] ? 1 : 0) << '\n';
 		}
-		Passability_temp.append(Passability_temp_item);
 	}
-
-	root0["Passability"] = Passability_temp;
-	return root0;
 
 }
 
-static MapView MapView::deserialize(Value& val)
-{
-	MapView obj0 = MapView();
+MapView MapView::deserialize(std::istream& input) {
+	MapView _obj = MapView();
 	// Passability
-	vector<vector<bool>> Passability = vector<vector<bool>>();
-	auto Passability_iterator = val["Passability"];
-	for(auto Passability_it = Passability_iterator.begin();Passability_it != Passability_iterator.end(); Passability_it++)
-	{
-		vector<bool> Passability_item = vector<bool>();
-		auto Passability_item_iterator = (*Passability_it);
-		for(auto Passability_item_it = Passability_item_iterator.begin();Passability_item_it != Passability_item_iterator.end(); Passability_item_it++)
-		{
-			bool Passability_item_item = (*Passability_item_it).asBool();
-			Passability_item.push_back(Passability_item_item);
+	std::vector<std::vector<bool>> _obj_Passability = std::vector<std::vector<bool>>();
+	int _obj_Passability_count; input >> _obj_Passability_count; input.ignore(1000, '\n');
+	for(int _obj_Passability_i = 0; _obj_Passability_i < _obj_Passability_count; _obj_Passability_i++) {
+		std::vector<bool> _obj_Passability_e = std::vector<bool>();
+		int _obj_Passability_e_count; input >> _obj_Passability_e_count; input.ignore(1000, '\n');
+		for(int _obj_Passability_e_i = 0; _obj_Passability_e_i < _obj_Passability_e_count; _obj_Passability_e_i++) {
+			bool _obj_Passability_e_e; input >> _obj_Passability_e_e; input.ignore(1000, '\n');
+			_obj_Passability_e.push_back((bool)_obj_Passability_e_e);
 		}
-		Passability.push_back(Passability_item);
+		_obj_Passability.push_back((std::vector<bool>)_obj_Passability_e);
 	}
 
-	obj0.Passability = Passability;
-
-	return obj0;
-
+	_obj.Passability = (::std::vector<std::vector<bool>>)_obj_Passability;
+	return _obj;
 }
-
 
 

@@ -1,316 +1,181 @@
-Value EntityBaseView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/EntityBaseView.h"
+void EntityBaseView::serialize(std::ostream& output) {
 	// GetMagicResist
-	Value GetMagicResist_temp = Value(this->GetMagicResist);
-
-	root0["GetMagicResist"] = GetMagicResist_temp;
+	output << ((float)this->GetMagicResist) << '\n';
 	// GetAbilityPower
-	Value GetAbilityPower_temp = Value(this->GetAbilityPower);
-
-	root0["GetAbilityPower"] = GetAbilityPower_temp;
+	output << ((float)this->GetAbilityPower) << '\n';
 	// GetCooldownReduction
-	Value GetCooldownReduction_temp = Value(this->GetCooldownReduction);
-
-	root0["GetCooldownReduction"] = GetCooldownReduction_temp;
+	output << ((float)this->GetCooldownReduction) << '\n';
 	// GetMoveSpeed
-	Value GetMoveSpeed_temp = Value(this->GetMoveSpeed);
-
-	root0["GetMoveSpeed"] = GetMoveSpeed_temp;
+	output << ((float)this->GetMoveSpeed) << '\n';
 	// GetAttackSpeed
-	Value GetAttackSpeed_temp = Value(this->GetAttackSpeed);
-
-	root0["GetAttackSpeed"] = GetAttackSpeed_temp;
+	output << ((float)this->GetAttackSpeed) << '\n';
 	// GetAttackDamage
-	Value GetAttackDamage_temp = Value(this->GetAttackDamage);
-
-	root0["GetAttackDamage"] = GetAttackDamage_temp;
+	output << ((float)this->GetAttackDamage) << '\n';
 	// GetArmor
-	Value GetArmor_temp = Value(this->GetArmor);
-
-	root0["GetArmor"] = GetArmor_temp;
+	output << ((float)this->GetArmor) << '\n';
 	// GetHP
-	Value GetHP_temp = Value(this->GetHP);
-
-	root0["GetHP"] = GetHP_temp;
+	output << ((float)this->GetHP) << '\n';
 	// GetMaxHP
-	Value GetMaxHP_temp = Value(this->GetMaxHP);
-
-	root0["GetMaxHP"] = GetMaxHP_temp;
+	output << ((float)this->GetMaxHP) << '\n';
 	// StateAlterations
-	Value StateAlterations_temp = Value(arrayValue);
-	auto StateAlterations_temp_iterator = this->StateAlterations;
-	for(auto StateAlterations_temp_it = StateAlterations_temp_iterator.begin();StateAlterations_temp_it != StateAlterations_temp_iterator.end();StateAlterations_temp_it++)
-	{
-		Value StateAlterations_temp_item = (*StateAlterations_temp_it).serialize();
-		StateAlterations_temp.append(StateAlterations_temp_item);
+	output << this->StateAlterations.size() << '\n';
+	for(int StateAlterations_it = 0; StateAlterations_it < this->StateAlterations.size(); StateAlterations_it++) {
+		this->StateAlterations[StateAlterations_it].serialize(output);
 	}
 
-	root0["StateAlterations"] = StateAlterations_temp;
 	// BaseArmor
-	Value BaseArmor_temp = Value(this->BaseArmor);
-
-	root0["BaseArmor"] = BaseArmor_temp;
+	output << ((float)this->BaseArmor) << '\n';
 	// Direction
-	Value Direction_temp = this->Direction.serialize();
-
-	root0["Direction"] = Direction_temp;
+	this->Direction.serialize(output);
 	// Position
-	Value Position_temp = this->Position.serialize();
-
-	root0["Position"] = Position_temp;
+	this->Position.serialize(output);
 	// ShieldPoints
-	Value ShieldPoints_temp = Value(this->ShieldPoints);
-
-	root0["ShieldPoints"] = ShieldPoints_temp;
+	output << ((float)this->ShieldPoints) << '\n';
 	// HP
-	Value HP_temp = Value(this->HP);
-
-	root0["HP"] = HP_temp;
+	output << ((float)this->HP) << '\n';
 	// BaseMaxHP
-	Value BaseMaxHP_temp = Value(this->BaseMaxHP);
-
-	root0["BaseMaxHP"] = BaseMaxHP_temp;
+	output << ((float)this->BaseMaxHP) << '\n';
 	// BaseMoveSpeed
-	Value BaseMoveSpeed_temp = Value(this->BaseMoveSpeed);
-
-	root0["BaseMoveSpeed"] = BaseMoveSpeed_temp;
+	output << ((float)this->BaseMoveSpeed) << '\n';
 	// IsDead
-	Value IsDead_temp = Value(this->IsDead);
-
-	root0["IsDead"] = IsDead_temp;
+	output << (this->IsDead ? 1 : 0) << '\n';
 	// Type
-	Value Type_temp = Value(this->Type);
-
-	root0["Type"] = Type_temp;
+	output << ((int)this->Type) << '\n';
 	// ID
-	Value ID_temp = Value(this->ID);
-
-	root0["ID"] = ID_temp;
+	output << ((int)this->ID) << '\n';
 	// BaseAttackDamage
-	Value BaseAttackDamage_temp = Value(this->BaseAttackDamage);
-
-	root0["BaseAttackDamage"] = BaseAttackDamage_temp;
+	output << ((float)this->BaseAttackDamage) << '\n';
 	// BaseCooldownReduction
-	Value BaseCooldownReduction_temp = Value(this->BaseCooldownReduction);
-
-	root0["BaseCooldownReduction"] = BaseCooldownReduction_temp;
+	output << ((float)this->BaseCooldownReduction) << '\n';
 	// BaseAttackSpeed
-	Value BaseAttackSpeed_temp = Value(this->BaseAttackSpeed);
-
-	root0["BaseAttackSpeed"] = BaseAttackSpeed_temp;
+	output << ((float)this->BaseAttackSpeed) << '\n';
 	// BaseAbilityPower
-	Value BaseAbilityPower_temp = Value(this->BaseAbilityPower);
-
-	root0["BaseAbilityPower"] = BaseAbilityPower_temp;
+	output << ((float)this->BaseAbilityPower) << '\n';
 	// BaseMagicResist
-	Value BaseMagicResist_temp = Value(this->BaseMagicResist);
-
-	root0["BaseMagicResist"] = BaseMagicResist_temp;
+	output << ((float)this->BaseMagicResist) << '\n';
 	// IsRooted
-	Value IsRooted_temp = Value(this->IsRooted);
-
-	root0["IsRooted"] = IsRooted_temp;
+	output << (this->IsRooted ? 1 : 0) << '\n';
 	// IsSilenced
-	Value IsSilenced_temp = Value(this->IsSilenced);
-
-	root0["IsSilenced"] = IsSilenced_temp;
+	output << (this->IsSilenced ? 1 : 0) << '\n';
 	// IsStuned
-	Value IsStuned_temp = Value(this->IsStuned);
-
-	root0["IsStuned"] = IsStuned_temp;
+	output << (this->IsStuned ? 1 : 0) << '\n';
 	// IsStealthed
-	Value IsStealthed_temp = Value(this->IsStealthed);
-
-	root0["IsStealthed"] = IsStealthed_temp;
+	output << (this->IsStealthed ? 1 : 0) << '\n';
 	// HasTrueVision
-	Value HasTrueVision_temp = Value(this->HasTrueVision);
-
-	root0["HasTrueVision"] = HasTrueVision_temp;
+	output << (this->HasTrueVision ? 1 : 0) << '\n';
 	// HasWardVision
-	Value HasWardVision_temp = Value(this->HasWardVision);
-
-	root0["HasWardVision"] = HasWardVision_temp;
+	output << (this->HasWardVision ? 1 : 0) << '\n';
 	// VisionRange
-	Value VisionRange_temp = Value(this->VisionRange);
-
-	root0["VisionRange"] = VisionRange_temp;
-	return root0;
-
+	output << ((float)this->VisionRange) << '\n';
 }
 
-static EntityBaseView EntityBaseView::deserialize(Value& val)
-{
-	EntityBaseView obj0 = EntityBaseView();
+EntityBaseView EntityBaseView::deserialize(std::istream& input) {
+	EntityBaseView _obj = EntityBaseView();
+	
 	// GetMagicResist
-	float GetMagicResist = val["GetMagicResist"].asDouble();
-
-	obj0.GetMagicResist = GetMagicResist;
-
+	float _obj_GetMagicResist; input >> _obj_GetMagicResist; input.ignore(1000, '\n');
+	_obj.GetMagicResist = (float)_obj_GetMagicResist;
 	// GetAbilityPower
-	float GetAbilityPower = val["GetAbilityPower"].asDouble();
-
-	obj0.GetAbilityPower = GetAbilityPower;
-
+	float _obj_GetAbilityPower; input >> _obj_GetAbilityPower; input.ignore(1000, '\n');
+	_obj.GetAbilityPower = (float)_obj_GetAbilityPower;
 	// GetCooldownReduction
-	float GetCooldownReduction = val["GetCooldownReduction"].asDouble();
-
-	obj0.GetCooldownReduction = GetCooldownReduction;
-
+	float _obj_GetCooldownReduction; input >> _obj_GetCooldownReduction; input.ignore(1000, '\n');
+	_obj.GetCooldownReduction = (float)_obj_GetCooldownReduction;
 	// GetMoveSpeed
-	float GetMoveSpeed = val["GetMoveSpeed"].asDouble();
-
-	obj0.GetMoveSpeed = GetMoveSpeed;
-
+	float _obj_GetMoveSpeed; input >> _obj_GetMoveSpeed; input.ignore(1000, '\n');
+	_obj.GetMoveSpeed = (float)_obj_GetMoveSpeed;
 	// GetAttackSpeed
-	float GetAttackSpeed = val["GetAttackSpeed"].asDouble();
-
-	obj0.GetAttackSpeed = GetAttackSpeed;
-
+	float _obj_GetAttackSpeed; input >> _obj_GetAttackSpeed; input.ignore(1000, '\n');
+	_obj.GetAttackSpeed = (float)_obj_GetAttackSpeed;
 	// GetAttackDamage
-	float GetAttackDamage = val["GetAttackDamage"].asDouble();
-
-	obj0.GetAttackDamage = GetAttackDamage;
-
+	float _obj_GetAttackDamage; input >> _obj_GetAttackDamage; input.ignore(1000, '\n');
+	_obj.GetAttackDamage = (float)_obj_GetAttackDamage;
 	// GetArmor
-	float GetArmor = val["GetArmor"].asDouble();
-
-	obj0.GetArmor = GetArmor;
-
+	float _obj_GetArmor; input >> _obj_GetArmor; input.ignore(1000, '\n');
+	_obj.GetArmor = (float)_obj_GetArmor;
 	// GetHP
-	float GetHP = val["GetHP"].asDouble();
-
-	obj0.GetHP = GetHP;
-
+	float _obj_GetHP; input >> _obj_GetHP; input.ignore(1000, '\n');
+	_obj.GetHP = (float)_obj_GetHP;
 	// GetMaxHP
-	float GetMaxHP = val["GetMaxHP"].asDouble();
-
-	obj0.GetMaxHP = GetMaxHP;
-
+	float _obj_GetMaxHP; input >> _obj_GetMaxHP; input.ignore(1000, '\n');
+	_obj.GetMaxHP = (float)_obj_GetMaxHP;
 	// StateAlterations
-	vector<StateAlterationView> StateAlterations = vector<StateAlterationView>();
-	auto StateAlterations_iterator = val["StateAlterations"];
-	for(auto StateAlterations_it = StateAlterations_iterator.begin();StateAlterations_it != StateAlterations_iterator.end(); StateAlterations_it++)
-	{
-		StateAlterationView StateAlterations_item = StateAlterationView::deserialize((*StateAlterations_it));
-		StateAlterations.push_back(StateAlterations_item);
+	std::vector<StateAlterationView> _obj_StateAlterations = std::vector<StateAlterationView>();
+	int _obj_StateAlterations_count; input >> _obj_StateAlterations_count; input.ignore(1000, '\n');
+	for(int _obj_StateAlterations_i = 0; _obj_StateAlterations_i < _obj_StateAlterations_count; _obj_StateAlterations_i++) {
+		StateAlterationView _obj_StateAlterations_e = StateAlterationView::deserialize(input);
+		_obj_StateAlterations.push_back((StateAlterationView)_obj_StateAlterations_e);
 	}
 
-	obj0.StateAlterations = StateAlterations;
-
+	_obj.StateAlterations = (::std::vector<StateAlterationView>)_obj_StateAlterations;
 	// BaseArmor
-	float BaseArmor = val["BaseArmor"].asDouble();
-
-	obj0.BaseArmor = BaseArmor;
-
+	float _obj_BaseArmor; input >> _obj_BaseArmor; input.ignore(1000, '\n');
+	_obj.BaseArmor = (float)_obj_BaseArmor;
 	// Direction
-	Vector2 Direction = Vector2::deserialize(val["Direction"]);
-
-	obj0.Direction = Direction;
-
+	Vector2 _obj_Direction = Vector2::deserialize(input);
+	_obj.Direction = (::Vector2)_obj_Direction;
 	// Position
-	Vector2 Position = Vector2::deserialize(val["Position"]);
-
-	obj0.Position = Position;
-
+	Vector2 _obj_Position = Vector2::deserialize(input);
+	_obj.Position = (::Vector2)_obj_Position;
 	// ShieldPoints
-	float ShieldPoints = val["ShieldPoints"].asDouble();
-
-	obj0.ShieldPoints = ShieldPoints;
-
+	float _obj_ShieldPoints; input >> _obj_ShieldPoints; input.ignore(1000, '\n');
+	_obj.ShieldPoints = (float)_obj_ShieldPoints;
 	// HP
-	float HP = val["HP"].asDouble();
-
-	obj0.HP = HP;
-
+	float _obj_HP; input >> _obj_HP; input.ignore(1000, '\n');
+	_obj.HP = (float)_obj_HP;
 	// BaseMaxHP
-	float BaseMaxHP = val["BaseMaxHP"].asDouble();
-
-	obj0.BaseMaxHP = BaseMaxHP;
-
+	float _obj_BaseMaxHP; input >> _obj_BaseMaxHP; input.ignore(1000, '\n');
+	_obj.BaseMaxHP = (float)_obj_BaseMaxHP;
 	// BaseMoveSpeed
-	float BaseMoveSpeed = val["BaseMoveSpeed"].asDouble();
-
-	obj0.BaseMoveSpeed = BaseMoveSpeed;
-
+	float _obj_BaseMoveSpeed; input >> _obj_BaseMoveSpeed; input.ignore(1000, '\n');
+	_obj.BaseMoveSpeed = (float)_obj_BaseMoveSpeed;
 	// IsDead
-	bool IsDead = val["IsDead"].asBool();
-
-	obj0.IsDead = IsDead;
-
+	bool _obj_IsDead; input >> _obj_IsDead; input.ignore(1000, '\n');
+	_obj.IsDead = (bool)_obj_IsDead;
 	// Type
-	EntityType Type = val["Type"].asInt();
-
-	obj0.Type = Type;
-
+	int _obj_Type; input >> _obj_Type; input.ignore(1000, '\n');
+	_obj.Type = (::EntityType)_obj_Type;
 	// ID
-	int ID = val["ID"].asInt();
-
-	obj0.ID = ID;
-
+	int _obj_ID; input >> _obj_ID; input.ignore(1000, '\n');
+	_obj.ID = (int)_obj_ID;
 	// BaseAttackDamage
-	float BaseAttackDamage = val["BaseAttackDamage"].asDouble();
-
-	obj0.BaseAttackDamage = BaseAttackDamage;
-
+	float _obj_BaseAttackDamage; input >> _obj_BaseAttackDamage; input.ignore(1000, '\n');
+	_obj.BaseAttackDamage = (float)_obj_BaseAttackDamage;
 	// BaseCooldownReduction
-	float BaseCooldownReduction = val["BaseCooldownReduction"].asDouble();
-
-	obj0.BaseCooldownReduction = BaseCooldownReduction;
-
+	float _obj_BaseCooldownReduction; input >> _obj_BaseCooldownReduction; input.ignore(1000, '\n');
+	_obj.BaseCooldownReduction = (float)_obj_BaseCooldownReduction;
 	// BaseAttackSpeed
-	float BaseAttackSpeed = val["BaseAttackSpeed"].asDouble();
-
-	obj0.BaseAttackSpeed = BaseAttackSpeed;
-
+	float _obj_BaseAttackSpeed; input >> _obj_BaseAttackSpeed; input.ignore(1000, '\n');
+	_obj.BaseAttackSpeed = (float)_obj_BaseAttackSpeed;
 	// BaseAbilityPower
-	float BaseAbilityPower = val["BaseAbilityPower"].asDouble();
-
-	obj0.BaseAbilityPower = BaseAbilityPower;
-
+	float _obj_BaseAbilityPower; input >> _obj_BaseAbilityPower; input.ignore(1000, '\n');
+	_obj.BaseAbilityPower = (float)_obj_BaseAbilityPower;
 	// BaseMagicResist
-	float BaseMagicResist = val["BaseMagicResist"].asDouble();
-
-	obj0.BaseMagicResist = BaseMagicResist;
-
+	float _obj_BaseMagicResist; input >> _obj_BaseMagicResist; input.ignore(1000, '\n');
+	_obj.BaseMagicResist = (float)_obj_BaseMagicResist;
 	// IsRooted
-	bool IsRooted = val["IsRooted"].asBool();
-
-	obj0.IsRooted = IsRooted;
-
+	bool _obj_IsRooted; input >> _obj_IsRooted; input.ignore(1000, '\n');
+	_obj.IsRooted = (bool)_obj_IsRooted;
 	// IsSilenced
-	bool IsSilenced = val["IsSilenced"].asBool();
-
-	obj0.IsSilenced = IsSilenced;
-
+	bool _obj_IsSilenced; input >> _obj_IsSilenced; input.ignore(1000, '\n');
+	_obj.IsSilenced = (bool)_obj_IsSilenced;
 	// IsStuned
-	bool IsStuned = val["IsStuned"].asBool();
-
-	obj0.IsStuned = IsStuned;
-
+	bool _obj_IsStuned; input >> _obj_IsStuned; input.ignore(1000, '\n');
+	_obj.IsStuned = (bool)_obj_IsStuned;
 	// IsStealthed
-	bool IsStealthed = val["IsStealthed"].asBool();
-
-	obj0.IsStealthed = IsStealthed;
-
+	bool _obj_IsStealthed; input >> _obj_IsStealthed; input.ignore(1000, '\n');
+	_obj.IsStealthed = (bool)_obj_IsStealthed;
 	// HasTrueVision
-	bool HasTrueVision = val["HasTrueVision"].asBool();
-
-	obj0.HasTrueVision = HasTrueVision;
-
+	bool _obj_HasTrueVision; input >> _obj_HasTrueVision; input.ignore(1000, '\n');
+	_obj.HasTrueVision = (bool)_obj_HasTrueVision;
 	// HasWardVision
-	bool HasWardVision = val["HasWardVision"].asBool();
-
-	obj0.HasWardVision = HasWardVision;
-
+	bool _obj_HasWardVision; input >> _obj_HasWardVision; input.ignore(1000, '\n');
+	_obj.HasWardVision = (bool)_obj_HasWardVision;
 	// VisionRange
-	float VisionRange = val["VisionRange"].asDouble();
-
-	obj0.VisionRange = VisionRange;
-
-	return obj0;
-
+	float _obj_VisionRange; input >> _obj_VisionRange; input.ignore(1000, '\n');
+	_obj.VisionRange = (float)_obj_VisionRange;
+	return _obj;
 }
-
 
 

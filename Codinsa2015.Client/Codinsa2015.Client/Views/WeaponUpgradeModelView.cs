@@ -12,6 +12,7 @@ namespace Codinsa2015.Views
 	public class WeaponUpgradeModelView
 	{
 
+static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public SpellDescriptionView Description;	
 		public List<StateAlterationModelView> PassiveAlterations;	

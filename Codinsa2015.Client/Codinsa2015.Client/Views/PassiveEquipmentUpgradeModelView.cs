@@ -12,6 +12,7 @@ namespace Codinsa2015.Views
 	public class PassiveEquipmentUpgradeModelView
 	{
 
+static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public List<StateAlterationModelView> PassiveAlterations;	
 		public float Cost;	

@@ -1,64 +1,40 @@
-Value SpellView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/SpellView.h"
+void SpellView::serialize(std::ostream& output) {
 	// CurrentCooldown
-	Value CurrentCooldown_temp = Value(this->CurrentCooldown);
-
-	root0["CurrentCooldown"] = CurrentCooldown_temp;
+	output << ((float)this->CurrentCooldown) << '\n';
 	// SourceCaster
-	Value SourceCaster_temp = Value(this->SourceCaster);
-
-	root0["SourceCaster"] = SourceCaster_temp;
+	output << ((int)this->SourceCaster) << '\n';
 	// Levels
-	Value Levels_temp = Value(arrayValue);
-	auto Levels_temp_iterator = this->Levels;
-	for(auto Levels_temp_it = Levels_temp_iterator.begin();Levels_temp_it != Levels_temp_iterator.end();Levels_temp_it++)
-	{
-		Value Levels_temp_item = (*Levels_temp_it).serialize();
-		Levels_temp.append(Levels_temp_item);
+	output << this->Levels.size() << '\n';
+	for(int Levels_it = 0; Levels_it < this->Levels.size(); Levels_it++) {
+		this->Levels[Levels_it].serialize(output);
 	}
 
-	root0["Levels"] = Levels_temp;
 	// Level
-	Value Level_temp = Value(this->Level);
-
-	root0["Level"] = Level_temp;
-	return root0;
-
+	output << ((int)this->Level) << '\n';
 }
 
-static SpellView SpellView::deserialize(Value& val)
-{
-	SpellView obj0 = SpellView();
+SpellView SpellView::deserialize(std::istream& input) {
+	SpellView _obj = SpellView();
 	// CurrentCooldown
-	float CurrentCooldown = val["CurrentCooldown"].asDouble();
-
-	obj0.CurrentCooldown = CurrentCooldown;
-
+	float _obj_CurrentCooldown; input >> _obj_CurrentCooldown; input.ignore(1000, '\n');
+	_obj.CurrentCooldown = (float)_obj_CurrentCooldown;
 	// SourceCaster
-	int SourceCaster = val["SourceCaster"].asInt();
-
-	obj0.SourceCaster = SourceCaster;
-
+	int _obj_SourceCaster; input >> _obj_SourceCaster; input.ignore(1000, '\n');
+	_obj.SourceCaster = (int)_obj_SourceCaster;
 	// Levels
-	vector<SpellDescriptionView> Levels = vector<SpellDescriptionView>();
-	auto Levels_iterator = val["Levels"];
-	for(auto Levels_it = Levels_iterator.begin();Levels_it != Levels_iterator.end(); Levels_it++)
-	{
-		SpellDescriptionView Levels_item = SpellDescriptionView::deserialize((*Levels_it));
-		Levels.push_back(Levels_item);
+	std::vector<SpellDescriptionView> _obj_Levels = std::vector<SpellDescriptionView>();
+	int _obj_Levels_count; input >> _obj_Levels_count; input.ignore(1000, '\n');
+	for(int _obj_Levels_i = 0; _obj_Levels_i < _obj_Levels_count; _obj_Levels_i++) {
+		SpellDescriptionView _obj_Levels_e = SpellDescriptionView::deserialize(input);
+		_obj_Levels.push_back((SpellDescriptionView)_obj_Levels_e);
 	}
 
-	obj0.Levels = Levels;
-
+	_obj.Levels = (::std::vector<SpellDescriptionView>)_obj_Levels;
 	// Level
-	int Level = val["Level"].asInt();
-
-	obj0.Level = Level;
-
-	return obj0;
-
+	int _obj_Level; input >> _obj_Level; input.ignore(1000, '\n');
+	_obj.Level = (int)_obj_Level;
+	return _obj;
 }
-
 
 

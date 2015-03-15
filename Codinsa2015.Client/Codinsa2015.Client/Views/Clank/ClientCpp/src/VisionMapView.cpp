@@ -1,49 +1,33 @@
-Value VisionMapView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/VisionMapView.h"
+void VisionMapView::serialize(std::ostream& output) {
 	// Vision
-	Value Vision_temp = Value(arrayValue);
-	auto Vision_temp_iterator = this->Vision;
-	for(auto Vision_temp_it = Vision_temp_iterator.begin();Vision_temp_it != Vision_temp_iterator.end();Vision_temp_it++)
-	{
-		Value Vision_temp_item = Value(arrayValue);
-		auto Vision_temp_item_iterator = (*Vision_temp_it);
-		for(auto Vision_temp_item_it = Vision_temp_item_iterator.begin();Vision_temp_item_it != Vision_temp_item_iterator.end();Vision_temp_item_it++)
-		{
-			Value Vision_temp_item_item = Value((*Vision_temp_item_it));
-			Vision_temp_item.append(Vision_temp_item_item);
+	output << this->Vision.size() << '\n';
+	for(int Vision_it = 0; Vision_it < this->Vision.size(); Vision_it++) {
+		output << this->Vision[Vision_it].size() << '\n';
+		for(int VisionVision_it_it = 0; VisionVision_it_it < this->Vision[Vision_it].size(); VisionVision_it_it++) {
+			output << ((int)this->Vision[Vision_it][VisionVision_it_it]) << '\n';
 		}
-		Vision_temp.append(Vision_temp_item);
 	}
-
-	root0["Vision"] = Vision_temp;
-	return root0;
 
 }
 
-static VisionMapView VisionMapView::deserialize(Value& val)
-{
-	VisionMapView obj0 = VisionMapView();
+VisionMapView VisionMapView::deserialize(std::istream& input) {
+	VisionMapView _obj = VisionMapView();
 	// Vision
-	vector<vector<VisionFlags>> Vision = vector<vector<VisionFlags>>();
-	auto Vision_iterator = val["Vision"];
-	for(auto Vision_it = Vision_iterator.begin();Vision_it != Vision_iterator.end(); Vision_it++)
-	{
-		vector<VisionFlags> Vision_item = vector<VisionFlags>();
-		auto Vision_item_iterator = (*Vision_it);
-		for(auto Vision_item_it = Vision_item_iterator.begin();Vision_item_it != Vision_item_iterator.end(); Vision_item_it++)
-		{
-			VisionFlags Vision_item_item = (*Vision_item_it).asInt();
-			Vision_item.push_back(Vision_item_item);
+	std::vector<std::vector<VisionFlags>> _obj_Vision = std::vector<std::vector<VisionFlags>>();
+	int _obj_Vision_count; input >> _obj_Vision_count; input.ignore(1000, '\n');
+	for(int _obj_Vision_i = 0; _obj_Vision_i < _obj_Vision_count; _obj_Vision_i++) {
+		std::vector<VisionFlags> _obj_Vision_e = std::vector<VisionFlags>();
+		int _obj_Vision_e_count; input >> _obj_Vision_e_count; input.ignore(1000, '\n');
+		for(int _obj_Vision_e_i = 0; _obj_Vision_e_i < _obj_Vision_e_count; _obj_Vision_e_i++) {
+			int _obj_Vision_e_e; input >> _obj_Vision_e_e; input.ignore(1000, '\n');
+			_obj_Vision_e.push_back((VisionFlags)_obj_Vision_e_e);
 		}
-		Vision.push_back(Vision_item);
+		_obj_Vision.push_back((std::vector<VisionFlags>)_obj_Vision_e);
 	}
 
-	obj0.Vision = Vision;
-
-	return obj0;
-
+	_obj.Vision = (::std::vector<std::vector<VisionFlags>>)_obj_Vision;
+	return _obj;
 }
-
 
 

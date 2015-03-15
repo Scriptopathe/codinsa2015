@@ -1,25 +1,15 @@
-Value SpellcastBaseView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/SpellcastBaseView.h"
+void SpellcastBaseView::serialize(std::ostream& output) {
 	// Shape
-	Value Shape_temp = this->Shape.serialize();
-
-	root0["Shape"] = Shape_temp;
-	return root0;
-
+	this->Shape.serialize(output);
 }
 
-static SpellcastBaseView SpellcastBaseView::deserialize(Value& val)
-{
-	SpellcastBaseView obj0 = SpellcastBaseView();
+SpellcastBaseView SpellcastBaseView::deserialize(std::istream& input) {
+	SpellcastBaseView _obj = SpellcastBaseView();
 	// Shape
-	GenericShapeView Shape = GenericShapeView::deserialize(val["Shape"]);
-
-	obj0.Shape = Shape;
-
-	return obj0;
-
+	GenericShapeView _obj_Shape = GenericShapeView::deserialize(input);
+	_obj.Shape = (::GenericShapeView)_obj_Shape;
+	return _obj;
 }
-
 
 

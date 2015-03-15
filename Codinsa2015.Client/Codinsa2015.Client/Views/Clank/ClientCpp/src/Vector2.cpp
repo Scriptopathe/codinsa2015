@@ -1,42 +1,28 @@
+#include "../inc/Vector2.h"
 Vector2::Vector2()
 {
 }
 Vector2::Vector2(float x, float y)
 {
-	this.X = x;
-	this.Y = y;
+	this->X = x;
+	this->Y = y;
 }
-Value Vector2::serialize()
-{
-	Value root0(Json::objectValue);
+void Vector2::serialize(std::ostream& output) {
 	// X
-	Value X_temp = Value(this->X);
-
-	root0["X"] = X_temp;
+	output << ((float)this->X) << '\n';
 	// Y
-	Value Y_temp = Value(this->Y);
-
-	root0["Y"] = Y_temp;
-	return root0;
-
+	output << ((float)this->Y) << '\n';
 }
 
-static Vector2 Vector2::deserialize(Value& val)
-{
-	Vector2 obj0 = Vector2();
+Vector2 Vector2::deserialize(std::istream& input) {
+	Vector2 _obj = Vector2();
 	// X
-	float X = val["X"].asDouble();
-
-	obj0.X = X;
-
+	float _obj_X; input >> _obj_X; input.ignore(1000, '\n');
+	_obj.X = (float)_obj_X;
 	// Y
-	float Y = val["Y"].asDouble();
-
-	obj0.Y = Y;
-
-	return obj0;
-
+	float _obj_Y; input >> _obj_Y; input.ignore(1000, '\n');
+	_obj.Y = (float)_obj_Y;
+	return _obj;
 }
-
 
 

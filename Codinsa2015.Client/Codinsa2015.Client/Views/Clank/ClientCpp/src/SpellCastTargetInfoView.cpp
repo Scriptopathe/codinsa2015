@@ -1,52 +1,30 @@
-Value SpellCastTargetInfoView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/SpellCastTargetInfoView.h"
+void SpellCastTargetInfoView::serialize(std::ostream& output) {
 	// Type
-	Value Type_temp = Value(this->Type);
-
-	root0["Type"] = Type_temp;
+	output << ((int)this->Type) << '\n';
 	// TargetPosition
-	Value TargetPosition_temp = this->TargetPosition.serialize();
-
-	root0["TargetPosition"] = TargetPosition_temp;
+	this->TargetPosition.serialize(output);
 	// TargetDirection
-	Value TargetDirection_temp = this->TargetDirection.serialize();
-
-	root0["TargetDirection"] = TargetDirection_temp;
+	this->TargetDirection.serialize(output);
 	// TargetId
-	Value TargetId_temp = Value(this->TargetId);
-
-	root0["TargetId"] = TargetId_temp;
-	return root0;
-
+	output << ((int)this->TargetId) << '\n';
 }
 
-static SpellCastTargetInfoView SpellCastTargetInfoView::deserialize(Value& val)
-{
-	SpellCastTargetInfoView obj0 = SpellCastTargetInfoView();
+SpellCastTargetInfoView SpellCastTargetInfoView::deserialize(std::istream& input) {
+	SpellCastTargetInfoView _obj = SpellCastTargetInfoView();
 	// Type
-	TargettingType Type = val["Type"].asInt();
-
-	obj0.Type = Type;
-
+	int _obj_Type; input >> _obj_Type; input.ignore(1000, '\n');
+	_obj.Type = (::TargettingType)_obj_Type;
 	// TargetPosition
-	Vector2 TargetPosition = Vector2::deserialize(val["TargetPosition"]);
-
-	obj0.TargetPosition = TargetPosition;
-
+	Vector2 _obj_TargetPosition = Vector2::deserialize(input);
+	_obj.TargetPosition = (::Vector2)_obj_TargetPosition;
 	// TargetDirection
-	Vector2 TargetDirection = Vector2::deserialize(val["TargetDirection"]);
-
-	obj0.TargetDirection = TargetDirection;
-
+	Vector2 _obj_TargetDirection = Vector2::deserialize(input);
+	_obj.TargetDirection = (::Vector2)_obj_TargetDirection;
 	// TargetId
-	int TargetId = val["TargetId"].asInt();
-
-	obj0.TargetId = TargetId;
-
-	return obj0;
-
+	int _obj_TargetId; input >> _obj_TargetId; input.ignore(1000, '\n');
+	_obj.TargetId = (int)_obj_TargetId;
+	return _obj;
 }
-
 
 

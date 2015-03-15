@@ -1,34 +1,20 @@
-Value StateAlterationParametersView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/StateAlterationParametersView.h"
+void StateAlterationParametersView::serialize(std::ostream& output) {
 	// DashTargetDirection
-	Value DashTargetDirection_temp = this->DashTargetDirection.serialize();
-
-	root0["DashTargetDirection"] = DashTargetDirection_temp;
+	this->DashTargetDirection.serialize(output);
 	// DashTargetEntity
-	Value DashTargetEntity_temp = Value(this->DashTargetEntity);
-
-	root0["DashTargetEntity"] = DashTargetEntity_temp;
-	return root0;
-
+	output << ((int)this->DashTargetEntity) << '\n';
 }
 
-static StateAlterationParametersView StateAlterationParametersView::deserialize(Value& val)
-{
-	StateAlterationParametersView obj0 = StateAlterationParametersView();
+StateAlterationParametersView StateAlterationParametersView::deserialize(std::istream& input) {
+	StateAlterationParametersView _obj = StateAlterationParametersView();
 	// DashTargetDirection
-	Vector2 DashTargetDirection = Vector2::deserialize(val["DashTargetDirection"]);
-
-	obj0.DashTargetDirection = DashTargetDirection;
-
+	Vector2 _obj_DashTargetDirection = Vector2::deserialize(input);
+	_obj.DashTargetDirection = (::Vector2)_obj_DashTargetDirection;
 	// DashTargetEntity
-	int DashTargetEntity = val["DashTargetEntity"].asInt();
-
-	obj0.DashTargetEntity = DashTargetEntity;
-
-	return obj0;
-
+	int _obj_DashTargetEntity; input >> _obj_DashTargetEntity; input.ignore(1000, '\n');
+	_obj.DashTargetEntity = (int)_obj_DashTargetEntity;
+	return _obj;
 }
-
 
 

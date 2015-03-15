@@ -1,52 +1,30 @@
-Value GenericShapeView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/GenericShapeView.h"
+void GenericShapeView::serialize(std::ostream& output) {
 	// Position
-	Value Position_temp = this->Position.serialize();
-
-	root0["Position"] = Position_temp;
+	this->Position.serialize(output);
 	// Radius
-	Value Radius_temp = Value(this->Radius);
-
-	root0["Radius"] = Radius_temp;
+	output << ((float)this->Radius) << '\n';
 	// Size
-	Value Size_temp = this->Size.serialize();
-
-	root0["Size"] = Size_temp;
+	this->Size.serialize(output);
 	// ShapeType
-	Value ShapeType_temp = Value(this->ShapeType);
-
-	root0["ShapeType"] = ShapeType_temp;
-	return root0;
-
+	output << ((int)this->ShapeType) << '\n';
 }
 
-static GenericShapeView GenericShapeView::deserialize(Value& val)
-{
-	GenericShapeView obj0 = GenericShapeView();
+GenericShapeView GenericShapeView::deserialize(std::istream& input) {
+	GenericShapeView _obj = GenericShapeView();
 	// Position
-	Vector2 Position = Vector2::deserialize(val["Position"]);
-
-	obj0.Position = Position;
-
+	Vector2 _obj_Position = Vector2::deserialize(input);
+	_obj.Position = (::Vector2)_obj_Position;
 	// Radius
-	float Radius = val["Radius"].asDouble();
-
-	obj0.Radius = Radius;
-
+	float _obj_Radius; input >> _obj_Radius; input.ignore(1000, '\n');
+	_obj.Radius = (float)_obj_Radius;
 	// Size
-	Vector2 Size = Vector2::deserialize(val["Size"]);
-
-	obj0.Size = Size;
-
+	Vector2 _obj_Size = Vector2::deserialize(input);
+	_obj.Size = (::Vector2)_obj_Size;
 	// ShapeType
-	GenericShapeType ShapeType = val["ShapeType"].asInt();
-
-	obj0.ShapeType = ShapeType;
-
-	return obj0;
-
+	int _obj_ShapeType; input >> _obj_ShapeType; input.ignore(1000, '\n');
+	_obj.ShapeType = (::GenericShapeType)_obj_ShapeType;
+	return _obj;
 }
-
 
 

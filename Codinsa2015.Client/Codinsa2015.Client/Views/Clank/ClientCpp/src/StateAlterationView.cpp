@@ -1,61 +1,35 @@
-Value StateAlterationView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/StateAlterationView.h"
+void StateAlterationView::serialize(std::ostream& output) {
 	// Source
-	Value Source_temp = Value(this->Source);
-
-	root0["Source"] = Source_temp;
+	output << ((int)this->Source) << '\n';
 	// SourceType
-	Value SourceType_temp = Value(this->SourceType);
-
-	root0["SourceType"] = SourceType_temp;
+	output << ((int)this->SourceType) << '\n';
 	// Model
-	Value Model_temp = this->Model.serialize();
-
-	root0["Model"] = Model_temp;
+	this->Model.serialize(output);
 	// Parameters
-	Value Parameters_temp = this->Parameters.serialize();
-
-	root0["Parameters"] = Parameters_temp;
+	this->Parameters.serialize(output);
 	// RemainingTime
-	Value RemainingTime_temp = Value(this->RemainingTime);
-
-	root0["RemainingTime"] = RemainingTime_temp;
-	return root0;
-
+	output << ((float)this->RemainingTime) << '\n';
 }
 
-static StateAlterationView StateAlterationView::deserialize(Value& val)
-{
-	StateAlterationView obj0 = StateAlterationView();
+StateAlterationView StateAlterationView::deserialize(std::istream& input) {
+	StateAlterationView _obj = StateAlterationView();
 	// Source
-	int Source = val["Source"].asInt();
-
-	obj0.Source = Source;
-
+	int _obj_Source; input >> _obj_Source; input.ignore(1000, '\n');
+	_obj.Source = (int)_obj_Source;
 	// SourceType
-	StateAlterationSource SourceType = val["SourceType"].asInt();
-
-	obj0.SourceType = SourceType;
-
+	int _obj_SourceType; input >> _obj_SourceType; input.ignore(1000, '\n');
+	_obj.SourceType = (::StateAlterationSource)_obj_SourceType;
 	// Model
-	StateAlterationModelView Model = StateAlterationModelView::deserialize(val["Model"]);
-
-	obj0.Model = Model;
-
+	StateAlterationModelView _obj_Model = StateAlterationModelView::deserialize(input);
+	_obj.Model = (::StateAlterationModelView)_obj_Model;
 	// Parameters
-	StateAlterationParametersView Parameters = StateAlterationParametersView::deserialize(val["Parameters"]);
-
-	obj0.Parameters = Parameters;
-
+	StateAlterationParametersView _obj_Parameters = StateAlterationParametersView::deserialize(input);
+	_obj.Parameters = (::StateAlterationParametersView)_obj_Parameters;
 	// RemainingTime
-	float RemainingTime = val["RemainingTime"].asDouble();
-
-	obj0.RemainingTime = RemainingTime;
-
-	return obj0;
-
+	float _obj_RemainingTime; input >> _obj_RemainingTime; input.ignore(1000, '\n');
+	_obj.RemainingTime = (float)_obj_RemainingTime;
+	return _obj;
 }
-
 
 

@@ -1,3 +1,6 @@
+#pragma once
+#include "Common.h"
+
 
 class SpellTargetInfoView
 {
@@ -9,9 +12,9 @@ public:
 	float AoeRadius;
 	bool DieOnCollision;
 	EntityTypeRelative AllowedTargetTypes;
-	Value serialize();
+	void serialize(std::ostream& output);
 
-	static SpellTargetInfoView deserialize(Value& val);
+	static SpellTargetInfoView deserialize(std::istream& input);
 private: 
 
 };

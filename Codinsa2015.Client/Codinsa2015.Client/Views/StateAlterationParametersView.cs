@@ -12,6 +12,7 @@ namespace Codinsa2015.Views
 	public class StateAlterationParametersView
 	{
 
+static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public Vector2 DashTargetDirection;	
 		public int DashTargetEntity;	

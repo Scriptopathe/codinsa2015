@@ -1,196 +1,110 @@
-Value StateAlterationModelView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/StateAlterationModelView.h"
+void StateAlterationModelView::serialize(std::ostream& output) {
 	// Type
-	Value Type_temp = Value(this->Type);
-
-	root0["Type"] = Type_temp;
+	output << ((int)this->Type) << '\n';
 	// BaseDuration
-	Value BaseDuration_temp = Value(this->BaseDuration);
-
-	root0["BaseDuration"] = BaseDuration_temp;
+	output << ((float)this->BaseDuration) << '\n';
 	// DashGoThroughWall
-	Value DashGoThroughWall_temp = Value(this->DashGoThroughWall);
-
-	root0["DashGoThroughWall"] = DashGoThroughWall_temp;
+	output << (this->DashGoThroughWall ? 1 : 0) << '\n';
 	// DashDirectionType
-	Value DashDirectionType_temp = Value(this->DashDirectionType);
-
-	root0["DashDirectionType"] = DashDirectionType_temp;
+	output << ((int)this->DashDirectionType) << '\n';
 	// FlatValue
-	Value FlatValue_temp = Value(this->FlatValue);
-
-	root0["FlatValue"] = FlatValue_temp;
+	output << ((float)this->FlatValue) << '\n';
 	// SourcePercentADValue
-	Value SourcePercentADValue_temp = Value(this->SourcePercentADValue);
-
-	root0["SourcePercentADValue"] = SourcePercentADValue_temp;
+	output << ((float)this->SourcePercentADValue) << '\n';
 	// SourcePercentHPValue
-	Value SourcePercentHPValue_temp = Value(this->SourcePercentHPValue);
-
-	root0["SourcePercentHPValue"] = SourcePercentHPValue_temp;
+	output << ((float)this->SourcePercentHPValue) << '\n';
 	// SourcePercentMaxHPValue
-	Value SourcePercentMaxHPValue_temp = Value(this->SourcePercentMaxHPValue);
-
-	root0["SourcePercentMaxHPValue"] = SourcePercentMaxHPValue_temp;
+	output << ((float)this->SourcePercentMaxHPValue) << '\n';
 	// SourcePercentArmorValue
-	Value SourcePercentArmorValue_temp = Value(this->SourcePercentArmorValue);
-
-	root0["SourcePercentArmorValue"] = SourcePercentArmorValue_temp;
+	output << ((float)this->SourcePercentArmorValue) << '\n';
 	// SourcePercentAPValue
-	Value SourcePercentAPValue_temp = Value(this->SourcePercentAPValue);
-
-	root0["SourcePercentAPValue"] = SourcePercentAPValue_temp;
+	output << ((float)this->SourcePercentAPValue) << '\n';
 	// SourcePercentRMValue
-	Value SourcePercentRMValue_temp = Value(this->SourcePercentRMValue);
-
-	root0["SourcePercentRMValue"] = SourcePercentRMValue_temp;
+	output << ((float)this->SourcePercentRMValue) << '\n';
 	// DestPercentADValue
-	Value DestPercentADValue_temp = Value(this->DestPercentADValue);
-
-	root0["DestPercentADValue"] = DestPercentADValue_temp;
+	output << ((float)this->DestPercentADValue) << '\n';
 	// DestPercentHPValue
-	Value DestPercentHPValue_temp = Value(this->DestPercentHPValue);
-
-	root0["DestPercentHPValue"] = DestPercentHPValue_temp;
+	output << ((float)this->DestPercentHPValue) << '\n';
 	// DestPercentMaxHPValue
-	Value DestPercentMaxHPValue_temp = Value(this->DestPercentMaxHPValue);
-
-	root0["DestPercentMaxHPValue"] = DestPercentMaxHPValue_temp;
+	output << ((float)this->DestPercentMaxHPValue) << '\n';
 	// DestPercentArmorValue
-	Value DestPercentArmorValue_temp = Value(this->DestPercentArmorValue);
-
-	root0["DestPercentArmorValue"] = DestPercentArmorValue_temp;
+	output << ((float)this->DestPercentArmorValue) << '\n';
 	// DestPercentAPValue
-	Value DestPercentAPValue_temp = Value(this->DestPercentAPValue);
-
-	root0["DestPercentAPValue"] = DestPercentAPValue_temp;
+	output << ((float)this->DestPercentAPValue) << '\n';
 	// DestPercentRMValue
-	Value DestPercentRMValue_temp = Value(this->DestPercentRMValue);
-
-	root0["DestPercentRMValue"] = DestPercentRMValue_temp;
+	output << ((float)this->DestPercentRMValue) << '\n';
 	// StructureBonus
-	Value StructureBonus_temp = Value(this->StructureBonus);
-
-	root0["StructureBonus"] = StructureBonus_temp;
+	output << ((float)this->StructureBonus) << '\n';
 	// MonsterBonus
-	Value MonsterBonus_temp = Value(this->MonsterBonus);
-
-	root0["MonsterBonus"] = MonsterBonus_temp;
+	output << ((float)this->MonsterBonus) << '\n';
 	// CreepBonus
-	Value CreepBonus_temp = Value(this->CreepBonus);
-
-	root0["CreepBonus"] = CreepBonus_temp;
-	return root0;
-
+	output << ((float)this->CreepBonus) << '\n';
 }
 
-static StateAlterationModelView StateAlterationModelView::deserialize(Value& val)
-{
-	StateAlterationModelView obj0 = StateAlterationModelView();
+StateAlterationModelView StateAlterationModelView::deserialize(std::istream& input) {
+	StateAlterationModelView _obj = StateAlterationModelView();
 	// Type
-	StateAlterationType Type = val["Type"].asInt();
-
-	obj0.Type = Type;
-
+	int _obj_Type; input >> _obj_Type; input.ignore(1000, '\n');
+	_obj.Type = (::StateAlterationType)_obj_Type;
 	// BaseDuration
-	float BaseDuration = val["BaseDuration"].asDouble();
-
-	obj0.BaseDuration = BaseDuration;
-
+	float _obj_BaseDuration; input >> _obj_BaseDuration; input.ignore(1000, '\n');
+	_obj.BaseDuration = (float)_obj_BaseDuration;
 	// DashGoThroughWall
-	bool DashGoThroughWall = val["DashGoThroughWall"].asBool();
-
-	obj0.DashGoThroughWall = DashGoThroughWall;
-
+	bool _obj_DashGoThroughWall; input >> _obj_DashGoThroughWall; input.ignore(1000, '\n');
+	_obj.DashGoThroughWall = (bool)_obj_DashGoThroughWall;
 	// DashDirectionType
-	DashDirectionType DashDirectionType = val["DashDirectionType"].asInt();
-
-	obj0.DashDirectionType = DashDirectionType;
-
+	int _obj_DashDirectionType; input >> _obj_DashDirectionType; input.ignore(1000, '\n');
+	_obj.DashDirectionType = (::DashDirectionType)_obj_DashDirectionType;
 	// FlatValue
-	float FlatValue = val["FlatValue"].asDouble();
-
-	obj0.FlatValue = FlatValue;
-
+	float _obj_FlatValue; input >> _obj_FlatValue; input.ignore(1000, '\n');
+	_obj.FlatValue = (float)_obj_FlatValue;
 	// SourcePercentADValue
-	float SourcePercentADValue = val["SourcePercentADValue"].asDouble();
-
-	obj0.SourcePercentADValue = SourcePercentADValue;
-
+	float _obj_SourcePercentADValue; input >> _obj_SourcePercentADValue; input.ignore(1000, '\n');
+	_obj.SourcePercentADValue = (float)_obj_SourcePercentADValue;
 	// SourcePercentHPValue
-	float SourcePercentHPValue = val["SourcePercentHPValue"].asDouble();
-
-	obj0.SourcePercentHPValue = SourcePercentHPValue;
-
+	float _obj_SourcePercentHPValue; input >> _obj_SourcePercentHPValue; input.ignore(1000, '\n');
+	_obj.SourcePercentHPValue = (float)_obj_SourcePercentHPValue;
 	// SourcePercentMaxHPValue
-	float SourcePercentMaxHPValue = val["SourcePercentMaxHPValue"].asDouble();
-
-	obj0.SourcePercentMaxHPValue = SourcePercentMaxHPValue;
-
+	float _obj_SourcePercentMaxHPValue; input >> _obj_SourcePercentMaxHPValue; input.ignore(1000, '\n');
+	_obj.SourcePercentMaxHPValue = (float)_obj_SourcePercentMaxHPValue;
 	// SourcePercentArmorValue
-	float SourcePercentArmorValue = val["SourcePercentArmorValue"].asDouble();
-
-	obj0.SourcePercentArmorValue = SourcePercentArmorValue;
-
+	float _obj_SourcePercentArmorValue; input >> _obj_SourcePercentArmorValue; input.ignore(1000, '\n');
+	_obj.SourcePercentArmorValue = (float)_obj_SourcePercentArmorValue;
 	// SourcePercentAPValue
-	float SourcePercentAPValue = val["SourcePercentAPValue"].asDouble();
-
-	obj0.SourcePercentAPValue = SourcePercentAPValue;
-
+	float _obj_SourcePercentAPValue; input >> _obj_SourcePercentAPValue; input.ignore(1000, '\n');
+	_obj.SourcePercentAPValue = (float)_obj_SourcePercentAPValue;
 	// SourcePercentRMValue
-	float SourcePercentRMValue = val["SourcePercentRMValue"].asDouble();
-
-	obj0.SourcePercentRMValue = SourcePercentRMValue;
-
+	float _obj_SourcePercentRMValue; input >> _obj_SourcePercentRMValue; input.ignore(1000, '\n');
+	_obj.SourcePercentRMValue = (float)_obj_SourcePercentRMValue;
 	// DestPercentADValue
-	float DestPercentADValue = val["DestPercentADValue"].asDouble();
-
-	obj0.DestPercentADValue = DestPercentADValue;
-
+	float _obj_DestPercentADValue; input >> _obj_DestPercentADValue; input.ignore(1000, '\n');
+	_obj.DestPercentADValue = (float)_obj_DestPercentADValue;
 	// DestPercentHPValue
-	float DestPercentHPValue = val["DestPercentHPValue"].asDouble();
-
-	obj0.DestPercentHPValue = DestPercentHPValue;
-
+	float _obj_DestPercentHPValue; input >> _obj_DestPercentHPValue; input.ignore(1000, '\n');
+	_obj.DestPercentHPValue = (float)_obj_DestPercentHPValue;
 	// DestPercentMaxHPValue
-	float DestPercentMaxHPValue = val["DestPercentMaxHPValue"].asDouble();
-
-	obj0.DestPercentMaxHPValue = DestPercentMaxHPValue;
-
+	float _obj_DestPercentMaxHPValue; input >> _obj_DestPercentMaxHPValue; input.ignore(1000, '\n');
+	_obj.DestPercentMaxHPValue = (float)_obj_DestPercentMaxHPValue;
 	// DestPercentArmorValue
-	float DestPercentArmorValue = val["DestPercentArmorValue"].asDouble();
-
-	obj0.DestPercentArmorValue = DestPercentArmorValue;
-
+	float _obj_DestPercentArmorValue; input >> _obj_DestPercentArmorValue; input.ignore(1000, '\n');
+	_obj.DestPercentArmorValue = (float)_obj_DestPercentArmorValue;
 	// DestPercentAPValue
-	float DestPercentAPValue = val["DestPercentAPValue"].asDouble();
-
-	obj0.DestPercentAPValue = DestPercentAPValue;
-
+	float _obj_DestPercentAPValue; input >> _obj_DestPercentAPValue; input.ignore(1000, '\n');
+	_obj.DestPercentAPValue = (float)_obj_DestPercentAPValue;
 	// DestPercentRMValue
-	float DestPercentRMValue = val["DestPercentRMValue"].asDouble();
-
-	obj0.DestPercentRMValue = DestPercentRMValue;
-
+	float _obj_DestPercentRMValue; input >> _obj_DestPercentRMValue; input.ignore(1000, '\n');
+	_obj.DestPercentRMValue = (float)_obj_DestPercentRMValue;
 	// StructureBonus
-	float StructureBonus = val["StructureBonus"].asDouble();
-
-	obj0.StructureBonus = StructureBonus;
-
+	float _obj_StructureBonus; input >> _obj_StructureBonus; input.ignore(1000, '\n');
+	_obj.StructureBonus = (float)_obj_StructureBonus;
 	// MonsterBonus
-	float MonsterBonus = val["MonsterBonus"].asDouble();
-
-	obj0.MonsterBonus = MonsterBonus;
-
+	float _obj_MonsterBonus; input >> _obj_MonsterBonus; input.ignore(1000, '\n');
+	_obj.MonsterBonus = (float)_obj_MonsterBonus;
 	// CreepBonus
-	float CreepBonus = val["CreepBonus"].asDouble();
-
-	obj0.CreepBonus = CreepBonus;
-
-	return obj0;
-
+	float _obj_CreepBonus; input >> _obj_CreepBonus; input.ignore(1000, '\n');
+	_obj.CreepBonus = (float)_obj_CreepBonus;
+	return _obj;
 }
-
 
 

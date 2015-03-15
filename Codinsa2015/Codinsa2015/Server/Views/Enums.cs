@@ -1,43 +1,10 @@
-/// <summary>
-/// Contient toutes les informations concernant l'état du serveur.
-/// </summary>
-
-class State
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+namespace Codinsa2015.Views
 {
 
-public: 
-	EntityBaseView GetHero();
-
-	Vector2 GetPosition();
-
-	MapView GetMapView();
-
-	bool StartMoveTo(Vector2 position);
-
-	bool IsAutoMoving();
-
-	bool EndMoveTo();
-
-	vector<EntityBaseView> GetEntitiesInSight();
-
-	EntityBaseView GetEntityById(int entityId);
-
-	bool UseSpell(int spellId,SpellCastTargetInfoView target);
-
-	SceneMode GetMode();
-
-	SpellDescriptionView GetSpellCurrentLevelDescription(int spellId);
-
-	SpellView GetSpell(int spellId);
-
-	vector<SpellView> GetSpells();
-
-	vector<SpellView> GetHeroSpells(int entityId);
-
-	Value serialize();
-
-	static State deserialize(Value& val);
-private: 
 	public enum EntityHeroRole
 	{
 		Fighter = 0,
@@ -45,7 +12,7 @@ private:
 		Tank = 2,
 		Max = 2
 	}
-
+	
 	public enum EntityType
 	{
 		Team1 = 2,
@@ -86,7 +53,7 @@ private:
 		HeroSpawner = 524288,
 		AllSaved = 609784
 	}
-
+	
 	public enum EntityTypeRelative
 	{
 		Me = 1,
@@ -127,7 +94,7 @@ private:
 		HeroSpawner = 524288,
 		AllSaved = 609784
 	}
-
+	
 	public enum StateAlterationSource
 	{
 		Consumable = 0,
@@ -138,7 +105,7 @@ private:
 		SpellActive = 5,
 		SpellPassive = 6
 	}
-
+	
 	public enum StateAlterationType
 	{
 		None = 0,
@@ -166,21 +133,21 @@ private:
 		WardSight = 1048576,
 		TrueSight = 2097152
 	}
-
+	
 	public enum DashDirectionType
 	{
 		TowardsEntity = 0,
 		Direction = 1,
 		BackwardsCaster = 2
 	}
-
+	
 	public enum ConsummableType
 	{
 		Empty = 0,
 		Ward = 1,
 		Unward = 2
 	}
-
+	
 	public enum ConsummableUseResult
 	{
 		Success = 0,
@@ -188,7 +155,7 @@ private:
 		Fail = 2,
 		NotUnits = 3
 	}
-
+	
 	public enum ShopTransactionResult
 	{
 		ItemDoesNotExist = 0,
@@ -203,13 +170,13 @@ private:
 		StackOverflow = 9,
 		Success = 10
 	}
-
+	
 	public enum GenericShapeType
 	{
 		Circle = 0,
 		Rectangle = 1
 	}
-
+	
 	public enum SpellUseResult
 	{
 		Success = 0,
@@ -219,14 +186,14 @@ private:
 		Silenced = 4,
 		OutOfRange = 5
 	}
-
+	
 	public enum TargettingType
 	{
 		Targetted = 1,
 		Position = 2,
 		Direction = 4
 	}
-
+	
 	public enum VisionFlags
 	{
 		None = 0,
@@ -237,12 +204,12 @@ private:
 		Team1WardSight = 17,
 		Team2WardSight = 18
 	}
-
+	
 	public enum SceneMode
 	{
 		Lobby = 0,
 		Pick = 1,
 		Game = 2
 	}
-
-};
+	
+}

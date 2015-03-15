@@ -1,55 +1,35 @@
-Value WeaponUpgradeModelView::serialize()
-{
-	Value root0(Json::objectValue);
+#include "../inc/WeaponUpgradeModelView.h"
+void WeaponUpgradeModelView::serialize(std::ostream& output) {
 	// Description
-	Value Description_temp = this->Description.serialize();
-
-	root0["Description"] = Description_temp;
+	this->Description.serialize(output);
 	// PassiveAlterations
-	Value PassiveAlterations_temp = Value(arrayValue);
-	auto PassiveAlterations_temp_iterator = this->PassiveAlterations;
-	for(auto PassiveAlterations_temp_it = PassiveAlterations_temp_iterator.begin();PassiveAlterations_temp_it != PassiveAlterations_temp_iterator.end();PassiveAlterations_temp_it++)
-	{
-		Value PassiveAlterations_temp_item = (*PassiveAlterations_temp_it).serialize();
-		PassiveAlterations_temp.append(PassiveAlterations_temp_item);
+	output << this->PassiveAlterations.size() << '\n';
+	for(int PassiveAlterations_it = 0; PassiveAlterations_it < this->PassiveAlterations.size(); PassiveAlterations_it++) {
+		this->PassiveAlterations[PassiveAlterations_it].serialize(output);
 	}
 
-	root0["PassiveAlterations"] = PassiveAlterations_temp;
 	// Cost
-	Value Cost_temp = Value(this->Cost);
-
-	root0["Cost"] = Cost_temp;
-	return root0;
-
+	output << ((float)this->Cost) << '\n';
 }
 
-static WeaponUpgradeModelView WeaponUpgradeModelView::deserialize(Value& val)
-{
-	WeaponUpgradeModelView obj0 = WeaponUpgradeModelView();
+WeaponUpgradeModelView WeaponUpgradeModelView::deserialize(std::istream& input) {
+	WeaponUpgradeModelView _obj = WeaponUpgradeModelView();
 	// Description
-	SpellDescriptionView Description = SpellDescriptionView::deserialize(val["Description"]);
-
-	obj0.Description = Description;
-
+	SpellDescriptionView _obj_Description = SpellDescriptionView::deserialize(input);
+	_obj.Description = (::SpellDescriptionView)_obj_Description;
 	// PassiveAlterations
-	vector<StateAlterationModelView> PassiveAlterations = vector<StateAlterationModelView>();
-	auto PassiveAlterations_iterator = val["PassiveAlterations"];
-	for(auto PassiveAlterations_it = PassiveAlterations_iterator.begin();PassiveAlterations_it != PassiveAlterations_iterator.end(); PassiveAlterations_it++)
-	{
-		StateAlterationModelView PassiveAlterations_item = StateAlterationModelView::deserialize((*PassiveAlterations_it));
-		PassiveAlterations.push_back(PassiveAlterations_item);
+	std::vector<StateAlterationModelView> _obj_PassiveAlterations = std::vector<StateAlterationModelView>();
+	int _obj_PassiveAlterations_count; input >> _obj_PassiveAlterations_count; input.ignore(1000, '\n');
+	for(int _obj_PassiveAlterations_i = 0; _obj_PassiveAlterations_i < _obj_PassiveAlterations_count; _obj_PassiveAlterations_i++) {
+		StateAlterationModelView _obj_PassiveAlterations_e = StateAlterationModelView::deserialize(input);
+		_obj_PassiveAlterations.push_back((StateAlterationModelView)_obj_PassiveAlterations_e);
 	}
 
-	obj0.PassiveAlterations = PassiveAlterations;
-
+	_obj.PassiveAlterations = (::std::vector<StateAlterationModelView>)_obj_PassiveAlterations;
 	// Cost
-	float Cost = val["Cost"].asDouble();
-
-	obj0.Cost = Cost;
-
-	return obj0;
-
+	float _obj_Cost; input >> _obj_Cost; input.ignore(1000, '\n');
+	_obj.Cost = (float)_obj_Cost;
+	return _obj;
 }
-
 
 
