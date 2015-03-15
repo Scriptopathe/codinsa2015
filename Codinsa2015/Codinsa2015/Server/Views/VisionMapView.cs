@@ -12,6 +12,7 @@ namespace Codinsa2015.Views
 	public class VisionMapView
 	{
 
+static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public List<List<VisionFlags>> Vision;	
 		public static VisionMapView Deserialize(System.IO.StreamReader input) {

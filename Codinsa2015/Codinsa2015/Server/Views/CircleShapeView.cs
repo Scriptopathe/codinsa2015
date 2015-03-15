@@ -12,6 +12,7 @@ namespace Codinsa2015.Views
 	public class CircleShapeView
 	{
 
+static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public Vector2 Position;	
 		public float Radius;	

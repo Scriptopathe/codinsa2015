@@ -11,7 +11,7 @@ main
             string name()
             {
                 string cs = "List<List<$(T)>>";
-                string cpp = "vector<vector<$(T)>>";
+                string cpp = "std::vector<std::vector<$(T)>>";
                 string java = "ArrayList<ArrayList<$(T)>>";
             }
             
@@ -30,7 +30,7 @@ main
             constructor Matrix<T> new(int width, int height)
             {
                 string cs = "new List<List<$(T)>>()";
-                string cpp = "vector<vector<$(T)>>($(width), vector<$(T)>($(height), 0))";
+                string cpp = "std::vector<std::vector<$(T)>>($(width), std::vector<$(T)>($(height), 0))";
                 string java = "new ArrayList<ArrayList<$(T)>>()";
             }
             
@@ -53,7 +53,7 @@ main
             {
                 string cs = "$(T)[]";
                 string java = "ArrayList<$(T)>";
-                string cpp = "vector<$(T)>";
+                string cpp = "std::vector<$(T)>";
                 string python = "array"; 
             }
             
@@ -97,13 +97,13 @@ main
             public constructor Array<T> new(int size)
             {
                 string cs = "new $(T)[size]";
-                string cpp = "vector<$(T)>($(size))";
+                string cpp = "std::vector<$(T)>($(size))";
                 string java = "new ArrayList<$(T)>($(size))";
             }
             public constructor Array<T> new()
             {
                 string cs = "new $(T)[0]";
-                string cpp = "vector<$(T)>()";
+                string cpp = "std::vector<$(T)>()";
                 string java = "new ArrayList<$(T)>()";
             }
         }
@@ -121,7 +121,7 @@ main
             {
                 string cs = "List<$(T)>";
                 string java = "ArrayList<$(T)>";
-                string cpp = "vector<$(T)>";
+                string cpp = "std::vector<$(T)>";
                 string python = "array";
             }
             
@@ -129,7 +129,7 @@ main
             {
                 string cs = "new List<$(T)>()";
                 string java = "new ArrayList<$(T)>()";
-                string cpp = "vector<$(T)>()";
+                string cpp = "std::vector<$(T)>()";
                 string python = "[]";
             }
             

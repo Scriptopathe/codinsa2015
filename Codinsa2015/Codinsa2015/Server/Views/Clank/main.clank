@@ -1,4 +1,4 @@
-﻿#include stdtypes.clank
+#include stdtypes.clank
 #include XNAMacros.clank
 main
 {

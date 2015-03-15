@@ -12,6 +12,7 @@ namespace Codinsa2015.Views
 	public class SpellView
 	{
 
+static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public float CurrentCooldown;	
 		public int SourceCaster;	
