@@ -175,8 +175,8 @@ main {
             #endregion
 
             string generationLog;
-            GenerationTarget serverTarget = new GenerationTarget("CS", "Serveur.cs");
-            List<GenerationTarget> clientTargets = new List<GenerationTarget>() { new GenerationTarget("CS", "Client.cs"),
+            GenerationTarget serverTarget = new GenerationTarget("cs", "Serveur.cs");
+            List<GenerationTarget> clientTargets = new List<GenerationTarget>() { new GenerationTarget("cs", "Client.cs"),
                                                             new GenerationTarget("Python", "Client.py") };
             ProjectGenerator generator = new ProjectGenerator();
             // System.IO.File.ReadAllText("samplescript.clank")

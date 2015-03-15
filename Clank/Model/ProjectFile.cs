@@ -68,23 +68,6 @@ namespace Clank.Core.Model
         /// <returns></returns>
         public List<Language.Instruction> GenerateClientProject()
         {
-            /*   
-            int GetMyVar(int arg1, int arg2, Something<bool> arg3)
-            {
-                // Send
-                List<object> args = new List<object>() { arg1, arg2, arg3 };
-                int funcId = 1;
-                List<object> obj = new List<object>() { funcId, args };
-                TCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
-
-                // Receive
-                string str = TCPHelper.Receive();
-                Newtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);
-
-                return o.Value<int>(0);
-            }*/
-
-
             List<Language.Instruction> classes = new List<Language.Instruction>();
             
             // Copie de la classe state
@@ -92,10 +75,18 @@ namespace Clank.Core.Model
             stateClass.Modifiers.Add("public");
 
 
+
+            // Ajoute les enums.
+            classes.AddRange(stateClass.Instructions.Where((Language.Instruction inst) =>
+            {
+                return inst is Language.EnumDeclaration;
+            }));
+
+            // Ne conserve que les fonctions.
             stateClass.Instructions = stateClass.Instructions.Where((Language.Instruction inst) =>
             {
                 // Ne garde que les fonctions.
-                return inst is Language.FunctionDeclaration || inst is Language.EnumDeclaration;
+                return inst is Language.FunctionDeclaration;
             }).ToList();
 
             stateClass.Comment = "Contient toutes les informations concernant l'état du serveur.";
@@ -136,11 +127,24 @@ namespace Clank.Core.Model
             Language.ClassDeclaration stateClass = State.StateClass.Copy();
             stateClass.Modifiers.Add("public");
             stateClass.Comment = "Contient toutes les informations concernant l'état du serveur.";
+
             // Copie des classes state
             List<Language.ClassDeclaration> stateClasses = new List<Language.ClassDeclaration>();
             foreach (Language.ClassDeclaration decl in State.Classes) { stateClasses.Add(decl.Copy()); };
 
-           
+            // Ajoute les enums.
+            classes.AddRange(stateClass.Instructions.Where((Language.Instruction inst) =>
+            {
+                return inst is Language.EnumDeclaration;
+            }));
+
+            // Ne conserve que les fonctions dans la classe state.
+            stateClass.Instructions = stateClass.Instructions.Where((Language.Instruction inst) =>
+            {
+                // Ne garde que les fonctions.
+                return inst is Language.FunctionDeclaration;
+            }).ToList();
+
             // Ajoute les méthodes access / write.
             foreach(Language.FunctionDeclaration method in Access.Declarations)
             {

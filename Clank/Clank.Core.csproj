@@ -47,12 +47,8 @@
   <ItemGroup>
     <Compile Include="Generation\Languages\CppHLangage.cs" />
     <Compile Include="Generation\Languages\CppLangage.cs" />
-    <Compile Include="Generation\Languages\CSLangage_Json.cs" />
-    <Compile Include="Generation\Languages\JavaLangage.cs" />
-    <Compile Include="Generation\Languages\PythonLanguage.cs" />
     <Compile Include="Generation\Languages\ILanguageGenerator.cs" />
     <Compile Include="Generation\Languages\LanguageGeneratorAttribute.cs" />
-    <Compile Include="Generation\Languages\PyLangage.cs" />
     <Compile Include="Generation\GenerationContext.cs" />
     <Compile Include="Generation\Languages\CSLangage.cs" />
     <Compile Include="Generation\Preprocessor\MemoryIncludeLoader.cs" />

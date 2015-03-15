@@ -38,6 +38,77 @@ namespace Clank.Core.Generation.Languages
         {
             m_project = project;
         }
+
+        /// <summary>
+        /// Génère les fichiers du projet à partir de la liste des instructions.
+        /// </summary>
+        public List<OutputFile> GenerateProjectFiles(List<Instruction> instructions, string outputDirectory, bool isServer)
+        {
+            List<OutputFile> outputFiles = new List<OutputFile>();
+            List<Instruction> enums = new List<Instruction>();
+            string theEnumNamespace = "Default.Namespace";
+            foreach (Model.Language.Instruction inst in instructions)
+            {
+                if (inst is Model.Language.ClassDeclaration)
+                {
+                    Model.Language.ClassDeclaration decl = (Model.Language.ClassDeclaration)inst;
+
+                    // Choisis le namespace des enums comme étant celui de State.
+                    if(decl.Name == "State")
+                    {
+                        Dictionary<string, string> metadata = new Dictionary<string, string>();
+                        if (m_project.Types.Types[decl.Name].LanguageMetadata.ContainsKey(LANG_KEY))
+                            metadata = m_project.Types.Types[decl.Name].LanguageMetadata[LANG_KEY];
+                        if (metadata.ContainsKey("namespace"))
+                            theEnumNamespace = metadata["namespace"];
+                    }
+
+                    outputFiles.Add(new OutputFile(outputDirectory + "/" + decl.Name + ".cs",
+                        GenerateInstruction(inst)));
+                }
+                else if(inst is Model.Language.EnumDeclaration)
+                {
+                    enums.Add(inst);
+                }
+                else
+                {
+                    m_project.Log.AddWarning("Instruction de type " + inst.GetType().ToString() + " inattendue.", inst.Line, inst.Character, inst.Source);
+                }
+            }
+
+            // Génère le fichier des enums
+            outputFiles.Add(new OutputFile(outputDirectory + "/Enums.cs", GenerateEnumFiles(enums, theEnumNamespace)));
+
+            return outputFiles;
+        }
+
+        /// <summary>
+        /// Génère le code d'un fichier ne contenant que des enums.
+        /// </summary>
+        /// <param name="enums"></param>
+        /// <returns></returns>
+        string GenerateEnumFiles(List<Instruction> enums, string theNamespace)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendLine(@"using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;");
+
+            // Namespace
+            builder.AppendLine("namespace " + theNamespace + "\r\n{\r\n");
+
+            foreach (Instruction instruction in enums)
+            {
+                builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 1));
+                builder.Append("\t\n");
+            }
+
+            builder.AppendLine("}");
+
+            return builder.ToString();
+        }
         /// <summary>
         /// Génére le code d'une classe.
         /// </summary>
@@ -81,8 +152,8 @@ using System.Text;");
 
             foreach(Instruction instruction in enums)
             {
-                    builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 1));
-                    builder.Append("\t\n");
+                builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 1));
+                builder.Append("\t\n");
             }
 
 
@@ -107,6 +178,11 @@ using System.Text;");
             // Héritage
             builder.AppendLine(inheritance + "\n\t{\n");
             
+
+            // Création d'une variable statique correspondant à l'encoding utf-8 sans bom utilisé par 
+            // les fonctions de sérialisation / déserialisation
+            builder.AppendLine("\t\tstatic Encoding BOMLESS_UTF8 = new UTF8Encoding(false);");
+
             // Instructions
             foreach(Instruction instruction in declaration.Instructions)
             {
@@ -422,7 +498,7 @@ using System.Text;");
                 builder.AppendLine("\tConsole.WriteLine(\"[" + instruction.Func.Func.Name + "]\");");
             }
             builder.AppendLine("\tSystem.IO.MemoryStream s = new System.IO.MemoryStream();");
-            builder.AppendLine("\tSystem.IO.StreamWriter output = new System.IO.StreamWriter(s, Encoding.UTF8);");
+            builder.AppendLine("\tSystem.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);");
             builder.AppendLine("\t\toutput.NewLine = \"\\n\";");
             // Sérialise le numéro de la fonction.
             builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializationInstruction(new Variable()
@@ -446,7 +522,7 @@ using System.Text;");
             // Récupère la réponse du serveur.
             builder.AppendLine("\tbyte[] response = TCPHelper.Receive();");
             builder.AppendLine("\ts = new System.IO.MemoryStream(response);");
-            builder.AppendLine("\tSystem.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);");
+            builder.AppendLine("\tSystem.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);");
             // Récupère l'objet dans le stream.
             builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializationInstruction(
                 new Variable()
@@ -541,7 +617,7 @@ using System.Text;");
             decls.AddRange(instruction.Write.Declarations);
 
             builder.AppendLine("\tSystem.IO.MemoryStream s = new System.IO.MemoryStream(request);");
-            builder.AppendLine("\tSystem.IO.StreamReader input = new System.IO.StreamReader(s, Encoding.UTF8);");
+            builder.AppendLine("\tSystem.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);");
             builder.AppendLine("\t\tSystem.IO.StreamWriter output;");
             // Récupère l'id de la fonction
             builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializationInstruction(
@@ -569,7 +645,7 @@ using System.Text;");
 
                 // Crée les streams nécessaires.
                 builder.AppendLine("\t\ts = new System.IO.MemoryStream();");
-                builder.AppendLine("\t\toutput = new System.IO.StreamWriter(s, Encoding.UTF8);");
+                builder.AppendLine("\t\toutput = new System.IO.StreamWriter(s, BOMLESS_UTF8);");
                 builder.AppendLine("\t\toutput.NewLine = \"\\n\";");
 
                 // Génère la variable à retourner à partir de l'appel à la fonction.

@@ -65,7 +65,7 @@ namespace Clank.ViewCreator
             Clank.IDE.ProjectNode node = new IDE.ProjectNode();
             node.SavePath = "";
             foreach (var kvp in files)
-                node.SourceFiles.Add(kvp.Key);
+            node.SourceFiles.Add(kvp.Key);
             node.SourceFiles.Add("stdtypes.clank");
             node.SourceFiles.Add("XNAMacros.clank");
             node.Name = name;
@@ -145,7 +145,7 @@ namespace Clank.ViewCreator
             b.AppendLine("\t\t# Rajoute les statements using et le bon namespace pour la classe state.");
             b.AppendLine("\t\tvoid getClassMetadata_cs()");
             b.AppendLine("\t\t{");
-            b.AppendLine("\t\t\tstring usingStatements = \"\"");
+            b.AppendLine("\t\t\tstring usingStatements = \"\";");
             b.AppendLine("\t\t\tstring namespace = \"Codinsa2015.Views\";");
             b.AppendLine("\t\t}");
 

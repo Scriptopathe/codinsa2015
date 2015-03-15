@@ -126,7 +126,7 @@ namespace Clank.Core.Generation
 
             // Lance le pré-processeur sur le script
             Dictionary<int, Generation.Preprocessor.Preprocessor.LineInfo> lineMapping = new Dictionary<int,Preprocessor.Preprocessor.LineInfo>();
-
+            Model.ProjectFile project = null;
             string processedScript;
             try
             {
@@ -156,7 +156,7 @@ namespace Clank.Core.Generation
 
 
                 // Project file.
-                Model.ProjectFile project = new Model.ProjectFile() { Types = parser.Types };
+                project = new Model.ProjectFile() { Types = parser.Types };
                 project.Log.OnEvent += logHandler;
 
                 // Parse les différents blocks "main".
@@ -170,7 +170,6 @@ namespace Clank.Core.Generation
                 }
                 finally
                 {
-                    project.Log.OnEvent -= logHandler;
                     parser.Log.OnEvent -= logHandler;
                     table.OnLog -= logHandler;
                 }
@@ -187,21 +186,10 @@ namespace Clank.Core.Generation
                 // Crée le code du serveur.
                 if (!m_languagesTable.ContainsKey(serverTarget.LanguageIdentifier))
                     throw new Exception("Le langage sélectionné pour le serveur '" + serverTarget.LanguageIdentifier + "' n'est pas implémenté");
+
                 Generation.Languages.ILanguageGenerator servGen = m_languagesTable[serverTarget.LanguageIdentifier];
                 servGen.SetProject(project);
-
-                foreach(Model.Language.Instruction inst in servDecl) {
-                    if (inst is Model.Language.ClassDeclaration)
-                    {
-                        outputFiles.Add(new OutputFile(serverTarget.OutputDirectory + "/" + ((Model.Language.ClassDeclaration)inst).Name + "." + serverTarget.LanguageIdentifier,
-                            servGen.GenerateInstruction(inst)));
-                    }
-                    else
-                    {
-                        logHandler(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Warning, "Instruction de type " + inst.GetType().ToString() + " inattendue.", inst.Line, inst.Character, inst.Source));
-                    }
-                }
-                
+                outputFiles.AddRange(servGen.GenerateProjectFiles(servDecl, serverTarget.OutputDirectory, true));
 
                 // Crée le code pour les clients
                 foreach(GenerationTarget clientTarget in clientTargets)
@@ -210,27 +198,14 @@ namespace Clank.Core.Generation
 
                     if (!m_languagesTable.ContainsKey(clientTarget.LanguageIdentifier))
                     {
-
-                        
-                        logHandler(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error, 
+                        logHandler(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Error,
                             "Le langage sélectionné pour le client '" + clientTarget.LanguageIdentifier + "' n'est pas implémenté. Compilation pour ce langage annulée", 0, 0, "compiler"));
                         continue;
                     }
+
                     Generation.Languages.ILanguageGenerator clientGen = m_languagesTable[clientTarget.LanguageIdentifier];
-                    clientGen.SetProject(project); 
-                    
-                    foreach (Model.Language.Instruction inst in clientDecl)
-                    {
-                        if (inst is Model.Language.ClassDeclaration)
-                        {
-                            outputFiles.Add(new OutputFile(clientTarget.OutputDirectory + "/" + ((Model.Language.ClassDeclaration)inst).Name + "." + clientTarget.LanguageIdentifier,
-                                clientGen.GenerateInstruction(inst)));
-                        }
-                        else
-                        {
-                            logHandler(new Tools.EventLog.Entry(Tools.EventLog.EntryType.Warning, "Instruction de type " + inst.GetType().ToString() + " inattendue.", inst.Line, inst.Character, inst.Source));
-                        }
-                    }
+                    clientGen.SetProject(project);
+                    outputFiles.AddRange(clientGen.GenerateProjectFiles(clientDecl, clientTarget.OutputDirectory, false));
                 }
 
             }
@@ -243,6 +218,11 @@ namespace Clank.Core.Generation
             {
                 // Le parseur sémantique utilise déjà le log.
                 outputFiles.Clear();
+            }
+            finally
+            {
+                if(project != null)
+                    project.Log.OnEvent -= logHandler;
             }
             return outputFiles;
         }

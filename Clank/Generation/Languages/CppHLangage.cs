@@ -10,7 +10,7 @@ namespace Clank.Core.Generation.Languages
     /// Cette classe prend en charge la traduction du code d'un arbre abstrait 
     /// vers le langage de programmation de destination.
     /// </summary>
-    [LanguageGenerator("cpp_h")]
+    [LanguageGenerator("h")]
     public class CppHGenerator : ILanguageGenerator
     {
         public const string LANG_KEY = "cpp";
@@ -38,6 +38,154 @@ namespace Clank.Core.Generation.Languages
         {
             m_project = project;
         }
+
+
+        /// <summary>
+        /// Génère les fichiers du projet à partir de la liste des instructions.
+        /// </summary>
+        public List<OutputFile> GenerateProjectFiles(List<Instruction> instructions, string outputDirectory, bool isServer)
+        {
+            List<OutputFile> outputFiles = new List<OutputFile>();
+            List<Instruction> enums = new List<Instruction>();
+            foreach (Model.Language.Instruction inst in instructions)
+            {
+                if (inst is Model.Language.ClassDeclaration)
+                {
+                    Model.Language.ClassDeclaration decl = (Model.Language.ClassDeclaration)inst;
+
+                    outputFiles.Add(new OutputFile(outputDirectory + "/" + decl.Name + ".h",
+                        GenerateInstruction(inst)));
+                }
+                else if (inst is Model.Language.EnumDeclaration)
+                {
+                    enums.Add(inst);
+                }
+                else
+                {
+                    m_project.Log.AddWarning("Instruction de type " + inst.GetType().ToString() + " inattendue.", inst.Line, inst.Character, inst.Source);
+                }
+            }
+
+            // Génère le fichier des enums
+            outputFiles.Add(new OutputFile(outputDirectory + "/Common.h", GenerateCommonFile(enums)));
+
+            return outputFiles;
+        }
+
+        /// <summary>
+        /// Génère le code d'un fichier ne contenant que des enums.
+        /// </summary>
+        /// <param name="enums"></param>
+        /// <returns></returns>
+        string GenerateCommonFile(List<Instruction> enums)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("#pragma once");
+            builder.AppendLine("#include \"inttypes.h\"");
+            builder.AppendLine("#include \"TCPHelper.h\"");
+            builder.AppendLine(@"#include <iostream>
+#include <vector>
+#include <list>");
+
+            foreach (Instruction instruction in enums)
+            {
+                builder.AppendLine(GenerateInstruction(instruction));
+            }
+
+            return builder.ToString();
+        }
+
+        #region Includes
+        /// <summary>
+        /// Ajoute un type includable à la collection de types donnée.
+        /// </summary>
+        void AddToSet(HashSet<ClankType> types, ClankTypeInstance type) 
+        {
+            if(type.IsGeneric)
+            {
+                foreach(var arg in type.GenericArguments)
+                {
+                    AddToSet(types, arg);
+                }
+            }
+
+            if (type.BaseType.IsBuiltIn | type.BaseType.IsEnum | type.BaseType.IsMacro)
+                return;
+            
+            if (!types.Contains(type.BaseType)) types.Add(type.BaseType); 
+        }
+        /// <summary>
+        /// Ajoute tous les types dont dépend l'instruction inst dans le set passé en paramètres.
+        /// </summary>
+        void AggregateDependencies(Instruction inst, HashSet<ClankType> types)
+        {
+            if(inst is ClassDeclaration)
+            {
+                ClassDeclaration decl = (ClassDeclaration)inst;
+                foreach(var instruction in decl.Instructions)
+                {
+                    AggregateDependencies(instruction, types);
+                }
+            }
+            else if (inst is Model.Language.Macros.RemoteFunctionWrapper)
+            {
+                var decl = (Model.Language.Macros.RemoteFunctionWrapper)inst;
+                AggregateDependencies(decl.Func, types);
+            }
+            if(inst is VariableDeclarationInstruction)
+            {
+                VariableDeclarationInstruction decl = (VariableDeclarationInstruction)inst;
+                AddToSet(types, decl.Var.Type);
+            }
+            else if(inst is VariableDeclarationAndAssignmentInstruction)
+            {
+                VariableDeclarationAndAssignmentInstruction decl = (VariableDeclarationAndAssignmentInstruction)inst;
+                AddToSet(types, decl.Declaration.Var.Type);
+            }
+            else if(inst is FunctionDeclaration)
+            {
+                FunctionDeclaration decl = (FunctionDeclaration)inst;
+                AddToSet(types, decl.Func.ReturnType);
+                foreach(var arg in decl.Func.Arguments)
+                {
+                    AddToSet(types, arg.ArgType);
+                }
+
+                foreach(var instruction in decl.Code)
+                {
+                    AggregateDependencies(instruction, types);
+                }
+            }
+            else if(inst is FunctionCallInstruction)
+            {
+                FunctionCallInstruction decl = (FunctionCallInstruction)inst;
+                AddToSet(types, decl.Call.Func.ReturnType);
+                foreach(var arg in decl.Call.Arguments)
+                {
+                    AddToSet(types, arg.Type);
+                }
+            }
+        }
+        /// <summary>
+        /// Génère les déclaration d'inclusion de la classe.
+        /// </summary>
+        /// <param name="declaration"></param>
+        /// <returns></returns>
+        string GenerateIncludes(ClassDeclaration declaration)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            HashSet<ClankType> referencedTypes = new HashSet<ClankType>();
+            AggregateDependencies(declaration, referencedTypes);
+            foreach(ClankType inst in referencedTypes)
+            {
+                builder.AppendLine("#include \"" + inst.Name + ".h\"");
+            }
+
+
+            return builder.ToString();
+        }
+        #endregion
         /// <summary>
         /// Génére le code d'une classe.
         /// </summary>
@@ -47,6 +195,11 @@ namespace Clank.Core.Generation.Languages
         {
             StringBuilder builder = new StringBuilder();
             string inheritance = declaration.InheritsFrom == null ? "" : " : " + declaration.InheritsFrom;
+
+            // Headers
+            builder.AppendLine("#pragma once");
+            builder.AppendLine("#include \"Common.h\"");
+            builder.AppendLine(GenerateIncludes(declaration));
 
 
             // Paramètres génériques
@@ -123,7 +276,7 @@ namespace Clank.Core.Generation.Languages
         {
             StringBuilder builder = new StringBuilder();
             // Nom de la fonction.
-            builder.AppendLine("Value serialize();");
+            builder.AppendLine("void serialize(std::ostream& output);");
             return builder.ToString();
         }
 
@@ -145,7 +298,7 @@ namespace Clank.Core.Generation.Languages
             string typename = GenerateTypeName(m_project.Types.Types[declaration.GetFullName()]);
             builder.Append("static ");
             builder.Append(typename + " ");
-            builder.Append("deserialize(Value& val);");
+            builder.Append("deserialize(std::istream& input);");
             return builder.ToString();
         }
 
@@ -240,12 +393,12 @@ namespace Clank.Core.Generation.Languages
             // Génère un commentaire approprié.
             if (inst is FunctionDeclaration || inst is ClassDeclaration || inst is Model.Language.Macros.ProcessMessageMacro)
             {
-                builder.AppendLine("/// <summary>");
+                builder.AppendLine("/** ");
                 foreach (string line in lines)
                 {
-                    builder.AppendLine("/// " + line);
+                    builder.AppendLine(" * " + line);
                 }
-                builder.AppendLine("/// </summary>");
+                builder.AppendLine(" */");
             }
             else
             {
@@ -583,7 +736,7 @@ namespace Clank.Core.Generation.Languages
         string GenerateEnumInstruction(EnumDeclaration decl)
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append("public enum " + decl.Name + "\n{\n");
+            builder.Append("enum class " + decl.Name + "\n{\n");
             foreach(var kvp in decl.Members)
             {
                 string member = kvp.Key;
@@ -594,7 +747,7 @@ namespace Clank.Core.Generation.Languages
                     builder.Append(',');
                 builder.Append("\n");
             }
-            builder.Append("}\n");
+            builder.Append("};\n");
             return builder.ToString();
         }
         /// <summary>

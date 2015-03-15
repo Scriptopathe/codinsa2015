@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Clank.Core.Model.Language;
 namespace Clank.Core.Generation.Languages
 {
     /// <summary>
@@ -10,6 +10,11 @@ namespace Clank.Core.Generation.Languages
     /// </summary>
     public interface ILanguageGenerator
     {
+        /// <summary>
+        /// Génère les fichiers du projet.
+        /// </summary>
+        /// <returns></returns>
+        List<OutputFile> GenerateProjectFiles(List<Instruction> instructions, string outputDirectory, bool isServer);
         /// <summary>
         /// Génère une instruction dans le langage cible.
         /// </summary>
