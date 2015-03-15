@@ -26,8 +26,13 @@ namespace Codinsa2015.Server
         public const bool SKIP_PICKS = false;
         public const bool LOAD_DB_FILE = false;
         #region Variables
+
         #region Error handling
         bool __initDone = false;
+        #endregion
+
+        #region Error log
+        Tools.Log Log = new Tools.Log();
         #endregion
         /// <summary>
         /// Queue de commandes reçues.
@@ -457,7 +462,19 @@ namespace Codinsa2015.Server
                 while (m_commands.Count != 0)
                 {
                     var tup = m_commands.Dequeue();
-                    CommandServer.Send(tup.Item1, State.ProcessRequest(tup.Item2, tup.Item1));
+                    try
+                    {
+                        CommandServer.Send(tup.Item1, State.ProcessRequest(tup.Item2, tup.Item1));
+                    }
+                    catch(Exception e)
+                    {
+                        Log.Entries.Add(new Tools.Log.Entry(Tools.Log.EntryType.Error, 
+                            "Une erreur est survenue lors de l'envoi de la commande :\n" +
+                            "Client =" + tup.Item1 + "\n" + 
+                            "Commande = " + Encoding.UTF8.GetString(tup.Item2), 
+                            e.StackTrace, 
+                            e));
+                    }
                 }
             }
         }

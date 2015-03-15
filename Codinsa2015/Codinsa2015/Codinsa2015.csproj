@@ -142,6 +142,7 @@
     <Compile Include="Server\Spells\Spell.cs" />
     <Compile Include="Server\Spells\SpellTargetInfo.cs" />
     <Compile Include="Server\Views\EntityBaseView.cs" />
+    <Compile Include="Server\Views\Enums.cs" />
     <Compile Include="Server\Views\GenericShapeView.cs" />
     <Compile Include="Server\Views\MapView.cs" />
     <Compile Include="Server\Views\PassiveEquipmentUpgradeModelView.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Server\GameServer.cs" />
     <Compile Include="Server\Scene.cs" />
+    <Compile Include="Tools\Log.cs" />
     <Compile Include="Tools\Serializer.cs" />
   </ItemGroup>
   <ItemGroup>

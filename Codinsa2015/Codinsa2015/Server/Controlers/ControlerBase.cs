@@ -416,9 +416,15 @@ namespace Codinsa2015.Server.Controlers
 
 
         #region XNA macros
+        float cf(float f)
+        {
+            if (float.IsInfinity(f) || float.IsNaN(f))
+                return 1;
+            return f;
+        }
         Views.Vector2 V2ToView(Vector2 xnaVector)
         {
-            return new Views.Vector2() { X = xnaVector.X, Y = xnaVector.Y };
+            return new Views.Vector2() { X = cf(xnaVector.X), Y = cf(xnaVector.Y) };
         }
         Vector2 ViewToV2(Views.Vector2 viewVector)
         {

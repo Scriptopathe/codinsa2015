@@ -25,6 +25,12 @@ namespace Codinsa2015.Server.Net
         /// Event lancé lorsqu'une commande est reçue.
         /// </summary>
         public event CommandReceivedDelegate CommandReceived;
+
+
+        /// <summary>
+        /// Représente l'encoding UTF8 sans BOM.
+        /// </summary>
+        public static Encoding UTF8 = new UTF8Encoding(false);
         #endregion
 
         #region Variables
@@ -91,7 +97,7 @@ namespace Codinsa2015.Server.Net
                             m_buffer.Add(id, new byte[512]);
                         }
 
-                        string name = Encoding.UTF8.GetString(Receive(id));
+                        string name = UTF8.GetString(Receive(id));
                         if (ClientConnected != null)
                             ClientConnected(id, name);
 
@@ -165,9 +171,13 @@ namespace Codinsa2015.Server.Net
         /// <param name="data"></param>
         public void Send(Socket s, byte[] data)
         {
+#if DEBUG
+            string d = UTF8.GetString(data);
+            string d2 = UTF8.GetString(UTF8.GetBytes(data.Length.ToString() + "\n"));
+#endif
             try
             {
-                s.Send(Encoding.UTF8.GetBytes(data.Length.ToString() + "\n"));
+                s.Send(UTF8.GetBytes(data.Length.ToString() + "\n"));
                 s.Send(data);
             }
             catch(SocketException e)
@@ -184,7 +194,7 @@ namespace Codinsa2015.Server.Net
         public byte[] Receive(Socket s, int clientId)
         {
             // Représente le caractère '\n'.
-            byte last = Encoding.UTF8.GetBytes(new char[] { '\n' })[0];
+            byte last = UTF8.GetBytes(new char[] { '\n' })[0];
 
             // Récupère le nombre de données à lire
 #if DEBUG
@@ -203,7 +213,7 @@ namespace Codinsa2015.Server.Net
             }
 
 
-            int dataLength = int.Parse(Encoding.UTF8.GetString(dataBytes.ToArray()));
+            int dataLength = int.Parse(UTF8.GetString(dataBytes.ToArray()));
             dataBytes.Clear();
             int totalBytes = 0;
             while (totalBytes < dataLength)
@@ -220,7 +230,7 @@ namespace Codinsa2015.Server.Net
             }
 
 #if DEBUG
-            string data = Encoding.UTF8.GetString(allBytes.ToArray());
+            string data = UTF8.GetString(allBytes.ToArray());
 
 #endif
             return dataBytes.ToArray();

@@ -18,8 +18,14 @@ namespace Codinsa2015
                 views.Add("main.clank", Clank.ViewCreator.Creator.CreateMain(System.Reflection.Assembly.GetExecutingAssembly(), views));
                 views.Add("autoproject.clankproject", 
                     Clank.ViewCreator.Creator.CreateProjectFile("Codinsa2015",
+                    // Server
                     "cs:\"..\"", 
-                    "cs:\"../../../../../Codinsa2015.Client/Codinsa2015.Client/Views\"", views).Replace("encoding=\"utf-16\"", ""));
+                    // Clients
+                    "cs:\"../../../../../Codinsa2015.Client/Codinsa2015.Client/Views\"\n" +
+                    "cpp:\"../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientCpp/src\"\n" +
+                    "h:\"../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientCpp/inc\"\n", 
+
+                    views).Replace("encoding=\"utf-16\"", ""));
                 foreach (var kvp in views)
                 {
                     System.IO.File.WriteAllText(root + kvp.Key, kvp.Value);
