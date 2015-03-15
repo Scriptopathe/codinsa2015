@@ -15,6 +15,13 @@ namespace Codinsa2015
         static Socket s_socket;
         static byte[] s_smallBuffer = new byte[1];
         static byte[] s_buffer = new byte[512];
+
+
+        /// <summary>
+        /// UTF8 sans bom.
+        /// </summary>
+        static Encoding UTF8 = new UTF8Encoding(false);
+
         /// <summary>
         /// Initialise un client vers un serveur sur l'IP donnée.
         /// </summary>
@@ -31,7 +38,7 @@ namespace Codinsa2015
         /// <param name="data"></param>
         public static void Send(string data)
         {
-            Send(Encoding.UTF8.GetBytes(data));
+            Send(UTF8.GetBytes(data));
         }
         /// <summary>
         /// Envoie une commande dans le socket.
@@ -39,11 +46,11 @@ namespace Codinsa2015
         /// <param name="data"></param>
         public static void Send(byte[] data)
         {
-            var tosend = Encoding.UTF8.GetString(data);
+            var tosend = UTF8.GetString(data);
 #if DEBUG
-            Console.WriteLine("sent " + data.Length.ToString() + "bytes:\n" + Encoding.UTF8.GetString(data));
+            Console.WriteLine("sent " + data.Length.ToString() + "bytes:\n" + UTF8.GetString(data));
 #endif
-            s_socket.Send(Encoding.UTF8.GetBytes(data.Length.ToString() + "\n"));
+            s_socket.Send(UTF8.GetBytes(data.Length.ToString() + "\n"));
             s_socket.Send(data);
         }
         /// <summary>
@@ -53,7 +60,7 @@ namespace Codinsa2015
         public static byte[] Receive()
         {
             // Représente le caractère '\n'.
-            byte last = Encoding.UTF8.GetBytes(new char[] { '\n' })[0];
+            byte last = UTF8.GetBytes(new char[] { '\n' })[0];
 
             // Récupère le nombre de données à lire
             List<byte> dataBytes = new List<byte>();
@@ -66,7 +73,7 @@ namespace Codinsa2015
             }
 
 
-            int dataLength = int.Parse(Encoding.UTF8.GetString(dataBytes.ToArray()));
+            int dataLength = int.Parse(UTF8.GetString(dataBytes.ToArray()));
             dataBytes.Clear();
             int totalBytes = 0;
             while(totalBytes < dataLength)
@@ -79,7 +86,7 @@ namespace Codinsa2015
                 }
             }
 #if DEBUG
-            Console.WriteLine("received " + dataLength.ToString() + " bytes: " + Encoding.UTF8.GetString(dataBytes.ToArray()));
+            Console.WriteLine("received " + dataLength.ToString() + " bytes: " + UTF8.GetString(dataBytes.ToArray()));
 #endif
             return dataBytes.ToArray();
         }
