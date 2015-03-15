@@ -291,18 +291,25 @@ namespace Codinsa2015.DebugHumanControler
                     }).ToList();
 
                 // Utilise l'arme sur le héros.
-                if (entities.Count != 0)
+                bool hasAttacked = false;
+                if (Hero.Weapon != null)
                 {
-                    if (Hero.Weapon.Use(Hero, entities.First().Value) == SpellUseResult.Success)
+                    if (entities.Count != 0)
                     {
-                        m_hero.EndMoveTo();
-                        m_hero.Path = null;
-                    }
-                }
 
+                        if (Hero.Weapon.Use(Hero, entities.First().Value) == SpellUseResult.Success)
+                        {
+                            m_hero.EndMoveTo();
+                            m_hero.Path = null;
+                        }
+                    }
+
+                    hasAttacked = dst > Hero.Weapon.GetAttackSpell().TargetType.Range;
+
+                }
                 // Si on effectue une auto attaque
                 if (entities.Count == 0 ||
-                    dst > Hero.Weapon.GetAttackSpell().TargetType.Range)
+                    !hasAttacked)
                     m_hero.Path = new Trajectory(new List<Vector2>() { pos });
 
 
