@@ -1,4 +1,4 @@
-# Généré automatiquement (Clank.ViewCreator)
+﻿# Généré automatiquement (Clank.ViewCreator)
 
 
 state {
@@ -18,7 +18,7 @@ state {
 		#Si Type contient Dash : Obtient ou définit une valeur indiquant si le dash permet traverser les murs.
 		public bool DashGoThroughWall;
 		#Si Type contient Dash : type direction du dash.
-		public DashDirectionType DashDirectionType;
+		public DashDirectionType DashDirType;
 		#Valeur flat du buff / debuff (valeur positive : buff, valeur négative : debuff). La nature du buff dépend de Type.
 		public float FlatValue;
 		#Même que FlatValue, mais en pourcentage de dégâts d'attaque actuels de la source.

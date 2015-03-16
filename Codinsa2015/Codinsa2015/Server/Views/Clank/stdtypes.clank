@@ -115,6 +115,12 @@ main
         # pas très important.
         public serializable array class List<T>
         {
+        	# Ajoute l'import nécessaire
+    		void getClassMetadata_java()
+    		{
+    			string import = "java.util.ArrayList";
+    		}
+		
             T getArrayElementType() { }
             # Nom du type "List" dans les différents langages cibles.
             string name()

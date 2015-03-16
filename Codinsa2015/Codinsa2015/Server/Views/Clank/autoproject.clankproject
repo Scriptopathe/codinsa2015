@@ -44,7 +44,7 @@
       </GenerationTarget>
       <GenerationTarget>
         <LanguageIdentifier>java</LanguageIdentifier>
-        <OutputDirectory>../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientJava/src</OutputDirectory>
+        <OutputDirectory>../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientJava/src/net/codinsa2015/</OutputDirectory>
       </GenerationTarget>
     </ClientTargets>
   </Settings>
