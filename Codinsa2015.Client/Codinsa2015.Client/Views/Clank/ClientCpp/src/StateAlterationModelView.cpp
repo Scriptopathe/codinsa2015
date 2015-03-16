@@ -6,8 +6,8 @@ void StateAlterationModelView::serialize(std::ostream& output) {
 	output << ((float)this->BaseDuration) << '\n';
 	// DashGoThroughWall
 	output << (this->DashGoThroughWall ? 1 : 0) << '\n';
-	// DashDirectionType
-	output << ((int)this->DashDirectionType) << '\n';
+	// DashDirType
+	output << ((int)this->DashDirType) << '\n';
 	// FlatValue
 	output << ((float)this->FlatValue) << '\n';
 	// SourcePercentADValue
@@ -53,9 +53,9 @@ StateAlterationModelView StateAlterationModelView::deserialize(std::istream& inp
 	// DashGoThroughWall
 	bool _obj_DashGoThroughWall; input >> _obj_DashGoThroughWall; input.ignore(1000, '\n');
 	_obj.DashGoThroughWall = (bool)_obj_DashGoThroughWall;
-	// DashDirectionType
-	int _obj_DashDirectionType; input >> _obj_DashDirectionType; input.ignore(1000, '\n');
-	_obj.DashDirectionType = (::DashDirectionType)_obj_DashDirectionType;
+	// DashDirType
+	int _obj_DashDirType; input >> _obj_DashDirType; input.ignore(1000, '\n');
+	_obj.DashDirType = (::DashDirectionType)_obj_DashDirType;
 	// FlatValue
 	float _obj_FlatValue; input >> _obj_FlatValue; input.ignore(1000, '\n');
 	_obj.FlatValue = (float)_obj_FlatValue;

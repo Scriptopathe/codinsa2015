@@ -9,7 +9,7 @@ public:
 	StateAlterationType Type;
 	float BaseDuration;
 	bool DashGoThroughWall;
-	DashDirectionType DashDirectionType;
+	DashDirectionType DashDirType;
 	float FlatValue;
 	float SourcePercentADValue;
 	float SourcePercentHPValue;
