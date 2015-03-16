@@ -69,70 +69,88 @@ namespace Clank.Core.Generation.Languages
         /// <summary>
         /// Ajoute un type includable à la collection de types donnée.
         /// </summary>
-        void AddToSet(HashSet<ClankType> types, ClankTypeInstance type)
+        void AddToSet(HashSet<string> imports, ClankTypeInstance type)
         {
+            string import = null;
             if (type.IsGeneric)
             {
                 foreach (var arg in type.GenericArguments)
                 {
-                    AddToSet(types, arg);
+                    AddToSet(imports, arg);
                 }
             }
 
-            if (type.BaseType.IsBuiltIn | type.BaseType.IsMacro)
+            if(type.BaseType.IsMacro)
+            {
+                string metadata = GetMetadata(type.BaseType, "import");
+                if (metadata == String.Empty)
+                    return;
+
+                import = "import " + GetMetadata(type.BaseType, "import") + ";";
+            }
+            else
+            {
+                string package = GetPackageName();
+                if (package != String.Empty)
+                    package += ".";
+                import = "import " + package + type.BaseType.Name + ".*;";
+            }
+
+            if (type.BaseType.IsBuiltIn)
                 return;
 
-            if (!types.Contains(type.BaseType)) types.Add(type.BaseType);
+
+            if (!imports.Contains(import)) imports.Add(import);
         }
         /// <summary>
         /// Ajoute tous les types dont dépend l'instruction inst dans le set passé en paramètres.
         /// </summary>
-        void AggregateDependencies(Instruction inst, HashSet<ClankType> types)
+        void AggregateDependencies(Instruction inst, HashSet<string> imports)
         {
             if (inst is ClassDeclaration)
             {
                 ClassDeclaration decl = (ClassDeclaration)inst;
                 foreach (var instruction in decl.Instructions)
                 {
-                    AggregateDependencies(instruction, types);
+                    AggregateDependencies(instruction, imports);
                 }
             }
             else if (inst is Model.Language.Macros.RemoteFunctionWrapper)
             {
                 var decl = (Model.Language.Macros.RemoteFunctionWrapper)inst;
-                AggregateDependencies(decl.Func, types);
+                AggregateDependencies(decl.Func, imports);
             }
             if (inst is VariableDeclarationInstruction)
             {
                 VariableDeclarationInstruction decl = (VariableDeclarationInstruction)inst;
-                AddToSet(types, decl.Var.Type);
+                AddToSet(imports, decl.Var.Type);
             }
             else if (inst is VariableDeclarationAndAssignmentInstruction)
             {
                 VariableDeclarationAndAssignmentInstruction decl = (VariableDeclarationAndAssignmentInstruction)inst;
-                AddToSet(types, decl.Declaration.Var.Type);
+                AddToSet(imports, decl.Declaration.Var.Type);
             }
             else if (inst is FunctionDeclaration)
             {
                 FunctionDeclaration decl = (FunctionDeclaration)inst;
-                AddToSet(types, decl.Func.ReturnType);
+                AddToSet(imports, decl.Func.ReturnType);
                 foreach (var arg in decl.Func.Arguments)
                 {
-                    AddToSet(types, arg.ArgType);
+                    AddToSet(imports, arg.ArgType);
                 }
 
                 foreach (var instruction in decl.Code)
                 {
-                    AggregateDependencies(instruction, types);
+                    AggregateDependencies(instruction, imports);
                 }
             }
             else if (inst is FunctionCallInstruction)
             {
                 FunctionCallInstruction decl = (FunctionCallInstruction)inst;
-                AddToSet(types, decl.Call.Func.ReturnType);
+                AddToSet(imports, decl.Call.Func.ReturnType);
                 foreach (var arg in decl.Call.Arguments)
                 {
-                    AddToSet(types, arg.Type);
+                    AddToSet(imports, arg.Type);
                 }
             }
         }
@@ -145,11 +163,11 @@ namespace Clank.Core.Generation.Languages
         {
             StringBuilder builder = new StringBuilder();
 
-            HashSet<ClankType> referencedTypes = new HashSet<ClankType>();
-            AggregateDependencies(declaration, referencedTypes);
-            foreach (ClankType inst in referencedTypes)
+            HashSet<string> imports = new HashSet<string>();
+            AggregateDependencies(declaration, imports);
+            foreach (string inst in imports)
             {
-                builder.AppendLine("#include \"" + inst.Name + ".h\"");
+                builder.AppendLine(inst);
             }
 
 
@@ -196,9 +214,25 @@ namespace Clank.Core.Generation.Languages
         {
             StringBuilder builder = new StringBuilder();
 
+            // Package
+            string pkg = GetPackageName();
+            if (pkg != String.Empty)
+            {
+                builder.AppendLine("package " + pkg + ";");
+            }
+
             // Récupère les métadonnées.
             string metadata = GetMetadata(m_project.Types.Types[declaration.Name], "import");
-            builder.AppendLine(@"import java.lang.*;");
+            builder.AppendLine("import java.lang.*;");
+            builder.AppendLine("import java.util.ArrayList;");
+            builder.AppendLine("import java.io.BufferedReader;");
+            builder.AppendLine("import java.io.ByteArrayInputStream;");
+            builder.AppendLine("import java.io.ByteArrayOutputStream;");
+            builder.AppendLine("import java.io.IOException;");
+            builder.AppendLine("import java.io.InputStreamReader;");
+            builder.AppendLine("import java.io.OutputStreamWriter;");
+            builder.AppendLine("import java.io.UnsupportedEncodingException;");
+            builder.AppendLine(GenerateIncludes(declaration));
 
             // Ajoute les headers supplémentaires
             if(metadata != String.Empty)
@@ -206,15 +240,7 @@ namespace Clank.Core.Generation.Languages
                 builder.AppendLine(metadata.Replace(";", ";\r\n"));
             }
             builder.AppendLine();
-
-            // Package
-            string pkg = GetPackageName();
-            if(pkg != String.Empty)
-            {
-                builder.AppendLine("package " + pkg + ";");
-            }
-
-            builder.Append("\t");
+            builder.AppendLine("@SuppressWarnings(\"unused\")");
             string inheritance = declaration.InheritsFrom == null ? "" : " extends " + declaration.InheritsFrom;
             if (declaration.Modifiers.Contains("public"))
                 builder.Append("public ");
@@ -233,21 +259,20 @@ namespace Clank.Core.Generation.Languages
                 builder.Append(">");
             }
             // Héritage
-            builder.AppendLine(inheritance + "\n\t{\n");
+            builder.AppendLine(inheritance + "\n{\n");
 
             // Instructions
             foreach(Instruction instruction in declaration.Instructions)
             {
                 if (!(instruction is EnumDeclaration))
                 {
-                    builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 2));
-                    builder.Append("\t\n");
+                    builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 1));
+                    builder.Append("\n");
                 }
             }
 
-            builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializer(declaration), 2));
-            builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializer(declaration), 2));
-            builder.AppendLine("\t}");
+            builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializer(declaration), 1));
+            builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializer(declaration), 1));
             builder.AppendLine("}");
             return builder.ToString();
         }
@@ -264,9 +289,8 @@ namespace Clank.Core.Generation.Languages
             ClankType type = m_project.Types.Types[decl.Name];
             string typename = GenerateTypeName(type);
             string objName = "_obj";
-            
-            sb.AppendLine("public static " + typename + " Deserialize(BufferedReader input) {");
-            sb.AppendLine("try {");
+
+            sb.AppendLine("public static " + typename + " deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {");
             sb.AppendLine("\t" + typename + " " + objName + " = " + " new " + typename + "();");
             
             foreach(var inst in decl.Instructions)
@@ -300,8 +324,6 @@ namespace Clank.Core.Generation.Languages
                 }
                 
             }
-            sb.AppendLine("\t} catch (UnsupportedEncodingExceptio e) { ");
-            sb.AppendLine("\t} catch (IOException e) { }");
 
             sb.AppendLine("\treturn " + objName + ";");
             sb.AppendLine("}");
@@ -317,11 +339,11 @@ namespace Clank.Core.Generation.Languages
             switch (variable.Type.BaseType.JType)
             {
                 case JSONType.Bool:
-                    return "boolean " + dstVarName + " = Integer.valueof(input.readLine()) == 0 ? false : true;";
+                    return "boolean " + dstVarName + " = Integer.valueOf(input.readLine()) == 0 ? false : true;";
                 case JSONType.Int:
-                    return "int " + dstVarName + " = Integer.valueof(input.readLine());";
+                    return "int " + dstVarName + " = Integer.valueOf(input.readLine());";
                 case JSONType.Float:
-                    return "float " + dstVarName + " = Float.valueof(input.readLine());";
+                    return "float " + dstVarName + " = Float.valueOf(input.readLine());";
                 case JSONType.String:
                     return "String " + dstVarName + " = input.readline();";
                 case JSONType.Object:
@@ -349,7 +371,12 @@ namespace Clank.Core.Generation.Languages
                             Name = "",
                             Type = elementType
                         }, elementVarName)));
-                    builder.AppendLine("\t" + dstVarName + ".add((" + elementTypename + ")" + elementVarName + ");");
+
+                    if(elementType.BaseType.IsEnum)
+                        builder.AppendLine("\t" + dstVarName + ".add(" + elementTypename + ".fromValue(" + elementVarName + "));");
+                    else
+                        builder.AppendLine("\t" + dstVarName + ".add((" + elementTypename + ")" + elementVarName + ");");
+
                     builder.AppendLine("}");
                     return builder.ToString();
             }
@@ -369,8 +396,7 @@ namespace Clank.Core.Generation.Languages
             StringBuilder sb = new StringBuilder();
             ClankType type = m_project.Types.Types[decl.Name];
             string typename = GenerateTypeName(type);
-            sb.AppendLine("public void serialize(OutputStreamWriter output) {");
-            sb.AppendLine("\ttry {");
+            sb.AppendLine("public void serialize(OutputStreamWriter output) throws UnsupportedEncodingException, IOException {");
             foreach (var inst in decl.Instructions)
             {
                 Variable attr = null;
@@ -392,8 +418,6 @@ namespace Clank.Core.Generation.Languages
                     new Variable() { Type = attr.Type, Name = "this." + attr.Name })));
             }
 
-            sb.AppendLine("\t} catch (UnsupportedEncodingExceptio e) { ");
-            sb.AppendLine("\t} catch (IOException e) { }");
             sb.AppendLine("}");
             return sb.ToString();
         }
@@ -416,20 +440,20 @@ namespace Clank.Core.Generation.Languages
                     else
                         return "output.append(((Integer)" + srcVar.Name + ").toString() + " + endl + ");";
                 case JSONType.Float:
-                    return "output.WriteLine(((Float)" + srcVar.Name + ").toString() + " + endl + ");";
+                    return "output.append(((Float)" + srcVar.Name + ").toString() + " + endl + ");";
                 case JSONType.String:
-                    return "output.WriteLine(" + srcVar.Name + " + " + endl + ");";
+                    return "output.append(" + srcVar.Name + " + " + endl + ");";
                 case JSONType.Object:
                     return srcVar.Name + ".serialize(output);";
                 case JSONType.Array:
                     StringBuilder builder = new StringBuilder();
-                    string itname = (srcVar.Name + "_it").Replace("this.", "").Replace("[", "").Replace("]", "");
+                    string itname = (srcVar.Name + "_it").Replace("this.", "").Replace(".get(", "").Replace(")", "");
                     Variable item = new Variable()
                     {
-                        Name = srcVar.Name + "[" + itname + "]",
+                        Name = srcVar.Name + ".get(" + itname + ")",
                         Type = srcVar.Type.BaseType.JArrayElementType.AsInstance().Instanciate(srcVar.Type.GenericArguments)
                     };
-                    builder.AppendLine("output.append(" + srcVar.Name + ".size().toString() + " + endl + ");");
+                    builder.AppendLine("output.append(String.valueOf(" + srcVar.Name + ".size()) + " + endl + ");");
                     builder.AppendLine("for(int " + itname + " = 0; " + itname + " < " + srcVar.Name + ".size();" + itname + "++) {");
                     builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializationInstruction(item)));
                     builder.AppendLine("}");
@@ -570,13 +594,13 @@ namespace Clank.Core.Generation.Languages
                 builder.Append(GenerateTypeInstanceName(arg.ArgType) + " " + arg.ArgName + (arg == func.Arguments.Last() ? "" : ","));
             }
             builder.Append(")\r\n{\r\n");
+            builder.AppendLine("\ttry {");
             if (PRINT_DEBUG)
             {
-                builder.AppendLine("\tConsole.WriteLine(\"[" + instruction.Func.Func.Name + "]\");");
+                builder.AppendLine("\tSystem.out.println(\"[" + instruction.Func.Func.Name + "]\");");
             }
-            builder.AppendLine("\tSystem.IO.MemoryStream s = new System.IO.MemoryStream();");
-            builder.AppendLine("\tSystem.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);");
-            builder.AppendLine("\t\toutput.NewLine = \"\\n\";");
+            builder.AppendLine("\tByteArrayOutputStream s = new ByteArrayOutputStream();");
+            builder.AppendLine("\tOutputStreamWriter output = new OutputStreamWriter(s, \"UTF-8\");");
             // Sérialise le numéro de la fonction.
             builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializationInstruction(new Variable()
             {
@@ -593,20 +617,28 @@ namespace Clank.Core.Generation.Languages
                     Type = func.Arguments[i].ArgType
                 })));
             }
-            builder.AppendLine("\toutput.Close();");
+            builder.AppendLine("\toutput.close();");
+            builder.AppendLine("\tTCPHelper.Send(s.toByteArray());");
 
-            builder.AppendLine("\tTCPHelper.Send(s.ToArray());");
             // Récupère la réponse du serveur.
             builder.AppendLine("\tbyte[] response = TCPHelper.Receive();");
-            builder.AppendLine("\ts = new System.IO.MemoryStream(response);");
-            builder.AppendLine("\tSystem.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);");
+            builder.AppendLine("\tByteArrayInputStream s2 = new ByteArrayInputStream(response);");
+            builder.AppendLine("\tBufferedReader input = new BufferedReader(new InputStreamReader(s2, \"UTF-8\"));");
             // Récupère l'objet dans le stream.
             builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializationInstruction(
                 new Variable()
                 {
                     Type = func.ReturnType
                 }, "returnValue")));
-            builder.AppendLine("\treturn (" + GenerateTypeInstanceName(func.ReturnType) + ")returnValue;");
+
+            if(func.ReturnType.BaseType.IsEnum)
+                builder.AppendLine("\treturn " + GenerateTypeInstanceName(func.ReturnType) + ".fromValue(returnValue);");
+            else
+                builder.AppendLine("\treturn returnValue;");
+
+            builder.AppendLine("\t} catch (UnsupportedEncodingException e) { ");
+            builder.AppendLine("\t} catch (IOException e) { }");
+            builder.AppendLine("\treturn null;");
             builder.AppendLine("}\r\n\r\n");
             // Corps de la fonction.
             /*
@@ -901,7 +933,22 @@ namespace Clank.Core.Generation.Languages
 
                 return mcClass.LanguageToTypeName[LANG_KEY];
             }
-            else
+            else if(type.IsBuiltIn)
+            {
+                switch(type.Name)
+                {
+                    case "string":
+                        return "String";
+                    case "bool":
+                        return "Boolean";
+                    case "int":
+                        return "Integer";
+                    case "float":
+                        return "Float";
+                    default:
+                        return type.Name;
+                }
+            }
                 return type.Name;
         }
         /// <summary>
