@@ -23,7 +23,8 @@ namespace Codinsa2015
                     // Clients
                     "cs:\"../../../../../Codinsa2015.Client/Codinsa2015.Client/Views\"\n" +
                     "cpp:\"../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientCpp/src\"\n" +
-                    "h:\"../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientCpp/inc\"\n", 
+                    "h:\"../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientCpp/inc\"\n" + 
+                    "java:\"../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientJava/src/net/codinsa2015\"\n", 
 
                     views).Replace("encoding=\"utf-16\"", ""));
                 foreach (var kvp in views)
