@@ -113,7 +113,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Si Type contient Dash : type direction du dash.
         /// </summary>
-        [Clank.ViewCreator.Export("DashDirectionType", @"Si Type contient Dash : type direction du dash.")]
+        [Clank.ViewCreator.Export("DashDirType", @"Si Type contient Dash : type direction du dash.")]
         public DashDirectionType DashDirectionType { get; set; }
 
 
@@ -381,7 +381,7 @@ namespace Codinsa2015.Server.Entities
             Views.StateAlterationModelView view = new Views.StateAlterationModelView();
             view.BaseDuration = BaseDuration;
             view.CreepBonus = CreepBonus;
-            view.DashDirectionType = (Views.DashDirectionType)DashDirectionType;
+            view.DashDirType = (Views.DashDirectionType)DashDirectionType;
             view.DashGoThroughWall = DashGoThroughWall;
             view.DestPercentADValue = DestPercentADValue;
             view.DestPercentAPValue = DestPercentAPValue;
