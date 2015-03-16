@@ -67,6 +67,7 @@ namespace Codinsa2015.Server.Net
             m_consecutiveTimeouts = new Dictionary<Socket, int>();
             m_smallBuffer = new Dictionary<int, byte[]>();
             m_buffer = new Dictionary<int, byte[]>();
+            
         }
 
         #region Wait for connections

@@ -38,7 +38,7 @@ public class StateAlterationView
 		StateAlterationParametersView _obj_Parameters = StateAlterationParametersView.deserialize(input);
 		_obj.Parameters = _obj_Parameters;
 		// RemainingTime
-		float _obj_RemainingTime = Float.valueOf(input.readLine());
+		float _obj_RemainingTime = Float.valueOf(input.readLine().replace(',', '.'));
 		_obj.RemainingTime = _obj_RemainingTime;
 		return _obj;
 	}
@@ -53,7 +53,7 @@ public class StateAlterationView
 		// Parameters
 		this.Parameters.serialize(output);
 		// RemainingTime
-		output.append(((Float)this.RemainingTime).toString() + "\n");
+		output.append(((Float)this.RemainingTime).toString().replace('.', ',') + "\n");
 	}
 
 }

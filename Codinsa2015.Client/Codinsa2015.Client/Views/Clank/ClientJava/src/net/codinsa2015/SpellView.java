@@ -24,7 +24,7 @@ public class SpellView
 	public static SpellView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellView _obj =  new SpellView();
 		// CurrentCooldown
-		float _obj_CurrentCooldown = Float.valueOf(input.readLine());
+		float _obj_CurrentCooldown = Float.valueOf(input.readLine().replace(',', '.'));
 		_obj.CurrentCooldown = _obj_CurrentCooldown;
 		// SourceCaster
 		int _obj_SourceCaster = Integer.valueOf(input.readLine());
@@ -45,7 +45,7 @@ public class SpellView
 
 	public void serialize(OutputStreamWriter output) throws UnsupportedEncodingException, IOException {
 		// CurrentCooldown
-		output.append(((Float)this.CurrentCooldown).toString() + "\n");
+		output.append(((Float)this.CurrentCooldown).toString().replace('.', ',') + "\n");
 		// SourceCaster
 		output.append(((Integer)this.SourceCaster).toString() + "\n");
 		// Levels

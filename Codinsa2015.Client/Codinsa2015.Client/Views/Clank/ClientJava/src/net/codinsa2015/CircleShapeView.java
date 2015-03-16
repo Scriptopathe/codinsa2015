@@ -24,7 +24,7 @@ public class CircleShapeView
 		Vector2 _obj_Position = Vector2.deserialize(input);
 		_obj.Position = _obj_Position;
 		// Radius
-		float _obj_Radius = Float.valueOf(input.readLine());
+		float _obj_Radius = Float.valueOf(input.readLine().replace(',', '.'));
 		_obj.Radius = _obj_Radius;
 		return _obj;
 	}
@@ -33,7 +33,7 @@ public class CircleShapeView
 		// Position
 		this.Position.serialize(output);
 		// Radius
-		output.append(((Float)this.Radius).toString() + "\n");
+		output.append(((Float)this.Radius).toString().replace('.', ',') + "\n");
 	}
 
 }

@@ -27,7 +27,7 @@ public class GenericShapeView
 		Vector2 _obj_Position = Vector2.deserialize(input);
 		_obj.Position = _obj_Position;
 		// Radius
-		float _obj_Radius = Float.valueOf(input.readLine());
+		float _obj_Radius = Float.valueOf(input.readLine().replace(',', '.'));
 		_obj.Radius = _obj_Radius;
 		// Size
 		Vector2 _obj_Size = Vector2.deserialize(input);
@@ -42,7 +42,7 @@ public class GenericShapeView
 		// Position
 		this.Position.serialize(output);
 		// Radius
-		output.append(((Float)this.Radius).toString() + "\n");
+		output.append(((Float)this.Radius).toString().replace('.', ',') + "\n");
 		// Size
 		this.Size.serialize(output);
 		// ShapeType
