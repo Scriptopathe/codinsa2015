@@ -17,7 +17,7 @@ namespace Codinsa2015.Views
 		public StateAlterationType Type;	
 		public float BaseDuration;	
 		public bool DashGoThroughWall;	
-		public DashDirectionType DashDirectionType;	
+		public DashDirectionType DashDirType;	
 		public float FlatValue;	
 		public float SourcePercentADValue;	
 		public float SourcePercentHPValue;	
@@ -45,9 +45,9 @@ namespace Codinsa2015.Views
 			// DashGoThroughWall
 			bool _obj_DashGoThroughWall = Int32.Parse(input.ReadLine()) == 0 ? false : true;
 			_obj.DashGoThroughWall = (bool)_obj_DashGoThroughWall;
-			// DashDirectionType
-			int _obj_DashDirectionType = Int32.Parse(input.ReadLine());
-			_obj.DashDirectionType = (DashDirectionType)_obj_DashDirectionType;
+			// DashDirType
+			int _obj_DashDirType = Int32.Parse(input.ReadLine());
+			_obj.DashDirType = (DashDirectionType)_obj_DashDirType;
 			// FlatValue
 			float _obj_FlatValue = Single.Parse(input.ReadLine());
 			_obj.FlatValue = (float)_obj_FlatValue;
@@ -106,8 +106,8 @@ namespace Codinsa2015.Views
 			output.WriteLine(((float)this.BaseDuration).ToString());
 			// DashGoThroughWall
 			output.WriteLine(this.DashGoThroughWall ? 1 : 0);
-			// DashDirectionType
-			output.WriteLine(((int)this.DashDirectionType).ToString());
+			// DashDirType
+			output.WriteLine(((int)this.DashDirType).ToString());
 			// FlatValue
 			output.WriteLine(((float)this.FlatValue).ToString());
 			// SourcePercentADValue
