@@ -72,7 +72,6 @@ void EntityBaseView::serialize(std::ostream& output) {
 
 EntityBaseView EntityBaseView::deserialize(std::istream& input) {
 	EntityBaseView _obj = EntityBaseView();
-	
 	// GetMagicResist
 	float _obj_GetMagicResist; input >> _obj_GetMagicResist; input.ignore(1000, '\n');
 	_obj.GetMagicResist = (float)_obj_GetMagicResist;

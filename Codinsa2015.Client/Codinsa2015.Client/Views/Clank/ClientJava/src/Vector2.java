@@ -1,27 +1,42 @@
-public class Vector2
-{
+import java.lang.*;
 
+	public class Vector2
+	{
 
-	public Vector2()
-	{
-	}
-	public Vector2(Double x, Double y)
-	{
-		this.X = x;
-		this.Y = y;
-	}
-	public Double X;
-	public Double Y;
-	public static Vector2 deserialize(JSONObject o)
-	{
-		Vector2 obj = new Vector2();
-		// X
-		Double X = o.getDouble("X");
-		obj.X = X;
-		// Y
-		Double Y = o.getDouble("Y");
-		obj.Y = Y;
-		return obj;
-	}
+	
+		public Vector2()
+		{
+		}	
+		public Vector2(float x, float y)
+		{
+			this.X = x;
+			this.Y = y;
+		}	
+		public float X;	
+		public float Y;	
+		public static Vector2 Deserialize(BufferedReader input) {
+		try {
+			Vector2 _obj =  new Vector2();
+			// X
+			float _obj_X = Float.Parse(input.readLine());
+			_obj.X = _obj_X;
+			// Y
+			float _obj_Y = Float.Parse(input.readLine());
+			_obj.Y = _obj_Y;
+			} catch (UnsupportedEncodingExceptio e) { 
+			} catch (IOException e) { }
+			return _obj;
+		}
 
+		public void serialize(OutputStreamWriter output) {
+			try {
+			// X
+			output.WriteLine(((Float)this.X).toString() + "\n");
+			// Y
+			output.WriteLine(((Float)this.Y).toString() + "\n");
+			} catch (UnsupportedEncodingExceptio e) { 
+			} catch (IOException e) { }
+		}
+
+	}
 }

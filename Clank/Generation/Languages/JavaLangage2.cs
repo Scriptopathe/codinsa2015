@@ -10,11 +10,11 @@ namespace Clank.Core.Generation.Languages
     /// Cette classe prend en charge la traduction du code d'un arbre abstrait 
     /// vers le langage de programmation de destination.
     /// </summary>
-    [LanguageGenerator("cpp")]
-    public class CppGenerator : ILanguageGenerator
+    [LanguageGenerator("java")]
+    public class JavaGenerator : ILanguageGenerator
     {
-        public const string LANG_KEY = "cpp";
-
+        public const string LANG_KEY = "java";
+        public const bool PRINT_DEBUG = true;
         #region Variables
         Clank.Core.Model.ProjectFile m_project;
         #endregion
@@ -23,14 +23,14 @@ namespace Clank.Core.Generation.Languages
         /// Crée une nouvelle instance de CSGenerator avec un fichier projet passé en paramètre.
         /// </summary>
         /// <param name="project"></param>
-        public CppGenerator(Clank.Core.Model.ProjectFile project)
+        public JavaGenerator(Clank.Core.Model.ProjectFile project)
         {
             SetProject(project);
         }
         /// <summary>
         /// Crée une nouvelle instance de CSGenerator.
         /// </summary>
-        public CppGenerator() { }
+        public JavaGenerator() { }
         /// <summary>
         /// Définit le projet contenant les informations nécessaires à la génération de code.
         /// </summary>
@@ -38,91 +38,219 @@ namespace Clank.Core.Generation.Languages
         {
             m_project = project;
         }
+
+        /// <summary>
+        /// Obtient la propriété de métadonnée 'metadataProperty' pour le type donné.
+        /// Retourne String.Empty par défaut.
+        /// </summary>
+        string GetMetadata(ClankType type, string metadataProperty)
+        {
+            Dictionary<string, string> metadata = new Dictionary<string,string>();
+            string metadataStr = String.Empty;
+            if (type.LanguageMetadata.ContainsKey(LANG_KEY))
+                metadata = type.LanguageMetadata[LANG_KEY];
+            if (metadata.ContainsKey(metadataProperty))
+                metadataStr = metadata[metadataProperty];
+
+            return metadataStr;
+        }
+        /// <summary>
+        /// Obtient le nom du package dans lequel seront contenues toutes les classes du projet.
+        /// Ce nom est déterminé par la propriété de métadonnée "package".
+        /// </summary>
+        /// <returns></returns>
+        string GetPackageName()
+        {
+            return GetMetadata(m_project.Types.Types["State"], "package");
+        }
+
+
+        #region Includes
+        /// <summary>
+        /// Ajoute un type includable à la collection de types donnée.
+        /// </summary>
+        void AddToSet(HashSet<ClankType> types, ClankTypeInstance type)
+        {
+            if (type.IsGeneric)
+            {
+                foreach (var arg in type.GenericArguments)
+                {
+                    AddToSet(types, arg);
+                }
+            }
+
+            if (type.BaseType.IsBuiltIn | type.BaseType.IsMacro)
+                return;
+
+            if (!types.Contains(type.BaseType)) types.Add(type.BaseType);
+        }
+        /// <summary>
+        /// Ajoute tous les types dont dépend l'instruction inst dans le set passé en paramètres.
+        /// </summary>
+        void AggregateDependencies(Instruction inst, HashSet<ClankType> types)
+        {
+            if (inst is ClassDeclaration)
+            {
+                ClassDeclaration decl = (ClassDeclaration)inst;
+                foreach (var instruction in decl.Instructions)
+                {
+                    AggregateDependencies(instruction, types);
+                }
+            }
+            else if (inst is Model.Language.Macros.RemoteFunctionWrapper)
+            {
+                var decl = (Model.Language.Macros.RemoteFunctionWrapper)inst;
+                AggregateDependencies(decl.Func, types);
+            }
+            if (inst is VariableDeclarationInstruction)
+            {
+                VariableDeclarationInstruction decl = (VariableDeclarationInstruction)inst;
+                AddToSet(types, decl.Var.Type);
+            }
+            else if (inst is VariableDeclarationAndAssignmentInstruction)
+            {
+                VariableDeclarationAndAssignmentInstruction decl = (VariableDeclarationAndAssignmentInstruction)inst;
+                AddToSet(types, decl.Declaration.Var.Type);
+            }
+            else if (inst is FunctionDeclaration)
+            {
+                FunctionDeclaration decl = (FunctionDeclaration)inst;
+                AddToSet(types, decl.Func.ReturnType);
+                foreach (var arg in decl.Func.Arguments)
+                {
+                    AddToSet(types, arg.ArgType);
+                }
+
+                foreach (var instruction in decl.Code)
+                {
+                    AggregateDependencies(instruction, types);
+                }
+            }
+            else if (inst is FunctionCallInstruction)
+            {
+                FunctionCallInstruction decl = (FunctionCallInstruction)inst;
+                AddToSet(types, decl.Call.Func.ReturnType);
+                foreach (var arg in decl.Call.Arguments)
+                {
+                    AddToSet(types, arg.Type);
+                }
+            }
+        }
+        /// <summary>
+        /// Génère les déclaration d'inclusion de la classe.
+        /// </summary>
+        /// <param name="declaration"></param>
+        /// <returns></returns>
+        string GenerateIncludes(ClassDeclaration declaration)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            HashSet<ClankType> referencedTypes = new HashSet<ClankType>();
+            AggregateDependencies(declaration, referencedTypes);
+            foreach (ClankType inst in referencedTypes)
+            {
+                builder.AppendLine("#include \"" + inst.Name + ".h\"");
+            }
+
+
+            return builder.ToString();
+        }
+        #endregion
+
         /// <summary>
         /// Génère les fichiers du projet à partir de la liste des instructions.
         /// </summary>
         public List<OutputFile> GenerateProjectFiles(List<Instruction> instructions, string outputDirectory, bool isServer)
         {
             List<OutputFile> outputFiles = new List<OutputFile>();
+
             foreach (Model.Language.Instruction inst in instructions)
             {
                 if (inst is Model.Language.ClassDeclaration)
                 {
-                    outputFiles.Add(new OutputFile(outputDirectory + "/" + ((Model.Language.ClassDeclaration)inst).Name + ".cpp",
+                    Model.Language.ClassDeclaration decl = (Model.Language.ClassDeclaration)inst;
+                    outputFiles.Add(new OutputFile(outputDirectory + "/" + decl.Name + ".java",
                         GenerateInstruction(inst)));
                 }
                 else if(inst is Model.Language.EnumDeclaration)
                 {
-
+                    Model.Language.EnumDeclaration decl = (Model.Language.EnumDeclaration)inst;
+                    outputFiles.Add(new OutputFile(outputDirectory + "/" + decl.Name + ".java", GenerateEnumFile(decl)));
                 }
                 else
                 {
                     m_project.Log.AddWarning("Instruction de type " + inst.GetType().ToString() + " inattendue.", inst.Line, inst.Character, inst.Source);
                 }
             }
+
+
             return outputFiles;
         }
+
         /// <summary>
         /// Génére le code d'une classe.
         /// </summary>
         /// <param name="declaration"></param>
         /// <returns></returns>
-        string GenerateClass(ClassDeclaration declaration)
+        string GenerateClass(ClassDeclaration declaration, bool generateIncludes=true)
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.AppendLine("#include \"../inc/" + declaration.Name + ".h\"");
+            // Récupère les métadonnées.
+            string metadata = GetMetadata(m_project.Types.Types[declaration.Name], "import");
+            builder.AppendLine(@"import java.lang.*;");
 
-            // Classe les instruction
-            List<Instruction> publicInstructions = new List<Instruction>();
-            List<Instruction> privateInstructions = new List<Instruction>();
+            // Ajoute les headers supplémentaires
+            if(metadata != String.Empty)
+            {
+                builder.AppendLine(metadata.Replace(";", ";\r\n"));
+            }
+            builder.AppendLine();
+
+            // Package
+            string pkg = GetPackageName();
+            if(pkg != String.Empty)
+            {
+                builder.AppendLine("package " + pkg + ";");
+            }
+
+            builder.Append("\t");
+            string inheritance = declaration.InheritsFrom == null ? "" : " extends " + declaration.InheritsFrom;
+            if (declaration.Modifiers.Contains("public"))
+                builder.Append("public ");
+            builder.Append("class " + declaration.Name);
+            
+            // Paramètres génériques
+            if (declaration.GenericParameters.Count > 0)
+            {
+                builder.Append("<");
+                foreach (string tupe in declaration.GenericParameters)
+                {
+                    builder.Append(tupe);
+                    if (tupe != declaration.GenericParameters.Last())
+                        builder.Append(",");
+                }
+                builder.Append(">");
+            }
+            // Héritage
+            builder.AppendLine(inheritance + "\n\t{\n");
+
+            // Instructions
             foreach(Instruction instruction in declaration.Instructions)
             {
-                bool isPublic = false;
-                if (instruction is VariableDeclarationInstruction)
-                    isPublic = ((VariableDeclarationInstruction)instruction).IsPublic;
-                else if (instruction is VariableDeclarationAndAssignmentInstruction)
-                    isPublic = ((VariableDeclarationAndAssignmentInstruction)instruction).Declaration.IsPublic;
-                else if (instruction is FunctionDeclaration)
-                    isPublic = ((FunctionDeclaration)instruction).Func.IsPublic;
-                else if (instruction is Model.Language.Macros.ProcessMessageMacro)
-                    isPublic = true;
-                else if (instruction is Model.Language.Macros.RemoteFunctionWrapper)
-                    isPublic = true;
-
-                if (! (instruction is VariableDeclarationInstruction) && !(instruction is VariableDeclarationAndAssignmentInstruction))
+                if (!(instruction is EnumDeclaration))
                 {
-                    if (isPublic)
-                        publicInstructions.Add(instruction);
-                    else
-                        privateInstructions.Add(instruction);
+                    builder.Append(Tools.StringUtils.Indent(GenerateInstruction(instruction), 2));
+                    builder.Append("\t\n");
                 }
             }
 
-            // Génère les instructions publiques.
-            // builder.AppendLine("public: ");
-            foreach (Instruction instruction in publicInstructions)
-            {
-                builder.Append(GenerateInstruction(instruction));
-                builder.Append("\n");
-            }
-
-            builder.AppendLine(GenerateSerializer(declaration));
-            builder.AppendLine(GenerateDeserializer(declaration));
-            // Génère les instructions privées.
-            //if(privateInstructions.Count > 0)
-            //    builder.AppendLine("private: ");
-
-            foreach (Instruction instruction in privateInstructions)
-            {
-                builder.Append(GenerateInstruction(instruction));
-                builder.Append("\n");
-            }
-
-//            builder.Append("};");
+            builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializer(declaration), 2));
+            builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializer(declaration), 2));
+            builder.AppendLine("\t}");
+            builder.AppendLine("}");
             return builder.ToString();
         }
-
 
         #region Deserialization
         /// <summary>
@@ -136,9 +264,12 @@ namespace Clank.Core.Generation.Languages
             ClankType type = m_project.Types.Types[decl.Name];
             string typename = GenerateTypeName(type);
             string objName = "_obj";
-            sb.AppendLine(typename + " " + typename + "::deserialize(std::istream& input) {");
-            sb.AppendLine("\t" + typename + " " + objName + " = " + typename + "();");
-            foreach (var inst in decl.Instructions)
+            
+            sb.AppendLine("public static " + typename + " Deserialize(BufferedReader input) {");
+            sb.AppendLine("try {");
+            sb.AppendLine("\t" + typename + " " + objName + " = " + " new " + typename + "();");
+            
+            foreach(var inst in decl.Instructions)
             {
                 Variable attr = null;
                 if (inst is VariableDeclarationInstruction)
@@ -154,10 +285,24 @@ namespace Clank.Core.Generation.Languages
                 else
                     continue;
 
+                string varTypename = GenerateTypeInstanceName(attr.Type);
+                string intermediateVariableName = objName + "_" + attr.Name;
                 sb.AppendLine("\t// " + attr.Name);
-                sb.AppendLine(Tools.StringUtils.Indent(GenerateDeserializationInstruction(attr, objName + "_" + attr.Name)));
-                sb.AppendLine("\t" + objName + "." + attr.Name + " = (" + GenerateTypeInstanceNamePrefixed(attr.Type) + ")" + objName + "_" + attr.Name + ";");
+                sb.AppendLine(Tools.StringUtils.Indent(GenerateDeserializationInstruction(attr, intermediateVariableName)));
+                
+                if(attr.Type.BaseType.IsEnum)
+                {
+                    sb.AppendLine("\t" + objName + "." + attr.Name + " = " + varTypename + ".fromValue(" + intermediateVariableName + ");");
+                }
+                else
+                {
+                    sb.AppendLine("\t" + objName + "." + attr.Name + " = " + intermediateVariableName + ";");
+                }
+                
             }
+            sb.AppendLine("\t} catch (UnsupportedEncodingExceptio e) { ");
+            sb.AppendLine("\t} catch (IOException e) { }");
+
             sb.AppendLine("\treturn " + objName + ";");
             sb.AppendLine("}");
             return sb.ToString();
@@ -172,16 +317,15 @@ namespace Clank.Core.Generation.Languages
             switch (variable.Type.BaseType.JType)
             {
                 case JSONType.Bool:
-                    
-                    return "bool " + dstVarName + "; input >> " + dstVarName + "; input.ignore(1000, '\\n');";
+                    return "boolean " + dstVarName + " = Integer.valueof(input.readLine()) == 0 ? false : true;";
                 case JSONType.Int:
-                    return "int " + dstVarName + "; input >> " + dstVarName + "; input.ignore(1000, '\\n');";
+                    return "int " + dstVarName + " = Integer.valueof(input.readLine());";
                 case JSONType.Float:
-                    return "float " + dstVarName + "; input >> " + dstVarName + "; input.ignore(1000, '\\n');";
+                    return "float " + dstVarName + " = Float.valueof(input.readLine());";
                 case JSONType.String:
-                    return "string " + dstVarName + "; getline(input, " + dstVarName +");";
+                    return "String " + dstVarName + " = input.readline();";
                 case JSONType.Object:
-                    return typename + " " + dstVarName + " = " + typename + "::deserialize(input);";
+                    return typename + " " + dstVarName + " = " + typename + ".deserialize(input);";
                 case JSONType.Array:
                     StringBuilder builder = new StringBuilder();
                     var elementType = variable.Type.BaseType.JArrayElementType.AsInstance().Instanciate(variable.Type.GenericArguments);
@@ -192,20 +336,20 @@ namespace Clank.Core.Generation.Languages
                     string elementCountName = dstVarNameMod + "_count";
 
                     string parenthesis = typename.EndsWith("]") ? "" : "()";
-                    builder.AppendLine(typename + " " + dstVarName + " = " + typename + parenthesis + ";");
+                    builder.AppendLine(typename + " " + dstVarName + " = new " + typename + parenthesis + ";");
                     builder.AppendLine(GenerateDeserializationInstruction(new Variable()
-                    {
-                        Type = m_project.Types.TypeInstances["int"],
-                        Name = ""
-                    }, elementCountName));
+                        {
+                            Type = m_project.Types.TypeInstances["int"],
+                            Name = ""
+                        }, elementCountName));
                     builder.AppendLine("for(int " + itName + " = 0; " + itName + " < " + elementCountName + "; " + itName + "++) {");
 
                     builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializationInstruction(new Variable()
-                    {
-                        Name = "",
-                        Type = elementType
-                    }, elementVarName)));
-                    builder.AppendLine("\t" + dstVarName + ".push_back((" + elementTypename + ")" + elementVarName + ");");
+                        {
+                            Name = "",
+                            Type = elementType
+                        }, elementVarName)));
+                    builder.AppendLine("\t" + dstVarName + ".add((" + elementTypename + ")" + elementVarName + ");");
                     builder.AppendLine("}");
                     return builder.ToString();
             }
@@ -225,7 +369,8 @@ namespace Clank.Core.Generation.Languages
             StringBuilder sb = new StringBuilder();
             ClankType type = m_project.Types.Types[decl.Name];
             string typename = GenerateTypeName(type);
-            sb.AppendLine("void " + typename + "::serialize(std::ostream& output) {");
+            sb.AppendLine("public void serialize(OutputStreamWriter output) {");
+            sb.AppendLine("\ttry {");
             foreach (var inst in decl.Instructions)
             {
                 Variable attr = null;
@@ -244,8 +389,11 @@ namespace Clank.Core.Generation.Languages
 
                 sb.AppendLine("\t// " + attr.Name);
                 sb.AppendLine(Tools.StringUtils.Indent(GenerateSerializationInstruction(
-                    new Variable() { Type = attr.Type, Name = "this->" + attr.Name })));
+                    new Variable() { Type = attr.Type, Name = "this." + attr.Name })));
             }
+
+            sb.AppendLine("\t} catch (UnsupportedEncodingExceptio e) { ");
+            sb.AppendLine("\t} catch (IOException e) { }");
             sb.AppendLine("}");
             return sb.ToString();
         }
@@ -257,28 +405,32 @@ namespace Clank.Core.Generation.Languages
         public string GenerateSerializationInstruction(Variable srcVar)
         {
             string typename = GenerateTypeInstanceName(srcVar.Type);
+            string endl = "\"\\n\"";
             switch (srcVar.Type.BaseType.JType)
             {
                 case JSONType.Bool:
-                    return "output << (" + srcVar.Name + " ? 1 : 0) << '\\n';";
+                    return "output.append((" + srcVar.Name + " ? 1 : 0) + " + endl + ");";
                 case JSONType.Int:
-                    return "output << ((int)" + srcVar.Name + ") << '\\n';";
+                    if(srcVar.Type.BaseType.IsEnum)
+                        return "output.append(((Integer)(" + srcVar.Name + ".getValue())).toString() + " + endl + ");";
+                    else
+                        return "output.append(((Integer)" + srcVar.Name + ").toString() + " + endl + ");";
                 case JSONType.Float:
-                    return "output << ((float)" + srcVar.Name + ") << '\\n';";
+                    return "output.WriteLine(((Float)" + srcVar.Name + ").toString() + " + endl + ");";
                 case JSONType.String:
-                    return "output << " + srcVar.Name + " << '\\n');";
+                    return "output.WriteLine(" + srcVar.Name + " + " + endl + ");";
                 case JSONType.Object:
                     return srcVar.Name + ".serialize(output);";
                 case JSONType.Array:
                     StringBuilder builder = new StringBuilder();
-                    string itname = (srcVar.Name + "_it").Replace("this->", "").Replace("[", "").Replace("]", "");
+                    string itname = (srcVar.Name + "_it").Replace("this.", "").Replace("[", "").Replace("]", "");
                     Variable item = new Variable()
                     {
                         Name = srcVar.Name + "[" + itname + "]",
                         Type = srcVar.Type.BaseType.JArrayElementType.AsInstance().Instanciate(srcVar.Type.GenericArguments)
                     };
-                    builder.AppendLine("output << " + srcVar.Name + ".size() << '\\n';");
-                    builder.AppendLine("for(int " + itname + " = 0; " + itname + " < " + srcVar.Name + ".size(); " + itname + "++) {");
+                    builder.AppendLine("output.append(" + srcVar.Name + ".size().toString() + " + endl + ");");
+                    builder.AppendLine("for(int " + itname + " = 0; " + itname + " < " + srcVar.Name + ".size();" + itname + "++) {");
                     builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializationInstruction(item)));
                     builder.AppendLine("}");
                     return builder.ToString();
@@ -287,6 +439,7 @@ namespace Clank.Core.Generation.Languages
             throw new NotImplementedException();
         }
         #endregion
+        
         /// <summary>
         /// Génère le code d'une instruction.
         /// </summary>
@@ -313,7 +466,7 @@ namespace Clank.Core.Generation.Languages
             }
             else if(instruction is ClassDeclaration)
             {
-                return comment + GenerateClass((ClassDeclaration)instruction);
+                return GenerateClass((ClassDeclaration)instruction);
             }
             else if(instruction is AffectationInstruction)
             {
@@ -333,7 +486,7 @@ namespace Clank.Core.Generation.Languages
             }
             else if(instruction is EnumDeclaration)
             {
-                return comment + GenerateEnumInstruction((EnumDeclaration)instruction);
+                return comment + GenerateEnumFile((EnumDeclaration)instruction);
             }
             else if(instruction is Model.Language.Macros.ProcessMessageMacro)
             {
@@ -351,10 +504,7 @@ namespace Clank.Core.Generation.Languages
             {
                 return comment + GenerateConditionalStatement((ConditionalStatement)instruction);
             }
-            else if(instruction is PlaceholderInstruction)
-            {
-                return comment;
-            }
+            else if (instruction is PlaceholderInstruction) { return ""; }
             throw new NotImplementedException();
         }
 
@@ -372,7 +522,7 @@ namespace Clank.Core.Generation.Languages
                     builder.Append("if");
                     break;
                 case ConditionalStatement.Type.Elsif:
-                    builder.Append("else if");
+                    builder.Append("elsif");
                     break;
                 case ConditionalStatement.Type.Else:
                     builder.Append("else");
@@ -383,7 +533,7 @@ namespace Clank.Core.Generation.Languages
                 default:
                     throw new NotImplementedException();
             }
-
+            
             // Ajout de la condition
             if(statement.StatementType != ConditionalStatement.Type.Else)
             {
@@ -412,20 +562,21 @@ namespace Clank.Core.Generation.Languages
             Function func = instruction.Func.Func;
             StringBuilder builder = new StringBuilder();
             string returnTypeName = GenerateTypeInstanceName(func.ReturnType);
-            builder.Append(returnTypeName + " State::" + func.Name + "(");
-
+            builder.Append("public " + returnTypeName + " " + func.Name + "(");
+            
             // Arg list
-            foreach (var arg in func.Arguments)
+            foreach(var arg in func.Arguments)
             {
                 builder.Append(GenerateTypeInstanceName(arg.ArgType) + " " + arg.ArgName + (arg == func.Arguments.Last() ? "" : ","));
             }
             builder.Append(")\r\n{\r\n");
-            /*
             if (PRINT_DEBUG)
             {
                 builder.AppendLine("\tConsole.WriteLine(\"[" + instruction.Func.Func.Name + "]\");");
-            }*/
-            builder.AppendLine("\tstd::ostringstream output = std::ostringstream(std::ios::out);");
+            }
+            builder.AppendLine("\tSystem.IO.MemoryStream s = new System.IO.MemoryStream();");
+            builder.AppendLine("\tSystem.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);");
+            builder.AppendLine("\t\toutput.NewLine = \"\\n\";");
             // Sérialise le numéro de la fonction.
             builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializationInstruction(new Variable()
             {
@@ -442,23 +593,51 @@ namespace Clank.Core.Generation.Languages
                     Type = func.Arguments[i].ArgType
                 })));
             }
-            builder.AppendLine("\toutput.flush();");
+            builder.AppendLine("\toutput.Close();");
 
-            builder.AppendLine("\tTCPHelper::tcpsend(output);");
+            builder.AppendLine("\tTCPHelper.Send(s.ToArray());");
             // Récupère la réponse du serveur.
-            builder.AppendLine("\tstd::istringstream input;");
-            builder.AppendLine("\tTCPHelper::tcpreceive(input);");
-
+            builder.AppendLine("\tbyte[] response = TCPHelper.Receive();");
+            builder.AppendLine("\ts = new System.IO.MemoryStream(response);");
+            builder.AppendLine("\tSystem.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);");
             // Récupère l'objet dans le stream.
             builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializationInstruction(
-            new Variable()
-            {
-                Type = func.ReturnType
-            }, "returnValue")));
-
+                new Variable()
+                {
+                    Type = func.ReturnType
+                }, "returnValue")));
             builder.AppendLine("\treturn (" + GenerateTypeInstanceName(func.ReturnType) + ")returnValue;");
             builder.AppendLine("}\r\n\r\n");
+            // Corps de la fonction.
+            /*
+            // --- Send
+            builder.AppendLine("\t// Send");
+            builder.Append("\tList<object> args = new List<object>() { ");
+            // Arg list
+            foreach (var arg in func.Arguments)
+            {
+                builder.Append(arg.ArgName + (arg == func.Arguments.Last() ? "" : ","));
+            }
+            builder.AppendLine("};");
+            // Func id
+            builder.AppendLine("\tint funcId = " + instruction.Id + ";");
+            builder.AppendLine("\tList<object> obj = new List<object>() { funcId, args };");
+            // Sending
+            builder.AppendLine("\tTCPHelper.Send(Newtonsoft.Json.JsonConvert.SerializeObject(obj));");
 
+            // --- Receive
+            builder.AppendLine("\t// Receive");
+            builder.AppendLine("\tstring str = TCPHelper.Receive();");
+            builder.AppendLine("\tNewtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(str);");
+
+
+            // Object
+            if (func.ReturnType.BaseType.JType == JSONType.Object || func.ReturnType.BaseType.JType == JSONType.Array)
+                builder.Append("\treturn (" + returnTypeName + ")o[0].ToObject(typeof(" + returnTypeName + "));\r\n");
+            else // Value
+                builder.Append("\treturn o.Value<" + returnTypeName + ">(0);\r\n");
+
+            builder.AppendLine("}\r\n\r\n"); // */
             return builder.ToString();
         }
         /// <summary>
@@ -472,12 +651,12 @@ namespace Clank.Core.Generation.Languages
             // Génère un commentaire approprié.
             if (inst is FunctionDeclaration || inst is ClassDeclaration || inst is Model.Language.Macros.ProcessMessageMacro)
             {
-                builder.AppendLine("/** ");
+                builder.AppendLine("/// <summary>");
                 foreach (string line in lines)
                 {
-                    builder.AppendLine(" * " + line);
+                    builder.AppendLine("/// " + line);
                 }
-                builder.AppendLine(" */");
+                builder.AppendLine("/// </summary>");
             }
             else
             {
@@ -507,18 +686,67 @@ namespace Clank.Core.Generation.Languages
         /// <returns></returns>
         string GenerateProcessMessageMacro(Model.Language.Macros.ProcessMessageMacro instruction)
         {
-            /*
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine("string State::processRequest(string request, int " + Clank.Core.Model.Language.SemanticConstants.ClientID + ")\r\n{");
-            builder.AppendLine("\tReader reader = Reader();");
-            builder.AppendLine("\tFastWriter writer = FastWriter();");
-            builder.AppendLine("\tValue response = Value(arrayValue);");
-            builder.AppendLine("\tValue query = Value(arrayValue);");
-            builder.AppendLine("\treader.parse(request, query);");
-            builder.AppendLine("\tValue functionArgs = *(query.begin()+1);");
-            // Récupère l'id
-            builder.AppendLine("\tint functionId = (*query.begin()).asInt();");
-            builder.AppendLine("\tswitch functionId\r\n\t{\r\n");
+            builder.AppendLine("public byte[] ProcessRequest(byte[] request, int " + Clank.Core.Model.Language.SemanticConstants.ClientID + ")\r\n{");
+            int id = 0;
+            List<FunctionDeclaration> decls = new List<FunctionDeclaration>();
+            decls.AddRange(instruction.Access.Declarations);
+            decls.AddRange(instruction.Write.Declarations);
+
+            builder.AppendLine("\tSystem.IO.MemoryStream s = new System.IO.MemoryStream(request);");
+            builder.AppendLine("\tSystem.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);");
+            builder.AppendLine("\t\tSystem.IO.StreamWriter output;");
+            // Récupère l'id de la fonction
+            builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializationInstruction(
+                new Variable() { Type = m_project.Types.TypeInstances["int"] }, "functionId")));
+            builder.AppendLine("\tswitch(functionId)\r\n\t{");
+            // Switch dans lequel on traite les différents messages.
+            foreach (FunctionDeclaration func in decls)
+            {
+                StringBuilder argList = new StringBuilder();
+                builder.AppendLine("\tcase " + id + ":");
+                int argId = 0;
+                foreach (FunctionArgument arg in func.Func.Arguments)
+                {
+                    // Variable name and type.
+                    string varName = "arg" + id + "_" + argId;
+                    string typeName = GenerateTypeInstanceName(arg.ArgType);
+                    builder.AppendLine(Tools.StringUtils.Indent(
+                        GenerateDeserializationInstruction(new Variable() { Type = arg.ArgType }, varName),
+                        2));
+
+                    argList.Append(varName + ", ");
+                    argId++;
+                }
+                argList.Append(Model.Language.SemanticConstants.ClientID);
+
+                // Crée les streams nécessaires.
+                builder.AppendLine("\t\ts = new System.IO.MemoryStream();");
+                builder.AppendLine("\t\toutput = new System.IO.StreamWriter(s, BOMLESS_UTF8);");
+                builder.AppendLine("\t\toutput.NewLine = \"\\n\";");
+
+                // Génère la variable à retourner à partir de l'appel à la fonction.
+                string funcCall = func.Func.Name + "(" + argList + ")";
+                string returnvarName = "retValue" + id.ToString();
+                builder.AppendLine("\t\t" + GenerateTypeInstanceName(func.Func.ReturnType) + " " + returnvarName + " = " + funcCall +";");
+                builder.AppendLine(Tools.StringUtils.Indent(
+                    GenerateSerializationInstruction(new Variable() { Name = returnvarName, Type = func.Func.ReturnType }),
+                    2));
+
+                // Function call and return
+                builder.AppendLine("\t\toutput.Close();");
+                builder.AppendLine("\t\treturn s.ToArray();");
+
+                id++;
+            }
+
+            builder.Append("\t}\r\n");
+            builder.Append("\treturn new byte[0];\r\n}\r\n");
+            return builder.ToString();
+            /* 
+            builder.AppendLine("\tNewtonsoft.Json.Linq.JArray o = (Newtonsoft.Json.Linq.JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(request);");
+            builder.AppendLine("\tint functionId = o.Value<int>(0);");
+            builder.AppendLine("\tswitch(functionId)\r\n\t{");
             int id = 0;
             List<FunctionDeclaration> decls = new List<FunctionDeclaration>();
             decls.AddRange(instruction.Access.Declarations);
@@ -528,7 +756,6 @@ namespace Clank.Core.Generation.Languages
             foreach(FunctionDeclaration func in decls)
             {
                 StringBuilder argList = new StringBuilder();
-                argList.Append("(");
                 builder.AppendLine("\t\tcase " + id + ":");
                 int argId = 0;
                 foreach(FunctionArgument arg in func.Func.Arguments)
@@ -536,39 +763,21 @@ namespace Clank.Core.Generation.Languages
                     // Variable name and type.
                     string varName = "arg" + id + "_" + argId;
                     string typeName = GenerateTypeInstanceName(arg.ArgType);
-                    Variable v = new Variable() 
-                    {
-                        Name = "(functionArgs.begin() + " + argId + ")",
-                        Type = arg.ArgType
-                    };
+                    builder.Append("\t\t\t" + typeName + " " + varName + " = ");
 
-                    // Petit commentaire.
-                    builder.AppendLine("\t\t\t// Argument " + argId + "\r\n");
+                    // Object
+                    if(arg.ArgType.BaseType.JType == JSONType.Object || arg.ArgType.BaseType.JType == JSONType.Array)
+                        builder.Append("(" + typeName + ")o[1][" + argId + "].ToObject(typeof(" + typeName + "));\r\n");
+                    else // Value
+                        builder.Append("o[1].Value<" + typeName + ">(" + argId + ");\r\n");
 
-                    // On désérialise la variable.
-                    builder.AppendLine(Tools.StringUtils.Indent(
-                        GenerateDeserializerInstruction(v, varName), 3
-                    ));
 
                     argList.Append(varName + ", ");
                     argId++;
                 }
-                argList.Append(Model.Language.SemanticConstants.ClientID + ")");
-
+                argList.Append(Model.Language.SemanticConstants.ClientID);
                 // Function call and return
-  
-                // Sérialise la réponse dans un array JSON.
-                builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializerInstruction(
-                    new Variable()
-                    {
-                        Name = func.Func.Name + argList,
-                        Type = func.Func.ReturnType
-                    },
-                    "response_" + id
-                    ), 3));
-
-
-                builder.AppendLine("\t\t\treturn writer.write(root0);");
+                builder.Append("\t\t\treturn Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>() { " + func.Func.Name + "(" + argList + ")" + " });\r\n");
                 
                 id++;
             }
@@ -576,8 +785,7 @@ namespace Clank.Core.Generation.Languages
             builder.Append("\t}\r\n");
             builder.Append("\treturn \"\";\r\n}\r\n");
 
-            return builder.ToString();*/
-            return "";
+            return builder.ToString(); // */
         }
 
         #region Expressions
@@ -636,27 +844,13 @@ namespace Clank.Core.Generation.Languages
         }
 
         /// <summary>
-        /// Génère le code représentant une référence vers l'instance de type
-        /// passé en paramètre, préfixé d'un namespace si besoin.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        string GenerateTypeInstanceNamePrefixed(ClankTypeInstance type)
-        {
-            if(type.BaseType.IsEnum || !type.BaseType.IsBuiltIn)
-            {
-                return "::" + GenerateTypeInstanceName(type);
-            }
-            return GenerateTypeInstanceName(type);
-        }
-        /// <summary>
         /// Génère le code représentant l'instance de type passé en paramètre.
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
         string GenerateTypeInstanceName(ClankTypeInstance type)
         {
-            if (type.IsGeneric || type.IsArray)
+            if (type.IsGeneric)
             {
                 StringBuilder b = new StringBuilder();
                 foreach (ClankTypeInstance tArg in type.GenericArguments)
@@ -730,12 +924,12 @@ namespace Clank.Core.Generation.Languages
                 return GenerateMacroFunctionCall(call);
             if (call.Func.IsConstructor)
                 return GenerateConstructorFunctionCall(call);
-            string dot = call.Func.IsStatic ? "::" : ".";
+
             StringBuilder builder = new StringBuilder();
             if (call.Src != null)
-                builder.Append(GenerateEvaluable(call.Src) + dot);
+                builder.Append(GenerateEvaluable(call.Src) + ".");
             else if (call.IsThisClassFunction)
-                builder.Append("this->");
+                builder.Append("this.");
 
             builder.Append(call.Func.Name);
             builder.Append("(");
@@ -758,6 +952,8 @@ namespace Clank.Core.Generation.Languages
         string GenerateConstructorFunctionCall(FunctionCall call)
         {
             StringBuilder builder = new StringBuilder();
+            builder.Append("new ");
+
             // Type name
             builder.Append(GenerateTypeInstanceName(call.Func.ReturnType));
 
@@ -783,21 +979,33 @@ namespace Clank.Core.Generation.Languages
         string GenerateMacroFunctionCall(FunctionCall call)
         {
             StringBuilder builder = new StringBuilder();
-
+            Clank.Core.Model.MacroContainer.MacroFunction func;
             Clank.Core.Model.MacroContainer macros = m_project.Macros;
-            ClankTypeInstance owner;
-            
-            if (call.IsConstructor)
-                owner = call.Func.ReturnType;
+            ClankTypeInstance owner = null;
+            if (call.Src == null)
+            {
+                // Fonction "globale".
+                func = macros.FindFunctionByName(call.Func.Name);
+            }
             else
-                owner = call.Src.Type;
+            {
+                if (call.IsConstructor)
+                    owner = call.Func.ReturnType;
+                else
+                    owner = call.Src.Type;
 
-            Model.MacroContainer.MacroClass klass = macros.FindClassByType(owner.BaseType);
-            Clank.Core.Model.MacroContainer.MacroFunction func = klass.Functions[call.Func.GetFullName()]; // TODO : GetFullName() ??
+                Model.MacroContainer.MacroClass klass = macros.FindClassByType(owner.BaseType);
+                func = klass.Functions[call.Func.GetFullName()]; // TODO : GetFullName() ??
+            }
+
+            // Vérification
+            if(!func.LanguageToFunctionName.ContainsKey(LANG_KEY))
+            {
+                throw new InvalidOperationException("Le nom de la macro fonction '" + func.Function.GetFullName() + "' n'est pas renseigné pour le langage '" + LANG_KEY + "'");
+            }
+
 
             // Nom de la fonctin native dont les paramètres sont entourés par des $
-            if (!func.LanguageToFunctionName.ContainsKey(LANG_KEY))
-                throw new Exception("La macro-fonction '" + call.Func.GetFullName() + "' n'est pas renseignée pour le langage '" + LANG_KEY + "'.");
             string nativeFuncName = func.LanguageToFunctionName[LANG_KEY];
 
 
@@ -809,15 +1017,17 @@ namespace Clank.Core.Generation.Languages
             }
 
 
-            // Remplace les params génériques par leurs valeurs.
-            for(int i = 0; i < call.Func.Owner.GenericArgumentNames.Count; i++)
-            {
-                nativeFuncName = nativeFuncName.Replace(SemanticConstants.ReplaceChr + "(" + call.Func.Owner.GenericArgumentNames[i] + ")",
-                    GenerateTypeInstanceName(owner.GenericArguments[i]));
-            }
+            // Remplace les params génériques par leurs valeurs (si fonction non globale)
+            if(owner != null)
+                for(int i = 0; i < call.Func.Owner.GenericArgumentNames.Count; i++)
+                {
+                    nativeFuncName = nativeFuncName.Replace(SemanticConstants.ReplaceChr + "(" + call.Func.Owner.GenericArgumentNames[i] + ")",
+                        GenerateTypeInstanceName(owner.GenericArguments[i]));
+                }
 
             // Remplace @self par le nom de la variable.
-            nativeFuncName = nativeFuncName.Replace(SemanticConstants.SelfKW, GenerateEvaluable(call.Src));
+            if(call.Src != null)
+                nativeFuncName = nativeFuncName.Replace(SemanticConstants.SelfKW, GenerateEvaluable(call.Src));
 
             builder.Append(nativeFuncName);
             return builder.ToString().Replace(".[", "[");
@@ -831,13 +1041,10 @@ namespace Clank.Core.Generation.Languages
         {
             if(access.Left.Type.GetFullName() == Core.Model.Language.SemanticConstants.StateClass)
             {
-                return "this->" + access.VariableName;
+                return "this." + access.VariableName;
             }
-            string left = GenerateEvaluable(access.Left);
-            if (left == "this")
-                return left + "->" + access.VariableName;
-            else
-                return left + "." + access.VariableName;
+
+            return GenerateEvaluable(access.Left) + "." + access.VariableName;
         }
         /// <summary>
         /// Génère le code d'une variable.
@@ -906,22 +1113,40 @@ namespace Clank.Core.Generation.Languages
         /// </summary>
         /// <param name="decl"></param>
         /// <returns></returns>
-        string GenerateEnumInstruction(EnumDeclaration decl)
+        string GenerateEnumFile(EnumDeclaration decl)
         {
-            throw new NotImplementedException();
             StringBuilder builder = new StringBuilder();
-            builder.Append("enum " + decl.Name + "\n{\n");
+
+            // Ajout du package.
+            string pkg = GetPackageName();
+            if (pkg != String.Empty)
+                builder.AppendLine("package " + pkg + ";");
+
+            // Crée l'enum.
+            builder.Append("public enum " + decl.Name + "\n{\n");
             foreach (var kvp in decl.Members)
             {
                 string member = kvp.Key;
                 int value = kvp.Value;
                 builder.Append(Tools.StringUtils.Indent(member, 1));
-                builder.Append(" = " + value.ToString());
+                builder.Append("(" + value.ToString() + ")");
                 if (kvp.Key != decl.Members.Last().Key)
                     builder.Append(',');
+                else
+                    builder.Append(';');
                 builder.Append("\n");
             }
-            builder.Append("}\n");
+
+            // Ajoute les champs permettant d'utiliser l'enum avec ses valeurs numériques.
+            builder.AppendLine("\tint _value;");
+            builder.AppendLine("\t" + decl.Name + "(int value) { _value = value; } ");
+            builder.AppendLine("\tpublic int getValue() { return _value; }");
+            builder.AppendLine("\tpublic static " + decl.Name + " fromValue(int value) { ");
+            builder.AppendLine("\t\t" + decl.Name + " val = " + decl.Members.First().Key + ";");
+            builder.AppendLine("\t\tval._value = value;");
+            builder.AppendLine("\t\treturn val;");
+            builder.AppendLine("\t}");
+            builder.AppendLine("}");
             return builder.ToString();
         }
         /// <summary>
@@ -939,7 +1164,13 @@ namespace Clank.Core.Generation.Languages
         /// <returns></returns>
         string GenerateDeclarationInstruction(VariableDeclarationInstruction instruction)
         {
-            return GenerateTypeInstanceName(instruction.Var.Type) + " " + instruction.Var.Name + ";";
+            StringBuilder builder = new StringBuilder();
+            foreach(string modifier in instruction.Modifiers)
+            {
+                builder.Append(modifier + " ");
+            }
+
+            return builder.ToString() + GenerateTypeInstanceName(instruction.Var.Type) + " " + instruction.Var.Name + ";";
         }
 
         /// <summary>
@@ -958,35 +1189,28 @@ namespace Clank.Core.Generation.Languages
         string GenerateFunctionDeclarationInstruction(FunctionDeclaration decl)
         {
             StringBuilder builder = new StringBuilder();
-
-
+            if (decl.Func.IsPublic)
+                builder.Append("public ");
+            if (decl.Func.IsStatic)
+                builder.Append("static ");
 
             if (decl.Func.IsConstructor)
             {
                 // Constructeur
-
-                if (decl.Func.Owner != null)
-                    builder.Append(GenerateTypeName(decl.Func.Owner) + "::");
                 builder.Append(GenerateTypeName(decl.Func.ReturnType.BaseType));
-                
             }
             else
             {
                 // Fonction classique
                 builder.Append(GenerateTypeInstanceName(decl.Func.ReturnType) + " ");
-                if (decl.Func.Owner != null)
-                    builder.Append(GenerateTypeName(decl.Func.Owner) + "::");
                 builder.Append(decl.Func.Name);
             }
-            
             builder.Append("(");
 
             // Ajout des arguments.
             foreach(FunctionArgument arg in decl.Func.Arguments)
             {
-                bool hasRef = arg.ArgType.BaseType.JType == JSONType.Object ||
-                                arg.ArgType.BaseType.JType == JSONType.Array;
-                builder.Append(GenerateTypeInstanceName(arg.ArgType) + (hasRef ? "& " : " ") + arg.ArgName);
+                builder.Append(GenerateTypeInstanceName(arg.ArgType) + " " + arg.ArgName);
                 if (arg != decl.Func.Arguments.Last())
                     builder.Append(", ");
             }
@@ -1010,6 +1234,7 @@ namespace Clank.Core.Generation.Languages
         string GenerateConstructorDeclarationInstruction(ConstructorDeclaration decl)
         {
             StringBuilder builder = new StringBuilder();
+            builder.Append("public ");
             builder.Append(decl.Func.Owner.GetFullName() + " ");
             builder.Append("(");
 

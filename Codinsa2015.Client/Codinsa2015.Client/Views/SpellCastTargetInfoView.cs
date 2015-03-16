@@ -12,7 +12,7 @@ namespace Codinsa2015.Views
 	public class SpellCastTargetInfoView
 	{
 
-static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
+		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public TargettingType Type;	
 		public Vector2 TargetPosition;	

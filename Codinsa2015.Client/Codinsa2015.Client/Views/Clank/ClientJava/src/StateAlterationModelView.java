@@ -1,91 +1,142 @@
-public class StateAlterationModelView
-{
+import java.lang.*;
 
-
-	public StateAlterationType Type;
-	public Double BaseDuration;
-	public Boolean DashGoThroughWall;
-	public DashDirectionType DashDirectionType;
-	public Double FlatValue;
-	public Double SourcePercentADValue;
-	public Double SourcePercentHPValue;
-	public Double SourcePercentMaxHPValue;
-	public Double SourcePercentArmorValue;
-	public Double SourcePercentAPValue;
-	public Double SourcePercentRMValue;
-	public Double DestPercentADValue;
-	public Double DestPercentHPValue;
-	public Double DestPercentMaxHPValue;
-	public Double DestPercentArmorValue;
-	public Double DestPercentAPValue;
-	public Double DestPercentRMValue;
-	public Double StructureBonus;
-	public Double MonsterBonus;
-	public Double CreepBonus;
-	public static StateAlterationModelView deserialize(JSONObject o)
+	public class StateAlterationModelView
 	{
-		StateAlterationModelView obj = new StateAlterationModelView();
-		// Type
-		StateAlterationType Type = o.getInt("Type");
-		obj.Type = Type;
-		// BaseDuration
-		Double BaseDuration = o.getDouble("BaseDuration");
-		obj.BaseDuration = BaseDuration;
-		// DashGoThroughWall
-		Boolean DashGoThroughWall = o.getBoolean("DashGoThroughWall");
-		obj.DashGoThroughWall = DashGoThroughWall;
-		// DashDirectionType
-		DashDirectionType DashDirectionType = o.getInt("DashDirectionType");
-		obj.DashDirectionType = DashDirectionType;
-		// FlatValue
-		Double FlatValue = o.getDouble("FlatValue");
-		obj.FlatValue = FlatValue;
-		// SourcePercentADValue
-		Double SourcePercentADValue = o.getDouble("SourcePercentADValue");
-		obj.SourcePercentADValue = SourcePercentADValue;
-		// SourcePercentHPValue
-		Double SourcePercentHPValue = o.getDouble("SourcePercentHPValue");
-		obj.SourcePercentHPValue = SourcePercentHPValue;
-		// SourcePercentMaxHPValue
-		Double SourcePercentMaxHPValue = o.getDouble("SourcePercentMaxHPValue");
-		obj.SourcePercentMaxHPValue = SourcePercentMaxHPValue;
-		// SourcePercentArmorValue
-		Double SourcePercentArmorValue = o.getDouble("SourcePercentArmorValue");
-		obj.SourcePercentArmorValue = SourcePercentArmorValue;
-		// SourcePercentAPValue
-		Double SourcePercentAPValue = o.getDouble("SourcePercentAPValue");
-		obj.SourcePercentAPValue = SourcePercentAPValue;
-		// SourcePercentRMValue
-		Double SourcePercentRMValue = o.getDouble("SourcePercentRMValue");
-		obj.SourcePercentRMValue = SourcePercentRMValue;
-		// DestPercentADValue
-		Double DestPercentADValue = o.getDouble("DestPercentADValue");
-		obj.DestPercentADValue = DestPercentADValue;
-		// DestPercentHPValue
-		Double DestPercentHPValue = o.getDouble("DestPercentHPValue");
-		obj.DestPercentHPValue = DestPercentHPValue;
-		// DestPercentMaxHPValue
-		Double DestPercentMaxHPValue = o.getDouble("DestPercentMaxHPValue");
-		obj.DestPercentMaxHPValue = DestPercentMaxHPValue;
-		// DestPercentArmorValue
-		Double DestPercentArmorValue = o.getDouble("DestPercentArmorValue");
-		obj.DestPercentArmorValue = DestPercentArmorValue;
-		// DestPercentAPValue
-		Double DestPercentAPValue = o.getDouble("DestPercentAPValue");
-		obj.DestPercentAPValue = DestPercentAPValue;
-		// DestPercentRMValue
-		Double DestPercentRMValue = o.getDouble("DestPercentRMValue");
-		obj.DestPercentRMValue = DestPercentRMValue;
-		// StructureBonus
-		Double StructureBonus = o.getDouble("StructureBonus");
-		obj.StructureBonus = StructureBonus;
-		// MonsterBonus
-		Double MonsterBonus = o.getDouble("MonsterBonus");
-		obj.MonsterBonus = MonsterBonus;
-		// CreepBonus
-		Double CreepBonus = o.getDouble("CreepBonus");
-		obj.CreepBonus = CreepBonus;
-		return obj;
-	}
 
+	
+		public StateAlterationType Type;	
+		public float BaseDuration;	
+		public bool DashGoThroughWall;	
+		public DashDirectionType DashDirectionType;	
+		public float FlatValue;	
+		public float SourcePercentADValue;	
+		public float SourcePercentHPValue;	
+		public float SourcePercentMaxHPValue;	
+		public float SourcePercentArmorValue;	
+		public float SourcePercentAPValue;	
+		public float SourcePercentRMValue;	
+		public float DestPercentADValue;	
+		public float DestPercentHPValue;	
+		public float DestPercentMaxHPValue;	
+		public float DestPercentArmorValue;	
+		public float DestPercentAPValue;	
+		public float DestPercentRMValue;	
+		public float StructureBonus;	
+		public float MonsterBonus;	
+		public float CreepBonus;	
+		public static StateAlterationModelView Deserialize(BufferedReader input) {
+		try {
+			StateAlterationModelView _obj =  new StateAlterationModelView();
+			// Type
+			int _obj_Type = Integer.Parse(input.readLine());
+			_obj.Type = StateAlterationType.fromValue(_obj_Type);
+			// BaseDuration
+			float _obj_BaseDuration = Float.Parse(input.readLine());
+			_obj.BaseDuration = _obj_BaseDuration;
+			// DashGoThroughWall
+			boolean _obj_DashGoThroughWall = Integer.valueof(input.readLine()) == 0 ? false : true;
+			_obj.DashGoThroughWall = _obj_DashGoThroughWall;
+			// DashDirectionType
+			int _obj_DashDirectionType = Integer.Parse(input.readLine());
+			_obj.DashDirectionType = DashDirectionType.fromValue(_obj_DashDirectionType);
+			// FlatValue
+			float _obj_FlatValue = Float.Parse(input.readLine());
+			_obj.FlatValue = _obj_FlatValue;
+			// SourcePercentADValue
+			float _obj_SourcePercentADValue = Float.Parse(input.readLine());
+			_obj.SourcePercentADValue = _obj_SourcePercentADValue;
+			// SourcePercentHPValue
+			float _obj_SourcePercentHPValue = Float.Parse(input.readLine());
+			_obj.SourcePercentHPValue = _obj_SourcePercentHPValue;
+			// SourcePercentMaxHPValue
+			float _obj_SourcePercentMaxHPValue = Float.Parse(input.readLine());
+			_obj.SourcePercentMaxHPValue = _obj_SourcePercentMaxHPValue;
+			// SourcePercentArmorValue
+			float _obj_SourcePercentArmorValue = Float.Parse(input.readLine());
+			_obj.SourcePercentArmorValue = _obj_SourcePercentArmorValue;
+			// SourcePercentAPValue
+			float _obj_SourcePercentAPValue = Float.Parse(input.readLine());
+			_obj.SourcePercentAPValue = _obj_SourcePercentAPValue;
+			// SourcePercentRMValue
+			float _obj_SourcePercentRMValue = Float.Parse(input.readLine());
+			_obj.SourcePercentRMValue = _obj_SourcePercentRMValue;
+			// DestPercentADValue
+			float _obj_DestPercentADValue = Float.Parse(input.readLine());
+			_obj.DestPercentADValue = _obj_DestPercentADValue;
+			// DestPercentHPValue
+			float _obj_DestPercentHPValue = Float.Parse(input.readLine());
+			_obj.DestPercentHPValue = _obj_DestPercentHPValue;
+			// DestPercentMaxHPValue
+			float _obj_DestPercentMaxHPValue = Float.Parse(input.readLine());
+			_obj.DestPercentMaxHPValue = _obj_DestPercentMaxHPValue;
+			// DestPercentArmorValue
+			float _obj_DestPercentArmorValue = Float.Parse(input.readLine());
+			_obj.DestPercentArmorValue = _obj_DestPercentArmorValue;
+			// DestPercentAPValue
+			float _obj_DestPercentAPValue = Float.Parse(input.readLine());
+			_obj.DestPercentAPValue = _obj_DestPercentAPValue;
+			// DestPercentRMValue
+			float _obj_DestPercentRMValue = Float.Parse(input.readLine());
+			_obj.DestPercentRMValue = _obj_DestPercentRMValue;
+			// StructureBonus
+			float _obj_StructureBonus = Float.Parse(input.readLine());
+			_obj.StructureBonus = _obj_StructureBonus;
+			// MonsterBonus
+			float _obj_MonsterBonus = Float.Parse(input.readLine());
+			_obj.MonsterBonus = _obj_MonsterBonus;
+			// CreepBonus
+			float _obj_CreepBonus = Float.Parse(input.readLine());
+			_obj.CreepBonus = _obj_CreepBonus;
+			} catch (UnsupportedEncodingExceptio e) { 
+			} catch (IOException e) { }
+			return _obj;
+		}
+
+		public void serialize(OutputStreamWriter output) {
+			try {
+			// Type
+			output.append(((Integer)(this.Type.getValue())).toString() + "\n");
+			// BaseDuration
+			output.WriteLine(((Float)this.BaseDuration).toString() + "\n");
+			// DashGoThroughWall
+			output.append((this.DashGoThroughWall ? 1 : 0) + "\n");
+			// DashDirectionType
+			output.append(((Integer)(this.DashDirectionType.getValue())).toString() + "\n");
+			// FlatValue
+			output.WriteLine(((Float)this.FlatValue).toString() + "\n");
+			// SourcePercentADValue
+			output.WriteLine(((Float)this.SourcePercentADValue).toString() + "\n");
+			// SourcePercentHPValue
+			output.WriteLine(((Float)this.SourcePercentHPValue).toString() + "\n");
+			// SourcePercentMaxHPValue
+			output.WriteLine(((Float)this.SourcePercentMaxHPValue).toString() + "\n");
+			// SourcePercentArmorValue
+			output.WriteLine(((Float)this.SourcePercentArmorValue).toString() + "\n");
+			// SourcePercentAPValue
+			output.WriteLine(((Float)this.SourcePercentAPValue).toString() + "\n");
+			// SourcePercentRMValue
+			output.WriteLine(((Float)this.SourcePercentRMValue).toString() + "\n");
+			// DestPercentADValue
+			output.WriteLine(((Float)this.DestPercentADValue).toString() + "\n");
+			// DestPercentHPValue
+			output.WriteLine(((Float)this.DestPercentHPValue).toString() + "\n");
+			// DestPercentMaxHPValue
+			output.WriteLine(((Float)this.DestPercentMaxHPValue).toString() + "\n");
+			// DestPercentArmorValue
+			output.WriteLine(((Float)this.DestPercentArmorValue).toString() + "\n");
+			// DestPercentAPValue
+			output.WriteLine(((Float)this.DestPercentAPValue).toString() + "\n");
+			// DestPercentRMValue
+			output.WriteLine(((Float)this.DestPercentRMValue).toString() + "\n");
+			// StructureBonus
+			output.WriteLine(((Float)this.StructureBonus).toString() + "\n");
+			// MonsterBonus
+			output.WriteLine(((Float)this.MonsterBonus).toString() + "\n");
+			// CreepBonus
+			output.WriteLine(((Float)this.CreepBonus).toString() + "\n");
+			} catch (UnsupportedEncodingExceptio e) { 
+			} catch (IOException e) { }
+		}
+
+	}
 }

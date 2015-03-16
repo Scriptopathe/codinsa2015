@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Generation\Languages\CppHLangage.cs" />
     <Compile Include="Generation\Languages\CppLangage.cs" />
+    <Compile Include="Generation\Languages\JavaLangage2.cs" />
     <Compile Include="Generation\Languages\ILanguageGenerator.cs" />
     <Compile Include="Generation\Languages\LanguageGeneratorAttribute.cs" />
     <Compile Include="Generation\GenerationContext.cs" />

@@ -1,19 +1,34 @@
-public class CircleShapeView
-{
+import java.lang.*;
 
-
-	public Vector2 Position;
-	public Double Radius;
-	public static CircleShapeView deserialize(JSONObject o)
+	public class CircleShapeView
 	{
-		CircleShapeView obj = new CircleShapeView();
-		// Position
-		Vector2 Position = Vector2.deserialize(o.getJSONObject("Position"));
-		obj.Position = Position;
-		// Radius
-		Double Radius = o.getDouble("Radius");
-		obj.Radius = Radius;
-		return obj;
-	}
 
+	
+		public Vector2 Position;	
+		public float Radius;	
+		public static CircleShapeView Deserialize(BufferedReader input) {
+		try {
+			CircleShapeView _obj =  new CircleShapeView();
+			// Position
+			Vector2 _obj_Position = Vector2.deserialize(input);
+			_obj.Position = _obj_Position;
+			// Radius
+			float _obj_Radius = Float.Parse(input.readLine());
+			_obj.Radius = _obj_Radius;
+			} catch (UnsupportedEncodingExceptio e) { 
+			} catch (IOException e) { }
+			return _obj;
+		}
+
+		public void serialize(OutputStreamWriter output) {
+			try {
+			// Position
+			this.Position.serialize(output);
+			// Radius
+			output.WriteLine(((Float)this.Radius).toString() + "\n");
+			} catch (UnsupportedEncodingExceptio e) { 
+			} catch (IOException e) { }
+		}
+
+	}
 }

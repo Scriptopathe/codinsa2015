@@ -10,7 +10,7 @@ namespace Codinsa2015.Views
 	public class State
 	{
 
-static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
+		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 		public EntityBaseView GetHero(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHero();

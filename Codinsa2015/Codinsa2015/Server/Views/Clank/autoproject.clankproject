@@ -42,6 +42,10 @@
         <LanguageIdentifier>cs</LanguageIdentifier>
         <OutputDirectory>../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/</OutputDirectory>
       </GenerationTarget>
+      <GenerationTarget>
+        <LanguageIdentifier>java</LanguageIdentifier>
+        <OutputDirectory>../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientJava/src</OutputDirectory>
+      </GenerationTarget>
     </ClientTargets>
   </Settings>
 </ProjectNode>

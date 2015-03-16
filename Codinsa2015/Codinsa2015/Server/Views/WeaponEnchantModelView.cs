@@ -12,7 +12,7 @@ namespace Codinsa2015.Views
 	public class WeaponEnchantModelView
 	{
 
-static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
+		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public List<StateAlterationModelView> OnHitEffects;	
 		public List<StateAlterationModelView> CastingEffects;	

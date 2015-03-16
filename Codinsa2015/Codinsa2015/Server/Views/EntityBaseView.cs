@@ -12,7 +12,7 @@ namespace Codinsa2015.Views
 	public class EntityBaseView
 	{
 
-        static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
+		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public float GetMagicResist;	
 		public float GetAbilityPower;	

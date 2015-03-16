@@ -99,7 +99,6 @@ std::vector<EntityBaseView> State::GetEntitiesInSight()
 	int returnValue_count; input >> returnValue_count; input.ignore(1000, '\n');
 	for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
 		EntityBaseView returnValue_e = EntityBaseView::deserialize(input);
-		
 		returnValue.push_back((EntityBaseView)returnValue_e);
 	}
 

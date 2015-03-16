@@ -12,7 +12,7 @@ namespace Codinsa2015.Views
 	public class MapView
 	{
 
-static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
+		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public List<List<bool>> Passability;	
 		public static MapView Deserialize(System.IO.StreamReader input) {

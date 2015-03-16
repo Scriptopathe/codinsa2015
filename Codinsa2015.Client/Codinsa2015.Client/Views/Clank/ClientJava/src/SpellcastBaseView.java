@@ -1,15 +1,28 @@
-public class SpellcastBaseView
-{
+import java.lang.*;
 
-
-	public GenericShapeView Shape;
-	public static SpellcastBaseView deserialize(JSONObject o)
+	public class SpellcastBaseView
 	{
-		SpellcastBaseView obj = new SpellcastBaseView();
-		// Shape
-		GenericShapeView Shape = GenericShapeView.deserialize(o.getJSONObject("Shape"));
-		obj.Shape = Shape;
-		return obj;
-	}
 
+	
+		public GenericShapeView Shape;	
+		public static SpellcastBaseView Deserialize(BufferedReader input) {
+		try {
+			SpellcastBaseView _obj =  new SpellcastBaseView();
+			// Shape
+			GenericShapeView _obj_Shape = GenericShapeView.deserialize(input);
+			_obj.Shape = _obj_Shape;
+			} catch (UnsupportedEncodingExceptio e) { 
+			} catch (IOException e) { }
+			return _obj;
+		}
+
+		public void serialize(OutputStreamWriter output) {
+			try {
+			// Shape
+			this.Shape.serialize(output);
+			} catch (UnsupportedEncodingExceptio e) { 
+			} catch (IOException e) { }
+		}
+
+	}
 }

@@ -12,7 +12,7 @@ namespace Codinsa2015.Views
 	public class StateAlterationModelView
 	{
 
-static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
+		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		public StateAlterationType Type;	
 		public float BaseDuration;	
