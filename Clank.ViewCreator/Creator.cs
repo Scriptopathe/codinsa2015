@@ -149,6 +149,11 @@ namespace Clank.ViewCreator
             b.AppendLine("\t\t\tstring namespace = \"Codinsa2015.Views\";");
             b.AppendLine("\t\t}");
 
+            b.AppendLine("\t\t# Rajoute le nom du package pour les projets java.");
+            b.AppendLine("\t\tvoid getClassMetadata_java()");
+            b.AppendLine("\t\t{");
+            b.AppendLine("\t\t\tstring package = \"net.codinsa2015\";");
+            b.AppendLine("\t\t}");
             // Enumérations.
             foreach(string str in enums)
             {
