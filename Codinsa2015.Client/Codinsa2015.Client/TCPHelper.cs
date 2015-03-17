@@ -29,6 +29,10 @@ namespace Codinsa2015
         {
             s_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             s_socket.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
+
+            // Change la culture courante.
+            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+
             Send(nickname);
         }
 

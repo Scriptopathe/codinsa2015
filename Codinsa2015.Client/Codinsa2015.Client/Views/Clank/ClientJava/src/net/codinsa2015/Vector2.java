@@ -29,19 +29,19 @@ public class Vector2
 	public static Vector2 deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		Vector2 _obj =  new Vector2();
 		// X
-		float _obj_X = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_X = Float.valueOf(input.readLine());
 		_obj.X = _obj_X;
 		// Y
-		float _obj_Y = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_Y = Float.valueOf(input.readLine());
 		_obj.Y = _obj_Y;
 		return _obj;
 	}
 
 	public void serialize(OutputStreamWriter output) throws UnsupportedEncodingException, IOException {
 		// X
-		output.append(((Float)this.X).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.X).toString() + "\n");
 		// Y
-		output.append(((Float)this.Y).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.Y).toString() + "\n");
 	}
 
 }

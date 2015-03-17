@@ -54,31 +54,31 @@ public class EntityBaseView
 	public static EntityBaseView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		EntityBaseView _obj =  new EntityBaseView();
 		// GetMagicResist
-		float _obj_GetMagicResist = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_GetMagicResist = Float.valueOf(input.readLine());
 		_obj.GetMagicResist = _obj_GetMagicResist;
 		// GetAbilityPower
-		float _obj_GetAbilityPower = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_GetAbilityPower = Float.valueOf(input.readLine());
 		_obj.GetAbilityPower = _obj_GetAbilityPower;
 		// GetCooldownReduction
-		float _obj_GetCooldownReduction = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_GetCooldownReduction = Float.valueOf(input.readLine());
 		_obj.GetCooldownReduction = _obj_GetCooldownReduction;
 		// GetMoveSpeed
-		float _obj_GetMoveSpeed = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_GetMoveSpeed = Float.valueOf(input.readLine());
 		_obj.GetMoveSpeed = _obj_GetMoveSpeed;
 		// GetAttackSpeed
-		float _obj_GetAttackSpeed = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_GetAttackSpeed = Float.valueOf(input.readLine());
 		_obj.GetAttackSpeed = _obj_GetAttackSpeed;
 		// GetAttackDamage
-		float _obj_GetAttackDamage = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_GetAttackDamage = Float.valueOf(input.readLine());
 		_obj.GetAttackDamage = _obj_GetAttackDamage;
 		// GetArmor
-		float _obj_GetArmor = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_GetArmor = Float.valueOf(input.readLine());
 		_obj.GetArmor = _obj_GetArmor;
 		// GetHP
-		float _obj_GetHP = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_GetHP = Float.valueOf(input.readLine());
 		_obj.GetHP = _obj_GetHP;
 		// GetMaxHP
-		float _obj_GetMaxHP = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_GetMaxHP = Float.valueOf(input.readLine());
 		_obj.GetMaxHP = _obj_GetMaxHP;
 		// StateAlterations
 		ArrayList<StateAlterationView> _obj_StateAlterations = new ArrayList<StateAlterationView>();
@@ -89,7 +89,7 @@ public class EntityBaseView
 		}
 		_obj.StateAlterations = _obj_StateAlterations;
 		// BaseArmor
-		float _obj_BaseArmor = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_BaseArmor = Float.valueOf(input.readLine());
 		_obj.BaseArmor = _obj_BaseArmor;
 		// Direction
 		Vector2 _obj_Direction = Vector2.deserialize(input);
@@ -98,16 +98,16 @@ public class EntityBaseView
 		Vector2 _obj_Position = Vector2.deserialize(input);
 		_obj.Position = _obj_Position;
 		// ShieldPoints
-		float _obj_ShieldPoints = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_ShieldPoints = Float.valueOf(input.readLine());
 		_obj.ShieldPoints = _obj_ShieldPoints;
 		// HP
-		float _obj_HP = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_HP = Float.valueOf(input.readLine());
 		_obj.HP = _obj_HP;
 		// BaseMaxHP
-		float _obj_BaseMaxHP = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_BaseMaxHP = Float.valueOf(input.readLine());
 		_obj.BaseMaxHP = _obj_BaseMaxHP;
 		// BaseMoveSpeed
-		float _obj_BaseMoveSpeed = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_BaseMoveSpeed = Float.valueOf(input.readLine());
 		_obj.BaseMoveSpeed = _obj_BaseMoveSpeed;
 		// IsDead
 		boolean _obj_IsDead = Integer.valueOf(input.readLine()) == 0 ? false : true;
@@ -119,19 +119,19 @@ public class EntityBaseView
 		int _obj_ID = Integer.valueOf(input.readLine());
 		_obj.ID = _obj_ID;
 		// BaseAttackDamage
-		float _obj_BaseAttackDamage = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_BaseAttackDamage = Float.valueOf(input.readLine());
 		_obj.BaseAttackDamage = _obj_BaseAttackDamage;
 		// BaseCooldownReduction
-		float _obj_BaseCooldownReduction = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_BaseCooldownReduction = Float.valueOf(input.readLine());
 		_obj.BaseCooldownReduction = _obj_BaseCooldownReduction;
 		// BaseAttackSpeed
-		float _obj_BaseAttackSpeed = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_BaseAttackSpeed = Float.valueOf(input.readLine());
 		_obj.BaseAttackSpeed = _obj_BaseAttackSpeed;
 		// BaseAbilityPower
-		float _obj_BaseAbilityPower = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_BaseAbilityPower = Float.valueOf(input.readLine());
 		_obj.BaseAbilityPower = _obj_BaseAbilityPower;
 		// BaseMagicResist
-		float _obj_BaseMagicResist = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_BaseMagicResist = Float.valueOf(input.readLine());
 		_obj.BaseMagicResist = _obj_BaseMagicResist;
 		// IsRooted
 		boolean _obj_IsRooted = Integer.valueOf(input.readLine()) == 0 ? false : true;
@@ -152,49 +152,49 @@ public class EntityBaseView
 		boolean _obj_HasWardVision = Integer.valueOf(input.readLine()) == 0 ? false : true;
 		_obj.HasWardVision = _obj_HasWardVision;
 		// VisionRange
-		float _obj_VisionRange = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_VisionRange = Float.valueOf(input.readLine());
 		_obj.VisionRange = _obj_VisionRange;
 		return _obj;
 	}
 
 	public void serialize(OutputStreamWriter output) throws UnsupportedEncodingException, IOException {
 		// GetMagicResist
-		output.append(((Float)this.GetMagicResist).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.GetMagicResist).toString() + "\n");
 		// GetAbilityPower
-		output.append(((Float)this.GetAbilityPower).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.GetAbilityPower).toString() + "\n");
 		// GetCooldownReduction
-		output.append(((Float)this.GetCooldownReduction).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.GetCooldownReduction).toString() + "\n");
 		// GetMoveSpeed
-		output.append(((Float)this.GetMoveSpeed).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.GetMoveSpeed).toString() + "\n");
 		// GetAttackSpeed
-		output.append(((Float)this.GetAttackSpeed).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.GetAttackSpeed).toString() + "\n");
 		// GetAttackDamage
-		output.append(((Float)this.GetAttackDamage).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.GetAttackDamage).toString() + "\n");
 		// GetArmor
-		output.append(((Float)this.GetArmor).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.GetArmor).toString() + "\n");
 		// GetHP
-		output.append(((Float)this.GetHP).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.GetHP).toString() + "\n");
 		// GetMaxHP
-		output.append(((Float)this.GetMaxHP).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.GetMaxHP).toString() + "\n");
 		// StateAlterations
 		output.append(String.valueOf(this.StateAlterations.size()) + "\n");
 		for(int StateAlterations_it = 0; StateAlterations_it < this.StateAlterations.size();StateAlterations_it++) {
 			this.StateAlterations.get(StateAlterations_it).serialize(output);
 		}
 		// BaseArmor
-		output.append(((Float)this.BaseArmor).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.BaseArmor).toString() + "\n");
 		// Direction
 		this.Direction.serialize(output);
 		// Position
 		this.Position.serialize(output);
 		// ShieldPoints
-		output.append(((Float)this.ShieldPoints).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.ShieldPoints).toString() + "\n");
 		// HP
-		output.append(((Float)this.HP).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.HP).toString() + "\n");
 		// BaseMaxHP
-		output.append(((Float)this.BaseMaxHP).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.BaseMaxHP).toString() + "\n");
 		// BaseMoveSpeed
-		output.append(((Float)this.BaseMoveSpeed).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.BaseMoveSpeed).toString() + "\n");
 		// IsDead
 		output.append((this.IsDead ? 1 : 0) + "\n");
 		// Type
@@ -202,15 +202,15 @@ public class EntityBaseView
 		// ID
 		output.append(((Integer)this.ID).toString() + "\n");
 		// BaseAttackDamage
-		output.append(((Float)this.BaseAttackDamage).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.BaseAttackDamage).toString() + "\n");
 		// BaseCooldownReduction
-		output.append(((Float)this.BaseCooldownReduction).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.BaseCooldownReduction).toString() + "\n");
 		// BaseAttackSpeed
-		output.append(((Float)this.BaseAttackSpeed).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.BaseAttackSpeed).toString() + "\n");
 		// BaseAbilityPower
-		output.append(((Float)this.BaseAbilityPower).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.BaseAbilityPower).toString() + "\n");
 		// BaseMagicResist
-		output.append(((Float)this.BaseMagicResist).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.BaseMagicResist).toString() + "\n");
 		// IsRooted
 		output.append((this.IsRooted ? 1 : 0) + "\n");
 		// IsSilenced
@@ -224,7 +224,7 @@ public class EntityBaseView
 		// HasWardVision
 		output.append((this.HasWardVision ? 1 : 0) + "\n");
 		// VisionRange
-		output.append(((Float)this.VisionRange).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.VisionRange).toString() + "\n");
 	}
 
 }

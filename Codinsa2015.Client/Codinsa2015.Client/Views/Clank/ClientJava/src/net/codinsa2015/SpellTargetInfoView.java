@@ -29,13 +29,13 @@ public class SpellTargetInfoView
 		int _obj_Type = Integer.valueOf(input.readLine());
 		_obj.Type = TargettingType.fromValue(_obj_Type);
 		// Range
-		float _obj_Range = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_Range = Float.valueOf(input.readLine());
 		_obj.Range = _obj_Range;
 		// Duration
-		float _obj_Duration = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_Duration = Float.valueOf(input.readLine());
 		_obj.Duration = _obj_Duration;
 		// AoeRadius
-		float _obj_AoeRadius = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_AoeRadius = Float.valueOf(input.readLine());
 		_obj.AoeRadius = _obj_AoeRadius;
 		// DieOnCollision
 		boolean _obj_DieOnCollision = Integer.valueOf(input.readLine()) == 0 ? false : true;
@@ -50,11 +50,11 @@ public class SpellTargetInfoView
 		// Type
 		output.append(((Integer)(this.Type.getValue())).toString() + "\n");
 		// Range
-		output.append(((Float)this.Range).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.Range).toString() + "\n");
 		// Duration
-		output.append(((Float)this.Duration).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.Duration).toString() + "\n");
 		// AoeRadius
-		output.append(((Float)this.AoeRadius).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.AoeRadius).toString() + "\n");
 		// DieOnCollision
 		output.append((this.DieOnCollision ? 1 : 0) + "\n");
 		// AllowedTargetTypes

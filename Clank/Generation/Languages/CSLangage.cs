@@ -182,7 +182,7 @@ using System.Text;");
             // Création d'une variable statique correspondant à l'encoding utf-8 sans bom utilisé par 
             // les fonctions de sérialisation / déserialisation
             builder.AppendLine("\t\tstatic Encoding BOMLESS_UTF8 = new UTF8Encoding(false);");
-
+            
             // Instructions
             foreach(Instruction instruction in declaration.Instructions)
             {
@@ -334,6 +334,7 @@ using System.Text;");
             string typename = GenerateTypeInstanceName(srcVar.Type);
             switch (srcVar.Type.BaseType.JType)
             {
+                    
                 case JSONType.Bool:
                     return "output.WriteLine(" + srcVar.Name + " ? 1 : 0);";
                 case JSONType.Int:

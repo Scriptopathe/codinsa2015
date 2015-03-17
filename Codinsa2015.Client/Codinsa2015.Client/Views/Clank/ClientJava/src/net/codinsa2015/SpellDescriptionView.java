@@ -26,10 +26,10 @@ public class SpellDescriptionView
 	public static SpellDescriptionView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellDescriptionView _obj =  new SpellDescriptionView();
 		// BaseCooldown
-		float _obj_BaseCooldown = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_BaseCooldown = Float.valueOf(input.readLine());
 		_obj.BaseCooldown = _obj_BaseCooldown;
 		// CastingTime
-		float _obj_CastingTime = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_CastingTime = Float.valueOf(input.readLine());
 		_obj.CastingTime = _obj_CastingTime;
 		// CastingTimeAlterations
 		ArrayList<StateAlterationModelView> _obj_CastingTimeAlterations = new ArrayList<StateAlterationModelView>();
@@ -55,9 +55,9 @@ public class SpellDescriptionView
 
 	public void serialize(OutputStreamWriter output) throws UnsupportedEncodingException, IOException {
 		// BaseCooldown
-		output.append(((Float)this.BaseCooldown).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.BaseCooldown).toString() + "\n");
 		// CastingTime
-		output.append(((Float)this.CastingTime).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.CastingTime).toString() + "\n");
 		// CastingTimeAlterations
 		output.append(String.valueOf(this.CastingTimeAlterations.size()) + "\n");
 		for(int CastingTimeAlterations_it = 0; CastingTimeAlterations_it < this.CastingTimeAlterations.size();CastingTimeAlterations_it++) {

@@ -343,7 +343,7 @@ namespace Clank.Core.Generation.Languages
                 case JSONType.Int:
                     return "int " + dstVarName + " = Integer.valueOf(input.readLine());";
                 case JSONType.Float:
-                    return "float " + dstVarName + " = Float.valueOf(input.readLine().replace(',', '.'));";
+                    return "float " + dstVarName + " = Float.valueOf(input.readLine());";
                 case JSONType.String:
                     return "String " + dstVarName + " = input.readline();";
                 case JSONType.Object:
@@ -440,7 +440,7 @@ namespace Clank.Core.Generation.Languages
                     else
                         return "output.append(((Integer)" + srcVar.Name + ").toString() + " + endl + ");";
                 case JSONType.Float:
-                    return "output.append(((Float)" + srcVar.Name + ").toString().replace('.', ',') + " + endl + ");";
+                    return "output.append(((Float)" + srcVar.Name + ").toString() + " + endl + ");";
                 case JSONType.String:
                     return "output.append(" + srcVar.Name + " + " + endl + ");";
                 case JSONType.Object:

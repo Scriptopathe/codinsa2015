@@ -30,7 +30,7 @@ public class PassiveEquipmentUpgradeModelView
 		}
 		_obj.PassiveAlterations = _obj_PassiveAlterations;
 		// Cost
-		float _obj_Cost = Float.valueOf(input.readLine().replace(',', '.'));
+		float _obj_Cost = Float.valueOf(input.readLine());
 		_obj.Cost = _obj_Cost;
 		return _obj;
 	}
@@ -42,7 +42,7 @@ public class PassiveEquipmentUpgradeModelView
 			this.PassiveAlterations.get(PassiveAlterations_it).serialize(output);
 		}
 		// Cost
-		output.append(((Float)this.Cost).toString().replace('.', ',') + "\n");
+		output.append(((Float)this.Cost).toString() + "\n");
 	}
 
 }

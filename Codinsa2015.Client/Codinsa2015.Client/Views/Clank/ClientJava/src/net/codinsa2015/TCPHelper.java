@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class TCPHelper {
 	static Socket s_sock;
@@ -27,6 +28,9 @@ public class TCPHelper {
 		// Initialise les buffers
 		s_smallBuffer = new byte[1];
 		s_bigBuffer = new byte[512];
+		
+		// Change la locale. (pour obtenir des floats au format US).
+		Locale.setDefault(Locale.US);
 		
 		Send(nickname.getBytes("UTF-8"));
 	}

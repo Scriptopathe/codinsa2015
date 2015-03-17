@@ -39,6 +39,9 @@ bool TCPHelper::initialize(std::string ipaddr, int port, std::string nickname)
 	s_smallBuff = (char*)malloc(1);
 	s_bigBuff = (char*)malloc(BIGBUF_LEN);
 
+	// Changement de la locale par défaut :
+	std::locale::global(std::locale("en-US"));
+
 	// Envoie le nickname
 	std::ostringstream stream;
 	stream << nickname;
