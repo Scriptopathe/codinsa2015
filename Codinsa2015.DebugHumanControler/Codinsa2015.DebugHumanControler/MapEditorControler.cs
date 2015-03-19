@@ -9,9 +9,19 @@ using Microsoft.Xna.Framework.Graphics;
 using Codinsa2015.DebugHumanControler.Components;
 using Codinsa2015.EnhancedGui;
 using Codinsa2015.Rendering;
+using System.Reflection;
 using ZLayer = Codinsa2015.Rendering.GraphicsHelpers.Z;
 namespace Codinsa2015.DebugHumanControler
 {
+    /// <summary>
+    /// Attribue qu'utilise la fonction d'aide pour afficher les fonctions
+    /// du contrôleur.
+    /// </summary>
+    public class ScriptFuncAttribute : Attribute
+    {
+        public string Tip { get; set; }
+        public ScriptFuncAttribute(string tip) { Tip = tip; }
+    }
     /// <summary>
     /// Contrôleur de l'éditeur de map.
     /// </summary>
@@ -78,37 +88,12 @@ namespace Codinsa2015.DebugHumanControler
         {
             m_minimap.LoadContent();
             m_console.LoadContent();
-            /* GUI TESTING */
-            /*
-            EnhancedGui.GuiWindow btn = new EnhancedGui.GuiWindow(m_baseControler.EnhancedGuiManager);
-            btn.Area = new Rectangle(100, 100, 200, 200);
-            btn.Title = "Back";
-            EnhancedGui.GuiButton btn2 = new EnhancedGui.GuiButton(m_baseControler.EnhancedGuiManager);
-            btn2.Area = new Rectangle(50, 50, 300, 100);
-            btn2.Parent = btn;
-            btn2.Title = "Front";
-            EnhancedGui.GuiMultilineTextDisplay disp = new EnhancedGui.GuiMultilineTextDisplay(m_baseControler.EnhancedGuiManager);
-            disp.Parent = btn2;
-            disp.Location = new Point(50, 50);
-            disp.Size = new Point(200, 200);
-            disp.AppendLine("hahah");
-            EnhancedGui.GuiTextInput inp = new EnhancedGui.GuiTextInput(m_baseControler.EnhancedGuiManager);
-            inp.Parent = btn2;
-            inp.Location = new Point(50, 250);
-            inp.Size = new Point(200, 20);
-            EnhancedGui.GuiMenu menu = new EnhancedGui.GuiMenu(m_baseControler.EnhancedGuiManager);
-            menu.Location = new Point(500, 100);
-            menu.Items = new List<EnhancedGui.GuiMenu.GuiMenuItem>()
-            {
-                new EnhancedGui.GuiMenu.GuiMenuItem("hah"),
-                new EnhancedGui.GuiMenu.GuiMenuItem("hihi")
-            };
-            menu.Focus();*/
             CreateGui();
+
+            Server.GameServer.GetScene().GameInterpreter.MainContext.LocalVariables.Add("ctrl", new PonyCarpetExtractor.ExpressionTree.Mutable(this));
         }
 
-  
-
+ 
 
         /// <summary>
         /// Initialise les composants de l'interface graphique.
@@ -122,8 +107,6 @@ namespace Codinsa2015.DebugHumanControler
                 Size = new Point(150, 25)
             };
             m_modeButton.Clicked += OnChangeMode;
-
-
 
         }
 
@@ -272,153 +255,16 @@ namespace Codinsa2015.DebugHumanControler
             if( Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M))
             {
                 Save();
+                m_console.Output.AppendLine("Map sauvegardée avec succès.");
             }
 
             // Chargement
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.L))
             {
                 Load();
-                
+                m_console.Output.AppendLine("Map chargée avec succès");
             }
         }
-
-        #region API
-        /// <summary>
-        /// Retourne la position de la souris sur la map en unités métriques.
-        /// </summary>
-        /// <returns></returns>
-        public Vector2 GetMousePosUnits()
-        {
-            Vector2 mousePosPx = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
-            Vector2 mousePosUnits = ((mousePosPx + m_baseControler.MapRdr.ScrollingVector2) - new Vector2(m_baseControler.MapRdr.Viewport.X, m_baseControler.MapRdr.Viewport.Y)) / m_baseControler.MapRdr.UnitSize;
-            return mousePosUnits;
-        }
-
-        /// <summary>
-        /// Affiche un message d'aide.
-        /// </summary>
-        public void Help()
-        {
-            
-        }
-
-        public void SetCheckpointId(int id) { m_checkpointId = id; }
-        public void SetRowId(int id) { m_rowId = id; m_checkpointId = 0; }
-        /// <summary>
-        /// Pose une ward sur l'emplacement à proximité de la placementPosition.
-        /// </summary>
-        /// <param name="team"></param>
-        public void PutWard(EntityType team, Vector2 placementPosition)
-        {
-            EntityWardPlacement p = m_baseControler.MapRdr.Map.Entities.GetEntitiesByType(EntityType.WardPlacement).
-                                    GetAliveEntitiesInRange(placementPosition, 1).
-                                    NearestFrom(placementPosition) as EntityWardPlacement;
-            if (p != null)
-            {
-                p.PutWard(new EntityHero() { Type = team });
-            }
-            else
-                m_console.Output.AppendLine("Pas d'emplacement où poser la ward !");
-        }
-        
-        /// <summary>
-        /// Ajoute un tour pour la team donnée à la position donnée.
-        /// </summary>
-        /// <param name="team"></param>
-        /// <param name="position"></param>
-        public void AddTower(EntityType team, Vector2 position)
-        {
-            Server.Entities.EntityBase entity = new Server.Entities.EntityTower()
-             {
-                 Position = position,
-                 Type = Server.Entities.EntityType.Tower | team,
-             };
-            CurrentMap.Entities.Add(entity.ID, entity);
-        }
-        /// <summary>
-        /// Ajoute un emplacement de ward à la position donnée.
-        /// </summary>
-        /// <param name="position"></param>
-        public void AddWardPlace(Vector2 position)
-        {
-            Server.Entities.EntityBase entity = new EntityWardPlacement()
-            {
-                Position = position,
-                Type = EntityType.WardPlacement,
-            };
-            CurrentMap.Entities.Add(entity.ID, entity);
-        }
-
-        /// <summary>
-        /// Ajoute un checkpoint à la position donnée et incrémente le compteur de checkpoint.
-        /// </summary>
-        public void AddCheckpoint(EntityType team, Vector2 position)
-        {
-            Server.Entities.EntityBase entity = new Server.Entities.EntityCheckpoint()
-            {
-                Position = position,
-                Type = Server.Entities.EntityType.Checkpoint | team,
-                CheckpointID = m_checkpointId,
-                CheckpointRow = m_rowId,
-            };
-            CurrentMap.Entities.Add(entity.ID, entity);
-            m_checkpointId++;
-        }
-
-        /// <summary>
-        /// Ajoute un spawner pour la team donnée à la position donnée.
-        /// </summary>
-        public void AddSpawner(EntityType team, Vector2 position)
-        {
-            Server.Entities.EntityBase entity = new Server.Entities.EntitySpawner()
-            {
-                Position = position,
-                SpawnPosition = position,
-                Type = Server.Entities.EntityType.Spawner | team,
-            };
-            CurrentMap.Entities.Add(entity.ID, entity);
-        }
-
-        /// <summary>
-        /// Ajoute une zone de spawn de héros à la position donnée.
-        /// </summary>
-        /// <param name="team"></param>
-        /// <param name="position"></param>
-        public void AddHeroSpawner(EntityType team, Vector2 position)
-        {
-            Server.Entities.EntityBase entity = new EntityHeroSpawner()
-            {
-                Position = position,
-                Type = EntityType.HeroSpawner | team,
-            };
-            CurrentMap.Entities.Add(entity.ID, entity);
-        }
-        /// <summary>
-        /// Sauvegarde la map.
-        /// </summary>
-        public void Save()
-        {
-            MapFile.Save(CurrentMap);
-        }
-
-        /// <summary>
-        /// Charge la map.
-        /// </summary>
-        public void Load()
-        {
-            if (System.IO.File.Exists(Ressources.MapFilename))
-            {
-                try
-                {
-                    MapFile loaded = MapFile.FromFile(Ressources.MapFilename);
-                    if (OnMapLoaded != null)
-                        OnMapLoaded(loaded);
-                }
-                /*catch { }*/
-                finally { }
-            }
-        }
-        #endregion
 
         /// <summary>
         /// Dessine les éléments graphiques du contrôleur.
@@ -466,7 +312,212 @@ namespace Codinsa2015.DebugHumanControler
                 new Vector2(150, 0), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, ZLayer.GUI + 4 * ZLayer.BackStep);
         }
 
-        #region External event handlers
+        #region Script
+
+        #region Help
+        /// <summary>
+        /// Affiche un message d'aide.
+        /// </summary>
+        public void help()
+        {
+            puts("+ print_shortcuts() ");
+            puts("+ print_commands() ");
+        }
+
+        /// <summary>
+        /// Affiche les raccourcis claviers de l'éditeur.
+        /// </summary>
+        public void print_shortcuts()
+        {
+            puts("> T = tower, R = spawner, Y = checkpoint, U = ward place, W = ward");
+            puts("> Numpad 1, 2, 3, 4 : set checkpoint id");
+            puts("> M = save, L = load");
+        }
+
+        /// <summary>
+        /// Affiche les commandes disponibles.
+        /// </summary>
+        public void print_commands()
+        {
+            MethodInfo[] methods = this.GetType().GetMethods();
+            foreach(MethodInfo method in methods)
+            {
+                object[] attrs = method.GetCustomAttributes(false);
+                foreach(object attr in attrs)
+                {
+                    ScriptFuncAttribute func = attr as ScriptFuncAttribute;
+                    if(func != null)
+                    {
+                        StringBuilder builder = new StringBuilder();
+                        puts(" " + func.Tip);
+                        builder.Append("+ " + method.Name + "(");
+                        // Arguments
+                        ParameterInfo[] parameters = method.GetParameters();
+                        foreach(var par in parameters)
+                        {
+                            builder.Append(par.ParameterType.Name + " " + par.Name + ",");
+                        }
+
+                        puts(builder.ToString().TrimEnd(',') + ")");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ecrit une ligne dans la console.
+        /// </summary>
+        /// <param name="msg"></param>
+        [ScriptFunc("Ecrit dans la console.")]
+        public void puts(string msg)
+        {
+            m_console.Output.AppendLine(msg);
+            m_console.Output.ScrollDown();
+        }
+        #endregion
+
+
+        #region API
+        /// <summary>
+        /// Retourne la position de la souris sur la map en unités métriques.
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GetMousePosUnits()
+        {
+            Vector2 mousePosPx = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
+            Vector2 mousePosUnits = ((mousePosPx + m_baseControler.MapRdr.ScrollingVector2) - new Vector2(m_baseControler.MapRdr.Viewport.X, m_baseControler.MapRdr.Viewport.Y)) / m_baseControler.MapRdr.UnitSize;
+            return mousePosUnits;
+        }
+
+
+        [ScriptFunc("Change l'id du prochain checkpoint créé dans l'éditeur.")]
+        public void SetCheckpointId(int id) { m_checkpointId = id; }
+        [ScriptFunc("Change la row du prochain checkpoint créé dans l'éditeur.")]
+        public void SetRowId(int id) { m_rowId = id; m_checkpointId = 0; }
+        /// <summary>
+        /// Pose une ward sur l'emplacement à proximité de la placementPosition.
+        /// </summary>
+        /// <param name="team"></param>
+
+        [ScriptFunc("Pose une ward à l'emplacement donné.")]
+        public void PutWard(EntityType team, Vector2 placementPosition)
+        {
+            EntityWardPlacement p = m_baseControler.MapRdr.Map.Entities.GetEntitiesByType(EntityType.WardPlacement).
+                                    GetAliveEntitiesInRange(placementPosition, 1).
+                                    NearestFrom(placementPosition) as EntityWardPlacement;
+            if (p != null)
+            {
+                p.PutWard(new EntityHero() { Type = team });
+            }
+            else
+                m_console.Output.AppendLine("Pas d'emplacement où poser la ward !");
+        }
+
+        /// <summary>
+        /// Ajoute un tour pour la team donnée à la position donnée.
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="position"></param>
+
+        [ScriptFunc("Ajoute une tour à l'emplacement donné.")]
+        public void AddTower(EntityType team, Vector2 position)
+        {
+            Server.Entities.EntityBase entity = new Server.Entities.EntityTower()
+            {
+                Position = position,
+                Type = Server.Entities.EntityType.Tower | team,
+            };
+            CurrentMap.Entities.Add(entity.ID, entity);
+        }
+        /// <summary>
+        /// Ajoute un emplacement de ward à la position donnée.
+        /// </summary>
+        /// <param name="position"></param>
+        [ScriptFunc("Ajoute un emplacement de ward à l'emplacement donné.")]
+        public void AddWardPlace(Vector2 position)
+        {
+            Server.Entities.EntityBase entity = new EntityWardPlacement()
+            {
+                Position = position,
+                Type = EntityType.WardPlacement,
+            };
+            CurrentMap.Entities.Add(entity.ID, entity);
+        }
+
+        /// <summary>
+        /// Ajoute un checkpoint à la position donnée et incrémente le compteur de checkpoint.
+        /// </summary>
+        [ScriptFunc("Ajoute un checkpoint tour à l'emplacement donné.")]
+        public void AddCheckpoint(EntityType team, Vector2 position)
+        {
+            Server.Entities.EntityBase entity = new Server.Entities.EntityCheckpoint()
+            {
+                Position = position,
+                Type = Server.Entities.EntityType.Checkpoint | team,
+                CheckpointID = m_checkpointId,
+                CheckpointRow = m_rowId,
+            };
+            CurrentMap.Entities.Add(entity.ID, entity);
+            m_checkpointId++;
+        }
+
+        /// <summary>
+        /// Ajoute un spawner pour la team donnée à la position donnée.
+        /// </summary>
+        [ScriptFunc("Ajoute un spawner à l'emplacement donné.")]
+        public void AddSpawner(EntityType team, Vector2 position)
+        {
+            Server.Entities.EntityBase entity = new Server.Entities.EntitySpawner()
+            {
+                Position = position,
+                SpawnPosition = position,
+                Type = Server.Entities.EntityType.Spawner | team,
+            };
+            CurrentMap.Entities.Add(entity.ID, entity);
+        }
+
+        /// <summary>
+        /// Ajoute une zone de spawn de héros à la position donnée.
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="position"></param>
+        [ScriptFunc("Ajoute un spawner de héros à l'emplacement donné.")]
+        public void AddHeroSpawner(EntityType team, Vector2 position)
+        {
+            Server.Entities.EntityBase entity = new EntityHeroSpawner()
+            {
+                Position = position,
+                Type = EntityType.HeroSpawner | team,
+            };
+            CurrentMap.Entities.Add(entity.ID, entity);
+        }
+        /// <summary>
+        /// Sauvegarde la map.
+        /// </summary>
+        public void Save()
+        {
+            MapFile.Save(CurrentMap);
+        }
+
+        /// <summary>
+        /// Charge la map.
+        /// </summary>
+        public void Load()
+        {
+            if (System.IO.File.Exists(Ressources.MapFilename))
+            {
+                try
+                {
+                    MapFile loaded = MapFile.FromFile(Ressources.MapFilename);
+                    if (OnMapLoaded != null)
+                        OnMapLoaded(loaded);
+                }
+                /*catch { }*/
+                finally { }
+            }
+        }
+        #endregion
+
         #endregion
         #endregion
     }

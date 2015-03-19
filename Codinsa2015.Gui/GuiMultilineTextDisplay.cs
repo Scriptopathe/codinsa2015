@@ -13,11 +13,14 @@ namespace Codinsa2015.EnhancedGui
     /// </summary>
     public class GuiMultilineTextDisplay : GuiWidget
     {
+        const int Margins = 2; // marges en pixels.
+        const int LineHeightMargin = 1;
         #region Delegate / Events / Classes
 
         #endregion
 
         #region Variables
+        GuiScrollbar m_scrollbar;
         /// <summary>
         /// Contient le texte en cours d'édition.
         /// </summary>
@@ -29,15 +32,19 @@ namespace Codinsa2015.EnhancedGui
         #endregion
 
         #region Properties
-
+        bool m_isVisible;
 
         /// <summary>
         /// Obtient ou définit une valeur indiquant si le contrôle est visible.
         /// </summary>
         public bool IsVisible
         {
-            get;
-            set;
+            get { return m_isVisible; }
+            set
+            {
+                m_isVisible = value;
+                m_scrollbar.IsVisible = value;
+            }
         }
         #endregion
 
@@ -49,6 +56,14 @@ namespace Codinsa2015.EnhancedGui
             : base(manager)
         {
             manager.AddWidget(this);
+
+            m_scrollbar = new GuiScrollbar(manager);
+            m_scrollbar.MaxValue = 100;
+            m_scrollbar.Step = 1;
+            m_scrollbar.GrabLen = 1;
+            m_scrollbar.CurrentValue = 0;
+            m_scrollbar.Parent = this;
+
             Area = new Rectangle(0, 0, 640, 460);
             IsVisible = true;
             m_textBuilder = new StringBuilder("");
@@ -61,10 +76,30 @@ namespace Codinsa2015.EnhancedGui
         /// <param name="time"></param>
         public override void Update(Microsoft.Xna.Framework.GameTime time)
         {
-
+            m_scrollbar.Size = new Point(20, this.Size.Y);
+            m_scrollbar.Location = new Point(this.Size.X - 20, 0);
+            m_scrollbar.MaxValue = Math.Max(1, m_linesCache.Count);
         }
 
+        /// <summary>
+        /// Envoie la scrollbar tout en bas.
+        /// </summary>
+        public void ScrollDown()
+        {
+            m_scrollbar.CurrentValue = m_scrollbar.MaxValue;
+        }
 
+        /// <summary>
+        /// Nombre de lignes max que peut afficher ce contrôle.
+        /// </summary>
+        /// <returns></returns>
+        int GetMaxLines()
+        {
+            var font = Ressources.CourrierFont;
+            int lineHeight = (int)font.MeasureString(" ").Y + LineHeightMargin;
+            int maxLines = (Size.Y - 2 * Margins) / lineHeight + 1;
+            return maxLines;
+        }
 
         /// <summary>
         /// Dessine les items de ce menu.
@@ -74,15 +109,14 @@ namespace Codinsa2015.EnhancedGui
         {
             if (!IsVisible)
                 return;
-            // Constantes
-            const int Margins = 2; // marges en pixels.
-            const int LineHeightMargin = 1;
 
             // Mesures de taille de lignes etc...
             var font = Ressources.CourrierFont;
             int lineHeight = (int)font.MeasureString(" ").Y + LineHeightMargin;
             int maxLines = (Size.Y - 2 * Margins) / lineHeight + 1;
-            int lastLine = m_linesCache.Count - 1; // TODO : mettre en place le scrolling.
+            int lastLine = Math.Max(0, Math.Min(
+                m_linesCache.Count - 1,
+                ((int)m_scrollbar.CurrentValue))); // TODO : mettre en place le scrolling.
             int firstLine = Math.Max(0, lastLine - maxLines);
 
             Rectangle menuBox = new Rectangle(0, 0, Size.X, Size.Y);
@@ -96,7 +130,7 @@ namespace Codinsa2015.EnhancedGui
             // Dessine les lignes affichées
             for (int line = lastLine; line >= firstLine; line--)
             {
-                int y = (int)(Size.Y + (line - lastLine) * lineHeight);
+                int y = (int)(Size.Y + (line - lastLine) * lineHeight - lineHeight);
                 DrawString(batch, font, m_linesCache[line],
                     new Vector2(Margins, Margins + y),
                     Color.Black,
@@ -182,6 +216,8 @@ namespace Codinsa2015.EnhancedGui
         public void AppendLine(string s)
         {
             Append(s + "\n");
+            m_scrollbar.MaxValue = Math.Max(1, m_linesCache.Count);
+            ScrollDown();
         }
 
         /// <summary>
@@ -192,6 +228,7 @@ namespace Codinsa2015.EnhancedGui
             m_linesCache.Clear();
             m_linesCache.Add("");
             m_textBuilder.Clear();
+            m_scrollbar.MaxValue = Math.Max(1, m_linesCache.Count);
         }
         #endregion
     }

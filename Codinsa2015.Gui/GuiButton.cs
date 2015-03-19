@@ -186,7 +186,8 @@ namespace Codinsa2015.EnhancedGui
             }
 
             // Dessin du texte
-            var pos = new Vector2(2 * MainMarginSize + m_iconSize, Area.Height / 2 - tSize.Y / 2);
+            int iconSize = Icon == null ? 0 : m_iconSize;
+            var pos = new Vector2(2 * MainMarginSize + iconSize, Area.Height / 2 - tSize.Y / 2);
             Color textColor = IsEnabled ? (hover ? HoverTextColor : EnabledTextColor) : DisabledTextColor;
             DrawString(batch, Ressources.Font, Title, pos, textColor, 0.0f, Vector2.Zero, 1.0f, 8);
 

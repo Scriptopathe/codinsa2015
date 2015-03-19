@@ -48,6 +48,7 @@
     <Compile Include="GuiManager.cs" />
     <Compile Include="GuiMenu.cs" />
     <Compile Include="GuiMultilineTextDisplay.cs" />
+    <Compile Include="GuiScrollbar.cs" />
     <Compile Include="GuiTextInput.cs" />
     <Compile Include="GuiWidget.cs" />
     <Compile Include="GuiWindow.cs" />
