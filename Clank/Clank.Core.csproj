@@ -108,6 +108,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tokenizers\ExpressionParser.cs" />
     <Compile Include="Tokenizers\ExpressionToken.cs" />
+    <Compile Include="Tokenizers\Lexer.cs" />
     <Compile Include="Tokenizers\SyntaxError.cs" />
     <Compile Include="Tokenizers\Token.cs" />
     <Compile Include="Tokenizers\Tokenizer.cs" />

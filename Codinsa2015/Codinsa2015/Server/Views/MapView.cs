@@ -14,6 +14,7 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
+		// Tableau de passabilité de la map. true : passable, false : non passable.
 		public List<List<bool>> Passability;	
 		public static MapView Deserialize(System.IO.StreamReader input) {
 			MapView _obj =  new MapView();

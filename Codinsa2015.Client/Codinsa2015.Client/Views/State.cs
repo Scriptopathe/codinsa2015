@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 
 
-namespace Codinsa2015.Views.Client
+namespace Codinsa2015.Views
 {
 
 	public class State
 	{
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
+		//  Retourne une vue vers le héros contrôlé par ce contrôleur.
 		public EntityBaseView GetHero()
 		{
 			Console.WriteLine("[GetHero]");
@@ -27,6 +28,7 @@ namespace Codinsa2015.Views.Client
 			return (EntityBaseView)returnValue;
 		}
 	
+		//  Retourne la position du héros.
 		public Vector2 GetPosition()
 		{
 			Console.WriteLine("[GetPosition]");
@@ -43,6 +45,7 @@ namespace Codinsa2015.Views.Client
 			return (Vector2)returnValue;
 		}
 	
+		//  Retourne les informations concernant la map actuelle
 		public MapView GetMapView()
 		{
 			Console.WriteLine("[GetMapView]");
@@ -59,6 +62,7 @@ namespace Codinsa2015.Views.Client
 			return (MapView)returnValue;
 		}
 	
+		//  Déplace le joueur vers la position donnée en utilisant l'A*.
 		public bool StartMoveTo(Vector2 position)
 		{
 			Console.WriteLine("[StartMoveTo]");
@@ -76,6 +80,7 @@ namespace Codinsa2015.Views.Client
 			return (bool)returnValue;
 		}
 	
+		//  Indique si le joueur est entrain de se déplacer en utilisant son A*.
 		public bool IsAutoMoving()
 		{
 			Console.WriteLine("[IsAutoMoving]");
@@ -92,6 +97,7 @@ namespace Codinsa2015.Views.Client
 			return (bool)returnValue;
 		}
 	
+		//  Arrête le déplacement automatique (A*) du joueur.
 		public bool EndMoveTo()
 		{
 			Console.WriteLine("[EndMoveTo]");
@@ -108,6 +114,7 @@ namespace Codinsa2015.Views.Client
 			return (bool)returnValue;
 		}
 	
+		//  Retourne la liste des entités en vue
 		public List<EntityBaseView> GetEntitiesInSight()
 		{
 			Console.WriteLine("[GetEntitiesInSight]");
@@ -129,6 +136,8 @@ namespace Codinsa2015.Views.Client
 			return (List<EntityBaseView>)returnValue;
 		}
 	
+		//  Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès
+		// refusé)
 		public EntityBaseView GetEntityById(int entityId)
 		{
 			Console.WriteLine("[GetEntityById]");
@@ -146,6 +155,7 @@ namespace Codinsa2015.Views.Client
 			return (EntityBaseView)returnValue;
 		}
 	
+		//  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 		public bool UseSpell(int spellId,SpellCastTargetInfoView target)
 		{
 			Console.WriteLine("[UseSpell]");
@@ -164,6 +174,7 @@ namespace Codinsa2015.Views.Client
 			return (bool)returnValue;
 		}
 	
+		//  Obtient le mode actuel de la scène.
 		public SceneMode GetMode()
 		{
 			Console.WriteLine("[GetMode]");
@@ -180,6 +191,7 @@ namespace Codinsa2015.Views.Client
 			return (SceneMode)returnValue;
 		}
 	
+		//  Obtient la description du spell dont l'id est donné en paramètre.
 		public SpellDescriptionView GetSpellCurrentLevelDescription(int spellId)
 		{
 			Console.WriteLine("[GetSpellCurrentLevelDescription]");
@@ -197,6 +209,7 @@ namespace Codinsa2015.Views.Client
 			return (SpellDescriptionView)returnValue;
 		}
 	
+		//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
 		public SpellView GetSpell(int spellId)
 		{
 			Console.WriteLine("[GetSpell]");
@@ -214,6 +227,7 @@ namespace Codinsa2015.Views.Client
 			return (SpellView)returnValue;
 		}
 	
+		//  Obtient la liste des spells du héros contrôlé.
 		public List<SpellView> GetSpells()
 		{
 			Console.WriteLine("[GetSpells]");
@@ -235,6 +249,7 @@ namespace Codinsa2015.Views.Client
 			return (List<SpellView>)returnValue;
 		}
 	
+		//  Obtient les spells possédés par le héros dont l'id est passé en paramètre.
 		public List<SpellView> GetHeroSpells(int entityId)
 		{
 			Console.WriteLine("[GetHeroSpells]");

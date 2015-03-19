@@ -7,6 +7,7 @@ class SpellcastBaseView
 {
 
 public: 
+	// Shape utilisée par ce spell cast.
 	GenericShapeView Shape;
 	void serialize(std::ostream& output);
 

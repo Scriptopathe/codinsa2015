@@ -17,9 +17,13 @@ public class SpellView
 {
 
 
+	// Cooldown actuel du sort, en secondes
 	public Float CurrentCooldown;
+	// Id de l'entité possédant le sort.
 	public Integer SourceCaster;
+	// Représente les descriptions du spell pour les différents niveaux.
 	public ArrayList<SpellDescriptionView> Levels;
+	// Niveau actuel du spell.
 	public Integer Level;
 	public static SpellView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellView _obj =  new SpellView();

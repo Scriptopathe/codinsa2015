@@ -144,24 +144,32 @@ namespace Clank.Core.Model.Semantic
         /// </summary>
         public static Pattern ConditionalStatementPattern = new Pattern()
         {
-            Identifier = "Statement",
-            Repeats = false,
-            Content = new List<string>() { "if", "else", "elsif", "while" },
-            TkType = new List<TokenType>() { TokenType.ConditionalStatement },
-            Optional = false,
+            Identifier = "Comment",
+            Repeats = true,
+            Content = null,
+            TkType = new List<TokenType>() { TokenType.Comment },
+            Optional = true,
             Next = new Pattern()
             {
-                Identifier = "Condition",
+                Identifier = "Statement",
                 Repeats = false,
-                Optional = true,
-                TkType = new List<TokenType>() { TokenType.List },
+                Content = new List<string>() { "if", "else", "elsif", "while" },
+                TkType = new List<TokenType>() { TokenType.ConditionalStatement },
+                Optional = false,
                 Next = new Pattern()
                 {
-                    Identifier = "Code",
+                    Identifier = "Condition",
                     Repeats = false,
-                    Optional = false,
-                    TkType = new List<TokenType>() { TokenType.CodeBlock },
-                    Next = null
+                    Optional = true,
+                    TkType = new List<TokenType>() { TokenType.List },
+                    Next = new Pattern()
+                    {
+                        Identifier = "Code",
+                        Repeats = false,
+                        Optional = false,
+                        TkType = new List<TokenType>() { TokenType.CodeBlock },
+                        Next = null
+                    }
                 }
             }
         };
@@ -170,24 +178,32 @@ namespace Clank.Core.Model.Semantic
         /// </summary>
         public static Pattern FunctionDeclarationPattern = new Pattern()
         {
-            Identifier = "Modifiers",
+            Identifier = "Comment",
             Repeats = true,
-            Content = new List<string>() { Language.SemanticConstants.Public, Language.SemanticConstants.Constructor, Language.SemanticConstants.Static },
-            TkType = new List<TokenType>() { TokenType.Name },
+            Content = null,
+            TkType = new List<TokenType>() { TokenType.Comment },
             Optional = true,
             Next = new Pattern()
             {
-                Identifier = "Type",
-                Repeats = false,
-                Content = null,
-                TkType = new List<TokenType>() { TokenType.Name, TokenType.GenericType, TokenType.ArrayType }, // plusieurs types autorisés.
+                Identifier = "Modifiers",
+                Repeats = true,
+                Content = new List<string>() { Language.SemanticConstants.Public, Language.SemanticConstants.Constructor, Language.SemanticConstants.Static },
+                TkType = new List<TokenType>() { TokenType.Name },
+                Optional = true,
                 Next = new Pattern()
                 {
-                    Identifier = "Declaration",
+                    Identifier = "Type",
                     Repeats = false,
                     Content = null,
-                    TkType = new List<TokenType>() { TokenType.FunctionDeclaration },
-                    Next = null
+                    TkType = new List<TokenType>() { TokenType.Name, TokenType.GenericType, TokenType.ArrayType }, // plusieurs types autorisés.
+                    Next = new Pattern()
+                    {
+                        Identifier = "Declaration",
+                        Repeats = false,
+                        Content = null,
+                        TkType = new List<TokenType>() { TokenType.FunctionDeclaration },
+                        Next = null
+                    }
                 }
             }
         };
@@ -196,50 +212,121 @@ namespace Clank.Core.Model.Semantic
         /// </summary>
         public static Pattern VariableDeclarationPattern = new Pattern()
         {
-            Identifier = "Modifiers",
-            Repeats = false,
-            Content = new List<string>() { Language.SemanticConstants.Public },
-            TkType = new List<TokenType>() { TokenType.Name },
+            Identifier = "Comment",
+            Repeats = true,
+            Content = null,
+            TkType = new List<TokenType>() { TokenType.Comment },
             Optional = true,
             Next = new Pattern()
             {
-                Identifier = "Type",
+                Identifier = "Modifiers",
                 Repeats = false,
-                Content = null,
-                TkType = new List<TokenType>() { TokenType.Name, TokenType.ArrayType, TokenType.GenericType },
+                Content = new List<string>() { Language.SemanticConstants.Public },
+                TkType = new List<TokenType>() { TokenType.Name },
+                Optional = true,
                 Next = new Pattern()
                 {
-                    Identifier = "Name",
+                    Identifier = "Type",
                     Repeats = false,
                     Content = null,
-                    TkType = new List<TokenType>() { TokenType.Name },
-                    Next = null
+                    TkType = new List<TokenType>() { TokenType.Name, TokenType.ArrayType, TokenType.GenericType },
+                    Next = new Pattern()
+                    {
+                        Identifier = "Name",
+                        Repeats = false,
+                        Content = null,
+                        TkType = new List<TokenType>() { TokenType.Name },
+                        Next = null
+                    }
                 }
             }
         };
-
+        /// <summary>
+        /// Pattern de déclaration de block de code nommé.
+        /// </summary>
+        public static Pattern NamedCodeBlockDeclarationPattern = new Pattern()
+        {
+            Identifier = "Comment",
+            Repeats = true,
+            Content = null,
+            TkType = new List<TokenType>() { TokenType.Comment },
+            Optional = true,
+            Next = new Pattern()
+            {
+                Identifier = "Block",
+                Repeats = false,
+                Content = null,
+                TkType = new List<TokenType>() { TokenType.NamedCodeBlock },
+                Optional = false,
+                Next = null,
+                
+            }
+        };
         /// <summary>
         /// Pattern de déclaration de classe.
         /// </summary>
         public static Pattern ClassDeclarationPattern = new Pattern()
         {
-            Identifier = "Modifiers",
+            Identifier = "Comment",
             Repeats = true,
-            Content = new List<string>() { Language.SemanticConstants.Public, Language.SemanticConstants.IsSerializable },
-            TkType = new List<TokenType>() { TokenType.Name },
+            Content = null,
+            TkType = new List<TokenType>() { TokenType.Comment },
             Optional = true,
             Next = new Pattern()
             {
-                Repeats = false,
-                Content = new List<string>() { Language.SemanticConstants.JsonArray, Language.SemanticConstants.JsonObject },
-                TkType = new List<TokenType>() { TokenType.Name},
+                Identifier = "Modifiers",
+                Repeats = true,
+                Content = new List<string>() { Language.SemanticConstants.Public, Language.SemanticConstants.IsSerializable },
+                TkType = new List<TokenType>() { TokenType.Name },
                 Optional = true,
-                Identifier = "JsonModifiers",
+                Next = new Pattern()
+                {
+                    Repeats = false,
+                    Content = new List<string>() { Language.SemanticConstants.JsonArray, Language.SemanticConstants.JsonObject },
+                    TkType = new List<TokenType>() { TokenType.Name },
+                    Optional = true,
+                    Identifier = "JsonModifiers",
+                    Next = new Pattern()
+                    {
+                        Identifier = "StructKW",
+                        Repeats = false,
+                        Content = new List<string>() { Language.SemanticConstants.Class },
+                        TkType = new List<TokenType>() { TokenType.Name },
+                        Next = new Pattern()
+                        {
+                            Identifier = "Block",
+                            Repeats = false,
+                            Content = null,
+                            TkType = new List<TokenType>() { TokenType.NamedCodeBlock },
+                            Next = null,
+                        }
+                    }
+                }
+            }
+        };
+        /// <summary>
+        /// Pattern de déclaration d'enum.
+        /// </summary>
+        public static Pattern EnumDeclarationPattern = new Pattern()
+        {
+            Identifier = "Comment",
+            Repeats = true,
+            Content = null,
+            TkType = new List<TokenType>() { TokenType.Comment },
+            Optional = true,
+            Next = new Pattern()
+            {
+                Identifier = "Modifiers",
+                Repeats = true,
+                Content = new List<string>() { Language.SemanticConstants.Public },
+                TkType = new List<TokenType>() { TokenType.Name },
+                Optional = true,
+
                 Next = new Pattern()
                 {
                     Identifier = "StructKW",
                     Repeats = false,
-                    Content = new List<string>() { Language.SemanticConstants.Class },
+                    Content = new List<string>() { Language.SemanticConstants.Enum },
                     TkType = new List<TokenType>() { TokenType.Name },
                     Next = new Pattern()
                     {
@@ -251,65 +338,46 @@ namespace Clank.Core.Model.Semantic
                     }
                 }
             }
-        };
-        /// <summary>
-        /// Pattern de déclaration d'enum.
-        /// </summary>
-        public static Pattern EnumDeclarationPattern = new Pattern()
-        {
-            Identifier = "Modifiers",
-            Repeats = true,
-            Content = new List<string>() { Language.SemanticConstants.Public },
-            TkType = new List<TokenType>() { TokenType.Name },
-            Optional = true,
 
-            Next = new Pattern()
-            {
-                Identifier = "StructKW",
-                Repeats = false,
-                Content = new List<string>() { Language.SemanticConstants.Enum },
-                TkType = new List<TokenType>() { TokenType.Name },
-                Next = new Pattern()
-                {
-                    Identifier = "Block",
-                    Repeats = false,
-                    Content = null,
-                    TkType = new List<TokenType>() { TokenType.NamedCodeBlock },
-                    Next = null,
-                }
-            }
-            
         };
         /// <summary>
         /// Pattern de déclaration de classe générique.
         /// </summary>
         public static Pattern GenericClassDeclarationPattern = new Pattern()
         {
-            Identifier = "Modifiers",
+            Identifier = "Comment",
             Repeats = true,
-            Content = new List<string>() { Language.SemanticConstants.Public, Language.SemanticConstants.IsSerializable },
-            TkType = new List<TokenType>() { TokenType.Name },
+            Content = null,
+            TkType = new List<TokenType>() { TokenType.Comment },
             Optional = true,
             Next = new Pattern()
             {
-                Identifier = "JsonModifiers",
-                Repeats = false,
-                Content = new List<string>() { Language.SemanticConstants.JsonArray, Language.SemanticConstants.JsonObject },
+                Identifier = "Modifiers",
+                Repeats = true,
+                Content = new List<string>() { Language.SemanticConstants.Public, Language.SemanticConstants.IsSerializable },
                 TkType = new List<TokenType>() { TokenType.Name },
                 Optional = true,
                 Next = new Pattern()
                 {
-                    Identifier = "StructKW",
+                    Identifier = "JsonModifiers",
                     Repeats = false,
-                    Content = new List<string>() { Language.SemanticConstants.Class },
+                    Content = new List<string>() { Language.SemanticConstants.JsonArray, Language.SemanticConstants.JsonObject },
                     TkType = new List<TokenType>() { TokenType.Name },
+                    Optional = true,
                     Next = new Pattern()
                     {
-                        Identifier = "Block",
+                        Identifier = "StructKW",
                         Repeats = false,
-                        Content = null,
-                        TkType = new List<TokenType>() { TokenType.NamedGenericCodeBlock },
-                        Next = null,
+                        Content = new List<string>() { Language.SemanticConstants.Class },
+                        TkType = new List<TokenType>() { TokenType.Name },
+                        Next = new Pattern()
+                        {
+                            Identifier = "Block",
+                            Repeats = false,
+                            Content = null,
+                            TkType = new List<TokenType>() { TokenType.NamedGenericCodeBlock },
+                            Next = null,
+                        }
                     }
                 }
             }
@@ -320,11 +388,46 @@ namespace Clank.Core.Model.Semantic
         /// </summary>
         public static Pattern VariableAffectationPattern = new Pattern()
         {
-            Identifier = "Affectation",
+            Identifier = "Comment",
             Repeats = true,
             Content = null,
-            TkType = new List<TokenType>() { TokenType.ExpressionGroup },
-            Next = null,
+            TkType = new List<TokenType>() { TokenType.Comment },
+            Optional = true,
+            Next = new Pattern()
+            {
+                Identifier = "Affectation",
+                Repeats = true,
+                Content = null,
+                TkType = new List<TokenType>() { TokenType.ExpressionGroup },
+                Next = null,
+            }
+        };
+
+        /// <summary>
+        /// Pattern de return.
+        /// </summary>
+        public static Pattern ReturnPattern = new Pattern()
+        {
+            Identifier = "Comment",
+            Repeats = true,
+            Content = null,
+            TkType = new List<TokenType>() { TokenType.Comment },
+            Optional = true,
+            Next = new Pattern()
+            {
+                Identifier = "Return",
+                Repeats = false,
+                Content = new List<string>() { Language.SemanticConstants.Return },
+                TkType = new List<TokenType>() { TokenType.Name },
+                Next = new Pattern()
+                {
+                    Identifier = "Evaluable",
+                    Repeats = false,
+                    Content = null,
+                    TkType = new List<TokenType>() {  TokenType.Name, TokenType.New, TokenType.FunctionCall, TokenType.ExpressionGroup, TokenType.List, TokenType.BoolLiteral,
+                        TokenType.NumberLiteral, TokenType.StringLiteral, TokenType.Access }
+                }
+            }
         };
         #endregion
     }

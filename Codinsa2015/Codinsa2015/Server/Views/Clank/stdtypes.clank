@@ -4,6 +4,12 @@ main
 
     macro
     {
+        /* dede */
+        /*
+        
+        tamere la pute
+        
+        */
         # Représente un tableau bidimensionnel. 
         public serializable array class Matrix<T>
         {

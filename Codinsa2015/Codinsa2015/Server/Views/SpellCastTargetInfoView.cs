@@ -14,9 +14,14 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
+		// Type de ciblage de cet objet TargetInfo.
 		public TargettingType Type;	
+		// Retourne la position de la cible, si le type de ciblage (Type) est TargettingType.Position.
 		public Vector2 TargetPosition;	
+		// Retourne la direction de la cible, si le type de ciblage (Type) est TargettingType.Direction.
+		// Ce vecteur est transformé automatiquement en vecteur unitaire.
 		public Vector2 TargetDirection;	
+		// Retourne l'id de la cible, si le type de cibale (Type) est TargettingType.Targetted.
 		public int TargetId;	
 		public static SpellCastTargetInfoView Deserialize(System.IO.StreamReader input) {
 			SpellCastTargetInfoView _obj =  new SpellCastTargetInfoView();

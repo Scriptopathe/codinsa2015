@@ -18,10 +18,15 @@ public class SpellDescriptionView
 {
 
 
+	// Cooldown de base du sort.
 	public Float BaseCooldown;
+	// Casting time du sort.
 	public Float CastingTime;
+	// Altération d'état appliquée pendant le casting time.
 	public ArrayList<StateAlterationModelView> CastingTimeAlterations;
+	// Indique la manière dont le ciblage du sort est effectué.
 	public SpellTargetInfoView TargetType;
+	// Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.
 	public ArrayList<StateAlterationModelView> OnHitEffects;
 	public static SpellDescriptionView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellDescriptionView _obj =  new SpellDescriptionView();

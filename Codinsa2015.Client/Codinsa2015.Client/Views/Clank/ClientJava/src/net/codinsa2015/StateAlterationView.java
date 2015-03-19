@@ -18,10 +18,15 @@ public class StateAlterationView
 {
 
 
+	// Id de la source de l'altération d'état.
 	public Integer Source;
+	// Représente le type de source de l'altération d'état.
 	public StateAlterationSource SourceType;
+	// Représente le modèle d'altération d'état appliquée sur une entité.
 	public StateAlterationModelView Model;
+	// Représente les paramètres de l'altération d'état.
 	public StateAlterationParametersView Parameters;
+	// Temps restant en secondes pour l'altération d'état.
 	public Float RemainingTime;
 	public static StateAlterationView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		StateAlterationView _obj =  new StateAlterationView();

@@ -14,8 +14,11 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
+		// Obtient les altértions d'état appliquées à l'impact de l'attaque sur la cible.
 		public List<StateAlterationModelView> OnHitEffects;	
+		// Obtient les altérations d'état appliquées lors de l'attaque sur le caster.
 		public List<StateAlterationModelView> CastingEffects;	
+		// Obtient les effets passifs appliqués par l'enchantement.
 		public List<StateAlterationModelView> PassiveEffects;	
 		public static WeaponEnchantModelView Deserialize(System.IO.StreamReader input) {
 			WeaponEnchantModelView _obj =  new WeaponEnchantModelView();

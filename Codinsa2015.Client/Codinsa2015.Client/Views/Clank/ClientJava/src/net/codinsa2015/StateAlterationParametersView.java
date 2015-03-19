@@ -16,7 +16,9 @@ public class StateAlterationParametersView
 {
 
 
+	// Position finale que le dash doit atteindre (si le targetting est Direction)
 	public Vector2 DashTargetDirection;
+	// Entité vers laquelle le dash doit se diriger (si le targetting du dash est Entity).
 	public Integer DashTargetEntity;
 	public static StateAlterationParametersView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		StateAlterationParametersView _obj =  new StateAlterationParametersView();

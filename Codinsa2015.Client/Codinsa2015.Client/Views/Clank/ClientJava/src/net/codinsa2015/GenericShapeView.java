@@ -17,9 +17,13 @@ public class GenericShapeView
 {
 
 
+	// Position de la forme : cercle => centre ; rectangle => coin supérieur gauche
 	public Vector2 Position;
+	// Si cercle : rayon du cercle.
 	public Float Radius;
+	// Si rectangle : taille du rectangle.
 	public Vector2 Size;
+	// Représente le type de la forme.
 	public GenericShapeType ShapeType;
 	public static GenericShapeView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		GenericShapeView _obj =  new GenericShapeView();

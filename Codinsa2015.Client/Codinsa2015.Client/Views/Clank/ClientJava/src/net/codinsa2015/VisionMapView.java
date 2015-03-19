@@ -16,6 +16,7 @@ public class VisionMapView
 {
 
 
+	// Représente la vision qu'ont les 2 équipes sur l'ensemble de la map.
 	public ArrayList<ArrayList<VisionFlags>> Vision;
 	public static VisionMapView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		VisionMapView _obj =  new VisionMapView();

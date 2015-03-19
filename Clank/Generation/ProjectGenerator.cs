@@ -164,8 +164,11 @@ namespace Clank.Core.Generation
                 {
                     foreach (var tk in exprTokens[0].ListTokens)
                     {
-                        var mainBlock = parser.Parse(tk);
-                        project.ParseScript(mainBlock);
+                        if (tk.TkType != Tokenizers.ExpressionToken.ExpressionTokenType.Comment)
+                        {
+                            var mainBlock = parser.Parse(tk);
+                            project.ParseScript(mainBlock);
+                        }
                     }
                 }
                 finally

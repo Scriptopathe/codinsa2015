@@ -17,7 +17,9 @@ public class PassiveEquipmentUpgradeModelView
 {
 
 
+	// Obtient les altérations d'état appliquées passivement par cet équipement.
 	public ArrayList<StateAlterationModelView> PassiveAlterations;
+	// Obtient le coût de l'upgrade.
 	public Float Cost;
 	public static PassiveEquipmentUpgradeModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		PassiveEquipmentUpgradeModelView _obj =  new PassiveEquipmentUpgradeModelView();

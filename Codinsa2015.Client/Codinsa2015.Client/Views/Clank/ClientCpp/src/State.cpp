@@ -2,6 +2,7 @@
  * Contient toutes les informations concernant l'état du serveur.
  */
 #include "../inc/State.h"
+//  Retourne une vue vers le héros contrôlé par ce contrôleur.
 EntityBaseView State::GetHero()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -16,6 +17,7 @@ EntityBaseView State::GetHero()
 
 
 
+//  Retourne la position du héros.
 Vector2 State::GetPosition()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -30,6 +32,7 @@ Vector2 State::GetPosition()
 
 
 
+//  Retourne les informations concernant la map actuelle
 MapView State::GetMapView()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -44,6 +47,7 @@ MapView State::GetMapView()
 
 
 
+//  Déplace le joueur vers la position donnée en utilisant l'A*.
 bool State::StartMoveTo(Vector2 position)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -59,6 +63,7 @@ bool State::StartMoveTo(Vector2 position)
 
 
 
+//  Indique si le joueur est entrain de se déplacer en utilisant son A*.
 bool State::IsAutoMoving()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -73,6 +78,7 @@ bool State::IsAutoMoving()
 
 
 
+//  Arrête le déplacement automatique (A*) du joueur.
 bool State::EndMoveTo()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -87,6 +93,7 @@ bool State::EndMoveTo()
 
 
 
+//  Retourne la liste des entités en vue
 std::vector<EntityBaseView> State::GetEntitiesInSight()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -107,6 +114,8 @@ std::vector<EntityBaseView> State::GetEntitiesInSight()
 
 
 
+//  Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès
+// refusé)
 EntityBaseView State::GetEntityById(int entityId)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -122,6 +131,7 @@ EntityBaseView State::GetEntityById(int entityId)
 
 
 
+//  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 bool State::UseSpell(int spellId,SpellCastTargetInfoView target)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -138,6 +148,7 @@ bool State::UseSpell(int spellId,SpellCastTargetInfoView target)
 
 
 
+//  Obtient le mode actuel de la scène.
 SceneMode State::GetMode()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -152,6 +163,7 @@ SceneMode State::GetMode()
 
 
 
+//  Obtient la description du spell dont l'id est donné en paramètre.
 SpellDescriptionView State::GetSpellCurrentLevelDescription(int spellId)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -167,6 +179,7 @@ SpellDescriptionView State::GetSpellCurrentLevelDescription(int spellId)
 
 
 
+//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
 SpellView State::GetSpell(int spellId)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -182,6 +195,7 @@ SpellView State::GetSpell(int spellId)
 
 
 
+//  Obtient la liste des spells du héros contrôlé.
 std::vector<SpellView> State::GetSpells()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
@@ -202,6 +216,7 @@ std::vector<SpellView> State::GetSpells()
 
 
 
+//  Obtient les spells possédés par le héros dont l'id est passé en paramètre.
 std::vector<SpellView> State::GetHeroSpells(int entityId)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);

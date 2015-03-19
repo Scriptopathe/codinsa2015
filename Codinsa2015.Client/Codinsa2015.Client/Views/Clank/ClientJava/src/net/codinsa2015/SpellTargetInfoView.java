@@ -17,11 +17,17 @@ public class SpellTargetInfoView
 {
 
 
+	// Type de ciblage du sort.
 	public TargettingType Type;
+	// Range du sort en unités métriques.
 	public Float Range;
+	// Durée en secondes que met le sort à atteindre la position donnée.
 	public Float Duration;
+	// Rayon du sort. (non utilisé pour les sort targetted)
 	public Float AoeRadius;
+	// Obtient une valeur indiquant si le sort est détruit lors d'une collision avec une entité
 	public Boolean DieOnCollision;
+	// Retourne le type de cibles pouvant être touchées par ce sort.
 	public EntityTypeRelative AllowedTargetTypes;
 	public static SpellTargetInfoView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellTargetInfoView _obj =  new SpellTargetInfoView();

@@ -16,6 +16,7 @@ public class SpellcastBaseView
 {
 
 
+	// Shape utilisée par ce spell cast.
 	public GenericShapeView Shape;
 	public static SpellcastBaseView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellcastBaseView _obj =  new SpellcastBaseView();

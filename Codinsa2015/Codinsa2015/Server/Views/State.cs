@@ -11,58 +11,101 @@ namespace Codinsa2015.Views
 	{
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
+		/// <summary>
+		///  Retourne une vue vers le héros contrôlé par ce contrôleur.
+		/// </summary>
 		public EntityBaseView GetHero(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHero();
 		}	
+		/// <summary>
+		///  Retourne la position du héros.
+		/// </summary>
 		public Vector2 GetPosition(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetPosition();
 		}	
+		/// <summary>
+		///  Retourne les informations concernant la map actuelle
+		/// </summary>
 		public MapView GetMapView(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMapView();
 		}	
+		/// <summary>
+		///  Déplace le joueur vers la position donnée en utilisant l'A*.
+		/// </summary>
 		public bool StartMoveTo(Vector2 position, int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).StartMoveTo(position);
 		}	
+		/// <summary>
+		///  Indique si le joueur est entrain de se déplacer en utilisant son A*.
+		/// </summary>
 		public bool IsAutoMoving(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).IsAutoMoving();
 		}	
+		/// <summary>
+		///  Arrête le déplacement automatique (A*) du joueur.
+		/// </summary>
 		public bool EndMoveTo(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).EndMoveTo();
 		}	
+		/// <summary>
+		///  Retourne la liste des entités en vue
+		/// </summary>
 		public List<EntityBaseView> GetEntitiesInSight(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntitiesInSight();
 		}	
+		/// <summary>
+		///  Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès
+		/// refusé)
+		/// </summary>
 		public EntityBaseView GetEntityById(int entityId, int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntityById(entityId);
 		}	
+		/// <summary>
+		///  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
+		/// </summary>
 		public bool UseSpell(int spellId, SpellCastTargetInfoView target, int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseSpell(spellId,target);
 		}	
+		/// <summary>
+		///  Obtient le mode actuel de la scène.
+		/// </summary>
 		public SceneMode GetMode(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMode();
 		}	
+		/// <summary>
+		///  Obtient la description du spell dont l'id est donné en paramètre.
+		/// </summary>
 		public SpellDescriptionView GetSpellCurrentLevelDescription(int spellId, int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpellCurrentLevelDescription(spellId);
 		}	
+		/// <summary>
+		///  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		/// </summary>
 		public SpellView GetSpell(int spellId, int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpell(spellId);
 		}	
+		/// <summary>
+		///  Obtient la liste des spells du héros contrôlé.
+		/// </summary>
 		public List<SpellView> GetSpells(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpells();
 		}	
+		/// <summary>
+		///  Obtient les spells possédés par le héros dont l'id est passé en paramètre.
+		/// </summary>
 		public List<SpellView> GetHeroSpells(int entityId, int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHeroSpells(entityId);

@@ -10,6 +10,7 @@ namespace Clank.Core.Model.Language
     /// </summary>
     public class Instruction
     {
+        string m_comment;
         /// <summary>
         /// Ligne à laquelle a été crée cette instruction.
         /// </summary>
@@ -25,6 +26,18 @@ namespace Clank.Core.Model.Language
         /// <summary>
         /// Représente un commentaire à insérer devant l'instruction.
         /// </summary>
-        public string Comment { get; set; }
+        public string Comment 
+        {
+            get { return m_comment; }
+            set
+            {
+                if (value == null)
+                    m_comment = value;
+                else
+                {
+                    m_comment = value.Trim('\n', '\r');
+                }
+            }
+        }
     }
 }

@@ -22,6 +22,7 @@ import net.codinsa2015.SpellView.*;
 public class State
 {
 
+	//  Retourne une vue vers le héros contrôlé par ce contrôleur.
 	public EntityBaseView GetHero()
 	{
 		try {
@@ -41,6 +42,7 @@ public class State
 		return null;
 	}
 
+	//  Retourne la position du héros.
 	public Vector2 GetPosition()
 	{
 		try {
@@ -60,6 +62,7 @@ public class State
 		return null;
 	}
 
+	//  Retourne les informations concernant la map actuelle
 	public MapView GetMapView()
 	{
 		try {
@@ -79,6 +82,7 @@ public class State
 		return null;
 	}
 
+	//  Déplace le joueur vers la position donnée en utilisant l'A*.
 	public Boolean StartMoveTo(Vector2 position)
 	{
 		try {
@@ -99,6 +103,7 @@ public class State
 		return null;
 	}
 
+	//  Indique si le joueur est entrain de se déplacer en utilisant son A*.
 	public Boolean IsAutoMoving()
 	{
 		try {
@@ -118,6 +123,7 @@ public class State
 		return null;
 	}
 
+	//  Arrête le déplacement automatique (A*) du joueur.
 	public Boolean EndMoveTo()
 	{
 		try {
@@ -137,6 +143,7 @@ public class State
 		return null;
 	}
 
+	//  Retourne la liste des entités en vue
 	public ArrayList<EntityBaseView> GetEntitiesInSight()
 	{
 		try {
@@ -161,6 +168,8 @@ public class State
 		return null;
 	}
 
+	//  Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès
+	// refusé)
 	public EntityBaseView GetEntityById(Integer entityId)
 	{
 		try {
@@ -181,6 +190,7 @@ public class State
 		return null;
 	}
 
+	//  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 	public Boolean UseSpell(Integer spellId,SpellCastTargetInfoView target)
 	{
 		try {
@@ -202,6 +212,7 @@ public class State
 		return null;
 	}
 
+	//  Obtient le mode actuel de la scène.
 	public SceneMode GetMode()
 	{
 		try {
@@ -221,6 +232,7 @@ public class State
 		return null;
 	}
 
+	//  Obtient la description du spell dont l'id est donné en paramètre.
 	public SpellDescriptionView GetSpellCurrentLevelDescription(Integer spellId)
 	{
 		try {
@@ -241,6 +253,7 @@ public class State
 		return null;
 	}
 
+	//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
 	public SpellView GetSpell(Integer spellId)
 	{
 		try {
@@ -261,6 +274,7 @@ public class State
 		return null;
 	}
 
+	//  Obtient la liste des spells du héros contrôlé.
 	public ArrayList<SpellView> GetSpells()
 	{
 		try {
@@ -285,6 +299,7 @@ public class State
 		return null;
 	}
 
+	//  Obtient les spells possédés par le héros dont l'id est passé en paramètre.
 	public ArrayList<SpellView> GetHeroSpells(Integer entityId)
 	{
 		try {

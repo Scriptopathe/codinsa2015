@@ -18,6 +18,7 @@ namespace Clank.Core.Tokenizers
         /// <param name="tokens"></param>
         public static List<ExpressionToken> Parse(List<Token> tokens)
         {
+            var expressionTokens = Separate(MakeGroups(tokens));
             return Separate(MakeGroups(tokens));
         }
 
@@ -114,6 +115,7 @@ namespace Clank.Core.Tokenizers
                         case "(": case "{": case "[": case "<":
                         case ")": case "}": case "]": case ">":
                         case ";": case ",": case ":": case "'":
+                        case "/":
                             throw new SyntaxError("Jeton '" + token.Content + "' inattendu.", token.Line, token.Source);
                         case "$":
                         case "@":
@@ -123,6 +125,17 @@ namespace Clank.Core.Tokenizers
                             throw new NotImplementedException();
 
                     }
+                case Token.TokenType.Comment:
+                    return new ExpressionToken()
+                    {
+                        TkType = ExpressionToken.ExpressionTokenType.Comment,
+                        Content = token.Content,
+                        Line = token.Line,
+                        Character = token.Character,
+                        Source = token.Source
+                    };
+
+
                 default:
                     throw new NotImplementedException();
             }
@@ -554,6 +567,7 @@ namespace Clank.Core.Tokenizers
                     // sinon, on l'ajoute à l'expression qui va contenir le groupe.
                     if (endsGroup)
                     {
+                        #region endsgroup
                         ExpressionToken e = new ExpressionToken();
                         e.Line = token.Line;
                         e.Character = token.Character;
@@ -590,6 +604,7 @@ namespace Clank.Core.Tokenizers
                                 }
                             }
                         }
+
                         if (matchPattern)
                         {
                             // Encapsule les jetons dans une liste;
@@ -606,7 +621,7 @@ namespace Clank.Core.Tokenizers
 
                             e.TkType = patterns[key];
                             e.ListTokens = capsule;
-
+                            
                             // Supprime le jeton Name que l'on a mis dans le jeton de type function call.
                             exprs.RemoveAt(exprs.Count - 1);
                         }
@@ -626,6 +641,7 @@ namespace Clank.Core.Tokenizers
                         exprs.Add(e);
                         currentExpr.Clear();
                         groupKindStarted = 0;
+                        #endregion
                     }
                     else
                     {
@@ -729,6 +745,10 @@ namespace Clank.Core.Tokenizers
                         break;
 
                     case Token.TokenType.BoolLiteral:
+                        currentExpr.Add(token);
+                        break;
+
+                    case Token.TokenType.Comment:
                         currentExpr.Add(token);
                         break;
                 }

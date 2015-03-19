@@ -18,7 +18,7 @@ namespace Clank.Core.Tokenizers
             StringLiteral,
             NumberLiteral,
             BoolLiteral,
-            Commentary,
+            Comment,
             Unresolved,
         }
 

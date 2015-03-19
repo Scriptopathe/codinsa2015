@@ -14,8 +14,11 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
+		// Obtient la description de l'upgrade
 		public SpellDescriptionView Description;	
+		// 
 		public List<StateAlterationModelView> PassiveAlterations;	
+		// Obtient le coût de l'upgrade.
 		public float Cost;	
 		public static WeaponUpgradeModelView Deserialize(System.IO.StreamReader input) {
 			WeaponUpgradeModelView _obj =  new WeaponUpgradeModelView();

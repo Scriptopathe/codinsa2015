@@ -14,6 +14,7 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
+		// Représente la vision qu'ont les 2 équipes sur l'ensemble de la map.
 		public List<List<VisionFlags>> Vision;	
 		public static VisionMapView Deserialize(System.IO.StreamReader input) {
 			VisionMapView _obj =  new VisionMapView();

@@ -106,17 +106,24 @@ namespace Clank.Core.Model.Semantic
             if (instructionToken.TkType != TokenType.List)
                 throw new InvalidOperationException();
 
+            Pattern.Match match;
             #region Return
             // Mot clef return.
-            if (!preparse && instructionToken.ChildToken.TkType == TokenType.Name && instructionToken.ChildToken.Content == Language.SemanticConstants.Return)
+            match = Pattern.ReturnPattern.MatchPattern(instructionToken.ListTokens);
+            if (!preparse && match.MatchPattern)
             {
                 Language.ReturnInstruction ret = new Language.ReturnInstruction();
                 ret.Line = instructionToken.ChildToken.Line;
                 ret.Character = instructionToken.ChildToken.Character;
                 ret.Source = instructionToken.ChildToken.Source;
-                if (instructionToken.ListTokens.Count == 2)
+                // Commentaire optionnel attaché.
+                var commentMatch = match.FindByIdentifier("Comment");
+                if (commentMatch.Count != 0)
+                    ret.Comment = commentMatch.First().MatchedToken.Content;
+                
+                if (match.FindByIdentifier("Evaluable").Count > 0)
                 {
-                    ret.Value = ParseEvaluable(instructionToken.ListTokens[1], context, preparse);
+                    ret.Value = ParseEvaluable(match.FindByIdentifier("Evaluable").First().MatchedToken, context, preparse);
 
                     // Type checking
                     if(context.ContainingFunc.Func.IsConstructor)
@@ -150,7 +157,6 @@ namespace Clank.Core.Model.Semantic
 
             // Déclaration de fonction
             #region Function Declaration
-            Pattern.Match match;
             match = Pattern.FunctionDeclarationPattern.MatchPattern(instructionToken.ListTokens);
             if (match.MatchPattern)
             {
@@ -160,6 +166,11 @@ namespace Clank.Core.Model.Semantic
                 var codeBlock = matchedToken.FunctionDeclCode;
                 var type = match.FindByIdentifier("Type").First().MatchedToken;
                 Language.FunctionDeclaration decl = new Language.FunctionDeclaration();
+
+                // Commentaire optionnel attaché.
+                var commentMatch = match.FindByIdentifier("Comment");
+                if (commentMatch.Count != 0)
+                    decl.Comment = commentMatch.First().MatchedToken.Content;
                 decl.Line = identifier.Line;
                 decl.Character = identifier.Character;
                 decl.Source = identifier.Source;
@@ -349,6 +360,10 @@ namespace Clank.Core.Model.Semantic
                     return unit.MatchedToken.Content;
                 }).ToList();
 
+                // Commentaire optionnel attaché.
+                var commentMatch = match.FindByIdentifier("Comment");
+                if (commentMatch.Count != 0)
+                    decl.Comment = commentMatch.First().MatchedToken.Content;
 
                 decl.Line = block.MatchedToken.Line;
                 decl.Source = block.MatchedToken.Source;
@@ -451,6 +466,11 @@ namespace Clank.Core.Model.Semantic
                 decl.Source = block.MatchedToken.Source;
                 decl.Character = block.MatchedToken.Character;
 
+                // Commentaire optionnel attaché.
+                var commentMatch = match.FindByIdentifier("Comment");
+                if (commentMatch.Count != 0)
+                    decl.Comment = commentMatch.First().MatchedToken.Content;
+
                 // Nom
                 if (block.MatchedToken.TkType == TokenType.NamedCodeBlock)
                 {
@@ -478,12 +498,15 @@ namespace Clank.Core.Model.Semantic
                 {
                     return unit.MatchedToken.Content;
                 }).ToList();
-
+                
                 decl.Line = nameToken.Line;
                 decl.Source = nameToken.Source;
                 decl.Character = nameToken.Character;
                 decl.IsInstanceVariable = context.ContainingFunc == null;
 
+                var commentMatch = match.FindByIdentifier("Comment");
+                if (commentMatch.Count != 0)
+                    decl.Comment = commentMatch.First().MatchedToken.Content;
 
                 if (decl.Var.Type != null)
                 {
@@ -729,17 +752,20 @@ namespace Clank.Core.Model.Semantic
 
 
             // Si on y trouve un autre bloc
-            if (instructionToken.ChildToken.TkType == TokenType.NamedCodeBlock)
+            match = Pattern.NamedCodeBlockDeclarationPattern.MatchPattern(instructionToken.ListTokens);
+            #region Named code block
+            if (match.MatchPattern)
             {
-                if (instructionToken.ChildToken.NamedCodeBlockIdentifier.Content == Language.SemanticConstants.State && preparse)
+                var codeBlock = match.FindByIdentifier("Block").First().MatchedToken;
+                if (codeBlock.NamedCodeBlockIdentifier.Content == Language.SemanticConstants.State && preparse)
                 {
                     // On simule le fait d'être dans la classe State pour y ajouter les variables d'instance.
                     // Création du contexte fils
                     TypeTable.Context childContext = new TypeTable.Context();
                     childContext.Container = Types.Types[Language.SemanticConstants.StateClass];
                     childContext.ParentContext = context;
-                    childContext.BlockName = instructionToken.ChildToken.NamedCodeBlockIdentifier.Content;
-                    return ParseNamedBlock(instructionToken.ChildToken, childContext, preparse, true);
+                    childContext.BlockName = codeBlock.NamedCodeBlockIdentifier.Content;
+                    return ParseNamedBlock(codeBlock, childContext, preparse, true);
                 }
                 else
                 {
@@ -747,11 +773,11 @@ namespace Clank.Core.Model.Semantic
                     TypeTable.Context childContext = new TypeTable.Context();
                     childContext.Container = context.Container;
                     childContext.ParentContext = context;
-                    childContext.BlockName = instructionToken.ChildToken.NamedCodeBlockIdentifier.Content;
+                    childContext.BlockName = codeBlock.NamedCodeBlockIdentifier.Content;
 
                     // Bloc access ou write : ajoute le mot clef state en temps que variable.
-                    if (instructionToken.ChildToken.NamedCodeBlockIdentifier.Content == Language.SemanticConstants.AccessBk ||
-                        instructionToken.ChildToken.NamedCodeBlockIdentifier.Content == Language.SemanticConstants.WriteBk)
+                    if (codeBlock.NamedCodeBlockIdentifier.Content == Language.SemanticConstants.AccessBk ||
+                        codeBlock.NamedCodeBlockIdentifier.Content == Language.SemanticConstants.WriteBk)
                     {
                         childContext.Variables.Add(Language.SemanticConstants.State, new Language.Variable() {
                             Name = Language.SemanticConstants.State, 
@@ -759,9 +785,35 @@ namespace Clank.Core.Model.Semantic
                         });
                     }
 
-                    return ParseNamedBlock(instructionToken.ChildToken, childContext, preparse);
+                    return ParseNamedBlock(codeBlock, childContext, preparse);
                 }
             }
+            #endregion
+
+            // Commentaires
+            #region Comments
+            if (instructionToken.TkType == TokenType.Comment)
+            {
+                return new Language.PlaceholderInstruction() { Comment = instructionToken.Content };
+            }
+            else if(instructionToken.TkType == TokenType.List)
+            {
+                bool allComment = true;
+                string comment = "";
+                foreach(var inst in instructionToken.ListTokens)
+                {
+                    if (inst.TkType != TokenType.Comment)
+                        allComment = false;
+                    else
+                        comment += inst.Content + "\n";
+                }
+
+                if(allComment)
+                {
+                    return new Language.PlaceholderInstruction() { Comment = comment.Trim('\n') };
+                }
+            }
+            #endregion
 
             throw new Clank.Core.Tokenizers.SyntaxError("Instruction mal formée.", instructionToken.Line, instructionToken.Source);
         }

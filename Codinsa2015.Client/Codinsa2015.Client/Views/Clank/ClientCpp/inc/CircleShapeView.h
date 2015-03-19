@@ -7,7 +7,9 @@ class CircleShapeView
 {
 
 public: 
+	// Position du centre du cercle.
 	Vector2 Position;
+	// Rayon du cercle.
 	float Radius;
 	void serialize(std::ostream& output);
 

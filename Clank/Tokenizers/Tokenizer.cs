@@ -31,224 +31,227 @@ namespace Clank.Core.Tokenizers
             string source;
             
             script = script + " ";
-            foreach(char chr in script)
+            Lexer lex = new Lexer(script);
+            while(!lex.IsOEF())
             {
-                // Incrémente le compteur de ligne.
-                if(chr == '\n')
-                {
-                    _line++;
-                    charIndex = 0;
-                }
-                charIndex++;
+                char chr = lex.GetCurrentChar();
+                _line = lex.GetLine();
+                charIndex = lex.GetCharacterIndex();
 
                 // Récupère la ligne / source correcte depuis le mapping entre ligne du
                 // script final et ligne des scripts included.
                 line = lineMappings[_line].Line;
                 source = lineMappings[_line].Source;
 
-                // Ignore les caractères si c'est un commentaire.
-                if(isParsingComment)
-                {
-                    if(chr == '\n') // fin de ligne = arrêt du commentaire.
-                        isParsingComment = false;
-                    continue;
-                }
                 // Début de commentaire.
-                if (chr == '#' && !isParsingString)
+                bool parseComments = !isParsingString;
+                string comment = "";
+                bool commentFound = parseComments && lex.MatchComment(out comment, true);
+                if (commentFound)
                 {
-                    isParsingComment = true;
+                    #region Comment
+                    Token c = new Token(comment, Token.TokenType.Comment, line, charIndex, source);
+                    tokens.Add(c);
+                    #endregion
+
                     continue;
                 }
-
-                // Si c'est un chiffre.
-                #region Digit
-                if(char.IsDigit(chr) || (isParsingNumber && chr == '.') )
+                else
                 {
-                    if(isParsingName || isParsingString || isParsingNumber)
+                    // Si c'est un chiffre.
+                    #region Digit
+                    if (char.IsDigit(chr) || (isParsingNumber && chr == '.'))
                     {
-                        // On continue le mot / string
-                        currentWord.Add(chr);
-                    }
-                    else if(isParsingOperator)
-                    {
-                        // On a fini de parser l'opérateur, on peut le terminer et parser un nouveau mot (number).
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
-                        currentWord.Clear();
-                        currentWord.Add(chr);
-                        isParsingNumber = true;
-                        isParsingOperator = false;
-                        tokens.Add(newToken);
-                    }
-                    else
-                    {
-                        isParsingNumber = true;
-                        currentWord.Add(chr);
-                    }
-                }
-                #endregion
-                // Lettre
-                #region Letter
-                else if(char.IsLetter(chr) || chr == '_')
-                {
-                    if (isParsingName || isParsingString || isParsingNumber)
-                    {
-                        // On continue le mot / string
-                        currentWord.Add(chr);
-                    }
-                    else if (isParsingOperator)
-                    {
-                        // On a fini de parser l'opérateur, on peut le terminer et parser un nouveau mot (bame).
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
-                        currentWord.Clear();
-                        currentWord.Add(chr);
-                        isParsingName = true;
-                        isParsingOperator = false;
-                        tokens.Add(newToken);
-                    }
-                    else
-                    {
-                        isParsingName = true;
-                        currentWord.Add(chr);
-                    }
-                }
-                #endregion
-                // Opérateur
-                #region Operator
-                else if(isOperatorChar(chr, currentWord, isParsingOperator))
-                {
-                    // Nom / Number / Special char : l'opérateur les termine.
-                    if(isParsingName)
-                    {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex, source);
-                        currentWord.Clear();
-                        currentWord.Add(chr);
-                        isParsingName = false;
-                        isParsingOperator = true;
-                        tokens.Add(newToken);
-                    }
-                    else if(isParsingNumber)
-                    {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex, source);
-                        currentWord.Clear();
-                        currentWord.Add(chr);
-                        isParsingNumber = false;
-                        isParsingOperator = true;
-                        tokens.Add(newToken);
-                    }
-                    else if(isParsingString || isParsingOperator)
-                    {
-                        // Il ne se passe rien de spécial.
-                        currentWord.Add(chr);
-                    }
-                    else
-                    {
-                        isParsingOperator = true;
-                        currentWord.Add(chr);
-                    }
-                }
-                #endregion
-                // Caractère spécial.
-                #region Special Char
-                else if(isSpecialChar(chr))
-                {
-                    bool isUnresolved = chr == '>' || chr == '<';
-                    Token.TokenType type = isUnresolved ? Token.TokenType.Unresolved : Token.TokenType.SpecialChar;
-                     // Nom / Number / Special char : l'opérateur les termine.
-                    if(isParsingName)
-                    {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex, source);
-                        currentWord.Clear();
-                        isParsingName = false;
-                        tokens.Add(newToken);
-                        if(!isIgnoredChar(chr))
-                            tokens.Add(new Token(chr.ToString(), type, line, charIndex, source));
-                    }
-                    else if(isParsingNumber)
-                    {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex, source);
-                        currentWord.Clear();
-                        isParsingNumber = false;
-                        tokens.Add(newToken);
-                        if(!isIgnoredChar(chr))
-                            tokens.Add(new Token(chr.ToString(), type, line, charIndex, source));
-                    }
-                    else if(isParsingOperator)
-                    {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
-                        currentWord.Clear();
-                        isParsingOperator = false;
-                        tokens.Add(newToken);
-                        if(!isIgnoredChar(chr))
-                            tokens.Add(new Token(chr.ToString(), type, line, charIndex, source));
-                    }
-                    else if(isParsingString)
-                    {
-                        // Il ne se passe rien de spécial.
-                        currentWord.Add(chr);
-                    }
-                    else if(!isIgnoredChar(chr)) // espaces, fin de lignes etc...
-                    {
-                        // A ce point, currentWord doit être vide.
-                        Token newToken = new Token(chr.ToString(), type, line, charIndex, source);
-      
-                        tokens.Add(newToken);
-                    }
-                }
-                #endregion
-                // Début de string.
-                else if(chr == '"' || chr == '`')
-                {
-                    // Nom / Number / Special char : l'opérateur les termine.
-                    if(isParsingName)
-                    {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex, source);
-                        currentWord.Clear();
-                        isParsingName = false;
-                        isParsingString = true;
-                        tokens.Add(newToken);
-                    }
-                    else if(isParsingNumber)
-                    {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex, source);
-                        currentWord.Clear();
-                        isParsingNumber = false;
-                        isParsingString = true;
-                        tokens.Add(newToken);
-                    }
-                    else if(isParsingOperator)
-                    {
-                        Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
-                        currentWord.Clear();
-                        isParsingOperator = false;
-                        isParsingString = true;
-                        tokens.Add(newToken);
-                    }
-                    else if (isParsingString) // termine le string s'il a déjà commencé.
-                    {
-                        // S'il est escapé : on l'ajoute au string.
-                        if (isEscapedChar)
+                        if (isParsingName || isParsingString || isParsingNumber)
                         {
+                            // On continue le mot / string
+                            currentWord.Add(chr);
+                        }
+                        else if (isParsingOperator)
+                        {
+                            // On a fini de parser l'opérateur, on peut le terminer et parser un nouveau mot (number).
+                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
+                            currentWord.Clear();
+                            currentWord.Add(chr);
+                            isParsingNumber = true;
+                            isParsingOperator = false;
+                            tokens.Add(newToken);
+                        }
+                        else
+                        {
+                            isParsingNumber = true;
+                            currentWord.Add(chr);
+                        }
+                    }
+                    #endregion
+                    // Lettre
+                    #region Letter
+                    else if (char.IsLetter(chr) || chr == '_')
+                    {
+                        if (isParsingName || isParsingString || isParsingNumber)
+                        {
+                            // On continue le mot / string
+                            currentWord.Add(chr);
+                        }
+                        else if (isParsingOperator)
+                        {
+                            // On a fini de parser l'opérateur, on peut le terminer et parser un nouveau mot (bame).
+                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
+                            currentWord.Clear();
+                            currentWord.Add(chr);
+                            isParsingName = true;
+                            isParsingOperator = false;
+                            tokens.Add(newToken);
+                        }
+                        else
+                        {
+                            isParsingName = true;
+                            currentWord.Add(chr);
+                        }
+                    }
+                    #endregion
+                    // Opérateur
+                    #region Operator
+                    else if (isOperatorChar(chr, currentWord, isParsingOperator))
+                    {
+                        // Nom / Number / Special char : l'opérateur les termine.
+                        if (isParsingName)
+                        {
+                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex, source);
+                            currentWord.Clear();
+                            currentWord.Add(chr);
+                            isParsingName = false;
+                            isParsingOperator = true;
+                            tokens.Add(newToken);
+                        }
+                        else if (isParsingNumber)
+                        {
+                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex, source);
+                            currentWord.Clear();
+                            currentWord.Add(chr);
+                            isParsingNumber = false;
+                            isParsingOperator = true;
+                            tokens.Add(newToken);
+                        }
+                        else if (isParsingString || isParsingOperator)
+                        {
+                            // Il ne se passe rien de spécial.
                             currentWord.Add(chr);
                         }
                         else
                         {
-                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.StringLiteral, line, charIndex, source);
+                            isParsingOperator = true;
+                            currentWord.Add(chr);
+                        }
+                    }
+                    #endregion
+                    // Caractère spécial.
+                    #region Special Char
+                    else if (isSpecialChar(chr))
+                    {
+                        bool isUnresolved = chr == '>' || chr == '<';
+                        Token.TokenType type = isUnresolved ? Token.TokenType.Unresolved : Token.TokenType.SpecialChar;
+                        // Nom / Number / Special char : l'opérateur les termine.
+                        if (isParsingName)
+                        {
+                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex, source);
                             currentWord.Clear();
-                            isParsingString = false;
+                            isParsingName = false;
+                            tokens.Add(newToken);
+                            if (!isIgnoredChar(chr))
+                                tokens.Add(new Token(chr.ToString(), type, line, charIndex, source));
+                        }
+                        else if (isParsingNumber)
+                        {
+                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex, source);
+                            currentWord.Clear();
+                            isParsingNumber = false;
+                            tokens.Add(newToken);
+                            if (!isIgnoredChar(chr))
+                                tokens.Add(new Token(chr.ToString(), type, line, charIndex, source));
+                        }
+                        else if (isParsingOperator)
+                        {
+                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
+                            currentWord.Clear();
+                            isParsingOperator = false;
+                            tokens.Add(newToken);
+                            if (!isIgnoredChar(chr))
+                                tokens.Add(new Token(chr.ToString(), type, line, charIndex, source));
+                        }
+                        else if (isParsingString)
+                        {
+                            // Il ne se passe rien de spécial.
+                            currentWord.Add(chr);
+                        }
+                        else if (!isIgnoredChar(chr)) // espaces, fin de lignes etc...
+                        {
+                            // A ce point, currentWord doit être vide.
+                            Token newToken = new Token(chr.ToString(), type, line, charIndex, source);
+
                             tokens.Add(newToken);
                         }
                     }
-                    else
+                    #endregion
+                    // Début de string.
+                    #region String
+                    else if (chr == '"' || chr == '`')
                     {
-                        isParsingString = true;
+                        // Nom / Number / Special char : l'opérateur les termine.
+                        if (isParsingName)
+                        {
+                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Name, line, charIndex, source);
+                            currentWord.Clear();
+                            isParsingName = false;
+                            isParsingString = true;
+                            tokens.Add(newToken);
+                        }
+                        else if (isParsingNumber)
+                        {
+                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.NumberLiteral, line, charIndex, source);
+                            currentWord.Clear();
+                            isParsingNumber = false;
+                            isParsingString = true;
+                            tokens.Add(newToken);
+                        }
+                        else if (isParsingOperator)
+                        {
+                            Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.Operator, line, charIndex, source);
+                            currentWord.Clear();
+                            isParsingOperator = false;
+                            isParsingString = true;
+                            tokens.Add(newToken);
+                        }
+                        else if (isParsingString) // termine le string s'il a déjà commencé.
+                        {
+                            // S'il est escapé : on l'ajoute au string.
+                            if (isEscapedChar)
+                            {
+                                currentWord.Add(chr);
+                            }
+                            else
+                            {
+                                Token newToken = new Token(new String(currentWord.ToArray()), Token.TokenType.StringLiteral, line, charIndex, source);
+                                currentWord.Clear();
+                                isParsingString = false;
+                                tokens.Add(newToken);
+                            }
+                        }
+                        else
+                        {
+                            isParsingString = true;
+                        }
                     }
+
+                    // Escape
+                    if (isParsingString && chr == '\\')
+                        isEscapedChar = true;
+                    else
+                        isEscapedChar = false;
+                    #endregion
                 }
 
-                // Escape
-                if(isParsingString && chr == '\\')
-                    isEscapedChar = true;
-                else
-                    isEscapedChar = false;
+                lex.Next();
             }
 
             return SolveUnresolvedTokens(tokens);
@@ -281,10 +284,6 @@ namespace Clank.Core.Tokenizers
             foreach(Token token in tokens)
             {
                 // Mot clef new :
-                /*if(token.TkType == Token.TokenType.Name && token.Content == "new")
-                {
-                    token.TkType = Token.TokenType.Operator;
-                }*/
                 // Litéraux booléens.
                 if(token.TkType == Token.TokenType.Name && (token.Content == "true" || token.Content == "false"))
                 {

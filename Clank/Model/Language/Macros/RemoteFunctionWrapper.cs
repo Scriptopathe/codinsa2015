@@ -28,6 +28,7 @@ namespace Clank.Core.Model.Language.Macros
             Func = func;
             Source = "generated";
             Id = id;
+            Comment = func.Comment;
         }
     }
 }

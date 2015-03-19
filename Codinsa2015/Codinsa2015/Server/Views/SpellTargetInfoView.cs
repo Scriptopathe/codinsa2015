@@ -14,11 +14,17 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
+		// Type de ciblage du sort.
 		public TargettingType Type;	
+		// Range du sort en unités métriques.
 		public float Range;	
+		// Durée en secondes que met le sort à atteindre la position donnée.
 		public float Duration;	
+		// Rayon du sort. (non utilisé pour les sort targetted)
 		public float AoeRadius;	
+		// Obtient une valeur indiquant si le sort est détruit lors d'une collision avec une entité
 		public bool DieOnCollision;	
+		// Retourne le type de cibles pouvant être touchées par ce sort.
 		public EntityTypeRelative AllowedTargetTypes;	
 		public static SpellTargetInfoView Deserialize(System.IO.StreamReader input) {
 			SpellTargetInfoView _obj =  new SpellTargetInfoView();

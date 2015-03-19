@@ -19,37 +19,70 @@ public class EntityBaseView
 {
 
 
+	// Retourne la résistance magique effective de cette entité.
 	public Float GetMagicResist;
+	// Retourne la valeur d'AP effective de cette entité.
 	public Float GetAbilityPower;
+	// Retourne la valeur de CDR effective de cette entité.
 	public Float GetCooldownReduction;
+	// Obtient la vitesse de déplacement de l'entité.
 	public Float GetMoveSpeed;
+	// Obtient la vitesse d'attaque effective de l'entité.
 	public Float GetAttackSpeed;
+	// Obtient les points d'attaque effectifs de cette entité.
 	public Float GetAttackDamage;
+	// Fonction utilisée pour obtenir les points d'armure effectifs sur cette unité.
 	public Float GetArmor;
+	// Obtient les HP actuels de cette entité.
 	public Float GetHP;
+	// Obtient les HP max actuels de cette entité.
 	public Float GetMaxHP;
+	// Obtient la liste des altérations d'état affectées à cette entité.
 	public ArrayList<StateAlterationView> StateAlterations;
+	// Représente les points d'armure de base de cette entité.
 	public Float BaseArmor;
+	// Représente la direction de cette entité.
 	public Vector2 Direction;
+	// Position de l'entité sur la map.
 	public Vector2 Position;
+	// Points de bouclier de cette entité.
 	public Float ShieldPoints;
+	// Obtient les points de vie actuels de l'entité
 	public Float HP;
+	// Obtient le nombre de points de vie maximum de base de cette entité.
 	public Float BaseMaxHP;
+	// Obtient la vitesse de déplacement de base de l'entité.
 	public Float BaseMoveSpeed;
+	// Retourne une valeur indiquant si l'entité est morte.
 	public Boolean IsDead;
+	// Retourne le type de cette entité.
 	public EntityType Type;
+	// Obtient l'id de cette entité.
 	public Integer ID;
+	// Obtient ou définit les points d'attaque de base de cette unité.
 	public Float BaseAttackDamage;
+	// Cooldown reduction de base de cette unité.
 	public Float BaseCooldownReduction;
+	// Attack speed de base de cette entité.
 	public Float BaseAttackSpeed;
+	// Points d'AP de base de cette entité.
 	public Float BaseAbilityPower;
+	// Point de résistance magique de base de cette entité.
 	public Float BaseMagicResist;
+	// Obtient une valeur indiquant si cette entité est Rootée. (ne peut plus bouger).
 	public Boolean IsRooted;
+	// Obtient une valeur indiquant si cette unité est Silenced (ne peut pas utiliser de sorts).
 	public Boolean IsSilenced;
+	// Obtient une valeur indiquant si cette unité est Stuned (ne peut pas bouger ni utiliser de
+	// sorts).
 	public Boolean IsStuned;
+	// Obtient une valeur indiquant si cette unité est invisible.
 	public Boolean IsStealthed;
+	// Obtient une valeur indiquant si cette entité possède la vision pure.
 	public Boolean HasTrueVision;
+	// Obtient une valeur indiquant si cette unité peut voir les wards.
 	public Boolean HasWardVision;
+	// Retourne la range à laquelle cette entité donne la vision.
 	public Float VisionRange;
 	public static EntityBaseView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		EntityBaseView _obj =  new EntityBaseView();

@@ -14,9 +14,13 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
+		// Cooldown actuel du sort, en secondes
 		public float CurrentCooldown;	
+		// Id de l'entité possédant le sort.
 		public int SourceCaster;	
+		// Représente les descriptions du spell pour les différents niveaux.
 		public List<SpellDescriptionView> Levels;	
+		// Niveau actuel du spell.
 		public int Level;	
 		public static SpellView Deserialize(System.IO.StreamReader input) {
 			SpellView _obj =  new SpellView();

@@ -17,9 +17,14 @@ public class SpellCastTargetInfoView
 {
 
 
+	// Type de ciblage de cet objet TargetInfo.
 	public TargettingType Type;
+	// Retourne la position de la cible, si le type de ciblage (Type) est TargettingType.Position.
 	public Vector2 TargetPosition;
+	// Retourne la direction de la cible, si le type de ciblage (Type) est TargettingType.Direction.
+	// Ce vecteur est transformé automatiquement en vecteur unitaire.
 	public Vector2 TargetDirection;
+	// Retourne l'id de la cible, si le type de cibale (Type) est TargettingType.Targetted.
 	public Integer TargetId;
 	public static SpellCastTargetInfoView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellCastTargetInfoView _obj =  new SpellCastTargetInfoView();

@@ -16,7 +16,9 @@ public class CircleShapeView
 {
 
 
+	// Position du centre du cercle.
 	public Vector2 Position;
+	// Rayon du cercle.
 	public Float Radius;
 	public static CircleShapeView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		CircleShapeView _obj =  new CircleShapeView();

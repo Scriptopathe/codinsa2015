@@ -14,7 +14,9 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
+		// Obtient les altérations d'état appliquées passivement par cet équipement.
 		public List<StateAlterationModelView> PassiveAlterations;	
+		// Obtient le coût de l'upgrade.
 		public float Cost;	
 		public static PassiveEquipmentUpgradeModelView Deserialize(System.IO.StreamReader input) {
 			PassiveEquipmentUpgradeModelView _obj =  new PassiveEquipmentUpgradeModelView();

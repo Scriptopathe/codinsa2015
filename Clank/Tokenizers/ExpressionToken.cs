@@ -15,6 +15,7 @@ namespace Clank.Core.Tokenizers
         /// </summary>
         public enum ExpressionTokenType
         {
+            Comment,
             NumberLiteral,         // 56
             StringLiteral,         // "jiji"
             BoolLiteral,           // true, false

@@ -17,25 +17,48 @@ public class StateAlterationModelView
 {
 
 
+	// Représente le type de l'altération d'état.
 	public StateAlterationType Type;
+	// Durée de base de l'altération d'état en secondes
 	public Float BaseDuration;
+	// Si Type contient Dash : Obtient ou définit une valeur indiquant si le dash permet traverser les
+	// murs.
 	public Boolean DashGoThroughWall;
+	// Si Type contient Dash : type direction du dash.
 	public DashDirectionType DashDirType;
+	// Valeur flat dubuff / debuff (valeur positive : buff, valeur négative : debuff). La nature du
+	// buff dépend de Type.
 	public Float FlatValue;
+	// Même que FlatValue, mais en pourcentage de dégâts d'attaque actuels de la source.
 	public Float SourcePercentADValue;
+	// Même que FlatValue, mais en pourcentage des HP actuels de la source.
 	public Float SourcePercentHPValue;
+	// Même que FlatValue, mais en pourcentage des HP max de la source.
 	public Float SourcePercentMaxHPValue;
+	// Même que FlatValue mais en pourcentage de l'armure actuelle de la source.
 	public Float SourcePercentArmorValue;
+	// Même que FlatValue, mais en pourcentage de l'AP actuelle de l'entité source.
 	public Float SourcePercentAPValue;
+	// Même que FlatValue mais en pourcentage de la RM actuelle de l'entité source.
 	public Float SourcePercentRMValue;
+	// Même que FlatValue, mais en pourcentage dedégâts d'attaque actuels del'entité de
+	// destination.
 	public Float DestPercentADValue;
+	// Même que FlatValue, mais en pourcentage des HP actuels de l'entité de destination.
 	public Float DestPercentHPValue;
+	// Même que FlatValue, mais en pourcentage des HP max de l'entité de destination.
 	public Float DestPercentMaxHPValue;
+	// Même que FlatValue mais en pourcentage de l'armure actuelle de l'entité de destination.
 	public Float DestPercentArmorValue;
+	// Même que FlatValue, mais en pourcentage de l'AP actuelle de l'entité de destination.
 	public Float DestPercentAPValue;
+	// Même que FlatValue mais en pourcentage de la RM actuelle de l'entité de destination.
 	public Float DestPercentRMValue;
+	// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée à une structure.
 	public Float StructureBonus;
+	// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un monstre neute.
 	public Float MonsterBonus;
+	// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.
 	public Float CreepBonus;
 	public static StateAlterationModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		StateAlterationModelView _obj =  new StateAlterationModelView();
