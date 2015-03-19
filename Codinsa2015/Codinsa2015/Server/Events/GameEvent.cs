@@ -10,7 +10,11 @@ namespace Codinsa2015.Server.Events
     /// </summary>
     public enum EventId
     {
-        Camps,
+        Bigboss,
+        Camp1,
+        Camp2,
+        Camp3,
+        Camp4,
         MinibossWest,
         MinibossEast,
         Resurrector,
@@ -31,5 +35,10 @@ namespace Codinsa2015.Server.Events
         /// Mets à jour l'évènement.
         /// </summary>
         public abstract void Update(GameTime time);
+
+        /// <summary>
+        /// Obtient ou définit la position de l'évènement (si applicable).
+        /// </summary>
+        public abstract Vector2 Position { get; set; }
     }
 }

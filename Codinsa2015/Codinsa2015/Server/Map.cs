@@ -36,6 +36,7 @@ namespace Codinsa2015.Server
         /// Dictionnaire contenant les différents évènements du jeu, addressés par leur type.
         /// </summary>
         Dictionary<EventId, GameEvent> m_events;
+
         /// <summary>
         /// Rectangle de l'écran sur lequel sera dessinée la map.
         /// </summary>
@@ -61,6 +62,14 @@ namespace Codinsa2015.Server
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Dictionnaire contenant les différents évènements du jeu, addressés par leur type.
+        /// </summary>
+        public Dictionary<EventId, GameEvent> Events
+        {
+            get { return m_events; }
+            set { m_events = value; }
+        }
         /// <summary>
         /// Retourne la liste des héros.
         /// </summary>
@@ -140,7 +149,8 @@ namespace Codinsa2015.Server
             __passabilityDrawRect(new Rectangle(3, 4, 20, 2), false);
 
             // TODO : chargement des évents.
-            CreateEvents();
+            CreateDefaultEvents();
+            CreateDebugEvents();
 
             // Vision
             Vision = new VisionMap(this);
@@ -150,13 +160,19 @@ namespace Codinsa2015.Server
         }
 
         /// <summary>
-        /// Crée et ajoute les évènements de la map.
+        /// Ajoute les évènements toujours présents sur la map.
         /// </summary>
-        void CreateEvents()
+        void CreateDefaultEvents()
         {
-            m_events.Add(EventId.Camps, new Events.EventMonsterCamp());
-            m_events.Add(EventId.MinibossEast, new Events.EventMiniboss());
             m_events.Add(EventId.Resurrector, new Events.PlayerResurrectorEvent());
+        }
+        /// <summary>
+        /// Crée et ajoute les évènements de debug de la map.
+        /// </summary>
+        void CreateDebugEvents()
+        {
+            m_events.Add(EventId.Camp1, new Events.EventMonsterCamp());
+            m_events.Add(EventId.MinibossEast, new Events.EventMiniboss());
         }
 
         /// <summary>
@@ -373,10 +389,13 @@ namespace Codinsa2015.Server
                 newEntities.Add(entity.Key, entity.Value);
             }
 
-            // Reset de tous les évents
-            foreach(var evt in m_events)
+            // Ajoute les évents.
+            m_events.Clear();
+            CreateDefaultEvents();
+            foreach(var kvp in map.Events)
             {
-                evt.Value.Initialize();
+                if(!m_events.ContainsKey(kvp.Key))
+                    m_events.Add(kvp.Key, kvp.Value);
             }
 
             Entities = newEntities;

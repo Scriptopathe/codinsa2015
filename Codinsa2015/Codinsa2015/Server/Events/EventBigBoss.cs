@@ -50,7 +50,7 @@ namespace Codinsa2015.Server.Events
         /// <summary>
         /// Obtient ou définit la position de l'évènement.
         /// </summary>
-        public Vector2 Position { get { return m_position; } set { m_position = value; } }
+        public override Vector2 Position { get { return m_position; } set { m_position = value; } }
 
         /// <summary>
         /// Crée une nouvelle instance de EventMiniboss.
@@ -163,5 +163,7 @@ namespace Codinsa2015.Server.Events
         {
             m_lastKiller = killer;
         }
+
+        
     }
 }

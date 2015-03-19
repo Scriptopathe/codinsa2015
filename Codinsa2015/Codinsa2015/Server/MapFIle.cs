@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Codinsa2015.Server.Entities;
+using Codinsa2015.Server.Events;
 using System.IO;
 using Microsoft.Xna.Framework;
 namespace Codinsa2015.Server
@@ -14,7 +15,7 @@ namespace Codinsa2015.Server
     {
         public bool[,] Passability { get; set; }
         public EntityCollection Entities { get; set; }
-
+        public Dictionary<EventId, GameEvent> Events { get; set; }
         
         /// <summary>
         /// Sauvegarde la map passée en paramètre dans le fichier map par défaut.
@@ -60,6 +61,15 @@ namespace Codinsa2015.Server
                     
             }
 
+            // Ecrit les évents.
+            foreach(var kvp in map.Events)
+            {
+                GameEvent evt = kvp.Value;
+                string x = evt.Position.X.ToString();
+                string y = evt.Position.Y.ToString();
+                writer.WriteLine(kvp.Key.ToString() + " " + x + " ");
+            }
+
             writer.Flush();
             writer.Close();
             fs.Close();
@@ -76,7 +86,7 @@ namespace Codinsa2015.Server
             Point size = new Point(10, 10);
             bool[,] pass = new bool[10, 10];
             EntityCollection newEntities = new EntityCollection();
-
+            Dictionary<EventId, GameEvent> newEvents = new Dictionary<EventId, GameEvent>();
             for (int i = 0; i < words.Length; i++)
             {
                 string word = words[i];
@@ -105,6 +115,7 @@ namespace Codinsa2015.Server
                 }
                 else
                 {
+                    #region Entities
                     try
                     {
                         // Entitié
@@ -165,14 +176,48 @@ namespace Codinsa2015.Server
                                 break;
                         }
 
-                        i += 2;
                         newEntities.Add(newEntity.ID, newEntity);
+                        i += 2;
                     }
                     catch (System.ArgumentException) { }
+                    #endregion
+
+
+
+                    #region Events
+                    try
+                    {
+                        // Entitié
+                        EventId type = (EventId)Enum.Parse(typeof(EventId), word);
+                        float sX = float.Parse(words[i + 1]);
+                        float sY = float.Parse(words[i + 2]);
+                        GameEvent newEvent = null;
+                        switch (type)
+                        {
+                            case EventId.Camp4:
+                            case EventId.Camp3:
+                            case EventId.Camp2:
+                            case EventId.Camp1:
+                                newEvent = new EventMonsterCamp() { Position = new Vector2(sX, sY) };
+                                break;
+                            case EventId.MinibossWest:
+                            case EventId.MinibossEast:
+                                newEvent = new EventMiniboss() { Position = new Vector2(sX, sY) };
+                                break;
+                            case EventId.Bigboss:
+                                newEvent = new EventBigBoss() { Position = new Vector2(sX, sY) };
+                                break;
+                        }
+
+                        newEvents.Add(type, newEvent);
+                        i += 2;
+                    }
+                    catch (System.ArgumentException) { }
+                    #endregion
                 }
             }
 
-            MapFile map = new MapFile() { Entities = newEntities, Passability = pass };
+            MapFile map = new MapFile() { Entities = newEntities, Passability = pass, Events = newEvents };
             return map;
         }
     }

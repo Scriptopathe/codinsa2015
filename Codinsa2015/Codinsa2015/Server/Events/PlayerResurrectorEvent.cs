@@ -11,6 +11,7 @@ namespace Codinsa2015.Server.Events
     /// </summary>
     public class PlayerResurrectorEvent : GameEvent
     {
+
         class TimerRef
         {
             public float Value { get; set; }
@@ -92,6 +93,22 @@ namespace Codinsa2015.Server.Events
         TimerRef ComputeDeathTimer()
         {
             return new TimerRef(10);
+        }
+
+
+        /// <summary>
+        /// Position de l'event (n'a pas de sens pour cet event ci).
+        /// </summary>
+        public override Vector2 Position
+        {
+            get
+            {
+                return Vector2.Zero;
+            }
+            set
+            {
+
+            }
         }
     }
 }
