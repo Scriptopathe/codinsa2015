@@ -14,13 +14,21 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
-		// Position de la forme : cercle => centre ; rectangle => coin supérieur gauche
+		/// <summary>
+		/// Position de la forme : cercle => centre ; rectangle => coin supérieur gauche
+		/// </summary>
 		public Vector2 Position;	
-		// Si cercle : rayon du cercle.
+		/// <summary>
+		/// Si cercle : rayon du cercle.
+		/// </summary>
 		public float Radius;	
-		// Si rectangle : taille du rectangle.
+		/// <summary>
+		/// Si rectangle : taille du rectangle.
+		/// </summary>
 		public Vector2 Size;	
-		// Représente le type de la forme.
+		/// <summary>
+		/// Représente le type de la forme.
+		/// </summary>
 		public GenericShapeType ShapeType;	
 		public static GenericShapeView Deserialize(System.IO.StreamReader input) {
 			GenericShapeView _obj =  new GenericShapeView();

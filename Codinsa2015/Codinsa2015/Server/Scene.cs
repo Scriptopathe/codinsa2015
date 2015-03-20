@@ -23,7 +23,7 @@ namespace Codinsa2015.Server
     /// </summary>
     public class Scene
     {
-        public const bool SKIP_PICKS = true;
+        public const bool SKIP_PICKS = false;
         public const bool LOAD_DB_FILE = false;
         #region Variables
 

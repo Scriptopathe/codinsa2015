@@ -14,15 +14,25 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
-		// Cooldown de base du sort.
+		/// <summary>
+		/// Cooldown de base du sort.
+		/// </summary>
 		public float BaseCooldown;	
-		// Casting time du sort.
+		/// <summary>
+		/// Casting time du sort.
+		/// </summary>
 		public float CastingTime;	
-		// Altération d'état appliquée pendant le casting time.
+		/// <summary>
+		/// Altération d'état appliquée pendant le casting time.
+		/// </summary>
 		public List<StateAlterationModelView> CastingTimeAlterations;	
-		// Indique la manière dont le ciblage du sort est effectué.
+		/// <summary>
+		/// Indique la manière dont le ciblage du sort est effectué.
+		/// </summary>
 		public SpellTargetInfoView TargetType;	
-		// Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.
+		/// <summary>
+		/// Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.
+		/// </summary>
 		public List<StateAlterationModelView> OnHitEffects;	
 		public static SpellDescriptionView Deserialize(System.IO.StreamReader input) {
 			SpellDescriptionView _obj =  new SpellDescriptionView();

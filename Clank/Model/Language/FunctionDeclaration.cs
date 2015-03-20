@@ -20,6 +20,11 @@ namespace Clank.Core.Model.Language
         public List<Instruction> Code { get; set; }
 
         /// <summary>
+        /// Commentaire de doc de la fonction.
+        /// </summary>
+        public Semantic.DocumentationComment DocComment { get; set; }
+
+        /// <summary>
         /// Retourne un String représentant cette déclaration de fonction.
         /// </summary>
         /// <returns></returns>

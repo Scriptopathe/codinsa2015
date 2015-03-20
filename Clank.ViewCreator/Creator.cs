@@ -97,6 +97,7 @@ namespace Clank.ViewCreator
                 {
                     if (info.DeclaringType != type)
                         continue;
+                    
                     attributes = info.GetCustomAttributes(typeof(AccessAttribute), false);
                     foreach(object att in attributes)
                     {

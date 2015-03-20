@@ -14,7 +14,9 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
-		// Shape utilisée par ce spell cast.
+		/// <summary>
+		/// Shape utilisée par ce spell cast.
+		/// </summary>
 		public GenericShapeView Shape;	
 		public static SpellcastBaseView Deserialize(System.IO.StreamReader input) {
 			SpellcastBaseView _obj =  new SpellcastBaseView();

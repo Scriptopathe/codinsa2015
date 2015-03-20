@@ -15,7 +15,11 @@ class State
 {
 
 public: 
-	//  Retourne une vue vers le héros contrôlé par ce contrôleur.
+	// 		 * @brief Retourne une vue vers le héros.
+			 * @param:lol testtest
+			 * @param:mdr test
+	// test
+			 * @returns hahaha
 	EntityBaseView GetHero();
 
 	//  Retourne la position du héros.

@@ -12,7 +12,11 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 		/// <summary>
-		///  Retourne une vue vers le héros contrôlé par ce contrôleur.
+		/// 		 * @brief Retourne une vue vers le héros.
+				 * @param:lol testtest
+				 * @param:mdr test
+		/// test
+				 * @returns hahaha
 		/// </summary>
 		public EntityBaseView GetHero(int clientId)
 		{
@@ -110,9 +114,7 @@ namespace Codinsa2015.Views
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHeroSpells(entityId);
 		}	
-		/// <summary>
-		/// Génère le code pour la fonction de traitement des messages.
-		/// </summary>
+		// Génère le code pour la fonction de traitement des messages.
 		public byte[] ProcessRequest(byte[] request, int clientId)
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream(request);

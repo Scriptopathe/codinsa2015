@@ -14,15 +14,25 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
-		// Id de la source de l'altération d'état.
+		/// <summary>
+		/// Id de la source de l'altération d'état.
+		/// </summary>
 		public int Source;	
-		// Représente le type de source de l'altération d'état.
+		/// <summary>
+		/// Représente le type de source de l'altération d'état.
+		/// </summary>
 		public StateAlterationSource SourceType;	
-		// Représente le modèle d'altération d'état appliquée sur une entité.
+		/// <summary>
+		/// Représente le modèle d'altération d'état appliquée sur une entité.
+		/// </summary>
 		public StateAlterationModelView Model;	
-		// Représente les paramètres de l'altération d'état.
+		/// <summary>
+		/// Représente les paramètres de l'altération d'état.
+		/// </summary>
 		public StateAlterationParametersView Parameters;	
-		// Temps restant en secondes pour l'altération d'état.
+		/// <summary>
+		/// Temps restant en secondes pour l'altération d'état.
+		/// </summary>
 		public float RemainingTime;	
 		public static StateAlterationView Deserialize(System.IO.StreamReader input) {
 			StateAlterationView _obj =  new StateAlterationView();

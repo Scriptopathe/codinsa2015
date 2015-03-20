@@ -2,7 +2,12 @@
  * Contient toutes les informations concernant l'état du serveur.
  */
 #include "../inc/State.h"
-//  Retourne une vue vers le héros contrôlé par ce contrôleur.
+// 		 * @brief Retourne une vue vers le héros.
+		 * @param:lol testtest
+		 * @param:mdr test
+// test
+		 * @returns hahaha
+	 
 EntityBaseView State::GetHero()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);

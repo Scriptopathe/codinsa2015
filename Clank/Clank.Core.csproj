@@ -70,6 +70,7 @@
     <Compile Include="Model\Language\ReturnInstruction.cs" />
     <Compile Include="Model\Language\SemanticConstants.cs" />
     <Compile Include="Model\Language\Typename.cs" />
+    <Compile Include="Model\Semantic\DocumentationParser.cs" />
     <Compile Include="Model\WriteContainer.cs" />
     <Compile Include="Model\Language\AffectationInstruction.cs" />
     <Compile Include="Model\Language\ClankType.cs" />

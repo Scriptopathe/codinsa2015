@@ -14,9 +14,13 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
-		// Position du centre du cercle.
+		/// <summary>
+		/// Position du centre du cercle.
+		/// </summary>
 		public Vector2 Position;	
-		// Rayon du cercle.
+		/// <summary>
+		/// Rayon du cercle.
+		/// </summary>
 		public float Radius;	
 		public static CircleShapeView Deserialize(System.IO.StreamReader input) {
 			CircleShapeView _obj =  new CircleShapeView();

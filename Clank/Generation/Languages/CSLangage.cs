@@ -564,6 +564,28 @@ using System.Text;");
             builder.AppendLine("}\r\n\r\n"); // */
             return builder.ToString();
         }
+
+        /// <summary>
+        /// Ajoute un commentaire documenté au builder.
+        /// </summary>
+        void AppendDocComments(StringBuilder builder, string comment, bool allowMonoline)
+        {
+            string[] lines = Tools.StringUtils.CutInLines(comment, 80);
+            if (allowMonoline && lines.Length == 1)
+            {
+                builder.Append(lines[0].Trim(' ', '*', '\n', '\b'));
+            }
+
+            else
+            {
+                builder.AppendLine();
+                foreach (string line in lines)
+                {
+                    builder.AppendLine("/// " + line.Trim(' ', '*', '\n', '\b'));
+                }
+                builder.Append("///");
+            }
+        }
         /// <summary>
         /// Génère le commentaire attaché à l'instruction donné.
         /// </summary>
@@ -573,7 +595,8 @@ using System.Text;");
             string[] lines = Tools.StringUtils.CutInLines(inst.Comment, 80);
 
             // Génère un commentaire approprié.
-            if (inst is FunctionDeclaration || inst is ClassDeclaration || inst is Model.Language.Macros.ProcessMessageMacro)
+            if (inst is ClassDeclaration || 
+                inst is VariableDeclarationInstruction)
             {
                 builder.AppendLine("/// <summary>");
                 foreach (string line in lines)
@@ -581,6 +604,53 @@ using System.Text;");
                     builder.AppendLine("/// " + line);
                 }
                 builder.AppendLine("/// </summary>");
+            }
+            else if (inst is FunctionDeclaration ||
+                    inst is Model.Language.Macros.RemoteFunctionWrapper)
+            {
+                FunctionDeclaration decl;
+                if (inst is Model.Language.Macros.RemoteFunctionWrapper)
+                    decl = ((Model.Language.Macros.RemoteFunctionWrapper)inst).Func;
+                else
+                    decl = (FunctionDeclaration)inst;
+                if(decl.DocComment != null)
+                {
+                    // Brief
+                    builder.AppendLine("/// <summary>");
+                    foreach (string line in Tools.StringUtils.CutInLines(decl.DocComment.GetSection("brief"), 80)) 
+                    { 
+                        builder.AppendLine("/// " + line.Trim(' ', '*', '\n')); 
+                    }
+                    builder.AppendLine("/// </summary>");
+                    // Args etc...
+                    foreach(string section in decl.DocComment.GetSections().Keys)
+                    {
+                        if(section.Contains("param:"))
+                        {
+                            string paramName = section.Split(':')[1];
+                            string paramValue = decl.DocComment.GetSection(section);
+                            builder.Append("/// <param name=\"" + paramName + "\">");
+                            AppendDocComments(builder, paramValue, true); 
+                            builder.AppendLine("</param>");
+                        }
+                        else if(section == "returns")
+                        {
+                            string paramValue = decl.DocComment.GetSection(section);
+                            builder.Append("/// <returns>");
+                            AppendDocComments(builder, paramValue, true);
+                            builder.AppendLine("</returns> ");
+                        }
+                    }
+                }
+                else
+                {
+                    builder.AppendLine("/// <summary>");
+                    foreach (string line in lines)
+                    {
+                        builder.AppendLine("/// " + line);
+                    }
+                    builder.AppendLine("/// </summary>");
+                }
             }
             else
             {

@@ -14,70 +14,134 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
-		// Retourne la résistance magique effective de cette entité.
+		/// <summary>
+		/// Retourne la résistance magique effective de cette entité.
+		/// </summary>
 		public float GetMagicResist;	
-		// Retourne la valeur d'AP effective de cette entité.
+		/// <summary>
+		/// Retourne la valeur d'AP effective de cette entité.
+		/// </summary>
 		public float GetAbilityPower;	
-		// Retourne la valeur de CDR effective de cette entité.
+		/// <summary>
+		/// Retourne la valeur de CDR effective de cette entité.
+		/// </summary>
 		public float GetCooldownReduction;	
-		// Obtient la vitesse de déplacement de l'entité.
+		/// <summary>
+		/// Obtient la vitesse de déplacement de l'entité.
+		/// </summary>
 		public float GetMoveSpeed;	
-		// Obtient la vitesse d'attaque effective de l'entité.
+		/// <summary>
+		/// Obtient la vitesse d'attaque effective de l'entité.
+		/// </summary>
 		public float GetAttackSpeed;	
-		// Obtient les points d'attaque effectifs de cette entité.
+		/// <summary>
+		/// Obtient les points d'attaque effectifs de cette entité.
+		/// </summary>
 		public float GetAttackDamage;	
-		// Fonction utilisée pour obtenir les points d'armure effectifs sur cette unité.
+		/// <summary>
+		/// Fonction utilisée pour obtenir les points d'armure effectifs sur cette unité.
+		/// </summary>
 		public float GetArmor;	
-		// Obtient les HP actuels de cette entité.
+		/// <summary>
+		/// Obtient les HP actuels de cette entité.
+		/// </summary>
 		public float GetHP;	
-		// Obtient les HP max actuels de cette entité.
+		/// <summary>
+		/// Obtient les HP max actuels de cette entité.
+		/// </summary>
 		public float GetMaxHP;	
-		// Obtient la liste des altérations d'état affectées à cette entité.
+		/// <summary>
+		/// Obtient la liste des altérations d'état affectées à cette entité.
+		/// </summary>
 		public List<StateAlterationView> StateAlterations;	
-		// Représente les points d'armure de base de cette entité.
+		/// <summary>
+		/// Représente les points d'armure de base de cette entité.
+		/// </summary>
 		public float BaseArmor;	
-		// Représente la direction de cette entité.
+		/// <summary>
+		/// Représente la direction de cette entité.
+		/// </summary>
 		public Vector2 Direction;	
-		// Position de l'entité sur la map.
+		/// <summary>
+		/// Position de l'entité sur la map.
+		/// </summary>
 		public Vector2 Position;	
-		// Points de bouclier de cette entité.
+		/// <summary>
+		/// Points de bouclier de cette entité.
+		/// </summary>
 		public float ShieldPoints;	
-		// Obtient les points de vie actuels de l'entité
+		/// <summary>
+		/// Obtient les points de vie actuels de l'entité
+		/// </summary>
 		public float HP;	
-		// Obtient le nombre de points de vie maximum de base de cette entité.
+		/// <summary>
+		/// Obtient le nombre de points de vie maximum de base de cette entité.
+		/// </summary>
 		public float BaseMaxHP;	
-		// Obtient la vitesse de déplacement de base de l'entité.
+		/// <summary>
+		/// Obtient la vitesse de déplacement de base de l'entité.
+		/// </summary>
 		public float BaseMoveSpeed;	
-		// Retourne une valeur indiquant si l'entité est morte.
+		/// <summary>
+		/// Retourne une valeur indiquant si l'entité est morte.
+		/// </summary>
 		public bool IsDead;	
-		// Retourne le type de cette entité.
+		/// <summary>
+		/// Retourne le type de cette entité.
+		/// </summary>
 		public EntityType Type;	
-		// Obtient l'id de cette entité.
+		/// <summary>
+		/// Obtient l'id de cette entité.
+		/// </summary>
 		public int ID;	
-		// Obtient ou définit les points d'attaque de base de cette unité.
+		/// <summary>
+		/// Obtient ou définit les points d'attaque de base de cette unité.
+		/// </summary>
 		public float BaseAttackDamage;	
-		// Cooldown reduction de base de cette unité.
+		/// <summary>
+		/// Cooldown reduction de base de cette unité.
+		/// </summary>
 		public float BaseCooldownReduction;	
-		// Attack speed de base de cette entité.
+		/// <summary>
+		/// Attack speed de base de cette entité.
+		/// </summary>
 		public float BaseAttackSpeed;	
-		// Points d'AP de base de cette entité.
+		/// <summary>
+		/// Points d'AP de base de cette entité.
+		/// </summary>
 		public float BaseAbilityPower;	
-		// Point de résistance magique de base de cette entité.
+		/// <summary>
+		/// Point de résistance magique de base de cette entité.
+		/// </summary>
 		public float BaseMagicResist;	
-		// Obtient une valeur indiquant si cette entité est Rootée. (ne peut plus bouger).
+		/// <summary>
+		/// Obtient une valeur indiquant si cette entité est Rootée. (ne peut plus bouger).
+		/// </summary>
 		public bool IsRooted;	
-		// Obtient une valeur indiquant si cette unité est Silenced (ne peut pas utiliser de sorts).
+		/// <summary>
+		/// Obtient une valeur indiquant si cette unité est Silenced (ne peut pas utiliser de sorts).
+		/// </summary>
 		public bool IsSilenced;	
-		// Obtient une valeur indiquant si cette unité est Stuned (ne peut pas bouger ni utiliser de
-		// sorts).
+		/// <summary>
+		/// Obtient une valeur indiquant si cette unité est Stuned (ne peut pas bouger ni utiliser de
+		/// sorts).
+		/// </summary>
 		public bool IsStuned;	
-		// Obtient une valeur indiquant si cette unité est invisible.
+		/// <summary>
+		/// Obtient une valeur indiquant si cette unité est invisible.
+		/// </summary>
 		public bool IsStealthed;	
-		// Obtient une valeur indiquant si cette entité possède la vision pure.
+		/// <summary>
+		/// Obtient une valeur indiquant si cette entité possède la vision pure.
+		/// </summary>
 		public bool HasTrueVision;	
-		// Obtient une valeur indiquant si cette unité peut voir les wards.
+		/// <summary>
+		/// Obtient une valeur indiquant si cette unité peut voir les wards.
+		/// </summary>
 		public bool HasWardVision;	
-		// Retourne la range à laquelle cette entité donne la vision.
+		/// <summary>
+		/// Retourne la range à laquelle cette entité donne la vision.
+		/// </summary>
 		public float VisionRange;	
 		public static EntityBaseView Deserialize(System.IO.StreamReader input) {
 			EntityBaseView _obj =  new EntityBaseView();

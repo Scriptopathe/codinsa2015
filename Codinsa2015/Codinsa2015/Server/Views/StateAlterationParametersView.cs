@@ -14,9 +14,13 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
-		// Position finale que le dash doit atteindre (si le targetting est Direction)
+		/// <summary>
+		/// Position finale que le dash doit atteindre (si le targetting est Direction)
+		/// </summary>
 		public Vector2 DashTargetDirection;	
-		// Entité vers laquelle le dash doit se diriger (si le targetting du dash est Entity).
+		/// <summary>
+		/// Entité vers laquelle le dash doit se diriger (si le targetting du dash est Entity).
+		/// </summary>
 		public int DashTargetEntity;	
 		public static StateAlterationParametersView Deserialize(System.IO.StreamReader input) {
 			StateAlterationParametersView _obj =  new StateAlterationParametersView();

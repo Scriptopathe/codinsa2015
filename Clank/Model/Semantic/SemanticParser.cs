@@ -170,7 +170,10 @@ namespace Clank.Core.Model.Semantic
                 // Commentaire optionnel attaché.
                 var commentMatch = match.FindByIdentifier("Comment");
                 if (commentMatch.Count != 0)
+                {
                     decl.Comment = commentMatch.First().MatchedToken.Content;
+                    decl.DocComment = Semantic.DocumentationParser.Parse(decl.Comment);
+                }
                 decl.Line = identifier.Line;
                 decl.Character = identifier.Character;
                 decl.Source = identifier.Source;
@@ -179,7 +182,6 @@ namespace Clank.Core.Model.Semantic
                 // Nom
                 decl.Func.Name = identifier.Content;
 
-  
 
                 // Arguments
                 decl.Func.Arguments = new List<Language.FunctionArgument>();

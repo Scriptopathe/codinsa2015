@@ -22,7 +22,11 @@ import net.codinsa2015.SpellView.*;
 public class State
 {
 
-	//  Retourne une vue vers le héros contrôlé par ce contrôleur.
+	// 		 * @brief Retourne une vue vers le héros.
+			 * @param:lol testtest
+			 * @param:mdr test
+	// test
+			 * @returns hahaha
 	public EntityBaseView GetHero()
 	{
 		try {
