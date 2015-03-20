@@ -23,8 +23,15 @@
 			<Span name = "DocLineComment" rule = "DocCommentSet" bold = "false" italic = "false" color = "Green" stopateol = "true" noescapesequences="true">
 				<Begin bold = "false" italic = "false" color = "Gray">///@!/@</Begin>
 			</Span>
+			<Span name = "DocComment" bold = "false" italic = "false" color = "Gray" stopateol = "false" noescapesequences="true">
+				<Begin>/**</Begin>
+				<End>*/</End>
+			</Span>
 			
-			
+      <Span name = "MultilineComment" bold = "false" italic = "false" color = "Green" stopateol = "false" noescapesequences="true">
+				<Begin>/*</Begin>
+				<End>*/</End>
+			</Span>
 			<Span name = "String" bold = "false" italic = "false" color = "#A31515" stopateol = "true" escapecharacter="\">
 				<Begin>"</Begin>
 				<End>"</End>
