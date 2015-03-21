@@ -80,14 +80,11 @@ namespace Codinsa2015.EnhancedGui
             m_addList.Clear();
             m_removeList.Clear();
 
+            // Change le focus si besoin.
             foreach (GuiWidget widget in m_widgets)
             {
                 if (widget.IsHover() && Input.IsLeftClickTrigger())
                     newFocus = widget;
-
-                widget.Update(time);
-                if (widget.IsDisposed)
-                    toDelete.Add(widget);
             }
 
             var oldFocus = m_focus;
@@ -100,6 +97,14 @@ namespace Codinsa2015.EnhancedGui
                     oldFocus.OnFocusLost();
                 if(newFocus != null)
                     newFocus.OnFocus();
+            }
+
+            // Mets à jour les widgets.
+            foreach (GuiWidget widget in m_widgets)
+            {
+                widget.Update(time);
+                if (widget.IsDisposed)
+                    toDelete.Add(widget);
             }
 
             // Supprime les widgets à supprimer.

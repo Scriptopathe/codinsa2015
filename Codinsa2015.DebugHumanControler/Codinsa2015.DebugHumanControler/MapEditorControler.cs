@@ -136,6 +136,9 @@ namespace Codinsa2015.DebugHumanControler
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M) && processGameInput)
                 m_minimap.Visible = !m_minimap.Visible;
 
+            if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Tab))
+                OnChangeMode();
+
             // Zoom
             Vector2 mousePosPx = new Vector2(Input.GetMouseState().X, Input.GetMouseState().Y);
             Vector2 mousePosUnits = GetMousePosUnits();

@@ -516,8 +516,8 @@ namespace Codinsa2015.DebugHumanControler
             if(GameServer.GetScene().Mode == SceneMode.Game)
             {
                 // Dessine les GUI, particules etc...
-                batch.GraphicsDevice.SetRenderTarget(mainRenderTarget);
-                batch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
+                //batch.GraphicsDevice.SetRenderTarget(mainRenderTarget);
+                batch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
                 EnhancedGuiManager.Draw(batch);
                 DrawControlerGUI(batch, time);
                 batch.End();

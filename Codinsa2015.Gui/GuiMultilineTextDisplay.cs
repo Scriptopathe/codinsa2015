@@ -35,6 +35,14 @@ namespace Codinsa2015.EnhancedGui
         bool m_isVisible;
 
         /// <summary>
+        /// Obtient ou définit l'opacité de ce contrôle.
+        /// </summary>
+        public int Opacity
+        {
+            get;
+            set;
+        }
+        /// <summary>
         /// Obtient ou définit une valeur indiquant si le contrôle est visible.
         /// </summary>
         public bool IsVisible
@@ -63,7 +71,7 @@ namespace Codinsa2015.EnhancedGui
             m_scrollbar.GrabLen = 1;
             m_scrollbar.CurrentValue = 0;
             m_scrollbar.Parent = this;
-
+            Opacity = 255;
             Area = new Rectangle(0, 0, 640, 460);
             IsVisible = true;
             m_textBuilder = new StringBuilder("");
@@ -124,7 +132,7 @@ namespace Codinsa2015.EnhancedGui
             // Dessine la boite principale.
             DrawRectBox(batch, Ressources.TextBox,
                 menuBox,
-                Color.White,
+                new Color(255, 255, 255, Opacity),
                 0);
 
             // Dessine les lignes affichées
@@ -133,7 +141,7 @@ namespace Codinsa2015.EnhancedGui
                 int y = (int)(Size.Y + (line - lastLine) * lineHeight - lineHeight);
                 DrawString(batch, font, m_linesCache[line],
                     new Vector2(Margins, Margins + y),
-                    Color.Black,
+                    new Color(0, 0, 0, Opacity),
                     0.0f,
                     Vector2.Zero,
                     1.0f,

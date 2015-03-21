@@ -65,6 +65,14 @@ namespace Codinsa2015.EnhancedGui
             set { m_textBuilder.Clear(); m_textBuilder.Append(value); ClampCursorPosition(); }
         }
 
+        /// <summary>
+        /// Obtient ou définit l'opacité de ce contrôle.
+        /// </summary>
+        public int Opacity
+        {
+            get;
+            set;
+        }
         #endregion 
 
         #region Methods
@@ -74,6 +82,7 @@ namespace Codinsa2015.EnhancedGui
         public GuiTextInput(GuiManager manager) : base(manager)
         {
             manager.AddWidget(this);
+            Opacity = 255;
             Size = new Point(640, 20);
             IsVisible = true;
             m_textBuilder = new StringBuilder();
@@ -332,13 +341,13 @@ namespace Codinsa2015.EnhancedGui
             // Dessine la boite principale du menu.
             DrawRectBox(batch, Ressources.TextBox,
                 menuBox,
-                Color.White,
+                new Color(255, 255, 255, Opacity),
                 1);
 
             // Dessine le titre du menu.
             DrawString(batch, font, Text, 
                 new Vector2(Margins, Margins),
-                Color.Black,
+                new Color(0, 0, 0, Opacity),
                 0.0f,
                 Vector2.Zero, 
                 1.0f,
@@ -352,7 +361,7 @@ namespace Codinsa2015.EnhancedGui
             {
                 DrawString(batch, font, "|",
                     new Vector2(Margins + size.X, Margins),
-                    Color.Black,
+                    new Color(0, 0, 0, Opacity),
                     0.0f,
                     Vector2.Zero,
                     1.0f,

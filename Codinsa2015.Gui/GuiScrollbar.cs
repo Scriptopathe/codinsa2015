@@ -73,8 +73,8 @@ namespace Codinsa2015.EnhancedGui
         {
             if (!IsVisible)
                 return;
-            DrawRectBox(batch, Ressources.LifebarEmpty, new Rectangle(0, 0, Area.Width, Area.Height), Color.White, 0);
-            DrawRectBox(batch, Ressources.LifebarFull, GetGrabRectangle(), Color.White, 2);
+            DrawRectBox(batch, Ressources.Menu, new Rectangle(0, 0, Area.Width, Area.Height), Color.White, 0);
+            DrawRectBox(batch, Ressources.MenuItemHover, GetGrabRectangle(), Color.White, 2);
         }
 
 
