@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace Codinsa2015.Views
+namespace Codinsa2015.Views.Client
 {
 
 	public class State

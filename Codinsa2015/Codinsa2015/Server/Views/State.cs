@@ -12,11 +12,6 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 		/// <summary>
-		/// 		 * @brief Retourne une vue vers le héros.
-				 * @param:lol testtest
-				 * @param:mdr test
-		/// test
-				 * @returns hahaha
 		/// </summary>
 		public EntityBaseView GetHero(int clientId)
 		{
