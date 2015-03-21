@@ -118,7 +118,8 @@ namespace Codinsa2015.Server.Equip
                                 new StateAlterationModel()
                                 {
                                     BaseDuration = 0,
-                                    FlatValue = 25,
+                                    FlatValue = 10,
+                                    SourcePercentADValue = 0.50f,
                                     Type = StateAlterationType.AttackDamage,
                                 }
                             },

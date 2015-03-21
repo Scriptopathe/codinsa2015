@@ -660,7 +660,7 @@ namespace Codinsa2015.Server.Entities
             EntityCount++;
 
             // Code de debug
-            BaseMaxHP = 50;
+            BaseMaxHP = 400;
             HP = BaseMaxHP;
             BaseArmor = 50;
             VisionRange = 3.0f;

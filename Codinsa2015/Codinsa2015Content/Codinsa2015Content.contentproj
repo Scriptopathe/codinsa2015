@@ -293,11 +293,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="textures\tileset-oldschool.png">
-      <Name>tileset-oldschool</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="textures\tileset.png">
       <Name>tileset</Name>
       <Importer>TextureImporter</Importer>
@@ -414,6 +409,18 @@
   <ItemGroup>
     <Compile Include="textures\icons\fighter.png">
       <Name>fighter</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\charsets\tour_bleue.png">
+      <Name>tour_bleue</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="textures\charsets\tour_rouge.png">
+      <Name>tour_rouge</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
