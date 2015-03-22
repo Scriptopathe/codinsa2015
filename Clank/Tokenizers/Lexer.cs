@@ -34,7 +34,7 @@ namespace Clank.Core.Tokenizers
         public Lexer(string str)
         {
             m_string = str;
-            SingleLineComment = "#";
+            SingleLineComment = "//";
             MultilineCommentStart = "/*";
             MultilineCommentEnd = "*/";
             StringDelimiter = "\"";

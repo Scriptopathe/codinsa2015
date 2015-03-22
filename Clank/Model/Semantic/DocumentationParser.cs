@@ -102,6 +102,7 @@ namespace Clank.Core.Model.Semantic
             }
             catch(Exception e)
             {
+                sections.Clear();
                 sections.Add(DefaultSection, str);
                 return new DocumentationComment(sections);
             }
