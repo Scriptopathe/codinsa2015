@@ -141,7 +141,7 @@ namespace Codinsa2015.EnhancedGui
                 int y = (int)(Size.Y + (line - lastLine) * lineHeight - lineHeight);
                 DrawString(batch, font, m_linesCache[line],
                     new Vector2(Margins, Margins + y),
-                    new Color(0, 0, 0, Opacity),
+                    new Color(0, 0, 0, 255),
                     0.0f,
                     Vector2.Zero,
                     1.0f,
