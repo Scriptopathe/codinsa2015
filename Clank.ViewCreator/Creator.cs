@@ -143,14 +143,14 @@ namespace Clank.ViewCreator
             }
 
             b.AppendLine("\tstate\r\n\t{");
-            b.AppendLine("\t\t# Rajoute les statements using et le bon namespace pour la classe state.");
+            b.AppendLine("\t\t// Rajoute les statements using et le bon namespace pour la classe state.");
             b.AppendLine("\t\tvoid getClassMetadata_cs()");
             b.AppendLine("\t\t{");
             b.AppendLine("\t\t\tstring usingStatements = \"\";");
             b.AppendLine("\t\t\tstring namespace = \"Codinsa2015.Views\";");
             b.AppendLine("\t\t}");
 
-            b.AppendLine("\t\t# Rajoute le nom du package pour les projets java.");
+            b.AppendLine("\t\t// Rajoute le nom du package pour les projets java.");
             b.AppendLine("\t\tvoid getClassMetadata_java()");
             b.AppendLine("\t\t{");
             b.AppendLine("\t\t\tstring package = \"net.codinsa2015\";");
@@ -170,7 +170,7 @@ namespace Clank.ViewCreator
                 b.AppendLine(macro);
             }
             b.AppendLine();
-            b.AppendLine("\t} # macro");
+            b.AppendLine("\t} // macro");
 
             // Access
             b.AppendLine("\taccess\r\n\t{");
@@ -179,10 +179,10 @@ namespace Clank.ViewCreator
                 b.AppendLine(a);
             }
             b.AppendLine();
-            b.AppendLine("\t} # access");
+            b.AppendLine("\t} // access");
 
             b.AppendLine();
-            b.AppendLine("} # main");
+            b.AppendLine("} // main");
             return b.ToString();
         }
 
@@ -194,7 +194,7 @@ namespace Clank.ViewCreator
         static string CreateMacro(string padding, MethodInfo info, AccessAttribute attr)
         {
             StringBuilder b = new StringBuilder();
-            b.AppendLine(padding + "# " + attr.Comment);
+            b.AppendLine(padding + "// " + attr.Comment);
             b.Append(padding + CreateTypeName(info.ReturnType) + " " + info.Name + "_macro");
             b.Append("(int clientId,");
             foreach(var arg in info.GetParameters())
@@ -248,7 +248,7 @@ namespace Clank.ViewCreator
         static string CreateAccess(string padding, MethodInfo info, AccessAttribute attr)
         {
             StringBuilder b = new StringBuilder();
-            b.AppendLine(padding + "# " + attr.Comment);
+            b.AppendLine(padding + "// " + attr.Comment);
             b.Append(padding + "public " + CreateTypeName(info.ReturnType) + " " + info.Name);
             b.Append("(");
             foreach (var arg in info.GetParameters())
@@ -323,12 +323,12 @@ namespace Clank.ViewCreator
                 return "";
 
             StringBuilder b = new StringBuilder();
-            b.AppendLine("# Généré automatiquement (Clank.ViewCreator)\r\n\r\n");
+            b.AppendLine("// Généré automatiquement (Clank.ViewCreator)\r\n\r\n");
             b.AppendLine("state {");
             b.AppendLine("\tpublic serializable class " + typename + "View\r\n\t{\r\n");
 
             // Metadata
-            b.AppendLine("\t\t# Rajoute les statements using et le bon namespace pour la classe state.");
+            b.AppendLine("\t\t// Rajoute les statements using et le bon namespace pour la classe state.");
             b.AppendLine("\t\tvoid getClassMetadata_cs()");
             b.AppendLine("\t\t{");
             b.AppendLine("\t\t\tstring usingStatements = \"using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;\";");
@@ -338,7 +338,7 @@ namespace Clank.ViewCreator
             // Records
             foreach(Record r in records)
             {
-                b.AppendLine("\t\t#" + r.Comment);
+                b.AppendLine("\t\t//" + r.Comment);
                 b.AppendLine("\t\tpublic " + r.Type + " " + r.Name + ";");
             }
 
