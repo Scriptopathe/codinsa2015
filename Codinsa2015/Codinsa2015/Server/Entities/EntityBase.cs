@@ -83,10 +83,6 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         float m_baseMaxHP;
         /// <summary>
-        /// Position de l'entité sur la map.
-        /// </summary>
-        Vector2 m_position;
-        /// <summary>
         /// Représente la direction de cette entité.
         /// </summary>
         Vector2 m_direction;
@@ -143,6 +139,21 @@ namespace Codinsa2015.Server.Entities
         #endregion
 
         #region Properties
+
+
+        /// <summary>
+        /// Si cette entité est un héros, obtient ou définit le rôle de ce héros.
+        /// 
+        /// note : cette propriété est stockée dans EntityBase pour pouvoir être communiquée
+        /// facilement par l'API clank, qui ne gère pas l'héritage.
+        /// </summary>
+        [Clank.ViewCreator.Export("EntityHeroRole", "Si cette entité est un héros, obtient le rôle de ce héros.")]
+        public EntityHeroRole Role
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Obtient la liste des altérations d'état affectées à cette entité.
         /// </summary>
@@ -179,8 +190,8 @@ namespace Codinsa2015.Server.Entities
         [Clank.ViewCreator.Export("Vector2", "Position de l'entité sur la map.")]
         public Vector2 Position
         {
-            get { return m_position; }
-            set { m_position = value; m_shape.Position = m_position; }
+            get { return m_shape.Position; }
+            set { m_shape.Position = value; }
         }
 
         /// <summary>
@@ -837,11 +848,12 @@ namespace Codinsa2015.Server.Entities
                 newDst = dst;
             else
             {
+                
                 // Coins de la case.
-                int left = (int)m_position.X;
-                int right = (int)(m_position.X) + 1;
-                int top = (int)m_position.Y;
-                int bottom = (int)(m_position.Y) + 1;
+                int left = (int)Position.X;
+                int right = (int)(Position.X) + 1;
+                int top = (int)Position.Y;
+                int bottom = (int)(Position.Y) + 1;
 
                 // On limite le mouvement au bord de la case.
                 newDst.X = Math.Min(right - 0.02f, Math.Max(left+0.02f, dst.X));

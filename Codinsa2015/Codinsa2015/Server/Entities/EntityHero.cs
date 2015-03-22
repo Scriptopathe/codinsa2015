@@ -97,15 +97,6 @@ namespace Codinsa2015.Server.Entities
         }
 
         /// <summary>
-        /// Obtient ou définit le rôle de ce héros.
-        /// </summary>
-        public EntityHeroRole Role
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Obtient ou définit la liste des spells accessibles pour ce héros.
         /// </summary>
         public List<Spell> Spells
