@@ -66,7 +66,7 @@ namespace Codinsa2015.Server.Spells
                         Type = StateAlterationType.Dash,
                         DashSpeed = 60,
                         DashGoThroughWall = true,
-                        DashDirectionType = Entities.DashDirectionType.Direction,
+                        DashDirType = Entities.DashDirectionType.Direction,
                         BaseDuration = 0.075f,
                     },
                 }
