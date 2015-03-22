@@ -106,7 +106,7 @@ namespace Codinsa2015.Server.Entities
             else
             {
                 Vector2 dstPosition = Vector2.Zero;
-                if (Model.DashDirectionType == DashDirectionType.TowardsEntity)
+                if (Model.DashDirType == DashDirectionType.TowardsEntity)
                 {
                     dstPosition = Parameters.DashTargetEntity.Position;
                     return Vector2.Distance(dstPosition, dstEntity.Position) <= Model.DashSpeed * (float)(time.ElapsedGameTime.TotalSeconds);

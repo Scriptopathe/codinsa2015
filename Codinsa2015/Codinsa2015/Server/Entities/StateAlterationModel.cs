@@ -113,8 +113,8 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Si Type contient Dash : type direction du dash.
         /// </summary>
-        [Clank.ViewCreator.Export("DashDirType", @"Si Type contient Dash : type direction du dash.")]
-        public DashDirectionType DashDirectionType { get; set; }
+        [Clank.ViewCreator.Export("DashDirectionType", @"Si Type contient Dash : type direction du dash.")]
+        public DashDirectionType DashDirType { get; set; }
 
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Codinsa2015.Server.Entities
         public Vector2 GetDashDirection(EntityBase caster, EntityBase source, StateAlterationParameters parameters)
         {
             Vector2 direction;
-            switch(DashDirectionType)
+            switch(DashDirType)
             {
                 case Entities.DashDirectionType.TowardsEntity:
                     if (parameters.DashTargetEntity == null)
@@ -381,7 +381,7 @@ namespace Codinsa2015.Server.Entities
             Views.StateAlterationModelView view = new Views.StateAlterationModelView();
             view.BaseDuration = BaseDuration;
             view.CreepBonus = CreepBonus;
-            view.DashDirType = (Views.DashDirectionType)DashDirectionType;
+            view.DashDirType = (Views.DashDirectionType)DashDirType;
             view.DashGoThroughWall = DashGoThroughWall;
             view.DestPercentADValue = DestPercentADValue;
             view.DestPercentAPValue = DestPercentAPValue;
@@ -411,7 +411,7 @@ namespace Codinsa2015.Server.Entities
             StateAlterationModel view = new StateAlterationModel();
             view.BaseDuration = BaseDuration;
             view.CreepBonus = CreepBonus;
-            view.DashDirectionType = DashDirectionType;
+            view.DashDirType = DashDirType;
             view.DashGoThroughWall = DashGoThroughWall;
             view.DestPercentADValue = DestPercentADValue;
             view.DestPercentAPValue = DestPercentAPValue;
