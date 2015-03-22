@@ -164,6 +164,8 @@ namespace Clank.Core.Model
                                 classMacro.Functions.Add(func.Function.GetFullName(), func);
                             }
                         }
+                        else if (funcDeclInstruction is Language.PlaceholderInstruction)
+                        { }
                         else
                         {
                             ParsingLog.AddWarning("Seules les déclarations de fonctions sont autorisées dans les classes de block macro. Obtenu : " +
@@ -239,8 +241,8 @@ namespace Clank.Core.Model
                 }
                 else
                 {
-                    ParsingLog.AddWarning("Instruction de type " + instruction.GetType() + " inatendue dans une déclaration de fonction macro", 
-                        varDecl.Line, varDecl.Character, varDecl.Source);
+                    ParsingLog.AddWarning("Instruction de type " + instruction.GetType() + " inatendue dans une déclaration de fonction macro",
+                        decl.Line, decl.Character, decl.Source);
                 }
             }
             return langToFuncName;
