@@ -50,7 +50,8 @@ enum class EntityType
 	Ward = 131072,
 	Shop = 262144,
 	HeroSpawner = 524288,
-	AllSaved = 609784
+	AllSaved = 609784,
+	All = 16777215
 };
 
 enum class EntityTypeRelative
@@ -91,7 +92,8 @@ enum class EntityTypeRelative
 	Ward = 131072,
 	Shop = 262144,
 	HeroSpawner = 524288,
-	AllSaved = 609784
+	AllSaved = 609784,
+	All = 16777215
 };
 
 enum class StateAlterationSource

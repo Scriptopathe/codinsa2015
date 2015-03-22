@@ -37,7 +37,8 @@ public enum EntityTypeRelative
 	Ward(131072),
 	Shop(262144),
 	HeroSpawner(524288),
-	AllSaved(609784);
+	AllSaved(609784),
+	All(16777215);
 	int _value;
 	EntityTypeRelative(int value) { _value = value; } 
 	public int getValue() { return _value; }

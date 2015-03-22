@@ -51,7 +51,8 @@ namespace Codinsa2015.Views
 		Ward = 131072,
 		Shop = 262144,
 		HeroSpawner = 524288,
-		AllSaved = 609784
+		AllSaved = 609784,
+		All = 16777215
 	}
 	
 	public enum EntityTypeRelative
@@ -92,7 +93,8 @@ namespace Codinsa2015.Views
 		Ward = 131072,
 		Shop = 262144,
 		HeroSpawner = 524288,
-		AllSaved = 609784
+		AllSaved = 609784,
+		All = 16777215
 	}
 	
 	public enum StateAlterationSource
