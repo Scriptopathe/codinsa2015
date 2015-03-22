@@ -1,5 +1,3 @@
-﻿
-
 #include stdtypes.clank
 #include XNAMacros.clank
 main
@@ -28,7 +26,7 @@ main
 			string usingStatements = "";
 			string namespace = "Codinsa2015.Views";
 		}
-		# Rajoute le nom du package
+		# Rajoute le nom du package pour les projets java.
 		void getClassMetadata_java()
 		{
 			string package = "net.codinsa2015";
@@ -275,12 +273,7 @@ main
 	} # macro
 	access
 	{
-		/*
-		 * @brief Retourne une vue vers le héros.
-		 * @param:lol test test
-		 * @param:mdr test test
-		 * @returns hahaha
-	     */
+		# Retourne une vue vers le héros contrôlé par ce contrôleur.
 		public EntityBaseView GetHero()
 		{ 
 			return GetHero_macro(clientId);

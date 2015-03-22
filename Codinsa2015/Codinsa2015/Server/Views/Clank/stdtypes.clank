@@ -4,12 +4,6 @@ main
 
     macro
     {
-        /* dede */
-        /*
-        
-        tamere la pute
-        
-        */
         # Représente un tableau bidimensionnel. 
         public serializable array class Matrix<T>
         {
@@ -19,6 +13,7 @@ main
                 string cs = "List<List<$(T)>>";
                 string cpp = "std::vector<std::vector<$(T)>>";
                 string java = "ArrayList<ArrayList<$(T)>>";
+                string python = "array";
             }
             
             # Type des éléments de l'array.
@@ -30,6 +25,7 @@ main
                 string cs = "@self[$(x)][$(y)]";
                 string cpp = "@self.at($(x)).at($(y))";
                 string java = "@self.get($(x)).get($(y))";
+                string python = "@self[$(x)][$(y)]";
             }
             
             # Crée une nouvelle instance de matrice avec les paramètres de taille donnés.
@@ -38,6 +34,7 @@ main
                 string cs = "new List<List<$(T)>>()";
                 string cpp = "std::vector<std::vector<$(T)>>($(width), std::vector<$(T)>($(height), 0))";
                 string java = "new ArrayList<ArrayList<$(T)>>()";
+                string python = "[]";
             }
             
             constructor Matrix<T> new()
@@ -45,6 +42,7 @@ main
                 string cs = "new List<List<$(T)>>()";
                 string cpp = "$(T)()";
                 string java = "new ArrayList<ArrayList<$(T)>>()";
+                string python = "[]";
             }
         }
         
@@ -105,12 +103,14 @@ main
                 string cs = "new $(T)[size]";
                 string cpp = "std::vector<$(T)>($(size))";
                 string java = "new ArrayList<$(T)>($(size))";
+                string python = "[]";
             }
             public constructor Array<T> new()
             {
                 string cs = "new $(T)[0]";
                 string cpp = "std::vector<$(T)>()";
                 string java = "new ArrayList<$(T)>()";
+                string python = "[]";
             }
         }
         

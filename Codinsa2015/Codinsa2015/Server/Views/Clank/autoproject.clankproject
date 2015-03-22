@@ -1,7 +1,7 @@
-<?xml version="1.0"?>
-<ProjectNode xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" ?>
+<ProjectNode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Name>Codinsa2015</Name>
-  <SavePath>C:\Users\Josué\Documents\Josue\[Projets]\Projets C#\Clank\Codinsa2015\Codinsa2015\Server\Views\Clank\autoproject.clankproject</SavePath>
+  <SavePath />
   <SourceFiles>
     <string>_EntityBaseView.clank</string>
     <string>_StateAlterationParametersView.clank</string>
@@ -31,6 +31,10 @@
     </ServerTarget>
     <ClientTargets>
       <GenerationTarget>
+        <LanguageIdentifier>cs</LanguageIdentifier>
+        <OutputDirectory>../../../../../Codinsa2015.Client/Codinsa2015.Client/Views</OutputDirectory>
+      </GenerationTarget>
+      <GenerationTarget>
         <LanguageIdentifier>cpp</LanguageIdentifier>
         <OutputDirectory>../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientCpp/src</OutputDirectory>
       </GenerationTarget>
@@ -39,12 +43,8 @@
         <OutputDirectory>../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientCpp/inc</OutputDirectory>
       </GenerationTarget>
       <GenerationTarget>
-        <LanguageIdentifier>cs</LanguageIdentifier>
-        <OutputDirectory>../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/</OutputDirectory>
-      </GenerationTarget>
-      <GenerationTarget>
         <LanguageIdentifier>java</LanguageIdentifier>
-        <OutputDirectory>../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientJava/src/net/codinsa2015/</OutputDirectory>
+        <OutputDirectory>../../../../../Codinsa2015.Client/Codinsa2015.Client/Views/Clank/ClientJava/src/net/codinsa2015</OutputDirectory>
       </GenerationTarget>
     </ClientTargets>
   </Settings>
