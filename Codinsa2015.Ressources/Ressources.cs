@@ -146,6 +146,12 @@ namespace Codinsa2015
         public static Texture2D IconTank { get; set; }
         public static Texture2D BlueTower { get; set; }
         public static Texture2D RedTower { get; set; }
+        public static Texture2D BlueFighter { get; set; }
+        public static Texture2D BlueMage { get; set; }
+        public static Texture2D BlueTank { get; set; }
+        public static Texture2D RedFighter { get; set; }
+        public static Texture2D RedMage { get; set; }
+        public static Texture2D RedTank { get; set; }
         /// <summary>
         /// Charge les ressources à partir du content manager passé en paramètre.
         /// </summary>
@@ -154,6 +160,12 @@ namespace Codinsa2015
         {
             Content = content;
             Device = device;
+            BlueFighter = content.Load<Texture2D>("textures/charsets/combattant_bleu");
+            BlueMage = content.Load<Texture2D>("textures/charsets/mage_bleu");
+            BlueTank = content.Load<Texture2D>("textures/charsets/tank_bleu");
+            RedFighter = content.Load<Texture2D>("textures/charsets/combattant_rouge");
+            RedMage = content.Load<Texture2D>("textures/charsets/mage_rouge");
+            RedTank = content.Load<Texture2D>("textures/charsets/tank_rouge");
             BlueTower = content.Load<Texture2D>("textures/charsets/tour_bleue");
             RedTower = content.Load<Texture2D>("textures/charsets/tour_rouge");
             IconMage = content.Load<Texture2D>( "textures/icons/mage");
