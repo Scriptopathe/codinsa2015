@@ -51,6 +51,10 @@ namespace Codinsa2015.Views
 		/// </summary>
 		public float GetMaxHP;	
 		/// <summary>
+		/// Si cette entité est un héros, obtient le rôle de ce héros.
+		/// </summary>
+		public EntityHeroRole Role;	
+		/// <summary>
 		/// Obtient la liste des altérations d'état affectées à cette entité.
 		/// </summary>
 		public List<StateAlterationView> StateAlterations;	
@@ -172,6 +176,9 @@ namespace Codinsa2015.Views
 			// GetMaxHP
 			float _obj_GetMaxHP = Single.Parse(input.ReadLine());
 			_obj.GetMaxHP = (float)_obj_GetMaxHP;
+			// Role
+			int _obj_Role = Int32.Parse(input.ReadLine());
+			_obj.Role = (EntityHeroRole)_obj_Role;
 			// StateAlterations
 			List<StateAlterationView> _obj_StateAlterations = new List<StateAlterationView>();
 			int _obj_StateAlterations_count = Int32.Parse(input.ReadLine());
@@ -268,6 +275,8 @@ namespace Codinsa2015.Views
 			output.WriteLine(((float)this.GetHP).ToString());
 			// GetMaxHP
 			output.WriteLine(((float)this.GetMaxHP).ToString());
+			// Role
+			output.WriteLine(((int)this.Role).ToString());
 			// StateAlterations
 			output.WriteLine(this.StateAlterations.Count.ToString());
 			for(int StateAlterations_it = 0; StateAlterations_it < this.StateAlterations.Count;StateAlterations_it++) {
