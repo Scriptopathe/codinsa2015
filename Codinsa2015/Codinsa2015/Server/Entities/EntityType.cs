@@ -62,6 +62,7 @@ namespace Codinsa2015.Server.Entities
         Team2CheckPoint = Team2 | Checkpoint,
         Teams = Team1 | Team2,
         
+        All = 0xFFFFFF,
     }
 
     /// <summary>
@@ -120,6 +121,7 @@ namespace Codinsa2015.Server.Entities
         AllyCheckpoint  = Ally | Checkpoint,
         EnnemyCheckpoint = Ennemy | Checkpoint,
 
+        All = 0xFFFFFF,
     }
     public static class EntityTypeConverter
     {
