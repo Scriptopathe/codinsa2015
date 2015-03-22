@@ -67,7 +67,7 @@ namespace Codinsa2015.Server
                 GameEvent evt = kvp.Value;
                 string x = evt.Position.X.ToString();
                 string y = evt.Position.Y.ToString();
-                writer.WriteLine(kvp.Key.ToString() + " " + x + " ");
+                writer.WriteLine(kvp.Key.ToString() + " " + x + " " + y);
             }
 
             writer.Flush();

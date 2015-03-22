@@ -46,6 +46,10 @@ namespace Codinsa2015.Server
         /// </summary>
         EntityCollection m_entitiesAddList;
 
+        /// <summary>
+        /// Indique si les évents doivent être initialisés à la prochaine update.
+        /// </summary>
+        bool m_refreshEvents;
         #endregion
 
         #region Events
@@ -197,6 +201,26 @@ namespace Codinsa2015.Server
             List<int> entitiesToDelete = new List<int>();
             List<Spellcast> spellcastsToDelete = new List<Spellcast>();
 
+            // Ajoute les entités en attente.
+            while (m_entitiesAddList.Count != 0)
+            {
+                var first = m_entitiesAddList.First();
+                m_entities.Add(first.Key, first.Value);
+                m_entitiesAddList.Remove(first.Key);
+            }
+
+            // Refresh les events
+            // Certains events sont dépendant d'entités, il faut donc attendre qu'elles soient ajoutées au jeu.
+            // C'est pourquoi ce code est ici.
+            if(m_refreshEvents)
+            {
+                foreach(var kvp in m_events)
+                {
+                    kvp.Value.Initialize();
+                }
+                m_refreshEvents = false;
+            }
+
             // Mets à jour tous les spells lancés.
             foreach (Spellcast cast in m_spellcasts)
             {
@@ -207,13 +231,7 @@ namespace Codinsa2015.Server
                 }
             }
 
-            // Ajoute les entités en attente.
-            while(m_entitiesAddList.Count != 0)
-            {
-                var first = m_entitiesAddList.First();
-                m_entities.Add(first.Key, first.Value);
-                m_entitiesAddList.Remove(first.Key);
-            }
+
 
             // Mets à jour tous les évènements.
             foreach (var kvp in m_events)
@@ -391,15 +409,17 @@ namespace Codinsa2015.Server
 
             // Ajoute les évents.
             m_events.Clear();
+
             CreateDefaultEvents();
             foreach(var kvp in map.Events)
             {
-                if(!m_events.ContainsKey(kvp.Key))
+                if(!m_events.ContainsKey(kvp.Key) && kvp.Value != null)
                     m_events.Add(kvp.Key, kvp.Value);
             }
 
             Entities = newEntities;
             Vision.SetMap(this);
+            m_refreshEvents = true;
             if(OnMapModified != null)
                 OnMapModified();
         }

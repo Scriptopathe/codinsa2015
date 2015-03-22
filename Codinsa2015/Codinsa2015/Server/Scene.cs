@@ -334,8 +334,8 @@ namespace Codinsa2015.Server
                 "Codinsa2015.Server.Graphics",
                 "Codinsa2015.Server.Spells",
                 "Codinsa2015.Server.Spellcasts",
-                "Codinsa2015.Server.Spells",
                 "Codinsa2015.Server.Views",
+                "Codinsa2015.Server.Events",
                 "System.Windows.Forms"
             };
 
