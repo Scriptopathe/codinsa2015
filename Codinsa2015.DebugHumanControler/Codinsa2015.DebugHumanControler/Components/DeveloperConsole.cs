@@ -96,14 +96,14 @@ namespace Codinsa2015.DebugHumanControler.Components
             m_consoleInput.Location = new Point(0, bar + h1);
             m_consoleInput.Size = new Point(width, h2);
             m_consoleInput.TextValidated += m_consoleInput_TextValidated;
-            m_consoleInput.Opacity = 100;
+            m_consoleInput.Opacity = 200;
 
             // Console output
             m_consoleOutput = new GuiMultilineTextDisplay(Manager);
             m_consoleOutput.Parent = m_window;
             m_consoleOutput.Location = new Point(0, bar);
             m_consoleOutput.Size = new Point(width, h1);
-            m_consoleOutput.Opacity = 100;
+            m_consoleOutput.Opacity = 200;
 
             m_expandButton.Clicked += m_expandButton_Clicked;
             Server.GameServer.GetScene().GameInterpreter.OnPuts = new PonyCarpetExtractor.Interpreter.PutsDelegate((string s) => { m_consoleOutput.AppendLine(s); m_consoleOutput.ScrollDown(); });
