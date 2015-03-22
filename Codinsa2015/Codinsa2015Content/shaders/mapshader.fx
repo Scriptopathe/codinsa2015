@@ -58,7 +58,7 @@ float4 PixelShaderFunction(float2 coords: TEXCOORD0) : COLOR0
 
 	float2 src = float2(val.r, val.b);
 	float4 col;
-	float2 texCoords = (coords + scrolling) * 300 / xUnitSize;
+	float2 texCoords = (coords + scrolling) * 150 / xUnitSize;
 
 	// Gradient
 	float2 step = xPixelSize * xUnitSize;
