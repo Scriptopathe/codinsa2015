@@ -320,7 +320,7 @@ namespace Codinsa2015.Rendering
                 case DataMode.Direct:
                     foreach (var kvp in Map.Entities) 
                     {
-                        m_entityRenderer.Draw(batch, time, kvp.Value.Position, (Views.EntityType)kvp.Value.Type);
+                        m_entityRenderer.Draw(batch, time, kvp.Value);
                     }
                     foreach (var cast in Map.Spellcasts) 
                     {
@@ -345,7 +345,7 @@ namespace Codinsa2015.Rendering
                 case DataMode.Remote:
                     foreach(var entity in MapView.Entities)
                     {
-                        m_entityRenderer.Draw(batch, time, entity.Position, entity.Type);
+                        m_entityRenderer.Draw(batch, time, entity.Position, entity.Type, entity.Role);
                     }
                     foreach(var cast in MapView.SpellCasts)
                     {
