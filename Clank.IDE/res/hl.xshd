@@ -27,7 +27,11 @@
 				<Begin>/**</Begin>
 				<End>*/</End>
 			</Span>
-			
+
+      <Span name = "SingleLineComment" bold = "false" italic = "false" color = "Green" stopateol = "true" noescapesequences="true">
+				<Begin>//</Begin>
+			</Span>
+        
       <Span name = "MultilineComment" bold = "false" italic = "false" color = "Green" stopateol = "false" noescapesequences="true">
 				<Begin>/*</Begin>
 				<End>*/</End>
