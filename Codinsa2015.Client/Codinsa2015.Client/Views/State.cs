@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace Codinsa2015.Views.Client
+namespace Codinsa2015.Views
 {
 
 	public class State
@@ -12,11 +12,8 @@ namespace Codinsa2015.Views.Client
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 		/// <summary>
-		/// Retourne une vue vers le héros.
+		/// Retourne une vue vers le héros contrôlé par ce contrôleur.
 		/// </summary>
-		/// <param name="lol">test test</param>
-		/// <param name="mdr">test test</param>
-		/// <returns>hahaha</returns> 
 		public EntityBaseView GetHero()
 		{
 			Console.WriteLine("[GetHero]");

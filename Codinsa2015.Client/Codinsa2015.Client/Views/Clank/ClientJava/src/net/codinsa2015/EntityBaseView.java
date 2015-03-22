@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import net.codinsa2015.EntityHeroRole.*;
 import net.codinsa2015.StateAlterationView.*;
 import java.util.ArrayList;
 import net.codinsa2015.Vector2.*;
@@ -37,6 +38,8 @@ public class EntityBaseView
 	public Float GetHP;
 	// Obtient les HP max actuels de cette entité.
 	public Float GetMaxHP;
+	// Si cette entité est un héros, obtient le rôle de ce héros.
+	public EntityHeroRole Role;
 	// Obtient la liste des altérations d'état affectées à cette entité.
 	public ArrayList<StateAlterationView> StateAlterations;
 	// Représente les points d'armure de base de cette entité.
@@ -113,6 +116,9 @@ public class EntityBaseView
 		// GetMaxHP
 		float _obj_GetMaxHP = Float.valueOf(input.readLine());
 		_obj.GetMaxHP = _obj_GetMaxHP;
+		// Role
+		int _obj_Role = Integer.valueOf(input.readLine());
+		_obj.Role = EntityHeroRole.fromValue(_obj_Role);
 		// StateAlterations
 		ArrayList<StateAlterationView> _obj_StateAlterations = new ArrayList<StateAlterationView>();
 		int _obj_StateAlterations_count = Integer.valueOf(input.readLine());
@@ -209,6 +215,8 @@ public class EntityBaseView
 		output.append(((Float)this.GetHP).toString() + "\n");
 		// GetMaxHP
 		output.append(((Float)this.GetMaxHP).toString() + "\n");
+		// Role
+		output.append(((Integer)(this.Role.getValue())).toString() + "\n");
 		// StateAlterations
 		output.append(String.valueOf(this.StateAlterations.size()) + "\n");
 		for(int StateAlterations_it = 0; StateAlterations_it < this.StateAlterations.size();StateAlterations_it++) {

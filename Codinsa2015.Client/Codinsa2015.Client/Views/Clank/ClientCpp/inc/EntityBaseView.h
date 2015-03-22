@@ -26,6 +26,8 @@ public:
 	float GetHP;
 	// Obtient les HP max actuels de cette entité.
 	float GetMaxHP;
+	// Si cette entité est un héros, obtient le rôle de ce héros.
+	EntityHeroRole Role;
 	// Obtient la liste des altérations d'état affectées à cette entité.
 	std::vector<StateAlterationView> StateAlterations;
 	// Représente les points d'armure de base de cette entité.

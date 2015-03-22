@@ -18,6 +18,8 @@ void EntityBaseView::serialize(std::ostream& output) {
 	output << ((float)this->GetHP) << '\n';
 	// GetMaxHP
 	output << ((float)this->GetMaxHP) << '\n';
+	// Role
+	output << ((int)this->Role) << '\n';
 	// StateAlterations
 	output << this->StateAlterations.size() << '\n';
 	for(int StateAlterations_it = 0; StateAlterations_it < this->StateAlterations.size(); StateAlterations_it++) {
@@ -99,6 +101,9 @@ EntityBaseView EntityBaseView::deserialize(std::istream& input) {
 	// GetMaxHP
 	float _obj_GetMaxHP; input >> _obj_GetMaxHP; input.ignore(1000, '\n');
 	_obj.GetMaxHP = (float)_obj_GetMaxHP;
+	// Role
+	int _obj_Role; input >> _obj_Role; input.ignore(1000, '\n');
+	_obj.Role = (::EntityHeroRole)_obj_Role;
 	// StateAlterations
 	std::vector<StateAlterationView> _obj_StateAlterations = std::vector<StateAlterationView>();
 	int _obj_StateAlterations_count; input >> _obj_StateAlterations_count; input.ignore(1000, '\n');
