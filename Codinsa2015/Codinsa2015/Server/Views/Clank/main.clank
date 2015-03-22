@@ -1,4 +1,4 @@
-#include stdtypes.clank
+﻿#include stdtypes.clank
 #include XNAMacros.clank
 main
 {
@@ -20,13 +20,13 @@ main
 	#include _VisionMapView.clank
 	state
 	{
-		# Rajoute les statements using et le bon namespace pour la classe state.
+		// Rajoute les statements using et le bon namespace pour la classe state.
 		void getClassMetadata_cs()
 		{
 			string usingStatements = "";
 			string namespace = "Codinsa2015.Views";
 		}
-		# Rajoute le nom du package pour les projets java.
+		// Rajoute le nom du package pour les projets java.
 		void getClassMetadata_java()
 		{
 			string package = "net.codinsa2015";
@@ -77,7 +77,8 @@ main
 			Ward = 131072,
 			Shop = 262144,
 			HeroSpawner = 524288,
-			AllSaved = 609784
+			AllSaved = 609784,
+			All = 16777215
 		}
 
 		public enum EntityTypeRelative
@@ -118,7 +119,8 @@ main
 			Ward = 131072,
 			Shop = 262144,
 			HeroSpawner = 524288,
-			AllSaved = 609784
+			AllSaved = 609784,
+			All = 16777215
 		}
 
 		public enum StateAlterationSource
@@ -241,123 +243,129 @@ main
 	}
 	macro
 	{
-		# Retourne une vue vers le héros contrôlé par ce contrôleur.
+		// Retourne une vue vers le héros contrôlé par ce contrôleur.
 		EntityBaseView GetHero_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHero()"; }
-		# Retourne la position du héros.
+		// Retourne la position du héros.
 		Vector2 GetPosition_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetPosition()"; }
-		# Retourne les informations concernant la map actuelle
+		// Retourne les informations concernant la map actuelle
 		MapView GetMapView_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMapView()"; }
-		# Déplace le joueur vers la position donnée en utilisant l'A*.
+		// Déplace le joueur vers la position donnée en utilisant l'A*.
 		bool StartMoveTo_macro(int clientId,Vector2 position) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).StartMoveTo($(position))"; }
-		# Indique si le joueur est entrain de se déplacer en utilisant son A*.
+		// Indique si le joueur est entrain de se déplacer en utilisant son A*.
 		bool IsAutoMoving_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).IsAutoMoving()"; }
-		# Arrête le déplacement automatique (A*) du joueur.
+		// Arrête le déplacement automatique (A*) du joueur.
 		bool EndMoveTo_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).EndMoveTo()"; }
-		# Retourne la liste des entités en vue
+		// Retourne la liste des entités en vue
 		List<EntityBaseView> GetEntitiesInSight_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntitiesInSight()"; }
-		# Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès refusé)
+		// Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès refusé)
 		EntityBaseView GetEntityById_macro(int clientId,int entityId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntityById($(entityId))"; }
-		# Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
+		// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 		bool UseSpell_macro(int clientId,int spellId,SpellCastTargetInfoView target) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseSpell($(spellId),$(target))"; }
-		# Obtient le mode actuel de la scène.
+		// Obtient le mode actuel de la scène.
 		SceneMode GetMode_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMode()"; }
-		# Obtient la description du spell dont l'id est donné en paramètre.
+		// Obtient la description du spell dont l'id est donné en paramètre.
 		SpellDescriptionView GetSpellCurrentLevelDescription_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpellCurrentLevelDescription($(spellId))"; }
-		# Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
 		SpellView GetSpell_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpell($(spellId))"; }
-		# Obtient la liste des spells du héros contrôlé.
+		// Obtient la liste des spells du héros contrôlé.
 		List<SpellView> GetSpells_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpells()"; }
-		# Obtient les spells possédés par le héros dont l'id est passé en paramètre.
+		// Obtient les spells possédés par le héros dont l'id est passé en paramètre.
 		List<SpellView> GetHeroSpells_macro(int clientId,int entityId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHeroSpells($(entityId))"; }
 
-	} # macro
+	} // macro
 	access
 	{
-		# Retourne une vue vers le héros contrôlé par ce contrôleur.
+	    /** 
+	     * @brief Ceci est la description de la fonction.
+	     * @param:param1 Description du param1
+	     * @returns Description de la valeur de retour.
+	    */
+	    public int FonctionTest(int param1) { }
+		// Retourne une vue vers le héros contrôlé par ce contrôleur.
 		public EntityBaseView GetHero()
 		{ 
 			return GetHero_macro(clientId);
 		}
 
-		# Retourne la position du héros.
+		// Retourne la position du héros.
 		public Vector2 GetPosition()
 		{ 
 			return GetPosition_macro(clientId);
 		}
 
-		# Retourne les informations concernant la map actuelle
+		// Retourne les informations concernant la map actuelle
 		public MapView GetMapView()
 		{ 
 			return GetMapView_macro(clientId);
 		}
 
-		# Déplace le joueur vers la position donnée en utilisant l'A*.
+		// Déplace le joueur vers la position donnée en utilisant l'A*.
 		public bool StartMoveTo(Vector2 position)
 		{ 
 			return StartMoveTo_macro(clientId,position);
 		}
 
-		# Indique si le joueur est entrain de se déplacer en utilisant son A*.
+		// Indique si le joueur est entrain de se déplacer en utilisant son A*.
 		public bool IsAutoMoving()
 		{ 
 			return IsAutoMoving_macro(clientId);
 		}
 
-		# Arrête le déplacement automatique (A*) du joueur.
+		// Arrête le déplacement automatique (A*) du joueur.
 		public bool EndMoveTo()
 		{ 
 			return EndMoveTo_macro(clientId);
 		}
 
-		# Retourne la liste des entités en vue
+		// Retourne la liste des entités en vue
 		public List<EntityBaseView> GetEntitiesInSight()
 		{ 
 			return GetEntitiesInSight_macro(clientId);
 		}
 
-		# Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès refusé)
+		// Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès refusé)
 		public EntityBaseView GetEntityById(int entityId)
 		{ 
 			return GetEntityById_macro(clientId,entityId);
 		}
 
-		# Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
+		// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 		public bool UseSpell(int spellId,SpellCastTargetInfoView target)
 		{ 
 			return UseSpell_macro(clientId,spellId,target);
 		}
 
-		# Obtient le mode actuel de la scène.
+		// Obtient le mode actuel de la scène.
 		public SceneMode GetMode()
 		{ 
 			return GetMode_macro(clientId);
 		}
 
-		# Obtient la description du spell dont l'id est donné en paramètre.
+		// Obtient la description du spell dont l'id est donné en paramètre.
 		public SpellDescriptionView GetSpellCurrentLevelDescription(int spellId)
 		{ 
 			return GetSpellCurrentLevelDescription_macro(clientId,spellId);
 		}
 
-		# Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
 		public SpellView GetSpell(int spellId)
 		{ 
 			return GetSpell_macro(clientId,spellId);
 		}
 
-		# Obtient la liste des spells du héros contrôlé.
+		// Obtient la liste des spells du héros contrôlé.
 		public List<SpellView> GetSpells()
 		{ 
 			return GetSpells_macro(clientId);
 		}
 
-		# Obtient les spells possédés par le héros dont l'id est passé en paramètre.
+		// Obtient les spells possédés par le héros dont l'id est passé en paramètre.
 		public List<SpellView> GetHeroSpells(int entityId)
 		{ 
 			return GetHeroSpells_macro(clientId,entityId);
 		}
 
 
-	} # access
+	} // access
 
-} # main
+} // main

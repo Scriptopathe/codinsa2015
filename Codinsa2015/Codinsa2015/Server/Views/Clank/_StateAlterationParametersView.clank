@@ -1,19 +1,19 @@
-# Généré automatiquement (Clank.ViewCreator)
+// Généré automatiquement (Clank.ViewCreator)
 
 
 state {
 	public serializable class StateAlterationParametersView
 	{
 
-		# Rajoute les statements using et le bon namespace pour la classe state.
+		// Rajoute les statements using et le bon namespace pour la classe state.
 		void getClassMetadata_cs()
 		{
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
-		#Position finale que le dash doit atteindre (si le targetting est Direction)
+		//Position finale que le dash doit atteindre (si le targetting est Direction)
 		public Vector2 DashTargetDirection;
-		#Entité vers laquelle le dash doit se diriger (si le targetting du dash est Entity).
+		//Entité vers laquelle le dash doit se diriger (si le targetting du dash est Entity).
 		public int DashTargetEntity;
 	}
 }

@@ -1,17 +1,17 @@
-# Généré automatiquement (Clank.ViewCreator)
+// Généré automatiquement (Clank.ViewCreator)
 
 
 state {
 	public serializable class SpellcastBaseView
 	{
 
-		# Rajoute les statements using et le bon namespace pour la classe state.
+		// Rajoute les statements using et le bon namespace pour la classe state.
 		void getClassMetadata_cs()
 		{
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
-		#Shape utilisée par ce spell cast.
+		//Shape utilisée par ce spell cast.
 		public GenericShapeView Shape;
 	}
 }

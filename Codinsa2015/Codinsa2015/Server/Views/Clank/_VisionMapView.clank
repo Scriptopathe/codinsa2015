@@ -1,17 +1,17 @@
-# Généré automatiquement (Clank.ViewCreator)
+// Généré automatiquement (Clank.ViewCreator)
 
 
 state {
 	public serializable class VisionMapView
 	{
 
-		# Rajoute les statements using et le bon namespace pour la classe state.
+		// Rajoute les statements using et le bon namespace pour la classe state.
 		void getClassMetadata_cs()
 		{
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
-		#Représente la vision qu'ont les 2 équipes sur l'ensemble de la map.
+		//Représente la vision qu'ont les 2 équipes sur l'ensemble de la map.
 		public Matrix<VisionFlags> Vision;
 	}
 }

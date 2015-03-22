@@ -1,13 +1,13 @@
-﻿# Types standard dans les langages supportés.
+﻿// Types standard dans les langages supportés.
 main
 {
 
     macro
     {
-        # Représente un tableau bidimensionnel. 
+        // Représente un tableau bidimensionnel. 
         public serializable array class Matrix<T>
         {
-            # Nom de la matrice dans les différents langages.
+            // Nom de la matrice dans les différents langages.
             string name()
             {
                 string cs = "List<List<$(T)>>";
@@ -16,10 +16,10 @@ main
                 string python = "array";
             }
             
-            # Type des éléments de l'array.
+            // Type des éléments de l'array.
             List<T> getArrayElementType() { }
             
-            # Retourne l'élément à la case (x, y).
+            // Retourne l'élément à la case (x, y).
             T get(int x, int y)
             {
                 string cs = "@self[$(x)][$(y)]";
@@ -28,7 +28,7 @@ main
                 string python = "@self[$(x)][$(y)]";
             }
             
-            # Crée une nouvelle instance de matrice avec les paramètres de taille donnés.
+            // Crée une nouvelle instance de matrice avec les paramètres de taille donnés.
             constructor Matrix<T> new(int width, int height)
             {
                 string cs = "new List<List<$(T)>>()";
@@ -46,13 +46,13 @@ main
             }
         }
         
-        # Tableau
+        // Tableau
         public serializable array class Array<T>
         {
-            # Type des éléments de l'array.
+            // Type des éléments de l'array.
             T getArrayElementType() { }
             
-            # Nom du type "Array" dans les différents langages cibles.
+            // Nom du type "Array" dans les différents langages cibles.
             string name()
             {
                 string cs = "$(T)[]";
@@ -61,7 +61,7 @@ main
                 string python = "array"; 
             }
             
-            # Obtient un élément de la liste à l'index donné.
+            // Obtient un élément de la liste à l'index donné.
             T get(int index)
             {
                 string cs = "@self[$(index)]";
@@ -70,7 +70,7 @@ main
                 string python = "@self[$(index)]";
             }
             
-            # Ajoute un élément à la fin de la liste.
+            // Ajoute un élément à la fin de la liste.
             void add(T value)
             {
                 string cs = "@self.Add($(value))";
@@ -79,7 +79,7 @@ main
                 string python = "@self.append($(value))";
             }
             
-            # Obtient le nombre d'éléments de la liste.
+            // Obtient le nombre d'éléments de la liste.
             int count()
             {
                 string cs = "@self.Count";
@@ -88,7 +88,7 @@ main
                 string python = "len(@self)";
             }
             
-            # Supprime l'élément de la liste à la position donnée.
+            // Supprime l'élément de la liste à la position donnée.
             void removeat(int index)
             {
                 string cs = "@self.RemoveAt($(index))";
@@ -97,7 +97,7 @@ main
                 string python = "del @self[$(index)]";
             }
             
-            # Crée un nouvel array de la taille spécifiée.
+            // Crée un nouvel array de la taille spécifiée.
             public constructor Array<T> new(int size)
             {
                 string cs = "new $(T)[size]";
@@ -114,21 +114,21 @@ main
             }
         }
         
-        # Représente une "liste".
-        # Ce conteneur est à utiliser en lieu et place des array, et autres,
-        # car il est compatible avec la plupart des langages et facile à utiliser.
-        # Cependant, l'implémentation ne sera pas forcément optimale, mais ce n'est
-        # pas très important.
+        // Représente une "liste".
+        // Ce conteneur est à utiliser en lieu et place des array, et autres,
+        // car il est compatible avec la plupart des langages et facile à utiliser.
+        // Cependant, l'implémentation ne sera pas forcément optimale, mais ce n'est
+        // pas très important.
         public serializable array class List<T>
         {
-        	# Ajoute l'import nécessaire
+        	// Ajoute l'import nécessaire
     		void getClassMetadata_java()
     		{
     			string import = "java.util.ArrayList";
     		}
 		
             T getArrayElementType() { }
-            # Nom du type "List" dans les différents langages cibles.
+            // Nom du type "List" dans les différents langages cibles.
             string name()
             {
                 string cs = "List<$(T)>";
@@ -145,7 +145,7 @@ main
                 string python = "[]";
             }
             
-            # Obtient un élément de la liste à l'index donné.
+            // Obtient un élément de la liste à l'index donné.
             T get(int index)
             {
                 string cs = "@self[$(index)]";
@@ -154,7 +154,7 @@ main
                 string python = "@self[$(index)]";
             }
             
-            # Ajoute un élément à la fin de la liste.
+            // Ajoute un élément à la fin de la liste.
             void add(T value)
             {
                 string cs = "@self.Add($(value))";
@@ -163,7 +163,7 @@ main
                 string python = "@self.append($(value))";
             }
             
-            # Obtient le nombre d'éléments de la liste.
+            // Obtient le nombre d'éléments de la liste.
             int count()
             {
                 string cs = "@self.Count";
@@ -172,7 +172,7 @@ main
                 string python = "len(@self)";
             }
             
-            # Supprime l'élément de la liste à la position donnée.
+            // Supprime l'élément de la liste à la position donnée.
             void removeat(int index)
             {
                 string cs = "@self.RemoveAt($(index))";
