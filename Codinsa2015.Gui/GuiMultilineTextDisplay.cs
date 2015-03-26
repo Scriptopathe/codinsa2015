@@ -87,6 +87,7 @@ namespace Codinsa2015.EnhancedGui
             m_scrollbar.Size = new Point(20, this.Size.Y);
             m_scrollbar.Location = new Point(this.Size.X - 20, 0);
             m_scrollbar.MaxValue = Math.Max(1, m_linesCache.Count);
+            m_scrollbar.GrabLen = Math.Max(1, m_scrollbar.MaxValue / 10);
         }
 
         /// <summary>

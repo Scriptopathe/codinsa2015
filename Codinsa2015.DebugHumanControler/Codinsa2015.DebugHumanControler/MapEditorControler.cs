@@ -91,6 +91,10 @@ namespace Codinsa2015.DebugHumanControler
             CreateGui();
 
             Server.GameServer.GetScene().GameInterpreter.MainContext.LocalVariables.Add("ctrl", new PonyCarpetExtractor.ExpressionTree.Mutable(this));
+            Server.GameServer.GetBattleLog().OnEvent += delegate(Tools.EventLog.Entry entry)
+            {
+                m_console.Output.AppendLine("[Battle] " + entry.Message);
+            };
         }
 
  
@@ -258,14 +262,12 @@ namespace Codinsa2015.DebugHumanControler
             if( Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M))
             {
                 Save();
-                m_console.Output.AppendLine("Map sauvegardée avec succès.");
             }
 
             // Chargement
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.L))
             {
                 Load();
-                m_console.Output.AppendLine("Map chargée avec succès");
             }
         }
 
@@ -497,9 +499,10 @@ namespace Codinsa2015.DebugHumanControler
         /// <summary>
         /// Sauvegarde la map.
         /// </summary>
-        public void Save()
+        public void Save(float scale=1.0f)
         {
-            MapFile.Save(CurrentMap);
+            MapFile.Save(CurrentMap, Ressources.MapFilename, scale);
+            m_console.Output.AppendLine("Map sauvegardée avec succès.");
         }
 
         /// <summary>
@@ -514,6 +517,7 @@ namespace Codinsa2015.DebugHumanControler
                     MapFile loaded = MapFile.FromFile(Ressources.MapFilename);
                     if (OnMapLoaded != null)
                         OnMapLoaded(loaded);
+                    m_console.Output.AppendLine("Map chargée avec succès");
                 }
                 /*catch { }*/
                 finally { }

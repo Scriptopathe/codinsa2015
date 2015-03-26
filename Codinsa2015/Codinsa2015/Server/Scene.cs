@@ -155,7 +155,7 @@ namespace Codinsa2015.Server
         /// </summary>
         void LoadConstants()
         {
-            if (System.IO.File.Exists("constants.xml"))
+            if (System.IO.File.Exists("constants.xml") && LOAD_DB_FILE)
             {
                 Constants = GameConstants.LoadFromFile("constants.xml");
             }

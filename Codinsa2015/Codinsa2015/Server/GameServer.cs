@@ -20,8 +20,16 @@ namespace Codinsa2015.Server
         public static int __INTERNAl_CLIENT_ID = -42;
         Scene m_scene;
         GameTime m_time;
+        Tools.EventLog m_battleLogs;
 
-
+        /// <summary>
+        /// Obtient le système de log de combat.
+        /// </summary>
+        /// <returns></returns>
+        public static Tools.EventLog GetBattleLog()
+        {
+            return Instance.m_battleLogs;
+        }
 
         /// <summary>
         /// Obtient le temps de jeu actuel.
@@ -78,6 +86,7 @@ namespace Codinsa2015.Server
         {
             Instance = this;
             m_scene = new Scene();
+            m_battleLogs = new Tools.EventLog();
         }
 
         /// <summary>

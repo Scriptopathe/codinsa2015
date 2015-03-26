@@ -273,7 +273,7 @@ namespace Codinsa2015.Server
             AttackDamage = 30;
             VisionRange = 8;
             AttackRange = 4;
-            HP = 100;
+            HP = 300;
         }
 
     }

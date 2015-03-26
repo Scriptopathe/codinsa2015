@@ -25,22 +25,24 @@ namespace Codinsa2015.Server
         {
             Save(map, Ressources.MapFilename);
         }
+
         /// <summary>
         /// Sauvegarde la map passée en paramètre dans le fichier dont le nom est passé en paramètre.
         /// </summary>
         /// <param name="map"></param>
-        public static void Save(Map map, string filename)
+        public static void Save(Map map, string filename, float scale=1.0f)
         {
-        
             FileStream fs = new System.IO.FileStream(filename, System.IO.FileMode.Create);
             StreamWriter writer = new StreamWriter(fs);
-            writer.WriteLine("size " + map.Size.X.ToString() + " " + map.Size.Y.ToString());
+            int sx = (int)(map.Size.X * scale);
+            int sy = (int)(map.Size.Y * scale);
+            writer.WriteLine("size " + sx.ToString() + " " + sy.ToString());
             writer.WriteLine("map ");
-            for (int y = 0; y < map.Size.Y; y++)
+            for (int y = 0; y < sy; y++)
             {
-                for (int x = 0; x < map.Size.X; x++)
+                for (int x = 0; x < sx; x++)
                 {
-                    writer.Write(map.GetPassabilityAt(x, y) ? "1" : "0");
+                    writer.Write(map.GetPassabilityAt(x/scale, y/scale) ? "1" : "0");
                 }
                 writer.WriteLine();
             }
@@ -48,9 +50,11 @@ namespace Codinsa2015.Server
             // Ecrit les entités
             foreach (EntityBase entity in map.Entities.Values)
             {
-                string x = entity.Position.X.ToString();
-                string y = entity.Position.Y.ToString();
-                if(entity.Type.HasFlag(EntityType.Structure) | entity.Type.HasFlag(EntityType.WardPlacement))
+                string x = (entity.Position.X * scale).ToString();
+                string y = (entity.Position.Y * scale).ToString();
+                if(entity.Type.HasFlag(EntityType.Structure) |
+                    entity.Type.HasFlag(EntityType.WardPlacement) |
+                    entity.Type.HasFlag(EntityType.HeroSpawner))
                     writer.WriteLine(entity.Type.ToString() + " " + x.ToString() + " " + y.ToString());
                 else if(entity.Type.HasFlag(EntityType.Checkpoint))
                 {
@@ -65,8 +69,8 @@ namespace Codinsa2015.Server
             foreach(var kvp in map.Events)
             {
                 GameEvent evt = kvp.Value;
-                string x = evt.Position.X.ToString();
-                string y = evt.Position.Y.ToString();
+                string x = (evt.Position.X * scale).ToString();
+                string y = (evt.Position.Y * scale).ToString();
                 writer.WriteLine(kvp.Key.ToString() + " " + x + " " + y);
             }
 
@@ -89,6 +93,10 @@ namespace Codinsa2015.Server
             Dictionary<EventId, GameEvent> newEvents = new Dictionary<EventId, GameEvent>();
             for (int i = 0; i < words.Length; i++)
             {
+                if(i== 152)
+                {
+                    i = 152;
+                }
                 string word = words[i];
                 if (word == "size")
                 {
@@ -118,6 +126,8 @@ namespace Codinsa2015.Server
                     #region Entities
                     try
                     {
+                        if (char.IsDigit(word[0]))
+                            throw new InvalidOperationException();
                         // Entitié
                         EntityType type = (EntityType)Enum.Parse(typeof(EntityType), word);
                         float sX = float.Parse(words[i + 1]);
@@ -141,7 +151,13 @@ namespace Codinsa2015.Server
                                     Type = type
                                 };
                                 break;
-
+                            case EntityType.HeroSpawner:
+                                newEntity = new EntityHeroSpawner()
+                                {
+                                    Position = new Vector2(sX, sY),
+                                    Type = type
+                                };
+                                break;
                             case EntityType.WardPlacement:
                                 newEntity = new EntityWardPlacement()
                                 {
@@ -161,15 +177,12 @@ namespace Codinsa2015.Server
                                     CheckpointID = id
                                 };
                                 break;
-
-                            case EntityType.Inhibitor:
-                                throw new NotImplementedException();
-                                break;
-                            case EntityType.Miniboss:
-                                throw new NotImplementedException();
-                                break;
                             case EntityType.Idol:
-                                throw new NotImplementedException();
+                                newEntity = new EntityIdol()
+                                {
+                                    Type = type,
+                                    Position = new Vector2(sX, sY)
+                                };
                                 break;
                             case EntityType.Boss:
                                 throw new NotImplementedException();
@@ -187,6 +200,8 @@ namespace Codinsa2015.Server
                     #region Events
                     try
                     {
+                        if (char.IsDigit(word[0]))
+                            throw new InvalidOperationException();
                         // Entitié
                         EventId type = (EventId)Enum.Parse(typeof(EventId), word);
                         float sX = float.Parse(words[i + 1]);
@@ -194,14 +209,18 @@ namespace Codinsa2015.Server
                         GameEvent newEvent = null;
                         switch (type)
                         {
+                            case EventId.Camp8:
+                            case EventId.Camp7:
+                            case EventId.Camp6:
+                            case EventId.Camp5:
                             case EventId.Camp4:
                             case EventId.Camp3:
                             case EventId.Camp2:
                             case EventId.Camp1:
                                 newEvent = new EventMonsterCamp() { Position = new Vector2(sX, sY) };
                                 break;
-                            case EventId.MinibossWest:
-                            case EventId.MinibossEast:
+                            case EventId.Miniboss1:
+                            case EventId.Miniboss2:
                                 newEvent = new EventMiniboss() { Position = new Vector2(sX, sY) };
                                 break;
                             case EventId.Bigboss:
