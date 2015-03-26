@@ -70,7 +70,7 @@ namespace Codinsa2015.Server.Spells
                     {
                         Type = StateAlterationType.AttackDamage,
                         BaseDuration = 0.0f,
-                        FlatValue = 100.0f,
+                        FlatValue = 50.0f,
                         SourcePercentADValue = 0.0f,
                     },
                 }
