@@ -86,6 +86,7 @@
     <Compile Include="Server\Controlers\PickPhaseControler.cs" />
     <Compile Include="Server\Controlers\ShopInterface.cs" />
     <Compile Include="Server\Entities\EntityBase.cs" />
+    <Compile Include="Server\Entities\EntityIdol.cs" />
     <Compile Include="Server\Entities\EntityBigBoss.cs" />
     <Compile Include="Server\Entities\EntityCampMonster.cs" />
     <Compile Include="Server\Entities\EntityMiniboss.cs" />
@@ -166,6 +167,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Server\GameServer.cs" />
     <Compile Include="Server\Scene.cs" />
+    <Compile Include="Tools\EventLog.cs" />
     <Compile Include="Tools\Log.cs" />
     <Compile Include="Tools\Serializer.cs" />
   </ItemGroup>
