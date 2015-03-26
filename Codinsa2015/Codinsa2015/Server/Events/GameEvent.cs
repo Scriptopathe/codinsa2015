@@ -15,8 +15,12 @@ namespace Codinsa2015.Server.Events
         Camp2,
         Camp3,
         Camp4,
-        MinibossWest,
-        MinibossEast,
+        Camp5,
+        Camp6,
+        Camp7,
+        Camp8,
+        Miniboss1,
+        Miniboss2,
         Resurrector,
     }
     /// <summary>
