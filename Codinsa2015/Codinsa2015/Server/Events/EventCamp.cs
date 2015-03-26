@@ -77,7 +77,6 @@ namespace Codinsa2015.Server.Events
         /// </summary>
         public override void Initialize()
         {
-            m_position = new Vector2(30, 40);
             m_destroyed = true;
             m_team1Timer = true;
             m_team2Timer = true;
@@ -126,6 +125,10 @@ namespace Codinsa2015.Server.Events
             }
             else
             {
+                // Si un monstre du camp a été aggro, fait en sorte que les autres
+                // le soient aussi.
+                DispatchAgro();
+
                 // Respawn du camp si le timer expire.
                 m_respawnTimer -= (float)time.ElapsedGameTime.TotalSeconds;
                 if (m_respawnTimer <= 0)
@@ -148,7 +151,28 @@ namespace Codinsa2015.Server.Events
             }
           
         }
+        /// <summary>
+        /// Si un monstre du camp a été aggro, fait en sorte que les autres
+        /// le soient aussi.
+        /// </summary>
+        void DispatchAgro()
+        {
+            // Recherche d'une aggro parmi les monstres du camp.
+            Entities.EntityBase aggro = null;
+            foreach (var monster in m_monsters)
+            {
+                if (monster.CurrentAgro != null)
+                    aggro = monster.CurrentAgro;
+            }
 
+            // Transfert de l'aggro à tous les monstres sans aggro.
+            if(aggro != null)
+                foreach(var monster in m_monsters)
+                {
+                    if(monster.CurrentAgro != null)
+                        monster.CurrentAgro = aggro;
+                }
+        }
         /// <summary>
         /// Fait apparaître un creep.
         /// </summary>
