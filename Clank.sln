@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codinsa2015.DebugHumanContr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codinsa2015.RemoteHumanControler", "Codinsa2015.RemoteHumanControler\Codinsa2015.RemoteHumanControler.csproj", "{DAB11981-AA92-46DE-8AA5-423F1510E75F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codinsa2015.MapImporter", "MapImporter\Codinsa2015.MapImporter.csproj", "{89610A03-345B-4CDA-93CC-FCE33D8AA54E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -201,6 +203,16 @@ Global
 		{DAB11981-AA92-46DE-8AA5-423F1510E75F}.Release|Mixed Platforms.Build.0 = Release|x86
 		{DAB11981-AA92-46DE-8AA5-423F1510E75F}.Release|x86.ActiveCfg = Release|x86
 		{DAB11981-AA92-46DE-8AA5-423F1510E75F}.Release|x86.Build.0 = Release|x86
+		{89610A03-345B-4CDA-93CC-FCE33D8AA54E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89610A03-345B-4CDA-93CC-FCE33D8AA54E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89610A03-345B-4CDA-93CC-FCE33D8AA54E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{89610A03-345B-4CDA-93CC-FCE33D8AA54E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{89610A03-345B-4CDA-93CC-FCE33D8AA54E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{89610A03-345B-4CDA-93CC-FCE33D8AA54E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89610A03-345B-4CDA-93CC-FCE33D8AA54E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89610A03-345B-4CDA-93CC-FCE33D8AA54E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{89610A03-345B-4CDA-93CC-FCE33D8AA54E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{89610A03-345B-4CDA-93CC-FCE33D8AA54E}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
