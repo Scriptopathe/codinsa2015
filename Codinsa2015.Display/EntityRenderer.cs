@@ -103,59 +103,6 @@ namespace Codinsa2015.Rendering
                 new Vector2(sx, sy),
                 SpriteEffects.None,
                 0.0f);
-            /*if (type.HasFlag(Views.EntityType.Team1))
-                col = Color.Blue;
-            else if (type.HasFlag(Views.EntityType.Team2))
-                col = Color.Red;
-            else
-                col = Color.White;
-
-            Texture2D tex = Ressources.DummyTexture;
-            if (type.HasFlag(Views.EntityType.Tower))
-            {
-                tex = (type & Views.EntityType.Teams) == Views.EntityType.Team1 ? Ressources.BlueTower : Ressources.RedTower;
-                col = Color.White;
-            }
-            else if (type.HasFlag(Views.EntityType.Spawner))
-                tex = Ressources.TextBox;
-            else if (type.HasFlag(Views.EntityType.WardPlacement))
-                tex = Ressources.SelectMark;
-
-            int s = m_mapRenderer.UnitSize / 2;
-            int sx = m_mapRenderer.UnitSize / 2;
-            int sy = m_mapRenderer.UnitSize / 2;
-            if (type.HasFlag(Views.EntityType.Checkpoint))
-            {
-                sx /= 4;
-                sy /= 4;
-            }
-            else if (type.HasFlag(Views.EntityType.Tower))
-            {
-                sy *= 4;
-                sx *= 2;
-            }
-            else if (type.HasFlag(Views.EntityType.Player))
-            {
-                bool blue = type.HasFlag(Views.EntityType.Team1);
-                switch (role)
-                {
-                    case Views.EntityHeroRole.Fighter:
-                        tex = blue ? Ressources.BlueFighter : Ressources.RedFighter;
-                        break;
-                    case Views.EntityHeroRole.Mage:
-                        tex = blue ? Ressources.BlueMage : Ressources.RedMage;
-                        break;
-                    case Views.EntityHeroRole.Tank:
-                        tex = blue ? Ressources.BlueTank : Ressources.RedTank;
-                        break;
-                }
-                sx *= 2;
-                sy *= 2;
-                col = Color.White;
-            }
-            col.A = (byte)((m_mapRenderer.HasVision((type & Views.EntityType.Teams) ^ Views.EntityType.Teams, entityPosition)) ? 255 : 220);
-            batch.Draw(tex,
-                new Rectangle(drawPos.X, drawPos.Y, sx, sy), null, col, __angle, new Vector2(s, s), SpriteEffects.None, 0.0f);*/
         }
         /// <summary>
         /// Dessine l'entité à la position donnée.
