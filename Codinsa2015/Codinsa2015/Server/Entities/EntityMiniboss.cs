@@ -73,6 +73,7 @@ namespace Codinsa2015.Server.Entities
             GuardPosition = guardPosition;
             Position = GuardPosition;
             m_attackSpell = new Spells.FireballSpell(this, 1.7f, AttackRange+1, EntityTypeRelative.Player);
+            Type |= EntityType.Miniboss;
         }
 
         /// <summary>

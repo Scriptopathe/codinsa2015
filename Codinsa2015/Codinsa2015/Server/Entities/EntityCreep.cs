@@ -62,6 +62,7 @@ namespace Codinsa2015.Server.Entities
             HP = BaseMaxHP;
             m_currentCheckpointId = -1;
             m_attackSpell = new Spells.FireballSpell(this);
+            Type |= EntityType.Creep;
         }
 
         /// <summary>

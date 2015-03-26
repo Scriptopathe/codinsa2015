@@ -18,7 +18,6 @@ namespace Codinsa2015.Server.Entities
         Team2 = 0x04,
         Structure = 0x08,
         Tower = 0x10 | Structure,
-        Inhibitor = 0x20 | Structure,
         Spawner = 0x40 | Structure,
         Idol = 0x80 | Structure,
 
@@ -40,16 +39,14 @@ namespace Codinsa2015.Server.Entities
         HeroSpawner = 0x00080000,
 
         // Macros
-        AllTeam1 = Team1 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
-        AllTeam2 = Team2 | Tower | Inhibitor | Spawner | Idol | Player | Creep,
-        AllObjectives = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss,
+        AllTeam1 = Team1 | Tower | Spawner | Idol | Player | Creep,
+        AllTeam2 = Team2 | Tower | Spawner | Idol | Player | Creep,
+        AllObjectives = Tower | Spawner | Idol | Boss | Miniboss,
         AllSaved = AllObjectives | Checkpoint | WardPlacement | HeroSpawner,
-        AllTargettableNeutral = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss | Creep | Monster,
+        AllTargettableNeutral = Tower | Spawner | Idol | Boss | Miniboss | Creep | Monster,
         // Team
         Team1Tower = Team1 | Tower,
         Team2Tower = Team2 | Tower,
-        Team1Inhibitor = Team1 | Inhibitor,
-        Team2Inhibitor = Team2 | Inhibitor,
         Team1Spawner = Team1 | Spawner,
         Team2Spawner = Team2 | Spawner,
         Team1Idol = Team1 | Idol,
@@ -60,6 +57,8 @@ namespace Codinsa2015.Server.Entities
         Team2Creep = Team2 | Creep,
         Team1Checkpoint = Team1 | Checkpoint,
         Team2CheckPoint = Team2 | Checkpoint,
+        Team1HeroSpawner = Team1 | HeroSpawner,
+        Team2HeroSpawner = Team2 | HeroSpawner,
         Teams = Team1 | Team2,
         
         All = 0xFFFFFF,
@@ -76,7 +75,6 @@ namespace Codinsa2015.Server.Entities
         Ennemy          = 0x04,
         Structure       = 0x08,
         Tower           = 0x10 | Structure,
-        Inhibitor       = 0x20 | Structure,
         Spawner         = 0x40 | Structure,
         Idol            = 0x80 | Structure,
 
@@ -99,17 +97,15 @@ namespace Codinsa2015.Server.Entities
         HeroSpawner = 0x00080000,
 
         // Macros
-        AllEnnemy       = Ennemy | Tower | Inhibitor | Spawner | Idol | Player | Creep,
-        AllAlly         = Ally | Tower | Inhibitor | Spawner | Idol | Player | Creep,
-        AllObjectives   = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss,
+        AllEnnemy       = Ennemy | Tower | Spawner | Idol | Player | Creep,
+        AllAlly         = Ally | Tower | Spawner | Idol | Player | Creep,
+        AllObjectives   = Tower | Spawner | Idol | Boss | Miniboss,
         AllSaved        = AllObjectives | Checkpoint | WardPlacement | HeroSpawner,
-        AllTargettableNeutral = Tower | Inhibitor | Spawner | Idol | Boss | Miniboss | Creep | Monster,
+        AllTargettableNeutral = Tower | Spawner | Idol | Boss | Miniboss | Creep | Monster,
 
         // Team
         AllyTower       = Ally | Tower,
         EnnemyTower     = Ennemy | Tower,
-        AllyInhibitor   = Ally | Inhibitor,
-        EnnemyInhibitor = Ennemy | Inhibitor,
         AllySpawner     = Ally | Spawner,
         EnnemySpawner   = Ennemy | Spawner,
         AllyIdol        = Ally | Idol,
@@ -120,6 +116,8 @@ namespace Codinsa2015.Server.Entities
         EnnemyCreep     = Ennemy | Creep,
         AllyCheckpoint  = Ally | Checkpoint,
         EnnemyCheckpoint = Ennemy | Checkpoint,
+        AllyHeroSpawner = Ally | HeroSpawner,
+        EnnemyHeroSpawner = Ennemy | HeroSpawner,
 
         All = 0xFFFFFF,
     }

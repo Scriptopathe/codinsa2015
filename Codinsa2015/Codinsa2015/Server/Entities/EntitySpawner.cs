@@ -71,9 +71,10 @@ namespace Codinsa2015.Server.Entities
             HP = BaseMaxHP;
             BaseMoveSpeed = 0f;
             SpawnInterval = 30;
-            CreepsPerWave = 6;
+            CreepsPerWave = 0; // 6
             SpawnDecay = 0.1f;
             RowCount = 3;
+            Type |= EntityType.Spawner;
         }
 
         /// <summary>

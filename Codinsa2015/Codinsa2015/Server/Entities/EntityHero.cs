@@ -230,6 +230,7 @@ namespace Codinsa2015.Server.Entities
             Spells.Add(new Spells.DashForwardSpell(this));
             Spells.Add(new Spells.MovementSpeedBuffSpell(this));
             Spells.Add(new Spells.TargettedTowerSpell(this));
+            Type |= EntityType.Player;
             VisionRange = 8;
             BaseMoveSpeed = 2;
             m_consummables = new ConsummableStack[2] {

@@ -24,6 +24,7 @@ namespace Codinsa2015.Server.Entities
         public EntityCheckpoint() : base()
         {
             VisionRange = 0;
+            Type |= EntityType.Checkpoint;
         }
         
     }

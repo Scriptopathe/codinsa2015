@@ -1097,6 +1097,7 @@ namespace Codinsa2015.Server.Entities
             m_stateAlterations.Add(alteration);
         }
 
+
         /// <summary>
         /// Applique le nombre de dégâts indiqué à cette entité.
         /// Cette fonction prend en compte l'armure de l'entité pour déterminer
@@ -1106,6 +1107,9 @@ namespace Codinsa2015.Server.Entities
         protected virtual float ApplyAttackDamage(float damage)
         {
             float trueDamages = (damage * 100 / (100 + GetArmor()));
+#if DEBUG
+            DebugBattleLogMessage("Dégâts AD infligés : " + damage + " (" + trueDamages + " true damage) armure : " + GetArmor() + " hp : " + GetHP() );
+#endif
             ApplyTrueDamage(trueDamages);
             return trueDamages;
         }
@@ -1119,6 +1123,9 @@ namespace Codinsa2015.Server.Entities
         {
             float trueDamages = (damage * 100 / (100 + GetMagicResist()));
             ApplyTrueDamage(trueDamages);
+#if DEBUG
+            DebugBattleLogMessage("Dégâts AP infligés : " + damage + " (" + trueDamages + " true damage) magic resist : " + GetMagicResist() + " hp : " + GetHP());
+#endif
             return trueDamages;
         }
         /// <summary>
@@ -1180,7 +1187,16 @@ namespace Codinsa2015.Server.Entities
         }
         #endregion
 
-        #region Misc
+        #region Misc        
+        /// <summary>
+        /// Ajoute un message de debug dans le battle log.
+        /// </summary>
+        /// <param name="message"></param>
+        protected void DebugBattleLogMessage(string message)
+        {
+            GameServer.GetBattleLog().AddMessage("[from: " + this.ToString() + "] " + message);
+        }
+
         /// <summary>
         /// Indique si oui ou non l'entité est à la position donné (avec une erreur convenablement
         /// calculée).
@@ -1191,6 +1207,7 @@ namespace Codinsa2015.Server.Entities
             return Vector2.DistanceSquared(position, Position) <= error * error;
         }
         #endregion
+
         #region Vision
         /// <summary>
         /// Indique si cette entité voit l'autre entité.
@@ -1211,6 +1228,11 @@ namespace Codinsa2015.Server.Entities
         public bool IsInVisionRange(EntityBase other)
         {
             return Vector2.DistanceSquared(other.Position, Position) <= this.VisionRange * this.VisionRange;
+        }
+
+        public override string ToString()
+        {
+            return Type.ToString() + "(" + ID + ")";
         }
         #endregion
 

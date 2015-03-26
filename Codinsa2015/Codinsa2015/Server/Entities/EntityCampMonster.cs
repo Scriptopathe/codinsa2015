@@ -52,6 +52,8 @@ namespace Codinsa2015.Server.Entities
         /// Distance maximale à laquelle cette unité peut s'éloigner de GuardPosition.
         /// </summary>
         public float MaxMoveDistance { get; set; }
+
+        public EntityBase CurrentAgro { get { return m_currentAgro; } set { m_currentAgro = value; } }
         #endregion
 
         #region Methods
@@ -69,6 +71,7 @@ namespace Codinsa2015.Server.Entities
             GuardPosition = guardPosition;
             Position = GuardPosition;
             m_attackSpell = new Spells.FireballSpell(this, 1.7f, AttackRange+1, EntityTypeRelative.Player);
+            Type |= EntityType.Monster;
         }
 
         /// <summary>

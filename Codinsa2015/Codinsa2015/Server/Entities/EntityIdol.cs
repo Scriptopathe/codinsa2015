@@ -7,22 +7,19 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Codinsa2015.Server.Entities
 {
     /// <summary>
-    /// Représente le big boss.
-    /// Tuer le Big-boss rapporte :
-    /// des points d’amélioration pour tout l’équipe
-    /// la réapparition du bâtiment d’unité de spawn s’il est détruit,
-    /// ou la création de sbires beaucoup plus puissants.
+    /// Représente l'idole d'une équipe.
+    /// Une fois tué, la partie se termine.
     /// </summary>
-    public class EntityBigBoss : EntityBase
+    public class EntityIdol : EntityBase
     {
         #region Variables
         /// <summary>
-        /// Référence vers l'entité ayant l'aggro du boss.
+        /// Référence vers l'entité ayant l'aggro de l'idole.
         /// </summary>
         EntityBase m_currentAgro;
 
         /// <summary>
-        /// Sort d'attaque du boss.
+        /// Sort d'attaque de l'idole.
         /// </summary>
         Spells.Spell m_attackSpell;
 
@@ -39,9 +36,9 @@ namespace Codinsa2015.Server.Entities
 
         #region Methods
         /// <summary>
-        /// Crée une nouvelle instance de EntityBigBoss.
+        /// Crée une nouvelle instance de EntityIdol
         /// </summary>
-        public EntityBigBoss()
+        public EntityIdol()
             : base()
         {
             BaseArmor = 80;
@@ -51,7 +48,7 @@ namespace Codinsa2015.Server.Entities
             HP = BaseMaxHP;
             VisionRange = 6.0f;
             AttackRange = VisionRange;
-            Type |= EntityType.Boss;
+            Type |= EntityType.Idol;
             m_attackSpell = new Spells.FireballSpell(this);
         }
 
@@ -80,7 +77,7 @@ namespace Codinsa2015.Server.Entities
             }
         }
         /// <summary>
-        /// Mets à jour l'aggro du big boss.
+        /// Mets à jour l'aggro de l'idole.
         /// </summary>
         void UpdateAggro()
         {

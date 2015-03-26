@@ -46,7 +46,7 @@ namespace Codinsa2015.Server.Entities
             HP = BaseMaxHP;
             VisionRange = 6.0f;
             TowerRange = VisionRange;
-
+            Type |= EntityType.Tower;
             m_attackSpell = new Spells.FireballSpell(this);
         }
 

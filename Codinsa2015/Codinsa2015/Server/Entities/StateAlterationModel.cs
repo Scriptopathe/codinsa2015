@@ -316,6 +316,10 @@ namespace Codinsa2015.Server.Entities
                 }
             }
 
+#if DEBUG
+            GameServer.GetBattleLog().AddMessage("[from: " + source + ", to: " + destination + "] GetValue() = " + totalValue);
+#endif
+
             return totalValue;
             // Note : ceci n'est pas équivalent au code ci dessous.
             // Dans cette version les fonctions source.GetAttackDamage(), etc... sont toujours appelées.
