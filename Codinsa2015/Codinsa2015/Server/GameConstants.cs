@@ -237,6 +237,13 @@ namespace Codinsa2015.Server
         public EntityConstants()
         {
             VisionRange = 8;
+            MoveSpeed = 4;
+            HP = 100;
+            Armor = 10;
+            MagicResist = 10;
+            CooldownReduction = 0;
+            AttackDamage = 10;
+            AttackSpeed = 1.0f;
         }
     }
 
@@ -250,7 +257,7 @@ namespace Codinsa2015.Server
         public CreepConstants() : base()
         {
             HP = 100;
-            VisionRange = 8.0f;
+            VisionRange = 4.0f;
             MoveSpeed = 4.0f;
             AttackSpeed = 1.0f;
             AttackDamage = 40;
@@ -268,10 +275,11 @@ namespace Codinsa2015.Server
         public float AttackRange;
         public CampMonsterConstants() 
         {
+            MoveSpeed = 4;
             MaxMoveDistance = 5;
             AttackSpeed = 0.75f;
             AttackDamage = 30;
-            VisionRange = 8;
+            VisionRange = 9;
             AttackRange = 4;
             HP = 300;
         }
