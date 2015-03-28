@@ -339,7 +339,8 @@ namespace Codinsa2015.Rendering
                                 Radius = radius,
                                 Size = size,
                                 ShapeType = (circ == null) ? Views.GenericShapeType.Rectangle : Views.GenericShapeType.Circle
-                            });
+                            },
+                            ((Server.Spellcasts.SpellcastBase)cast).Name);
                     }
                     break;
                 case DataMode.Remote:
@@ -349,7 +350,7 @@ namespace Codinsa2015.Rendering
                     }
                     foreach(var cast in MapView.SpellCasts)
                     {
-                        m_spellCastRenderer.Draw(batch, cast.Shape);
+                        m_spellCastRenderer.Draw(batch, cast.Shape, cast.Name);
                     }
                     break;
             }

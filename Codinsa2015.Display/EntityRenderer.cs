@@ -62,7 +62,7 @@ namespace Codinsa2015.Rendering
                 case Views.EntityType.Creep:
                     sx = 1;
                     sy = 1;
-                    tex = Ressources.DummyTexture;
+                    tex = blue ? Ressources.BlueCreep : Ressources.RedCreep;
                     break;
                 // Player
                 case Views.EntityType.Player:

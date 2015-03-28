@@ -32,10 +32,18 @@ namespace Codinsa2015.Rendering
         /// <summary>
         /// Dessine le spellcast.
         /// </summary>
-        public void Draw(SpriteBatch batch, Views.GenericShapeView shape)
+        public void Draw(SpriteBatch batch, Views.GenericShapeView shape, string name)
         {
             Point scroll = m_mapRenderer.Scrolling;
-            batch.Draw(Ressources.DummyTexture,
+            Texture2D tex = Ressources.DummyTexture;
+            switch(name)
+            {
+                case "Fireball":
+                    tex = Ressources.Fireball;
+                    break;
+            }
+
+            batch.Draw(tex,
                 new Rectangle((int)(shape.Position.X * m_mapRenderer.UnitSize) - scroll.X,
                     (int)(shape.Position.Y * m_mapRenderer.UnitSize) - scroll.Y,
                     (int)(shape.Radius * 2 * m_mapRenderer.UnitSize),

@@ -47,6 +47,10 @@ namespace Codinsa2015.Server.Spellcasts
         /// </summary>
         [Clank.ViewCreator.Export("GenericShapeView", "Shape utilisée par ce spell cast.")]
         public Shapes.CircleShape Shape { get { return m_shape; } set { m_shape = value; } }
+        /// <summary>
+        /// Obtient ou définit le nom de ce spellcast (utilisé pour le texturing notamment).
+        /// </summary>
+        public string Name { get; set; }
         #endregion
 
         #region Methods
@@ -56,6 +60,7 @@ namespace Codinsa2015.Server.Spellcasts
         public SpellcastBase(Spells.Spell sourceSpell, Spells.SpellCastTargetInfo castInfo) : base()
         {
             SourceSpell = sourceSpell;
+            Name = sourceSpell.Name;
             m_time = 0;
             m_shape = new Shapes.CircleShape(sourceSpell.SourceCaster.Position, sourceSpell.Description.TargetType.AoeRadius);
             m_castInfo = castInfo;
