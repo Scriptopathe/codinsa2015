@@ -8,12 +8,24 @@ using Microsoft.Xna.Framework;
 
 namespace Codinsa2015.Views
 {
+    public enum EntityUniquePassives
+    {
 
+    }
 	public class EntityBaseView
 	{
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
-	
+        /// <summary>
+        /// Représente le passif unique de cette entité.
+        /// </summary>
+        public EntityUniquePassives UniquePassive;
+
+        /// <summary>
+        /// Niveau du passif unique.
+        /// </summary>
+        public int UniquePassiveLevel;
+        public float BaseHPRegen;
 		/// <summary>
 		/// Retourne la résistance magique effective de cette entité.
 		/// </summary>
@@ -37,7 +49,9 @@ namespace Codinsa2015.Views
 		/// <summary>
 		/// Obtient les points d'attaque effectifs de cette entité.
 		/// </summary>
-		public float GetAttackDamage;	
+		public float GetAttackDamage;
+
+        public float GetHPRegen;
 		/// <summary>
 		/// Fonction utilisée pour obtenir les points d'armure effectifs sur cette unité.
 		/// </summary>

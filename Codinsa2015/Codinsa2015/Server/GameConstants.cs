@@ -26,6 +26,35 @@ namespace Codinsa2015.Server
             WardPutRange = 5.0f;
         }
     }
+
+    /// <summary>
+    /// Constantes des passifs uniques.
+    /// </summary>
+    public class UniquePassiveConstants
+    {
+        public float HunterMonsterArmorDebuff = 10;
+        public float HunterMonsterMRDebuff = 10;
+        /// <summary>
+        /// Bonus de regen du hunter en présence de monstres neutres (lvl 1).
+        /// </summary>
+        public float HunterBonusRegen = 2;
+        /// <summary>
+        /// Bonus du hunter lorsqu'il tue un monstre neutre. (lvl 2)
+        /// </summary>
+        public float HunterBonusGold = 10;
+        /// <summary>
+        /// Bonus de Armure du Hunter en présence de monstre (lvl 3)
+        /// </summary>
+        public float HunterBonusArmor = 50;
+        /// <summary>
+        /// Bonus de MR du Hunter en présence de monstre (lvl 3)
+        /// </summary>
+        public float HunterBonusMR = 50;
+        /// <summary>
+        /// Range à partir de laquelle les bonus du hunter sont actifs.
+        /// </summary>
+        public float HunterActivationRange = 3;
+    }
     /// <summary>
     /// Constantes de récompenses.
     /// </summary>
@@ -226,6 +255,7 @@ namespace Codinsa2015.Server
     public class EntityConstants
     {
         public float HP;
+        public float HPRegen;
         public float AttackDamage;
         public float AbilityPower;
         public float Armor;
@@ -236,6 +266,7 @@ namespace Codinsa2015.Server
         public float CooldownReduction;
         public EntityConstants()
         {
+            HPRegen = 1;
             VisionRange = 8;
             MoveSpeed = 4;
             HP = 100;
@@ -346,6 +377,7 @@ namespace Codinsa2015.Server
         public CampMonsterConstants CampMonsters;
         public MinibossConstants Minibosses;
         public EventConstants Events;
+        public UniquePassiveConstants UniquePassives;
         /// <summary>
         /// Crée une nouvelle instance de GameConstants avec des constantes par défaut.
         /// </summary>
@@ -360,6 +392,7 @@ namespace Codinsa2015.Server
             CampMonsters = new CampMonsterConstants();
             Minibosses = new MinibossConstants();
             BuffedCreeps = new CreepConstants();
+            UniquePassives = new UniquePassiveConstants();
         }
 
         /// <summary>

@@ -22,7 +22,8 @@ namespace Codinsa2015.Server.Equip
             if(!UsingStarted)
             {
                 // Permet au héros de révéler les wards.
-                owner.AddAlteration(new StateAlteration(owner, new StateAlterationModel()
+                owner.AddAlteration(new StateAlteration("unward-consummable",
+                    owner, new StateAlterationModel()
                         {
                             Type = StateAlterationType.WardSight,
                             BaseDuration = GameServer.GetScene().Constants.Vision.WardRevealDuration,

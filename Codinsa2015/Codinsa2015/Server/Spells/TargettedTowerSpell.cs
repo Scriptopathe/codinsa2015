@@ -47,9 +47,9 @@ namespace Codinsa2015.Server.Spells
                 
                 TargetType = new SpellTargetInfo()
                 {
-                    AllowedTargetTypes = EntityTypeRelative.AllEnnemy,
+                    AllowedTargetTypes = EntityTypeRelative.AllEnnemy | EntityTypeRelative.AllTargettableNeutral,
                     AoeRadius = 0.3f,
-                    Range = 10f,
+                    Range = 8f,
                     Duration = 2f,
                     DieOnCollision = true,
                     Type = TargettingType.Targetted
@@ -70,7 +70,7 @@ namespace Codinsa2015.Server.Spells
                         Type = StateAlterationType.AttackDamage,
                         BaseDuration = 0.0f,
                         FlatValue = 10.0f,
-                        SourcePercentADValue = 100.0f,
+                        SourcePercentADValue = 10.0f,
                     },
                 }
             }};

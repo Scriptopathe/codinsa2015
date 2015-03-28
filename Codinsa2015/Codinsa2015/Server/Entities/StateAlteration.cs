@@ -54,8 +54,7 @@ namespace Codinsa2015.Server.Entities
         SpellActive,
         // Note : les effets SpellPassive sont supprimés à chaque frame.
         // Ils correspondent à des passifs de sorts d'un héros.
-        // Note : non utilisé
-        SpellPassive,
+        UniquePassive,
     }
 
     /// <summary>
@@ -70,6 +69,10 @@ namespace Codinsa2015.Server.Entities
         [Clank.ViewCreator.Export("int", "Id de la source de l'altération d'état.")]
         public EntityBase Source { get; set; }
 
+        /// <summary>
+        /// Identifiant de l'altération.
+        /// </summary>
+        public string ID { get; set; }
         /// <summary>
         /// Représente le type de source de l'altération d'état.
         /// Les altérations d'état peuvent provenir de Consommables,
@@ -121,8 +124,9 @@ namespace Codinsa2015.Server.Entities
         /// La durée restante de l'altération d'état est déterminée à partir
         /// de la durée contenue dans le modèle d'altération d'état donné.
         /// </summary>
-        public StateAlteration(EntityBase source, StateAlterationModel model, StateAlterationParameters parameters, StateAlterationSource sourceType)
+        public StateAlteration(string id, EntityBase source, StateAlterationModel model, StateAlterationParameters parameters, StateAlterationSource sourceType)
         {
+            ID = id;
             Parameters = parameters;
             Source = source;
             Model = model;

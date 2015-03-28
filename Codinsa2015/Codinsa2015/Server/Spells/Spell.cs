@@ -186,7 +186,8 @@ namespace Codinsa2015.Server.Spells
             // Applique les effets du casting time.
             foreach(var alterationModel in Description.CastingTimeAlterations)
             {
-                SourceCaster.AddAlteration(new Entities.StateAlteration(SourceCaster,
+                SourceCaster.AddAlteration(new Entities.StateAlteration("spell-casting-time",
+                    SourceCaster,
                     alterationModel, 
                     target.AlterationParameters,
                     isWeaponAttack ? Entities.StateAlterationSource.Weapon : Entities.StateAlterationSource.SpellActive));

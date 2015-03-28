@@ -263,6 +263,7 @@ namespace Codinsa2015.Server.Controlers
             if(Hero.HasSightOn(entity))
             {
                 Views.EntityBaseView view = new Views.EntityBaseView();
+                view.BaseHPRegen = entity.BaseHPRegen;
                 view.BaseAbilityPower = entity.BaseAbilityPower;
                 view.BaseArmor = entity.BaseArmor;
                 view.BaseAttackDamage = entity.BaseAttackDamage;
@@ -280,6 +281,9 @@ namespace Codinsa2015.Server.Controlers
                 view.GetMagicResist = entity.GetMagicResist();
                 view.GetMaxHP = entity.GetMaxHP();
                 view.GetMoveSpeed = entity.GetMoveSpeed();
+                view.GetHPRegen = entity.GetHPRegen();
+                view.UniquePassive = (Views.EntityUniquePassives)entity.UniquePassive;
+                view.UniquePassiveLevel = entity.UniquePassiveLevel;
                 view.HasTrueVision = entity.HasTrueVision;
                 view.HasWardVision = entity.HasWardVision;
                 view.HP = entity.HP;

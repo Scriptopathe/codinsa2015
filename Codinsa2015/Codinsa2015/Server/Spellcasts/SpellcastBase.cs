@@ -165,7 +165,11 @@ namespace Codinsa2015.Server.Spellcasts
             // Ajoute les altérations d'état au héros.
             foreach(StateAlterationModel alteration in SourceSpell.Description.OnHitEffects)
             {
-                entity.AddAlteration(new StateAlteration(SourceSpell.SourceCaster, alteration, m_castInfo.AlterationParameters, StateAlterationSource.SpellActive));
+                entity.AddAlteration(new StateAlteration("spell-active-" + entity.ID,
+                    SourceSpell.SourceCaster,
+                    alteration, 
+                    m_castInfo.AlterationParameters, 
+                    StateAlterationSource.SpellActive));
             }
             
         }

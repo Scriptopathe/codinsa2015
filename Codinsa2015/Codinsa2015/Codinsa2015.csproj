@@ -132,6 +132,8 @@
     <Compile Include="Server\Spellcasts\SpellcastBase.cs" />
     <Compile Include="Server\Spellcasts\Spellcast.cs" />
     <Compile Include="Server\Spells\DashForwardSpell.cs" />
+    <Compile Include="Server\Spells\BasicSpell.cs" />
+    <Compile Include="Server\Spells\SpellFactory.cs" />
     <Compile Include="Server\Spells\WeaponAttackSpell.cs" />
     <Compile Include="Server\Spells\MovementSpeedBuffSpell.cs" />
     <Compile Include="Server\Spells\TargettedTowerSpell.cs" />

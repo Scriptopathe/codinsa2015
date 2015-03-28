@@ -61,7 +61,18 @@ namespace Codinsa2015.Server.Entities
             }
         }
 
-
+        /// <summary>
+        /// Termine toutes les altérations dont l'id correspond à l'id donné.
+        /// </summary>
+        /// <param name="type"></param>
+        public void EndAlterations(string id)
+        {
+            foreach (StateAlteration alt in this)
+            {
+                if (alt.ID == id)
+                    alt.EndNow();
+            }
+        }
         /// <summary>
         /// Retourne une liste de vues de cette collection d'altération.
         /// </summary>

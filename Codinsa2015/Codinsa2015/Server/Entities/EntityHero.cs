@@ -185,7 +185,11 @@ namespace Codinsa2015.Server.Entities
                 foreach (StateAlterationModel model in m_weapon.GetPassives())
                 {
                     model.BaseDuration = StateAlteration.DURATION_INFINITY;
-                    AddAlteration(new StateAlteration(this, model, new StateAlterationParameters(), StateAlterationSource.Weapon));
+                    AddAlteration(new StateAlteration("weapon-passive",
+                        this,
+                        model, 
+                        new StateAlterationParameters(), 
+                        StateAlterationSource.Weapon));
                 }
         }
 
@@ -213,7 +217,10 @@ namespace Codinsa2015.Server.Entities
                 foreach (StateAlterationModel model in passiveEquip.GetPassives())
                 {
                     model.BaseDuration = StateAlteration.DURATION_INFINITY;
-                    AddAlteration(new StateAlteration(this, model, new StateAlterationParameters(), src));
+                    AddAlteration(new StateAlteration("equip-passive-" + equip.ToString(),
+                        this, 
+                        model,
+                        new StateAlterationParameters(), src));
                 }
         }
         #endregion
@@ -250,7 +257,7 @@ namespace Codinsa2015.Server.Entities
             if(Weapon != null)
                 Weapon.Update(time);
             // Supprime les effets des passsifs
-            StateAlterations.EndAlterations(StateAlterationSource.SpellPassive);
+            StateAlterations.EndAlterations(StateAlterationSource.UniquePassive);
 
             // Mets à jour les spells et applique les passifs.
             foreach (Spell spell in Spells) { spell.UpdateCooldown((float)time.ElapsedGameTime.TotalSeconds); spell.ApplyPassives(); }

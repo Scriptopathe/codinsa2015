@@ -338,6 +338,12 @@ namespace Codinsa2015.Server
                     }
                 }
             }
+
+            // Récompense du HUNTER
+            if(unit.Type.HasFlag(EntityType.Monster) && killer.UniquePassive == EntityUniquePassives.Hunter)
+            {
+                killer.PA += GameServer.GetScene().Constants.UniquePassives.HunterBonusGold;
+            }
         }
         #endregion
 

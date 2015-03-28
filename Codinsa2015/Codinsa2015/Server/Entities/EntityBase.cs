@@ -9,6 +9,22 @@ namespace Codinsa2015.Server.Entities
 {
     
     /// <summary>
+    /// Champ de bits énumèrant les différents passifs uniques.
+    /// </summary>
+    [Clank.ViewCreator.Enum("Enumère les différents passifs uniques.")]
+    public enum EntityUniquePassives
+    {
+        None        = 0x0000,
+        Hunter      = 0x0001,
+        Rugged      = 0x0002,
+        Unshakable  = 0x0004,
+        Strategist  = 0x0010,
+        Soldier     = 0x0020,
+        Altruistic  = 0x0040,
+
+        All         = 0xFFFF
+    }
+    /// <summary>
     /// Classe de base pour les entités in-game.
     /// 
     /// 
@@ -43,6 +59,16 @@ namespace Codinsa2015.Server.Entities
         #endregion
 
         #region Battle variables
+        /// <summary>
+        /// Représente le passif unique de cette entité.
+        /// </summary>
+        EntityUniquePassives m_uniquePassive;
+
+        /// <summary>
+        /// Niveau du passif unique.
+        /// </summary>
+        int m_uniquePassiveLevel;
+
         /// <summary>
         /// Représente les points de vie actuels de l'entité.
         /// </summary>
@@ -82,6 +108,11 @@ namespace Codinsa2015.Server.Entities
         /// Représente le nombre de points de vie maximum de cette entité.
         /// </summary>
         float m_baseMaxHP;
+        /// <summary>
+        /// Régénération de HP / s de base de cette unité.
+        /// </summary>
+        float m_baseHPRegen;
+
         /// <summary>
         /// Représente la direction de cette entité.
         /// </summary>
@@ -139,7 +170,25 @@ namespace Codinsa2015.Server.Entities
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Obtient ou définit le niveau du passif unique.
+        /// </summary>
+        [Clank.ViewCreator.Export("int", "niveau du passif unique")]
+        public int UniquePassiveLevel
+        {
+            get { return m_uniquePassiveLevel; }
+            set { m_uniquePassiveLevel = value; }
+        }
 
+        /// <summary>
+        /// Obtient ou définit le passif unique de cette entité.
+        /// </summary>
+        [Clank.ViewCreator.Export("EntityUniquePassives", "passif unique de cette entité.")]
+        public EntityUniquePassives UniquePassive
+        {
+            get { return m_uniquePassive; }
+            set { m_uniquePassive = value; }
+        }
 
         /// <summary>
         /// Si cette entité est un héros, obtient ou définit le rôle de ce héros.
@@ -232,6 +281,15 @@ namespace Codinsa2015.Server.Entities
                 m_hp = value;
                 m_hp = Math.Max(0, Math.Min(m_baseMaxHP, m_hp));
             }
+        }
+        /// <summary>
+        /// Obtient ou définit la régénération de HP / s de base de cette unité.
+        /// </summary>
+        [Clank.ViewCreator.Export("float", "régénération de HP / s de base de cette unité.")]
+        public float BaseHPRegen
+        {
+            get { return m_baseHPRegen; }
+            set { m_baseHPRegen = value; }
         }
 
         /// <summary>
@@ -393,7 +451,7 @@ namespace Codinsa2015.Server.Entities
 
             // Récupère tous les buffs d'attaque.
             List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.MoveSpeed);
-    
+            
 
             // Applique les buffs / debuffs
             foreach (StateAlteration alteration in alterations)
@@ -425,7 +483,27 @@ namespace Codinsa2015.Server.Entities
 
             return Math.Max(0, totalMs);
         }
+        /// <summary>
+        /// Obtient la regen de HP / s effective de l'entité.
+        /// </summary>
+        /// <returns></returns>
+        [Clank.ViewCreator.Export("float", "Obtient la vitesse d'attaque effective de l'entité.")]
+        public virtual float GetHPRegen()
+        {
+            float totalMs = BaseHPRegen;
 
+            // Récupère tous les buffs d'attaque.
+            List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.Regen);
+
+
+            // Applique les buffs / debuffs
+            foreach (StateAlteration alteration in alterations)
+            {
+                totalMs += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All);
+            }
+
+            return Math.Max(0, totalMs);
+        }
         /// <summary>
         /// Obtient les points d'attaque effectifs de cette entité.
         /// </summary>
@@ -701,6 +779,7 @@ namespace Codinsa2015.Server.Entities
         public void LoadEntityConstants(EntityConstants constants)
         {
             BaseMaxHP = constants.HP;
+            BaseHPRegen = constants.HPRegen;
             BaseAttackDamage = constants.AttackDamage;
             BaseAttackSpeed = constants.AttackSpeed;
             BaseAbilityPower = constants.AbilityPower;
@@ -886,6 +965,9 @@ namespace Codinsa2015.Server.Entities
             // Apply state alterations
             ApplyStateAlterations(time);
 
+            // Regen de l'entité.
+            UpdateRegen(time);
+
             // Mise à jour du mouvement
             UpdateMoveTo(time);
 
@@ -902,6 +984,16 @@ namespace Codinsa2015.Server.Entities
             }
         }
 
+        /// <summary>
+        /// Mets à jour la regen de HP.
+        /// </summary>
+        void UpdateRegen(GameTime time)
+        {
+            float regen = GetHPRegen();
+            HP += regen * (float)time.ElapsedGameTime.TotalSeconds;
+        }
+
+        
         /// <summary>
         /// Effectue la mise à jour de l'entité.
         /// Cette méthode doit être réécrite dans les entités filles.
@@ -963,7 +1055,7 @@ namespace Codinsa2015.Server.Entities
             IsDisposing = false;
             HP = GetMaxHP();
             m_stateAlterations.EndAlterations(StateAlterationSource.SpellActive);
-            m_stateAlterations.EndAlterations(StateAlterationSource.SpellPassive);
+            m_stateAlterations.EndAlterations(StateAlterationSource.UniquePassive);
         }
         #region Alterations
         /// <summary>
@@ -1103,7 +1195,111 @@ namespace Codinsa2015.Server.Entities
             m_stateAlterations.Add(alteration);
         }
 
+        /// <summary>
+        /// Mets à jour les passifs uniques.
+        /// </summary>
+        /// <param name="time"></param>
+        void UpdateUniquePassives(GameTime time)
+        {
+            UniquePassiveConstants cst = GameServer.GetScene().Constants.UniquePassives;
+            switch (UniquePassive)
+            {
+                case EntityUniquePassives.Hunter:
+                    EntityCollection monsters = GameServer.GetMap().Entities.
+                        GetEntitiesByType(EntityType.Monster).
+                        GetAliveEntitiesInRange(Position, cst.HunterActivationRange);
+                    int monsterCount = monsters.Count;
+                    if (monsterCount > 0)
+                    {
+                        string id = "unique-passive-hunter-" + ID;
+                        // Applique le debuff d'armure aux monstres.
+                        foreach (var kvp in monsters)
+                        {
+                            kvp.Value.StateAlterations.EndAlterations(id);
+                            kvp.Value.AddAlteration(new StateAlteration(id,
+                                this,
+                                new StateAlterationModel()
+                                {
+                                    BaseDuration = 0.25f,
+                                    FlatValue = -cst.HunterMonsterArmorDebuff,
+                                    Type = StateAlterationType.ArmorBuff
+                                },
+                                new StateAlterationParameters(),
+                                StateAlterationSource.UniquePassive
+                                ));
+                            kvp.Value.AddAlteration(new StateAlteration(id,
+                                this,
+                                new StateAlterationModel()
+                                {
+                                    BaseDuration = 0.25f,
+                                    FlatValue = -cst.HunterMonsterMRDebuff,
+                                    Type = StateAlterationType.MagicResistBuff
+                                },
+                                new StateAlterationParameters(),
+                                StateAlterationSource.UniquePassive
+                                ));
+                        }
+                        // Applique le buff de régen
+                        StateAlterations.EndAlterations(id);
+                        AddAlteration(new StateAlteration(id,
+                            this,
+                            new StateAlterationModel()
+                            {
+                                BaseDuration = 1f,
+                                FlatValue = cst.HunterBonusRegen,
+                                Type = StateAlterationType.Regen
+                            }, new StateAlterationParameters(),
+                            StateAlterationSource.UniquePassive));
 
+                        if(UniquePassiveLevel >= 2)
+                        {
+                            AddAlteration(new StateAlteration(id,
+                                this,
+                                new StateAlterationModel()
+                                {
+                                    BaseDuration = 0.25f,
+                                    FlatValue = cst.HunterBonusArmor,
+                                    Type = StateAlterationType.ArmorBuff
+                                },
+                                new StateAlterationParameters(),
+                                StateAlterationSource.UniquePassive
+                                ));
+                            AddAlteration(new StateAlteration(id,
+                                this,
+                                new StateAlterationModel()
+                                {
+                                    BaseDuration = 0.25f,
+                                    FlatValue = cst.HunterBonusMR,
+                                    Type = StateAlterationType.MagicResistBuff
+                                },
+                                new StateAlterationParameters(),
+                                StateAlterationSource.UniquePassive
+                                ));
+                        }
+                    }
+                    break;
+
+                case EntityUniquePassives.Rugged:
+
+                    break;
+
+                case EntityUniquePassives.Soldier:
+
+                    break;
+
+                case EntityUniquePassives.Strategist:
+
+                    break;
+
+                case EntityUniquePassives.Unshakable:
+
+                    break;
+
+                case EntityUniquePassives.Altruistic:
+
+                    break;
+            }
+        }
         /// <summary>
         /// Applique le nombre de dégâts indiqué à cette entité.
         /// Cette fonction prend en compte l'armure de l'entité pour déterminer
