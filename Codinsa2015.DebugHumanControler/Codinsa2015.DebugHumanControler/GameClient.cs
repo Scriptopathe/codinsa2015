@@ -85,6 +85,7 @@ namespace Codinsa2015.DebugHumanControler
                 EntityHero hero = new EntityHero();
                 hero.Position = new Vector2(10, 10);
                 hero.Role = EntityHeroRole.Fighter;
+                hero.UniquePassive = EntityUniquePassives.Unshakable;
                 hero.Type = EntityType.Player | EntityType.Team1;
                 m_controler = new HumanControler(this, hero);
                 m_server.GetSrvScene().AddHero(GameServer.__INTERNAl_CLIENT_ID, hero, m_controler);

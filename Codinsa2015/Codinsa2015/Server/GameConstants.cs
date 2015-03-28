@@ -32,6 +32,7 @@ namespace Codinsa2015.Server
     /// </summary>
     public class UniquePassiveConstants
     {
+        #region Hunter
         public float HunterMonsterArmorDebuff = 10;
         public float HunterMonsterMRDebuff = 10;
         /// <summary>
@@ -54,6 +55,26 @@ namespace Codinsa2015.Server
         /// Range à partir de laquelle les bonus du hunter sont actifs.
         /// </summary>
         public float HunterActivationRange = 3;
+        #endregion
+
+        #region Rugged
+        public float RuggedADBonusScaling = 0.10f;
+        public float RuggedAPBonusScaling = 0.10f;
+        public float RuggedASBonusFlat = 0.10f;
+        public float RuggedCDRBonusFlat = 0.10f;
+        public float RuggedMSBonus = 0.20f;
+        public float RuggedKillReward = 50;
+        #endregion
+
+        #region Unshakable
+        
+        public float UnshakableMaxHpFlatBonus = 40;
+        /// <summary>
+        /// Coefficient multiplicateur de la durée des slows.
+        /// </summary>
+        public float UnshakableSlowResistance = 0.5f;
+        #endregion
+
     }
     /// <summary>
     /// Constantes de récompenses.

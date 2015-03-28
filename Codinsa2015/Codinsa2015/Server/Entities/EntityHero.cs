@@ -189,7 +189,7 @@ namespace Codinsa2015.Server.Entities
                         this,
                         model, 
                         new StateAlterationParameters(), 
-                        StateAlterationSource.Weapon));
+                        StateAlterationSource.Weapon), false);
                 }
         }
 
@@ -220,7 +220,7 @@ namespace Codinsa2015.Server.Entities
                     AddAlteration(new StateAlteration("equip-passive-" + equip.ToString(),
                         this, 
                         model,
-                        new StateAlterationParameters(), src));
+                        new StateAlterationParameters(), src), false);
                 }
         }
         #endregion
@@ -256,8 +256,6 @@ namespace Codinsa2015.Server.Entities
 
             if(Weapon != null)
                 Weapon.Update(time);
-            // Supprime les effets des passsifs
-            StateAlterations.EndAlterations(StateAlterationSource.UniquePassive);
 
             // Mets à jour les spells et applique les passifs.
             foreach (Spell spell in Spells) { spell.UpdateCooldown((float)time.ElapsedGameTime.TotalSeconds); spell.ApplyPassives(); }

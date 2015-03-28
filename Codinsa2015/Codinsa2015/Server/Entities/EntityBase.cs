@@ -416,8 +416,35 @@ namespace Codinsa2015.Server.Entities
         [Clank.ViewCreator.Export("float", "Retourne la résistance magique effective de cette entité.")]
         public virtual float GetMagicResist()
         {
-            return BaseMagicResist;
-            throw new NotImplementedException();
+            float total = BaseMagicResist;
+            List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.MagicResistBuff);
+            // Les buffs sont ajoutés de celui au plus gros scaling vers le plus petit.
+            alterations.Sort(new Comparison<StateAlteration>((StateAlteration a, StateAlteration b) =>
+            {
+                return (int)(a.Model.DestPercentRMValue - b.Model.DestPercentRMValue);
+            }));
+
+            // Applique les buffs / debuffs ne prenant pas en compte l'armure de
+            // cette entité.
+            foreach (StateAlteration alteration in alterations)
+            {
+                if (alteration.Source != this)
+                    total += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstMr);
+                else
+                    total += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.SrcMR | ScalingRatios.DstMr));
+            }
+
+
+            // Applique les buffs de mr dépendants de la mr de cette entité.
+            // Ceux-là sont séparés des buffs précédents puisque s'ils ne l'étaient pas,
+            // la fonction GetMagicResist() serait appelée de manière récursive à l'infini.
+            foreach (StateAlteration alteration in alterations)
+            {
+                if (alteration.Source == this)
+                    total += alteration.Model.SourcePercentRMValue * total;
+            }
+
+            return total;
         }
 
         /// <summary>
@@ -426,18 +453,59 @@ namespace Codinsa2015.Server.Entities
         [Clank.ViewCreator.Export("float", "Retourne la valeur d'AP effective de cette entité.")]
         public virtual float GetAbilityPower()
         {
-            return BaseAbilityPower;
-            throw new NotImplementedException();
+            float totalDamage = BaseAbilityPower;
+
+            // Récupère tous les buffs d'ap.
+            List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.MagicDamageBuff);
+            // Les buffs sont ajoutés de celui au plus gros scaling vers le plus petit.
+            alterations.Sort(new Comparison<StateAlteration>((StateAlteration a, StateAlteration b) =>
+            {
+                return (int)(a.Model.DestPercentAPValue - b.Model.DestPercentAPValue);
+            }));
+
+            // Applique les buffs / debuffs ne prenant pas en compte les dégâts d'attaque de
+            // cette entité.
+            foreach (StateAlteration alteration in alterations)
+            {
+                if (alteration.Source != this)
+                    totalDamage += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All ^ ScalingRatios.DstAP);
+                else
+                    totalDamage += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All ^ (ScalingRatios.DstAP | ScalingRatios.SrcAP));
+            }
+
+
+
+            // Applique les buffs d'attaque dépendants de l'attaque de cette entité.
+            // Ceux-là sont séparés des buffs précédents puisque s'ils ne l'étaient pas,
+            // la fonction GetAttackDamage() serait appelée de manière récursive à l'infini.
+            
+            foreach (StateAlteration alteration in alterations)
+            {
+                if (alteration.Source == this)
+                    totalDamage += alteration.Model.SourcePercentAPValue * totalDamage;
+            }
+
+            return Math.Max(0, totalDamage);
         }
 
         /// <summary>
         /// Retourne la valeur de CDR effective de cette entité.
+        /// (valeur entre 0 et 0.40)
         /// </summary>
-        [Clank.ViewCreator.Export("float", "Retourne la valeur de CDR effective de cette entité.")]
+        [Clank.ViewCreator.Export("float", "Retourne la valeur de CDR effective de cette entité. (de 0 à 0.40)")]
         public virtual float GetCooldownReduction()
         {
-            return BaseCooldownReduction;
-            throw new NotImplementedException();
+            float total = BaseCooldownReduction;           
+            // Récupère tous les buffs d'attaque.
+            List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.CDR);
+
+            // Applique les buffs / debuffs
+            foreach (StateAlteration alteration in alterations)
+            {
+                total += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All);
+            }
+
+            return Math.Max(0, total);
         }
 
         /// <summary>
@@ -459,7 +527,7 @@ namespace Codinsa2015.Server.Entities
                 totalMs += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All);
             }
 
-            return Math.Max(0, totalMs);
+            return Math.Max(0.1f, totalMs);
         }
 
         /// <summary>
@@ -481,7 +549,7 @@ namespace Codinsa2015.Server.Entities
                 totalMs += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All);
             }
 
-            return Math.Max(0, totalMs);
+            return totalMs;
         }
         /// <summary>
         /// Obtient la regen de HP / s effective de l'entité.
@@ -502,7 +570,7 @@ namespace Codinsa2015.Server.Entities
                 totalMs += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All);
             }
 
-            return Math.Max(0, totalMs);
+            return totalMs;
         }
         /// <summary>
         /// Obtient les points d'attaque effectifs de cette entité.
@@ -537,11 +605,8 @@ namespace Codinsa2015.Server.Entities
             // la fonction GetAttackDamage() serait appelée de manière récursive à l'infini.
             foreach (StateAlteration alteration in alterations)
             {
-                if(alteration.Source == this)
-                    totalDamage += alteration.Model.SourcePercentADValue * totalDamage
-                                + alteration.Model.DestPercentADValue * totalDamage;
-                else
-                    totalDamage += alteration.Model.DestPercentADValue * totalDamage;
+                if (alteration.Source == this)
+                    totalDamage += alteration.Model.SourcePercentADValue * totalDamage;
             }
 
             return Math.Max(0, totalDamage);
@@ -581,10 +646,7 @@ namespace Codinsa2015.Server.Entities
             foreach (StateAlteration alteration in alterations)
             {
                 if (alteration.Source == this)
-                    totalArmor += alteration.Model.SourcePercentArmorValue * totalArmor
-                                + alteration.Model.DestPercentArmorValue * totalArmor;
-                else
-                    totalArmor += alteration.Model.DestPercentArmorValue * totalArmor;
+                    totalArmor += alteration.Model.SourcePercentArmorValue * totalArmor;
             }
 
             return totalArmor;
@@ -607,14 +669,14 @@ namespace Codinsa2015.Server.Entities
         [Clank.ViewCreator.Export("float", "Obtient les HP max actuels de cette entité.")]
         public virtual float GetMaxHP()
         {
-            float totalHP = BaseArmor;
+            float totalHP = BaseMaxHP;
 
-            // Récupère tous les buffs d'attaque.
+            // Récupère tous les buffs d'hp.
             List<StateAlteration> alterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.MaxHP);
             // Les buffs sont ajoutés de celui au plus gros scaling vers le plus petit.
             alterations.Sort(new Comparison<StateAlteration>((StateAlteration a, StateAlteration b) =>
             {
-                return (int)(a.Model.DestPercentArmorValue - b.Model.DestPercentArmorValue);
+                return (int)(a.Model.DestPercentMaxHPValue - b.Model.DestPercentMaxHPValue);
             }));
 
             // Applique les buffs / debuffs ne prenant pas en compte les dégâts d'attaque de
@@ -635,10 +697,7 @@ namespace Codinsa2015.Server.Entities
             foreach (StateAlteration alteration in alterations)
             {
                 if (alteration.Source == this)
-                    totalHP += alteration.Model.SourcePercentMaxHPValue * totalHP
-                                + alteration.Model.DestPercentMaxHPValue * totalHP;
-                else
-                    totalHP += alteration.Model.DestPercentMaxHPValue * totalHP;
+                    totalHP += alteration.Model.SourcePercentMaxHPValue * totalHP;
             }
 
             return totalHP;
@@ -962,14 +1021,17 @@ namespace Codinsa2015.Server.Entities
             // Compteur de blocage
             m_movementBlockedCounter--;
 
-            // Apply state alterations
-            ApplyStateAlterations(time);
-
             // Regen de l'entité.
             UpdateRegen(time);
 
             // Mise à jour du mouvement
             UpdateMoveTo(time);
+
+            // Mise à jour des passifs.
+            UpdateUniquePassives(time);
+
+            // Apply state alterations
+            ApplyStateAlterations(time);
 
             // Mets à jour les composantes spécifiques à l'entité
             DoUpdate(time);
@@ -1171,27 +1233,59 @@ namespace Codinsa2015.Server.Entities
             // Arrête le déplacement en cours après le dash.
             EndMoveTo();
         }
+
         /// <summary>
         /// Ajoute une altération d'état à cette entité.
         /// </summary>
-        public void AddAlteration(StateAlteration alteration)
+        public void AddAlteration(StateAlteration alteration, bool notify=true)
         {
-            // Notifications au système de récompenses.
+            // Modification éventuelle par le passif 
             switch(alteration.Model.Type)
             {
-                case StateAlterationType.AttackDamageBuff:
-                case StateAlterationType.MagicDamageBuff:
-                case StateAlterationType.AttackSpeed:
-                case StateAlterationType.ArmorBuff:
-                case StateAlterationType.CDR:
-                case StateAlterationType.MaxHP:
-                case StateAlterationType.Regen:
-                case StateAlterationType.MagicResistBuff:
-                    GameServer.GetScene().RewardSystem.NotifyBuffOrDebuffReception(alteration.Source,
-                        this, alteration.Model, 
-                        alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
+                case StateAlterationType.Stun:
+                    // Un shakable => on transforme le stun en silence.
+                    if (UniquePassive == EntityUniquePassives.Unshakable && UniquePassiveLevel >= 1)
+                    {
+                        alteration = alteration.Copy();
+                        alteration.Model.Type = StateAlterationType.Silence;
+                    }
+                    break;
+                case StateAlterationType.Root:
+                    if (UniquePassive == EntityUniquePassives.Unshakable && UniquePassiveLevel >= 1)
+                    {
+                        // unshakable Le root ne s'applique pas.
+                        return;
+                    }
+                    break;
+                case StateAlterationType.MoveSpeed:
+                    if(UniquePassive == EntityUniquePassives.Unshakable && UniquePassiveLevel >= 2)
+                    {
+                        // unshakable => durée des slows / 2
+                        if (alteration.Model.FlatValue > 0)
+                            alteration.Model.FlatValue /= 2;
+                    }
                     break;
             }
+
+
+            // Notifications au système de récompenses.
+            if(notify)
+                switch (alteration.Model.Type)
+                {
+                    case StateAlterationType.AttackDamageBuff:
+                    case StateAlterationType.MagicDamageBuff:
+                    case StateAlterationType.AttackSpeed:
+                    case StateAlterationType.ArmorBuff:
+                    case StateAlterationType.CDR:
+                    case StateAlterationType.MaxHP:
+                    case StateAlterationType.Regen:
+                    case StateAlterationType.MagicResistBuff:
+                        GameServer.GetScene().RewardSystem.NotifyBuffOrDebuffReception(alteration.Source,
+                            this, alteration.Model,
+                            alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
+                        break;
+                }
+
             m_stateAlterations.Add(alteration);
         }
 
@@ -1205,83 +1299,139 @@ namespace Codinsa2015.Server.Entities
             switch (UniquePassive)
             {
                 case EntityUniquePassives.Hunter:
-                    EntityCollection monsters = GameServer.GetMap().Entities.
-                        GetEntitiesByType(EntityType.Monster).
-                        GetAliveEntitiesInRange(Position, cst.HunterActivationRange);
-                    int monsterCount = monsters.Count;
-                    if (monsterCount > 0)
                     {
-                        string id = "unique-passive-hunter-" + ID;
-                        // Applique le debuff d'armure aux monstres.
-                        foreach (var kvp in monsters)
+                        EntityCollection monsters = GameServer.GetMap().Entities.
+                            GetEntitiesByType(EntityType.Monster).
+                            GetAliveEntitiesInRange(Position, cst.HunterActivationRange);
+                        int monsterCount = monsters.Count;
+                        if (monsterCount > 0)
                         {
-                            kvp.Value.StateAlterations.EndAlterations(id);
-                            kvp.Value.AddAlteration(new StateAlteration(id,
-                                this,
-                                new StateAlterationModel()
-                                {
-                                    BaseDuration = 0.25f,
-                                    FlatValue = -cst.HunterMonsterArmorDebuff,
-                                    Type = StateAlterationType.ArmorBuff
-                                },
-                                new StateAlterationParameters(),
-                                StateAlterationSource.UniquePassive
-                                ));
-                            kvp.Value.AddAlteration(new StateAlteration(id,
-                                this,
-                                new StateAlterationModel()
-                                {
-                                    BaseDuration = 0.25f,
-                                    FlatValue = -cst.HunterMonsterMRDebuff,
-                                    Type = StateAlterationType.MagicResistBuff
-                                },
-                                new StateAlterationParameters(),
-                                StateAlterationSource.UniquePassive
-                                ));
-                        }
-                        // Applique le buff de régen
-                        StateAlterations.EndAlterations(id);
-                        AddAlteration(new StateAlteration(id,
-                            this,
-                            new StateAlterationModel()
+                            string id = "unique-passive-hunter-" + ID;
+                            // Applique le debuff d'armure aux monstres.
+                            foreach (var kvp in monsters)
                             {
-                                BaseDuration = 1f,
-                                FlatValue = cst.HunterBonusRegen,
-                                Type = StateAlterationType.Regen
-                            }, new StateAlterationParameters(),
-                            StateAlterationSource.UniquePassive));
+                                kvp.Value.StateAlterations.EndAlterations(id);
+                                kvp.Value.AddAlteration(new StateAlteration(id,
+                                    this,
+                                    new StateAlterationModel()
+                                    {
+                                        BaseDuration = 0.25f,
+                                        FlatValue = -cst.HunterMonsterArmorDebuff,
+                                        Type = StateAlterationType.ArmorBuff
+                                    },
+                                    new StateAlterationParameters(),
+                                    StateAlterationSource.UniquePassive
+                                    ));
+                                kvp.Value.AddAlteration(new StateAlteration(id,
+                                    this,
+                                    new StateAlterationModel()
+                                    {
+                                        BaseDuration = 0.25f,
+                                        FlatValue = -cst.HunterMonsterMRDebuff,
+                                        Type = StateAlterationType.MagicResistBuff
+                                    },
+                                    new StateAlterationParameters(),
+                                    StateAlterationSource.UniquePassive
+                                    ));
+                            }
+                            // Applique le buff de régen
+                            StateAlterations.EndAlterations(id);
+                            AddAlteration(new StateAlteration(id,
+                                this,
+                                new StateAlterationModel()
+                                {
+                                    BaseDuration = 1f,
+                                    FlatValue = cst.HunterBonusRegen,
+                                    Type = StateAlterationType.Regen
+                                }, new StateAlterationParameters(),
+                                StateAlterationSource.UniquePassive), false);
 
-                        if(UniquePassiveLevel >= 2)
-                        {
-                            AddAlteration(new StateAlteration(id,
-                                this,
-                                new StateAlterationModel()
-                                {
-                                    BaseDuration = 0.25f,
-                                    FlatValue = cst.HunterBonusArmor,
-                                    Type = StateAlterationType.ArmorBuff
-                                },
-                                new StateAlterationParameters(),
-                                StateAlterationSource.UniquePassive
-                                ));
-                            AddAlteration(new StateAlteration(id,
-                                this,
-                                new StateAlterationModel()
-                                {
-                                    BaseDuration = 0.25f,
-                                    FlatValue = cst.HunterBonusMR,
-                                    Type = StateAlterationType.MagicResistBuff
-                                },
-                                new StateAlterationParameters(),
-                                StateAlterationSource.UniquePassive
-                                ));
+                            if (UniquePassiveLevel >= 2)
+                            {
+                                AddAlteration(new StateAlteration(id,
+                                    this,
+                                    new StateAlterationModel()
+                                    {
+                                        BaseDuration = 0.25f,
+                                        FlatValue = cst.HunterBonusArmor,
+                                        Type = StateAlterationType.ArmorBuff
+                                    },
+                                    new StateAlterationParameters(),
+                                    StateAlterationSource.UniquePassive
+                                    ), false);
+                                AddAlteration(new StateAlteration(id,
+                                    this,
+                                    new StateAlterationModel()
+                                    {
+                                        BaseDuration = 0.25f,
+                                        FlatValue = cst.HunterBonusMR,
+                                        Type = StateAlterationType.MagicResistBuff
+                                    },
+                                    new StateAlterationParameters(),
+                                    StateAlterationSource.UniquePassive
+                                    ), false);
+                            }
                         }
                     }
                     break;
 
                 case EntityUniquePassives.Rugged:
+                    {
+                        EntityCollection ennemies = GameServer.GetMap().Entities.
+                            GetEntitiesByType(EntityType.Player | ((EntityType.Teams & Type) ^ EntityType.Teams)).
+                            GetAliveEntitiesInRange(Position, cst.HunterActivationRange);
 
+                        if (ennemies.Count > 0)
+                        {
+                            // AD, AP, Vitesse d'attaque et CDR bonus
+                            string id = "unique-passive-rugged-" + ID;
+                            StateAlterations.EndAlterations(id);
+
+                            // Bonus d'ad
+                            AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                            {
+                                Type = StateAlterationType.AttackDamageBuff,
+                                BaseDuration = 0.25f,
+                                FlatValue = 0.0f,
+                                SourcePercentADValue = cst.RuggedADBonusScaling
+                            }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                            // Bonus d'ap
+                            AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                            {
+                                Type = StateAlterationType.MagicDamageBuff,
+                                BaseDuration = 0.25f,
+                                FlatValue = 0.0f,
+                                SourcePercentAPValue = cst.RuggedAPBonusScaling
+                            }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                            // Bonus d'as
+                            AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                            {
+                                Type = StateAlterationType.AttackSpeed,
+                                BaseDuration = 0.25f,
+                                FlatValue = cst.RuggedASBonusFlat
+                            }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                            // Bonus de cdr
+                            AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                            {
+                                Type = StateAlterationType.CDR,
+                                BaseDuration = 0.25f,
+                                FlatValue = cst.RuggedCDRBonusFlat,
+                            }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+
+                            if (UniquePassiveLevel >= 1)
+                            {
+                                // Bonus de move speed
+                                AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                {
+                                    Type = StateAlterationType.MoveSpeed,
+                                    BaseDuration = 0.25f,
+                                    FlatValue = cst.RuggedMSBonus,
+                                }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                            }
+                        }
+                    }
                     break;
+
 
                 case EntityUniquePassives.Soldier:
 
@@ -1292,7 +1442,18 @@ namespace Codinsa2015.Server.Entities
                     break;
 
                 case EntityUniquePassives.Unshakable:
+                    {
+                        // Max HP bonus
+                        string id = "unique-passive-unshakable-" + ID;
+                        StateAlterations.EndAlterations(id);
+                        AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                        {
+                            Type = StateAlterationType.MaxHP,
+                            BaseDuration = 0.25f,
+                            FlatValue = cst.UnshakableMaxHpFlatBonus,
+                        }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
 
+                    }
                     break;
 
                 case EntityUniquePassives.Altruistic:
@@ -1308,9 +1469,10 @@ namespace Codinsa2015.Server.Entities
         /// <returns>Retourne le nombre de dégâts bruts infligés.</returns>
         protected virtual float ApplyAttackDamage(float damage)
         {
-            float trueDamages = (damage * 100 / (100 + GetArmor()));
+            float armor = GetArmor();
+            float trueDamages = (damage * 100 / (100 + armor));
 #if DEBUG
-            DebugBattleLogMessage("Dégâts AD infligés : " + damage + " (" + trueDamages + " true damage) armure : " + GetArmor() + " hp : " + GetHP() );
+            DebugBattleLogMessage("Dégâts AD infligés : " + damage + " (" + trueDamages + " true damage) armure : " + armor + " hp : " + GetHP() );
 #endif
             ApplyTrueDamage(trueDamages);
             return trueDamages;

@@ -95,7 +95,10 @@ namespace Codinsa2015.Server.Entities
         /// Temps restant en secondes pour l'altération d'état.
         /// </summary>
         [Clank.ViewCreator.Export("float", "Temps restant en secondes pour l'altération d'état.")]
-        public float RemainingTime { get; set; }
+        public float RemainingTime { 
+            get; 
+            set; 
+        }
 
         /// <summary>
         /// Retourne une valeur indiquant si l'intéraction est terminée.
@@ -166,6 +169,21 @@ namespace Codinsa2015.Server.Entities
             view.Parameters = this.Parameters.ToView();
             view.Model = this.Model.ToView();
             return view;
+        }
+
+        /// <summary>
+        /// Crée une copy complète de cette altération.
+        /// </summary>
+        /// <returns></returns>
+        public StateAlteration Copy()
+        {
+            StateAlteration copy = new StateAlteration(this.ID,
+                this.Source,
+                this.Model.Copy(),
+                this.Parameters,
+                this.SourceType);
+            copy.RemainingTime = this.RemainingTime;
+            return copy;
         }
     }
 }

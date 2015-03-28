@@ -144,7 +144,7 @@ namespace Codinsa2015.Server
                     // Vérifie qu'il y a des héros alliés en combat
                     EntityCollection inrange = GameServer.GetMap().Entities.GetAliveEntitiesInRange(dst.Position, constants.TankPAPerHPLostRange);
                     inrange = inrange.GetEntitiesByType((dst.Type & EntityType.Teams) | EntityType.Player);
-                    if (inrange.Count != null)
+                    if (inrange.Count != 0)
                         dst.PA += damageAmount * constants.TankPAPerHPLost;
                 }
 
@@ -249,6 +249,12 @@ namespace Codinsa2015.Server
             // On donne une récompense au tueur.
             RewardConstants constants = GameServer.GetScene().Constants.Rewards;
             killer.PA += constants.KillReward;
+
+            // Bonus de PA/Kill pour le passif rugged.
+            if(killer.UniquePassive == EntityUniquePassives.Rugged && killer.UniquePassiveLevel == 2)
+            {
+                killer.PA += GameServer.GetScene().Constants.UniquePassives.RuggedKillReward;
+            }
 
             // On mémorise les héros déjà récompensés pour les assist
             List<EntityHero> rewarded = new List<EntityHero>();
