@@ -134,17 +134,20 @@ namespace Codinsa2015.Server.Shapes
                 Vector2 circleDistance;
                 circleDistance.X = Math.Abs(circleShape.Position.X - X);
                 circleDistance.Y = Math.Abs(circleShape.Position.Y - Y);
+                float wOver2 = Width / 2;
+                float hOver2 = Height / 2;
 
-                if (circleDistance.X > (Width / 2 + circleShape.Radius)) { return false; }
-                if (circleDistance.Y > (Height / 2 + circleShape.Radius)) { return false; }
+                if (circleDistance.X > (wOver2 + circleShape.Radius)) { return false; }
+                if (circleDistance.Y > (hOver2 + circleShape.Radius)) { return false; }
 
-                if (circleDistance.X <= (Width / 2)) { return true; }
-                if (circleDistance.Y <= (Height / 2)) { return true; }
+                if (circleDistance.X <= (wOver2)) { return true; }
+                if (circleDistance.Y <= (hOver2)) { return true; }
 
-                double cornerDistance_sq = Math.Pow((circleDistance.X - Width / 2), 2) +
-                                     Math.Pow((circleDistance.Y - Height / 2), 2);
+                float dx = circleDistance.X - wOver2;
+                float dy = circleDistance.Y - hOver2;
+                double cornerDistance_sq = dx * dx + dy * dy;
 
-                return (cornerDistance_sq <= (Math.Pow(circleShape.Radius, 2)));
+                return (cornerDistance_sq <= circleShape.Radius * circleShape.Radius);
             }
 
             throw new NotImplementedException();
