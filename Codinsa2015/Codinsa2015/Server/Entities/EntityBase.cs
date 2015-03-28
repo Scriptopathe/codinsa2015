@@ -181,7 +181,13 @@ namespace Codinsa2015.Server.Entities
         public Vector2 Direction
         {
             get { return m_direction; }
-            set { m_direction = value; m_direction.Normalize(); }
+            set
+            { 
+                    m_direction = value; 
+                    if(m_direction.X != 0 || m_direction.Y != 0)
+                        m_direction.Normalize();
+                    System.Diagnostics.Debug.Assert(!float.IsNaN(m_direction.X) && !float.IsNaN(m_direction.Y));
+            }
         }
 
         /// <summary>

@@ -122,12 +122,15 @@ namespace Codinsa2015.Server.Events
                     m_respawnTimer = GameServer.GetScene().Constants.Events.MonsterCamp.RespawnTimer;
                     m_destroyed = true;
                 }
+                else
+                {
+                    // Si un monstre du camp a été aggro, fait en sorte que les autres
+                    // le soient aussi.
+                    DispatchAgro();
+                }
             }
             else
             {
-                // Si un monstre du camp a été aggro, fait en sorte que les autres
-                // le soient aussi.
-                DispatchAgro();
 
                 // Respawn du camp si le timer expire.
                 m_respawnTimer -= (float)time.ElapsedGameTime.TotalSeconds;
@@ -161,16 +164,16 @@ namespace Codinsa2015.Server.Events
             Entities.EntityBase aggro = null;
             foreach (var monster in m_monsters)
             {
-                if (monster.CurrentAgro != null)
-                    aggro = monster.CurrentAgro;
+                if (monster.CurrentAggro != null)
+                    aggro = monster.CurrentAggro;
             }
 
             // Transfert de l'aggro à tous les monstres sans aggro.
             if(aggro != null)
                 foreach(var monster in m_monsters)
                 {
-                    if(monster.CurrentAgro != null)
-                        monster.CurrentAgro = aggro;
+                    if(monster.CurrentAggro == null)
+                        monster.CurrentAggro = aggro;
                 }
         }
         /// <summary>

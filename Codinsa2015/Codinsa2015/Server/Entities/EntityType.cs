@@ -56,7 +56,7 @@ namespace Codinsa2015.Server.Entities
         Team1Creep = Team1 | Creep,
         Team2Creep = Team2 | Creep,
         Team1Checkpoint = Team1 | Checkpoint,
-        Team2CheckPoint = Team2 | Checkpoint,
+        Team2Checkpoint = Team2 | Checkpoint,
         Team1HeroSpawner = Team1 | HeroSpawner,
         Team2HeroSpawner = Team2 | HeroSpawner,
         Teams = Team1 | Team2,

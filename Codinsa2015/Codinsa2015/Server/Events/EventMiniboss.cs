@@ -69,7 +69,6 @@ namespace Codinsa2015.Server.Events
         /// </summary>
         public override void Initialize()
         {
-            m_position = new Vector2(40, 40);
             m_destroyed = true;
             m_team1Timer = true;
             m_team2Timer = true;

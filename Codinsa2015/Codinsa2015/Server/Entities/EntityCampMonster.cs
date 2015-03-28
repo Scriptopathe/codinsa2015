@@ -53,7 +53,23 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         public float MaxMoveDistance { get; set; }
 
-        public EntityBase CurrentAgro { get { return m_currentAgro; } set { m_currentAgro = value; } }
+        /// <summary>
+        /// Obtient ou définit l'aggro actuelle du monstre.
+        /// </summary>
+        public EntityBase CurrentAggro 
+        { 
+            get { return m_currentAgro; }
+            set 
+            {
+                if (value != null && value != m_currentAgro)
+                {
+                    m_currentAggroOldPos = value.Position;
+                    ComputePath();
+                }
+                m_currentAgro = value;
+                
+            } 
+        }
         #endregion
 
         #region Methods
@@ -166,13 +182,16 @@ namespace Codinsa2015.Server.Entities
             if (m_currentAgro != null && (m_currentAgro.IsDead || !IsInVisionRange(m_currentAgro)))
             {
                 m_currentAgro = null;
-                m_path = new Trajectory(PathFinder.Astar(this.Position, this.GuardPosition)) { Offset = new Vector2(-0.5f, -0.5f) };
+                m_path = new Trajectory(PathFinder.Astar(this.Position, this.GuardPosition)) { Offset = new Vector2(0, 0) };
             }
 
             // Si pas d'aggro : on cherche le premier héros en range qui l'a attaqué.
             EntityBase aggressiveHero = GetRecentlyAgressiveEntities(0.2f).GetEntitiesByType(EntityType.Player).NearestFrom(this.Position);
             if (aggressiveHero != null)
+            {
                 m_currentAgro = aggressiveHero;
+                m_currentAggroOldPos = m_currentAgro.Position;
+            }
             
 
             // Si l'aggro bouge, on recalcule l'A*.
@@ -181,13 +200,15 @@ namespace Codinsa2015.Server.Entities
             {
                 m_currentAggroOldPos = m_currentAgro.Position;
                 ComputePath();
+                return;
             }
 
             // Si on s'éloigne trop de la position de garde, on lâche l'aggro, et on revient.
             if(m_currentAgro != null && Vector2.DistanceSquared(GuardPosition, Position) >= MaxMoveDistance * MaxMoveDistance)
             {
                 m_currentAgro = null;
-                m_path = new Trajectory(PathFinder.Astar(this.Position, this.GuardPosition)) { Offset = new Vector2(-0.5f, -0.5f) };
+                m_path = new Trajectory(PathFinder.Astar(this.Position, this.GuardPosition)) { Offset = new Vector2(0, 0) };
+                return;
             }
 
             // Si on change d'aggro, on recalcule le chemin.

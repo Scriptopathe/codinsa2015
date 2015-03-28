@@ -11,11 +11,21 @@ namespace Codinsa2015.Server.Entities
     /// </summary>
     public class EntityCreep : EntityBase
     {
+        static Random s_random = new Random();
         /// <summary>
         /// Pourcentage de la range d'attaque à laquelle va s'approcher cette unité
         /// pour attaquer.
         /// </summary>
         const float AttackRangeApproach = 0.80f;
+        /// <summary>
+        /// Délai moyen (+- 10%) après lequel l'aggro des creeps sera mise à jour.
+        /// </summary>
+        const float AggroUpdateDelay = 0.100f;
+        /// <summary>
+        /// Pourcentage d'altération random possible sur le délai de mise à jour de l'aggro.
+        /// </summary>
+        const float AggroUpdateDelayMargin = 0.100f;
+        
         #region Variables
         /// <summary>
         /// Référence vers l'entité ayant l'aggro de la tour.
@@ -162,11 +172,27 @@ namespace Codinsa2015.Server.Entities
                 MoveForward(time);
             }
         }
+
+        float __updateAgroDelay;
         /// <summary>
-        /// Mets à jour l'aggro de la tour.
+        /// Mets à jour l'aggro du creep.
         /// </summary>
         void UpdateAggro(GameTime time)
         {
+            // Vérification du délai d'update
+            // Ce délai est mis en place pour des questions de performances.
+            __updateAgroDelay -= (float)time.ElapsedGameTime.TotalSeconds;
+            if (__updateAgroDelay > 0)
+            {
+                return;
+            }
+
+            // Mise à jour du délai d'update
+            float margin = AggroUpdateDelay * AggroUpdateDelayMargin;
+            __updateAgroDelay = AggroUpdateDelay + ((float)s_random.NextDouble() - 0.5f) * margin;
+
+
+            // Commencement de l'update.
             EntityCollection entitiesInRange = GameServer.GetMap().Entities.GetAliveEntitiesInRange(this.Position, AttackRange);
             EntityBase oldAggro = m_currentAgro;
 

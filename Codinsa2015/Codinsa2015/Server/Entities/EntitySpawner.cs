@@ -71,9 +71,9 @@ namespace Codinsa2015.Server.Entities
             HP = BaseMaxHP;
             BaseMoveSpeed = 0f;
             SpawnInterval = 30;
-            CreepsPerWave = 0; // 6
+            CreepsPerWave = 16; // 6
             SpawnDecay = 0.1f;
-            RowCount = 3;
+            RowCount = 4;
             Type |= EntityType.Spawner;
         }
 
@@ -90,6 +90,8 @@ namespace Codinsa2015.Server.Entities
                 for(int i = 0; i < CreepsPerWave; i++)
                 {
                     int iref = i;
+                    var idol = GameServer.GetMap().Entities.GetEntitiesByType((this.Type & EntityType.Teams) | EntityType.Idol).First().Value;
+                    SpawnPosition = idol.Position;
                     GameServer.GetScene().EventSheduler.Schedule(new Scheduler.ActionDelegate(() =>
                     {
                         EntityCreep creep = new EntityCreep()
