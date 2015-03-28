@@ -224,7 +224,7 @@ namespace Codinsa2015.Server
         {
             Vector2 startPos = new Vector2((int)position.X, (int)position.Y);
             float radiusSqr = radius * radius;
-            for(float x = -radius - 1; x <= radius + 1; x+=0.5f)
+            for(float x = -radius - 1; x <= radius + 1; x+=1f)
             {   
                 float y1 = -radius;
                 float y2 = radius;
@@ -247,20 +247,20 @@ namespace Codinsa2015.Server
             for(int i = 0; i < radius; i++)
             {
                 Vector2 currentStep = startPos + dir * i;
-                currentStep.X = (int)Math.Round(currentStep.X);
-                currentStep.Y = (int)Math.Round(currentStep.Y);
+                int currentStepX = (int)Math.Round(currentStep.X);
+                int currentStepY = (int)Math.Round(currentStep.Y);
                 bool distanceOK = Vector2.DistanceSquared(startPos, currentStep) < radiusSqr;
-                if (m_map.GetPassabilityAt(currentStep) && distanceOK)
+                if (m_map.GetPassabilityAtUnsafe(currentStepX, currentStepY) && distanceOK)
                 {
-                    m_vision[(int)currentStep.X, (int)currentStep.Y] |= flags;
+                    m_vision[currentStepX, currentStepY] |= flags;
                 }
-                else if (dir.Y < -0.1f && distanceOK && (currentStep.X > 0 && currentStep.Y > 0 && currentStep.X <= m_vision.GetLength(0) - 1 &&
+                /*else if (dir.Y < -0.1f && distanceOK && (currentStep.X > 0 && currentStep.Y > 0 && currentStep.X <= m_vision.GetLength(0) - 1 &&
                         currentStep.Y <= m_vision.GetLength(1) - 1))
                 {
                     // Effet graphique pour éclairer les murs.
                     m_vision[(int)currentStep.X, (int)currentStep.Y] |= flags;
                     break;
-                }
+                }*/
                 else
                     break;
             }

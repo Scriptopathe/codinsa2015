@@ -302,6 +302,14 @@ namespace Codinsa2015.Server
 
             return m_passability[(int)x, (int)y];
         }
+        /// <summary>
+        /// Retourne la passabilité de la map à la position donnée en unités métriques.
+        /// Cette méthode ne fait pas de vérification de bord !
+        /// </summary>
+        public bool GetPassabilityAtUnsafe(int x, int y)
+        {
+            return m_passability[(int)x, (int)y];
+        }
 
         /// <summary>
         /// Positionne le bit de passabilité à la position (x, y) à la valeur donnée.
