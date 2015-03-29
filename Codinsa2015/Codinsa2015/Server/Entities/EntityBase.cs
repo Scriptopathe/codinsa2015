@@ -970,10 +970,10 @@ namespace Codinsa2015.Server.Entities
         /// Avance dans la direction donnée, à la vitesse du personnage,
         /// pendant la durée donnée (en secondes).
         /// </summary>
-        public void MoveTowards(Vector2 direction, float duration, float speed)
+        public void MoveTowards(Vector2 direction, float duration, float speed, bool ignoreRoot=false)
         {
             // Si l'entité est rootée, le mouvement est impossible.
-            if (IsRooted)
+            if (IsRooted && !ignoreRoot)
                 return;
 
             // Stratégie :

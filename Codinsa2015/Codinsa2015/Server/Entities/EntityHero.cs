@@ -236,7 +236,7 @@ namespace Codinsa2015.Server.Entities
             Spells = new List<Spell>();
             Spells.Add(Server.Spells.SpellFactory.Meteor(this)); //new Spells.FireballSpell(this, 4));
             Spells.Add(Server.Spells.SpellFactory.BroForce(this)); //(new Spells.DashForwardSpell(this));
-            Spells.Add(new Spells.MovementSpeedBuffSpell(this));
+            Spells.Add(Server.Spells.SpellFactory.Kick(this));
             Spells.Add(new Spells.TargettedTowerSpell(this));
             Type |= EntityType.Player;
             VisionRange = 8;

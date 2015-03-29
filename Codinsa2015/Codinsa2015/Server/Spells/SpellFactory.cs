@@ -178,6 +178,7 @@ namespace Codinsa2015.Server.Spells
 
             return spell;
         }
+
         #endregion
 
         #region Supporting
@@ -352,7 +353,189 @@ namespace Codinsa2015.Server.Spells
 
             return spell;
         }
+
+
+        /// <summary>
+        /// Sort war-cry.
+        /// Augmente les dégâts des alliés pendant un cours instant.
+        /// </summary>
+        public static Spell WarCry(EntityBase caster)
+        {
+            var cst = GameServer.GetScene().Constants.ActiveSpells;
+            SpellDescription lvl1 = new SpellDescription()
+            {
+
+                TargetType = new SpellTargetInfo()
+                {
+                    AllowedTargetTypes = EntityTypeRelative.AllyPlayer,
+                    AoeRadius = cst.Aoes[MEDIUM],
+                    DieOnCollision = false,
+                    Range = cst.Ranges[MEDIUM],
+                    Type = TargettingType.Position,
+                    Duration = cst.AoeDurations[LOW]
+                },
+                BaseCooldown = cst.CDs[HIGH],
+                OnHitEffects = new List<StateAlterationModel>()
+                {
+                    // bonus d'ad moyen
+                    new StateAlterationModel()
+                    {
+                        Type = StateAlterationType.AttackDamageBuff,
+                        FlatValue = cst.AdDamageFlat[MEDIUM],
+                        BaseDuration = cst.ADAPBonusesDurations[LOW],
+                    },                    
+                    // bonus d'ap moyen
+                    new StateAlterationModel()
+                    {
+                        Type = StateAlterationType.MagicDamageBuff,
+                        FlatValue = cst.ApDamageFlat[MEDIUM],
+                        BaseDuration = cst.ADAPBonusesDurations[LOW],
+                    },
+                }
+            };
+            SpellDescription lvl2 = lvl1.Copy();
+            // bonus de d'ad et ap forts
+            lvl2.OnHitEffects[0].FlatValue = cst.AdDamageFlat[HIGH];
+            lvl2.OnHitEffects[1].FlatValue = cst.ApDamageFlat[HIGH];
+
+            SpellDescription lvl3 = lvl2.Copy();
+
+            // bonus move speed moyen court.
+            lvl3.OnHitEffects.Add(new StateAlterationModel()
+            {
+                Type = StateAlterationType.MoveSpeed,
+                FlatValue = cst.MoveSpeedAlterations[MEDIUM],
+                BaseDuration = cst.MoveSpeedDurations[LOW]
+            });
+            // bonus attack speed moyen court.
+            lvl3.OnHitEffects.Add(new StateAlterationModel()
+            {
+                Type = StateAlterationType.AttackSpeed,
+                FlatValue = cst.AttackSpeedBonuses[MEDIUM],
+                BaseDuration = cst.AttackSpeedBonusesDurations[LOW]
+            });
+            Spell spell = new BasicSpell(caster,
+                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+                "bro-force");
+
+            return spell;
+        }
         #endregion
 
+        #region Spells de CC
+        /// <summary>
+        /// Sort bim!.
+        /// Stunne un ennemi pendant une courte durée.
+        /// </summary>
+        public static Spell Bim(EntityBase caster)
+        {
+            var cst = GameServer.GetScene().Constants.ActiveSpells;
+            SpellDescription lvl1 = new SpellDescription()
+            {
+
+                TargetType = new SpellTargetInfo()
+                {
+                    AllowedTargetTypes = EntityTypeRelative.EnnemyPlayer |
+                            EntityTypeRelative.EnnemyCreep | EntityTypeRelative.AllTargettableNeutral,
+                    AoeRadius = cst.Aoes[LOWER],
+                    DieOnCollision = false,
+                    Range = cst.Ranges[MEDIUM],
+                    Type = TargettingType.Direction,
+                    Duration = 0
+                },
+                BaseCooldown = cst.CDs[HIGH],
+                OnHitEffects = new List<StateAlterationModel>()
+                {
+                    // stun durée moyenne
+                    new StateAlterationModel()
+                    {
+                        Type = StateAlterationType.Stun,
+                        BaseDuration = cst.StunDurations[MEDIUM],
+                    },
+                }
+            };
+            SpellDescription lvl2 = lvl1.Copy();
+            // dégâts de sorts faibles
+            lvl2.OnHitEffects.Add(new StateAlterationModel()
+            {
+                Type = StateAlterationType.MagicDamage,
+                BaseDuration = 0,
+                FlatValue = cst.ApDamageFlat[LOWER],
+                SourcePercentAPValue = cst.ApDamageRatios[LOW]
+            });
+
+            SpellDescription lvl3 = lvl2.Copy();
+            lvl3.TargetType.DieOnCollision = false;
+
+            Spell spell = new BasicSpell(caster,
+                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+                "bim!");
+
+            return spell;
+        }
+        /// <summary>
+        /// Sort Kick !
+        /// Projette un ennemi en arrière.
+        /// </summary>
+        public static Spell Kick(EntityBase caster)
+        {
+            var cst = GameServer.GetScene().Constants.ActiveSpells;
+            SpellDescription lvl1 = new SpellDescription()
+            {
+
+                TargetType = new SpellTargetInfo()
+                {
+                    AllowedTargetTypes = EntityTypeRelative.EnnemyPlayer |
+                                         EntityTypeRelative.EnnemyCreep,
+                    AoeRadius = cst.Aoes[LOWER],
+                    DieOnCollision = false,
+                    Range = cst.Ranges[LOWER],
+                    Type = TargettingType.Targetted,
+                    Duration = 0
+                },
+                BaseCooldown = cst.CDs[HIGH],
+                OnHitEffects = new List<StateAlterationModel>()
+                {
+                    // Kick en arrière
+                    new StateAlterationModel()
+                    {
+                        Type = StateAlterationType.Dash,
+                        DashDirType = DashDirectionType.BackwardsCaster,
+                        DashSpeed = 40,
+                        BaseDuration = 0.15f,
+                    },
+                    // Dégâts moyens
+                    new StateAlterationModel()
+                    {
+                        Type = StateAlterationType.MagicDamage,
+                        SourcePercentAPValue = cst.ApDamageRatios[MEDIUM]
+                    }
+                }
+            };
+            SpellDescription lvl2 = lvl1.Copy();
+            // Ralentissement grand, durée faible.
+            lvl2.OnHitEffects.Add(new StateAlterationModel()
+            {
+                Type = StateAlterationType.MoveSpeed,
+                BaseDuration = cst.MoveSpeedDurations[LOW],
+                FlatValue = -cst.MoveSpeedAlterations[HIGH],
+            });
+
+            SpellDescription lvl3 = lvl2.Copy();
+            // Baisse d'armure moyenne, durée moyenne.
+            lvl3.OnHitEffects.Add(new StateAlterationModel()
+            {
+                Type = StateAlterationType.ArmorBuff,
+                BaseDuration = cst.ResistAlterationDuration[MEDIUM],
+                FlatValue = -cst.ArmorAlterations[MEDIUM]
+            });
+
+            Spell spell = new BasicSpell(caster,
+                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+                "kick");
+
+            return spell;
+        }
+        #endregion
     }
 }

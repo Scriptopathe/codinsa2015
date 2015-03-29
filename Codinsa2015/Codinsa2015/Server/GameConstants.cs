@@ -318,7 +318,7 @@ namespace Codinsa2015.Server
             HPRegen = 0.1f;
             VisionRange = 8;
             MoveSpeed = 4;
-            HP = 100;
+            HP = 10000;
             Armor = 10;
             MagicResist = 10;
             CooldownReduction = 0;
@@ -438,6 +438,8 @@ namespace Codinsa2015.Server
         public float[] BlindDurations = new float[] { 0.5f, 0.1f, 1.5f, 2.5f };
         public float[] DashLengths = new float[] { 2, 4, 6, 8 };
         public float[] CDs = new float[] { 1, 3, 5, 7 };
+        public float[] AttackSpeedBonuses = new float[] { 0.20f, 0.40f, 0.60f, 0.80f };
+        public float[] AttackSpeedBonusesDurations = new float[] { 1, 2, 3, 5 };
         public float[] FlatADAPBonuses = new float[] { 4, 8, 12, 20 };
         public float[] ADAPBonusesDurations = new float[] { 1, 2, 3, 5 };
         public float[] ScalingADAPBonuses = new float[] { 0.05f, 0.10f, 0.15f, 0.20f };
