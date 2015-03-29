@@ -42,7 +42,9 @@ namespace Codinsa2015.DebugHumanControler.Components
             m_output.Size = new Point(this.Size.X, this.Size.Y - m_output.Location.Y);
 
             m_output.Clear();
+            m_output.AppendLine("-- " + Entity.ToString() + " (" + Entity.ID + ")");
             m_output.AppendLine(String.Format("Max HP = {0}", m_entity.GetMaxHP()));
+            m_output.AppendLine(String.Format("Shield = {0}", m_entity.ShieldPoints));
             m_output.AppendLine(String.Format("HP     = {0}", m_entity.GetHP()));
             m_output.AppendLine(String.Format("Regen  = {0} HP/s", m_entity.GetHPRegen()));
             m_output.AppendLine(String.Format("Armor  = {0}", m_entity.GetArmor()));

@@ -142,6 +142,10 @@ namespace Codinsa2015.Server.Spells
             // Vérifie que si le sort est targetté, il on est bien sur la bonne cible.
             if (Description.TargetType.Type == Spells.TargettingType.Targetted &&
                 entity.ID != info.TargetId)
+                return false; 
+
+            // Si le caster et le receveur, on vérifie que le flag "me" est présent.
+            if ((!Description.TargetType.AllowedTargetTypes.HasFlag(EntityTypeRelative.Me)) && entity.ID == SourceCaster.ID)
                 return false;
 
             return true;
@@ -187,6 +191,8 @@ namespace Codinsa2015.Server.Spells
                 if (Vector2.Distance(target.TargetPosition, SourceCaster.Position) > Description.TargetType.Range)
                     return SpellUseResult.OutOfRange;
             }
+            // Préparation des paramètres
+            SetupParameters(target);
 
             // Applique les effets du casting time.
             foreach(var alterationModel in Description.CastingTimeAlterations)
@@ -228,6 +234,14 @@ namespace Codinsa2015.Server.Spells
 
         }
 
+        /// <summary>
+        /// Effectue un setup des paramètres du sort à partir des infos de targetting.
+        /// </summary>
+        /// <param name="cast"></param>
+        public virtual void SetupParameters(SpellCastTargetInfo target)
+        {
+
+        }
         /// <summary>
         /// Mets à jour le cooldown de ce sort.
         /// </summary>

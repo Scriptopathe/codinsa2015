@@ -73,6 +73,19 @@ namespace Codinsa2015.Server.Entities
                     alt.EndNow();
             }
         }
+
+        /// <summary>
+        /// Supprime toutes les altérations du type donné.
+        /// </summary>
+        /// <param name="type"></param>
+        public void EndAlterations(StateAlterationType type)
+        {
+            foreach(StateAlteration alt in this)
+            {
+                if (alt.Model.Type == type)
+                    alt.EndNow();
+            }
+        }
         /// <summary>
         /// Retourne une liste de vues de cette collection d'altération.
         /// </summary>

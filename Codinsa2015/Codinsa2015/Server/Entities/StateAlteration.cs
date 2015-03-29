@@ -114,8 +114,14 @@ namespace Codinsa2015.Server.Entities
                 Vector2 dstPosition = Vector2.Zero;
                 if (Model.DashDirType == DashDirectionType.TowardsEntity)
                 {
+                    // Si l'entité n'existe pas, on a fini le dash.
+                    if (Parameters.DashTargetEntity == null)
+                        return true;
+
                     dstPosition = Parameters.DashTargetEntity.Position;
-                    return Vector2.Distance(dstPosition, dstEntity.Position) <= Model.DashSpeed * (float)(time.ElapsedGameTime.TotalSeconds);
+                    float distance = Vector2.Distance(dstPosition, dstEntity.Position);
+                    float delta = Model.DashSpeed * (float)(time.ElapsedGameTime.TotalSeconds);
+                    return distance <= delta;
                 }
                 else
                     return RemainingTime <= 0;

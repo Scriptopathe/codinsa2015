@@ -90,8 +90,12 @@ namespace Codinsa2015.Server.Entities
                 for(int i = 0; i < CreepsPerWave; i++)
                 {
                     int iref = i;
-                    var idol = GameServer.GetMap().Entities.GetEntitiesByType((this.Type & EntityType.Teams) | EntityType.Idol).First().Value;
-                    SpawnPosition = idol.Position;
+                    var idolCandidates = GameServer.GetMap().Entities.GetEntitiesByType((this.Type & EntityType.Teams) | EntityType.Idol);
+                    if (idolCandidates.Count > 0)
+                    {
+                        var idol = idolCandidates.First().Value;
+                        SpawnPosition = idol.Position;
+                    }
                     GameServer.GetScene().EventSheduler.Schedule(new Scheduler.ActionDelegate(() =>
                     {
                         EntityCreep creep = new EntityCreep()

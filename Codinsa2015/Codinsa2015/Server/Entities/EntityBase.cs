@@ -764,6 +764,31 @@ namespace Codinsa2015.Server.Entities
         {
             get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Stun).Count != 0; }
         }
+
+        /// <summary>
+        /// Obtient une valeur indiquant si cette unité possède une immunité temporaire aux dégâts.
+        /// </summary>
+        [Clank.ViewCreator.Export("bool", "Obtient une valeur indiquant si cette unité possède une immunité temporaire aux dégâts.")]
+        public bool IsDamageImmune
+        {
+            get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.DamageImmune).Count != 0; }
+        }
+
+        /// <summary>
+        /// Obtient une valeur indiquant si les cc présents sur cette unité sont annulés.
+        /// </summary>
+        public bool HasCleanse
+        {
+            get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Cleanse).Count != 0; }
+        }
+        /// <summary>
+        /// Obtient une valeur indiquant si cette unité possède une immunité temporaire aux dégâts.
+        /// </summary>
+        [Clank.ViewCreator.Export("bool", "Obtient une valeur indiquant si cette unité possède une immunité temporaire aux contrôles.")]
+        public bool IsControlImmune
+        {
+            get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.ControlImmune).Count != 0; }
+        }
         /// <summary>
         /// Obtient une valeur indiquant si cette unité est Blinded (ne peut pas lancer d'attaque avec son arme).
         /// </summary>
@@ -1060,6 +1085,9 @@ namespace Codinsa2015.Server.Entities
         {
             float regen = GetHPRegen();
             HP += regen * (float)time.ElapsedGameTime.TotalSeconds;
+
+            // Régression du shield éventuel
+            ShieldPoints = Math.Max(ShieldPoints - (ShieldPoints * 0.10f + 5) * (float)time.ElapsedGameTime.TotalSeconds, 0);
         }
 
         
@@ -1202,6 +1230,15 @@ namespace Codinsa2015.Server.Entities
                 ApplyHeal(alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
             }
 
+            // Shields
+            List<StateAlteration> shields = m_stateAlterations.GetInteractionsByType(StateAlterationType.Shield);
+            foreach(StateAlteration alteration in shields)
+            {
+                this.ShieldPoints += alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All);
+                alteration.EndNow();
+            }
+
+
             // Applique les dash
             List<StateAlteration> dashAlterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.Dash);
             foreach(StateAlteration alteration in dashAlterations)
@@ -1211,6 +1248,15 @@ namespace Codinsa2015.Server.Entities
                     alteration.RemainingTime,
                     (float)time.ElapsedGameTime.TotalSeconds,
                     alteration.Model.DashGoThroughWall);
+            }
+
+            // Cleanse les CC
+            if(HasCleanse)
+            {
+                StateAlterations.EndAlterations(StateAlterationType.Root);
+                StateAlterations.EndAlterations(StateAlterationType.Stun);
+                StateAlterations.EndAlterations(StateAlterationType.Silence);
+                StateAlterations.EndAlterations(StateAlterationType.Blind);
             }
         }
 
@@ -1246,45 +1292,67 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         public void AddAlteration(StateAlteration alteration, bool notify=true)
         {
-            // Modification éventuelle par le passif 
-            switch(alteration.Model.Type)
+            // Immunités
+            #region Immunity
+            if(IsDamageImmune & ((alteration.Model.Type  & StateAlterationType.AllDamage) != 0))
             {
-                case StateAlterationType.Stun:
-                    // Un shakable => on transforme le stun en silence.
-                    if (UniquePassive == EntityUniquePassives.Unshakable && UniquePassiveLevel >= 1)
-                    {
-                        alteration = alteration.Copy();
-                        alteration.Model.Type = StateAlterationType.Silence;
-                    }
-                    break;
-                case StateAlterationType.Root:
-                    if (UniquePassive == EntityUniquePassives.Unshakable && UniquePassiveLevel >= 1)
-                    {
-                        // unshakable Le root ne s'applique pas.
-                        return;
-                    }
-                    break;
-                case StateAlterationType.MoveSpeed:
-                    if(UniquePassive == EntityUniquePassives.Unshakable && UniquePassiveLevel >= 2)
-                    {
-                        // unshakable => durée des slows / 2
-                        if (alteration.Model.FlatValue > 0)
-                            alteration.Model.FlatValue /= 2;
-                    }
-                    break;
-                case StateAlterationType.Silence:
-                    if(UniquePassive== EntityUniquePassives.Altruistic && UniquePassiveLevel >= 2)
-                    {
-                        // sur un altruiste de lvl >= 2, le silence ne s'applique pas.
-                        return;
-                    }
-
-                    break;
+                alteration = alteration.Copy();
+                // On annule tous les dégâts.
+                alteration.Model.Type &= (StateAlterationType.AllDamage ^ StateAlterationType.All);
+                if (alteration.Model.Type == StateAlterationType.None)
+                    return;
             }
+            if (IsControlImmune & ((alteration.Model.Type & StateAlterationType.AllCC) != 0))
+            {
+                alteration = alteration.Copy();
+                // On annule tous les cc
+                alteration.Model.Type &= (StateAlterationType.AllCC ^ StateAlterationType.All);
+                if (alteration.Model.Type == StateAlterationType.None)
+                    return;
+            }
+            #endregion
 
+            // Modification éventuelle par le passif 
+            #region Passive
+            if (alteration.Model.Type.HasFlag(StateAlterationType.Stun))
+            {
+                // Un shakable => on transforme le stun en silence.
+                if (UniquePassive == EntityUniquePassives.Unshakable && UniquePassiveLevel >= 1)
+                {
+                    alteration = alteration.Copy();
+                    alteration.Model.Type = StateAlterationType.Silence;
+                }
+            }
+            else if(alteration.Model.Type.HasFlag(StateAlterationType.Root))
+            {
+                if (UniquePassive == EntityUniquePassives.Unshakable && UniquePassiveLevel >= 1)
+                {
+                    // unshakable Le root ne s'applique pas.
+                    return;
+                }
+            }
+            else if(alteration.Model.Type.HasFlag(StateAlterationType.MoveSpeed))
+            {
+                if (UniquePassive == EntityUniquePassives.Unshakable && UniquePassiveLevel >= 2)
+                {
+                    // unshakable => durée des slows / 2
+                    if (alteration.Model.FlatValue > 0)
+                        alteration.Model.FlatValue /= 2;
+                }
+            }
+            else if(alteration.Model.Type.HasFlag(StateAlterationType.Silence))
+            {
+                if (UniquePassive == EntityUniquePassives.Altruistic && UniquePassiveLevel >= 2)
+                {
+                    // sur un altruiste de lvl >= 2, le silence ne s'applique pas.
+                    return;
+                }
+            }
+            #endregion
 
             // Notifications au système de récompenses.
-            if(notify)
+            #region Notify
+            if (notify)
                 switch (alteration.Model.Type)
                 {
                     case StateAlterationType.AttackDamageBuff:
@@ -1300,7 +1368,7 @@ namespace Codinsa2015.Server.Entities
                             alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
                         break;
                 }
-
+            #endregion
             m_stateAlterations.Add(alteration);
         }
 

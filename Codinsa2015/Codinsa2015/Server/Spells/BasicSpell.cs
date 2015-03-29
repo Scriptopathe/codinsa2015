@@ -23,6 +23,16 @@ namespace Codinsa2015.Server.Spells
         }
 
         /// <summary>
+        /// Prépare les paramètres du sort à partir des informations de ciblage.
+        /// </summary>
+        /// <param name="target"></param>
+        public override void SetupParameters(SpellCastTargetInfo target)
+        {
+            base.SetupParameters(target);
+            target.AlterationParameters.DashTargetEntity = GameServer.GetMap().GetEntityById(target.TargetId);
+        }
+
+        /// <summary>
         /// Retourne le cooldown du sort.
         /// </summary>
         /// <returns></returns>

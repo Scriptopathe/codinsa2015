@@ -70,8 +70,6 @@ namespace Codinsa2015.Server.Spells
         {
             get
             {
-                if (Type != TargettingType.Direction)
-                    throw new InvalidOperationException();
                 return m_targetDirection;
             }
             set
@@ -88,8 +86,6 @@ namespace Codinsa2015.Server.Spells
         {
             get
             {
-                if (Type != TargettingType.Targetted)
-                    throw new InvalidOperationException();
                 return m_targetId;
             }
             set

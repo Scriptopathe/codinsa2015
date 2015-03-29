@@ -197,7 +197,7 @@ namespace Codinsa2015.DebugHumanControler
                             menu.Title = "Menu";
                             foreach (EntityBase entity in entitiesInRange.Values)
                             {
-                                GuiMenu.GuiMenuItem item = new GuiMenu.GuiMenuItem("Remove " + entity.Type.ToString());
+                                GuiMenu.GuiMenuItem item = new GuiMenu.GuiMenuItem("Remove " + entity.Type.ToString() + " (" + entity.ID + ")");
                                 item.ItemSelected += new GuiMenu.ItemSelectedDelegate(() =>
                                 {
                                     CurrentMap.Entities.Remove(entity.ID);

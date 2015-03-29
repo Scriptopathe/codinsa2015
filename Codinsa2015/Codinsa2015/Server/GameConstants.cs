@@ -324,6 +324,7 @@ namespace Codinsa2015.Server
             CooldownReduction = 0;
             AttackDamage = 10;
             AttackSpeed = 1.0f;
+            AbilityPower = 50;
         }
     }
 
@@ -416,14 +417,14 @@ namespace Codinsa2015.Server
     /// </summary>
     public class ActiveSpellsConstants
     {
-        public float[] Ranges = new float[] { 1, 4, 6, 8 };
+        public float[] Ranges = new float[] { 2, 4, 6, 8 };
         public float[] Aoes   = new float[] { 0.5f, 1.5f, 2.5f, 3.5f};
         public float[] HealApRatio = new float[] { 0.1f, 0.2f, 0.4f, 0.8f };
         public float[] ShieldApRatio = new float[] { 0.2f, 0.5f, 1.0f, 2.0f };
         public float[] ShieldDuration = new float[] { 1, 2, 3, 5 };
         public float[] MoveSpeedAlterations = new float[] { 0.1f, 0.2f, 0.4f, 0.7f };
         public float[] MoveSpeedDurations = new float[] { 1, 2, 3, 5 };
-        public float[] AoeDurations = new float[] { 1, 2, 3, 5 };
+        public float[] AoeDurations = new float[] { 0.2f, 2, 3, 5 };
         public float[] ApDamageFlat = new float[] { 5, 10, 15, 20 };
         public float[] AdDamageFlat = new float[] { 5, 10, 15, 20 };
         public float[] ApDamageRatios = new float[] { 0.2f, 0.5f, 1, 2 };
@@ -464,6 +465,7 @@ namespace Codinsa2015.Server
         public EventConstants Events;
         public UniquePassiveConstants UniquePassives;
         public ActiveSpellsConstants ActiveSpells;
+        public EntityConstants Heroes;
         /// <summary>
         /// Crée une nouvelle instance de GameConstants avec des constantes par défaut.
         /// </summary>
@@ -480,6 +482,7 @@ namespace Codinsa2015.Server
             BuffedCreeps = new CreepConstants();
             UniquePassives = new UniquePassiveConstants();
             ActiveSpells = new ActiveSpellsConstants();
+            Heroes = new EntityConstants();
         }
 
         /// <summary>

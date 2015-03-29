@@ -14,7 +14,7 @@ namespace Codinsa2015.Server.Entities
         Silence         = 0x0002,
         Interruption    = 0x0004,
         Blind           = 0x00400000,
-        Stun            = Root | Silence | Interruption,
+        Stun            = Root | Silence | Interruption | Blind,
 
         // Stats
         CDR             = 0x0008,
@@ -38,6 +38,14 @@ namespace Codinsa2015.Server.Entities
         Sight           = 0x00100000,
         WardSight       = 0x00100000, // révèle les wards.
         TrueSight       = 0x00200000, // révèle les unités stealth.
+        DamageImmune    = 0x01000000,
+        ControlImmune   = 0x02000000,
+        Cleanse         = 0x04000000,
+
+        // Macros
+        AllCC           = Stun,
+        AllDamage       = AttackDamage | MagicDamage | TrueDamage,
+        All             = 0x0FFFFFFF,
     }
 
     public enum ScalingRatios
@@ -131,23 +139,47 @@ namespace Codinsa2015.Server.Entities
             {
                 case Entities.DashDirectionType.TowardsEntity:
                     if (parameters.DashTargetEntity == null)
-                        throw new Exception("StateAlterationModel.GetDashDirection : target null & DashDirectionType == TowardsEntity");
-                    direction = parameters.DashTargetEntity.Position - source.Position; direction.Normalize();
+                    {
+#if DEBUG
+                        GameServer.GetBattleLog().AddError("StateAlterationModel.GetDashDirection : target null & DashDirectionType == TowardsEntity");
+                        // throw new Exception("StateAlterationModel.GetDashDirection : target null & DashDirectionType == TowardsEntity");
+#endif
+                        return Vector2.Zero;
+                    }
+
+                    direction = parameters.DashTargetEntity.Position - source.Position;
+                    direction = normalize(direction);
                     return direction;
                 case Entities.DashDirectionType.Direction:
                     if(parameters.DashTargetDirection== null)
                         throw new Exception("StateAlterationModel.GetDashDirection : target null & DashDirectionType == Position");
-                    direction = parameters.DashTargetDirection; direction.Normalize();
+                    direction = parameters.DashTargetDirection; 
+                    direction = normalize(direction);
                     return direction;
                 case Entities.DashDirectionType.BackwardsCaster:
                     direction = source.Position - caster.Position;
-                    direction.Normalize();
+                    direction = normalize(direction);
                     return direction;
             }
 
             return Vector2.Zero;
         }
 
+        /// <summary>
+        /// Normalise une direction, en prenant en compte le cas (0, 0).
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <returns></returns>
+        Vector2 normalize(Vector2 direction)
+        {
+            if (direction.X == 0 && direction.Y == 0)
+                return Vector2.Zero;
+            else
+            {
+                direction.Normalize();
+                return direction;
+            }
+        }
         /// <summary>
         /// Valeur flat du buff / debuff (valeur positive : buff, valeur négative : debuff).
         /// La nature du buff dépend de Type.

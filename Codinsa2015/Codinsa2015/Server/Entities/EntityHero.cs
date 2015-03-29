@@ -230,16 +230,16 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Crée une nouvelle instance de EntityHero.
         /// </summary>
-        public EntityHero()
+        public EntityHero() : base()
         {
+            LoadEntityConstants(GameServer.GetScene().Constants.Heroes);
             Spells = new List<Spell>();
             Spells.Add(Server.Spells.SpellFactory.Meteor(this)); //new Spells.FireballSpell(this, 4));
-            Spells.Add(new Spells.DashForwardSpell(this));
+            Spells.Add(Server.Spells.SpellFactory.BroForce(this)); //(new Spells.DashForwardSpell(this));
             Spells.Add(new Spells.MovementSpeedBuffSpell(this));
             Spells.Add(new Spells.TargettedTowerSpell(this));
             Type |= EntityType.Player;
             VisionRange = 8;
-            BaseMoveSpeed = 2;
             m_consummables = new ConsummableStack[2] {
                 new ConsummableStack(this, ConsummableType.Ward),
                 new ConsummableStack(this, ConsummableType.Unward)
