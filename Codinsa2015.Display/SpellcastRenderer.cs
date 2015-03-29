@@ -43,16 +43,32 @@ namespace Codinsa2015.Rendering
                     break;
             }
 
-            batch.Draw(tex,
-                new Rectangle((int)(shape.Position.X * m_mapRenderer.UnitSize) - scroll.X,
-                    (int)(shape.Position.Y * m_mapRenderer.UnitSize) - scroll.Y,
-                    (int)(shape.Radius * 2 * m_mapRenderer.UnitSize),
-                    (int)(shape.Radius * 2 * m_mapRenderer.UnitSize)),
-                null,
-                Color.Violet,
-                0.0f,
-                new Vector2(shape.Radius * m_mapRenderer.UnitSize, shape.Radius * m_mapRenderer.UnitSize),
-                SpriteEffects.None, 0.0f);
+            if (shape.ShapeType == Views.GenericShapeType.Circle)
+            {
+                batch.Draw(tex,
+                    new Rectangle((int)(shape.Position.X * m_mapRenderer.UnitSize) - scroll.X,
+                        (int)(shape.Position.Y * m_mapRenderer.UnitSize) - scroll.Y,
+                        (int)(shape.Radius * 2 * m_mapRenderer.UnitSize),
+                        (int)(shape.Radius * 2 * m_mapRenderer.UnitSize)),
+                    null,
+                    Color.Violet,
+                    0.0f,
+                    new Vector2(tex.Width / 2, tex.Height / 2),
+                    SpriteEffects.None, 0.0f);
+            }
+            else
+            {
+                batch.Draw(tex,
+                    new Rectangle((int)(shape.Position.X * m_mapRenderer.UnitSize) - scroll.X,
+                        (int)(shape.Position.Y * m_mapRenderer.UnitSize) - scroll.Y,
+                        (int)(shape.Size.X * m_mapRenderer.UnitSize),
+                        (int)(shape.Size.Y * m_mapRenderer.UnitSize)),
+                    null,
+                    Color.Violet,
+                    0.0f,
+                    new Vector2(tex.Width / 2, tex.Height / 2),
+                    SpriteEffects.None, 0.0f);
+            }
         }
         #endregion
     }
