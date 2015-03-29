@@ -125,9 +125,13 @@ namespace Codinsa2015.Server.Spellcasts
                     }
                     else
                     {
+                        Vector2 dstPos = GameServer.GetMap().GetEntityById(m_castInfo.TargetId).Position;
                         Vector2 dir = GameServer.GetMap().GetEntityById(m_castInfo.TargetId).Position - m_shape.Position;
                         dir.Normalize();
                         m_shape.Position += dir * speed;
+                        if (Vector2.Distance(m_shape.Position, dstPos) <= speed)
+                            m_shape.Position = dstPos;
+
                         m_canTouch = true;
 
                     }

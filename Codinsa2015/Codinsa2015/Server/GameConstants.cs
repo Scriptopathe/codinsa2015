@@ -466,6 +466,7 @@ namespace Codinsa2015.Server
         public UniquePassiveConstants UniquePassives;
         public ActiveSpellsConstants ActiveSpells;
         public EntityConstants Heroes;
+        public TowerConstants Towers;
         /// <summary>
         /// Crée une nouvelle instance de GameConstants avec des constantes par défaut.
         /// </summary>
@@ -483,6 +484,7 @@ namespace Codinsa2015.Server
             UniquePassives = new UniquePassiveConstants();
             ActiveSpells = new ActiveSpellsConstants();
             Heroes = new EntityConstants();
+            Towers = new TowerConstants();
         }
 
         /// <summary>

@@ -312,7 +312,7 @@ namespace Codinsa2015.Server.Spells
                     DieOnCollision = false,
                     Range = cst.Ranges[MEDIUM],
                     Type = TargettingType.Targetted,
-                    Duration = cst.AoeDurations[LOWER]
+                    Duration = 0
                 },
                 BaseCooldown = cst.CDs[HIGH],
                 OnHitEffects = new List<StateAlterationModel>()

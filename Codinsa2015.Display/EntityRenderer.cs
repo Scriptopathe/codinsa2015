@@ -93,14 +93,60 @@ namespace Codinsa2015.Rendering
                     break;
             }
 
+            // Rectangle de dessin de l'entité
+            Rectangle drawRect = new Rectangle(drawPos.X, drawPos.Y, (int)(m_mapRenderer.UnitSize * sx), (int)(m_mapRenderer.UnitSize * sy));
 
+            // Dessin de la jauge
+            int totalLength = (int)(drawRect.Width)*3/4;
+            int totalH = 6;
+            Vector2 gaugeOrigin = new Vector2(0, 0);
+            float max = (entity.GetMaxHP() + entity.ShieldPoints);
+            float percent = entity.HP / max;
+            float shieldPercent = entity.ShieldPoints / max;
+
+            int offsetY = -drawRect.Height;
+            int offsetX = -drawRect.Width / 2;
+            Rectangle gaugeRect = new Rectangle(drawPos.X +  offsetX + (drawRect.Width - totalLength) / 2,
+                drawPos.Y + offsetY - 10,
+                totalLength,
+                totalH);
+
+            Color gaugeColor = blue ? Color.Blue : Color.Red;
+            // Jauge vide
+            batch.Draw(Ressources.LifebarEmpty,
+                gaugeRect,
+                null,
+                gaugeColor,
+                0, gaugeOrigin, SpriteEffects.None, 0.0f);
+
+            // Vie
+            gaugeRect.Width = (int)(totalLength * percent);
+            batch.Draw(Ressources.LifebarFull,
+                gaugeRect,
+                null,
+                gaugeColor,
+                0, gaugeOrigin, SpriteEffects.None, 0.1f);
+
+            if (entity.ShieldPoints > 0)
+            {
+                // Shield
+                gaugeRect.X += (int)(totalLength * percent);
+                gaugeRect.Width = (int)(gaugeRect.Width * shieldPercent);
+                batch.Draw(Ressources.LifebarFull,
+                    gaugeRect,
+                    null,
+                    Color.White,
+                    0, gaugeOrigin, SpriteEffects.None, 0.2f);
+            }
+            
+            // Entité
             col.A = (byte)((m_mapRenderer.HasVision((type & Views.EntityType.Teams) ^ Views.EntityType.Teams, entityPosition)) ? 255 : 220);
             batch.Draw(tex,
-                new Rectangle(drawPos.X, drawPos.Y, (int)(m_mapRenderer.UnitSize* sx), (int)(m_mapRenderer.UnitSize * sy)), 
+                drawRect, 
                 null,
                 col,
                 __angle,
-                new Vector2(sx, sy),
+                new Vector2(tex.Width/2, tex.Height),
                 SpriteEffects.None,
                 0.0f);
         }

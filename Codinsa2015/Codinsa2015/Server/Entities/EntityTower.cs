@@ -39,13 +39,8 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         public EntityTower() : base()
         {
-            BaseArmor = 80;
-            BaseAttackDamage = 900;
-            BaseMagicResist = 40;
-            BaseMaxHP = 400;
-            HP = BaseMaxHP;
-            VisionRange = 6.0f;
-            TowerRange = VisionRange;
+            LoadEntityConstants(GameServer.GetScene().Constants.Towers);
+            TowerRange = GameServer.GetScene().Constants.Towers.AttackRange;
             Type |= EntityType.Tower;
             m_attackSpell = new Spells.FireballSpell(this);
         }
