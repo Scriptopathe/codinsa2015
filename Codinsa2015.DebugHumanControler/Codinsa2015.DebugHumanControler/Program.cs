@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
+using System.Reflection;
 namespace Codinsa2015.DebugHumanControler
 {
     static class Program
@@ -9,6 +12,17 @@ namespace Codinsa2015.DebugHumanControler
         /// </summary>
         static void Main(string[] args)
         {
+            // Chargement de toutes les assemblys au démarrage
+            // pour éviter des vieux laggs.
+            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+
+            loadedAssemblies
+                .SelectMany(x => x.GetReferencedAssemblies())
+                .Distinct()
+                .Where(y => loadedAssemblies.Any((a) => a.FullName == y.FullName) == false)
+                .ToList()
+                .ForEach(x => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(x)));
+            
             using(GameClient client = new GameClient())
             {
 
