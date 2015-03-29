@@ -1265,6 +1265,14 @@ namespace Codinsa2015.Server.Entities
                             alteration.Model.FlatValue /= 2;
                     }
                     break;
+                case StateAlterationType.Silence:
+                    if(UniquePassive== EntityUniquePassives.Altruistic && UniquePassiveLevel >= 2)
+                    {
+                        // sur un altruiste de lvl >= 2, le silence ne s'applique pas.
+                        return;
+                    }
+
+                    break;
             }
 
 
@@ -1379,7 +1387,7 @@ namespace Codinsa2015.Server.Entities
                     {
                         EntityCollection ennemies = GameServer.GetMap().Entities.
                             GetEntitiesByType(EntityType.Player | ((EntityType.Teams & Type) ^ EntityType.Teams)).
-                            GetAliveEntitiesInRange(Position, cst.HunterActivationRange);
+                            GetAliveEntitiesInRange(Position, cst.RuggedActivationRange);
 
                         if (ennemies.Count > 0)
                         {
@@ -1434,11 +1442,160 @@ namespace Codinsa2015.Server.Entities
 
 
                 case EntityUniquePassives.Soldier:
+                    // Lvl 1 : armure + 25%, RM + 25%
+                    // Lvl 2 : regen +100% quand ennemy proche
+                    // Lvl 3 : max HP + 10%
+                    {
+                        string id = "unique-passive-soldier-" + ID;
+                        // Bonus d'armure
+                        AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                        {
+                            Type = StateAlterationType.ArmorBuff,
+                            BaseDuration = 0.25f,
+                            DestPercentArmorValue = cst.SoldierArmorBuff,
+                        }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                        // Bonus de MR
+                        AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                        {
+                            Type = StateAlterationType.MagicResistBuff,
+                            BaseDuration = 0.25f,
+                            DestPercentRMValue = cst.SoldierMRBuff,
+                        }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
 
+                        if (UniquePassiveLevel >= 1)
+                        {
+                            // Bonus de regen si ennemi proche
+                            EntityCollection ennemies = GameServer.GetMap().Entities.
+                                GetEntitiesByType(EntityType.Player | ((EntityType.Teams & Type) ^ EntityType.Teams)).
+                                GetAliveEntitiesInRange(Position, cst.RuggedActivationRange);
+                            if (ennemies.Count > 0)
+                            {
+                                AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                {
+                                    Type = StateAlterationType.Regen,
+                                    BaseDuration = 0.25f,
+                                    FlatValue = cst.SoldierRegenBuff * GetHPRegen(),
+                                }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                            }
+                        }
+
+                        if(UniquePassiveLevel >= 2)
+                        {
+                            // Bonus de hp max
+                            AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                            {
+                                Type = StateAlterationType.Regen,
+                                BaseDuration = 0.25f,
+                                DestPercentMaxHPValue = cst.SoldierRegenBuff,
+                            }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                        }
+
+                    }
                     break;
 
                 case EntityUniquePassives.Strategist:
+                    // Bâtiments ennemis proches : pertes d'armure et RM.
+                    // Creeps alliés : +10 vit depl
+                    // Lvl1 : Bâtiments alliés proches +50% armure / RM
+                    // Lvl2 : creeps alliés proches +50% armure / RM
+                    {
+                        EntityCollection ennemyBuildings = GameServer.GetMap().Entities.
+                            GetEntitiesByType(EntityType.Structure | ((EntityType.Teams & Type) ^ EntityType.Teams)).
+                            GetAliveEntitiesInRange(Position, cst.StrategistActivationRange);
+                        EntityCollection allyCreeps = GameServer.GetMap().Entities.
+                            GetEntitiesByType(EntityType.Creep | (EntityType.Teams & Type)).
+                            GetAliveEntitiesInRange(Position, cst.StrategistActivationRange);
+                        string id = "unique-passive-strategist-" + ID;
+                        
+                        // Debuffs des buildings ennemys.
+                        if(ennemyBuildings.Count > 0)
+                        {
+                            foreach(var kvp in ennemyBuildings)
+                            {
+                                kvp.Value.StateAlterations.EndAlterations(id);
+                                // Debuff d'armure.
+                                kvp.Value.AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                {
+                                    Type = StateAlterationType.ArmorBuff,
+                                    BaseDuration = 0.25f,
+                                    DestPercentArmorValue = cst.StrategistAllyStructureArmorBuff,
+                                }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                                // Debuff de RM.
+                                kvp.Value.AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                {
+                                    Type = StateAlterationType.MagicResistBuff,
+                                    BaseDuration = 0.25f,
+                                    DestPercentRMValue = cst.StrategistAllyStructureRMBuff,
+                                }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                            }
+                        }
 
+                        // Buff des creeps alliés.
+                        if(allyCreeps.Count > 0)
+                        {
+                            foreach(var kvp in allyCreeps)
+                            {
+                                kvp.Value.StateAlterations.EndAlterations(id);
+
+                                // Buff de move speed.
+                                kvp.Value.AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                {
+                                    Type = StateAlterationType.MoveSpeed,
+                                    BaseDuration = 0.25f,
+                                    FlatValue = cst.StrategistAllyCreepMSBuff,
+                                }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+
+                                // Level 2 : creeps + tanky !
+                                if(UniquePassiveLevel >= 2)
+                                {
+                                    // Buff d'armure.
+                                    kvp.Value.AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                    {
+                                        Type = StateAlterationType.ArmorBuff,
+                                        BaseDuration = 0.25f,
+                                        DestPercentArmorValue = cst.StrategistAllyStructureArmorBuff,
+                                    }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                                    // Buff de RM.
+                                    kvp.Value.AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                    {
+                                        Type = StateAlterationType.MagicResistBuff,
+                                        BaseDuration = 0.25f,
+                                        DestPercentRMValue = cst.StrategistAllyStructureRMBuff,
+                                    }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                                }
+                            }
+                        }
+
+                        // Level 1 : 
+                        if(UniquePassiveLevel >= 1)
+                        {
+                            // Bâtiments alliés proches +50% armure / RM
+                            EntityCollection allyBuildings = GameServer.GetMap().Entities.
+                                GetEntitiesByType(EntityType.Structure | (EntityType.Teams & Type)).
+                                GetAliveEntitiesInRange(Position, cst.StrategistActivationRange);
+
+                            foreach (var kvp in allyBuildings)
+                            {
+                                kvp.Value.StateAlterations.EndAlterations(id);
+                                // Buff d'armure.
+                                kvp.Value.AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                {
+                                    Type = StateAlterationType.ArmorBuff,
+                                    BaseDuration = 0.25f,
+                                    DestPercentArmorValue = cst.StrategistAllyStructureArmorBuff,
+                                }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                                // Buff de RM.
+                                kvp.Value.AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                {
+                                    Type = StateAlterationType.MagicResistBuff,
+                                    BaseDuration = 0.25f,
+                                    DestPercentRMValue = cst.StrategistAllyStructureRMBuff,
+                                }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                            }
+                            
+                        }
+
+                    }
                     break;
 
                 case EntityUniquePassives.Unshakable:
@@ -1457,7 +1614,59 @@ namespace Codinsa2015.Server.Entities
                     break;
 
                 case EntityUniquePassives.Altruistic:
+                    {
+                        // Alliés proches : bonus regen
+                        // (soins donnés + 50% : cf StateAlterationModel.GetValue())
+                        // Lvl1 : Alliés proches : + 25% RM et armor
+                        // Lvl2 : +20% CDR, (immunité aux silences cf AddAlteration).
+                        EntityCollection allies = GameServer.GetMap().Entities.
+                             GetEntitiesByType(EntityType.Player | (EntityType.Teams & Type)).
+                             GetAliveEntitiesInRange(Position, cst.AltruistActivationRange);
 
+                        string id = "unique-passive-unshakable-" + ID;
+                        StateAlterations.EndAlterations(id);
+
+                        foreach (var ally in allies)
+                        {
+                            // Regen
+                            AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                            {
+                                Type = StateAlterationType.Regen,
+                                BaseDuration = 0.25f,
+                                FlatValue = cst.AltruistAllyRegenBonus,
+                            }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+
+                            if (UniquePassiveLevel >= 1)
+                            {
+                                // Armor
+                                AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                {
+                                    Type = StateAlterationType.ArmorBuff,
+                                    BaseDuration = 0.25f,
+                                    DestPercentArmorValue = cst.AltruistAllyArmorBonus,
+                                }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+
+                                // RM
+                                AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                {
+                                    Type = StateAlterationType.MagicResistBuff,
+                                    BaseDuration = 0.25f,
+                                    DestPercentRMValue = cst.AltruistAllyMRBonus,
+                                }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                            }
+
+                            if(UniquePassiveLevel >= 2)
+                            {
+                                // +20% CDR
+                                AddAlteration(new StateAlteration(id, this, new StateAlterationModel()
+                                {
+                                    Type = StateAlterationType.CDR,
+                                    BaseDuration = 0.25f,
+                                    FlatValue = cst.AltruistBonusCDR,
+                                }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
+                            }
+                        }
+                    }
                     break;
             }
         }

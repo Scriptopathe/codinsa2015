@@ -314,6 +314,18 @@ namespace Codinsa2015.Server.Entities
 
                         break;
                 }
+
+                // Application du bonus des passifs uniques
+                switch(hero.UniquePassive)
+                {
+                    case EntityUniquePassives.Altruistic:
+                        // Soins augmentés
+                        if(Type.HasFlag(StateAlterationType.Heal))
+                        {
+                            totalValue *= 1 + GameServer.GetScene().Constants.UniquePassives.AltruistHealBonus;
+                        }
+                        break;
+                }
             }
 
 #if DEBUG

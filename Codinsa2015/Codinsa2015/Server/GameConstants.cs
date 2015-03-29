@@ -64,10 +64,10 @@ namespace Codinsa2015.Server
         public float RuggedCDRBonusFlat = 0.10f;
         public float RuggedMSBonus = 0.20f;
         public float RuggedKillReward = 50;
+        public float RuggedActivationRange = 3;
         #endregion
 
         #region Unshakable
-        
         public float UnshakableMaxHpFlatBonus = 40;
         /// <summary>
         /// Coefficient multiplicateur de la durée des slows.
@@ -75,6 +75,34 @@ namespace Codinsa2015.Server
         public float UnshakableSlowResistance = 0.5f;
         #endregion
 
+        #region Strategist
+        public float StrategistEnnemyStructureArmorDebuff = -0.25f; // % de l'armure
+        public float StrategistEnnemyStructureRMDebuff = -0.25f; // % de la RM
+        public float StrategistAllyCreepMSBuff = 1f; // flat
+        public float StrategistAllyStructureArmorBuff = 0.5f; // % armure
+        public float StrategistAllyStructureRMBuff = 0.5f; // % armure 
+        public float StrategistActivationRange = 4f;
+        #endregion
+
+        #region Soldier
+        // Lvl 1 : armure + 25%, RM + 25%
+        // Lvl 2 : regen +100% quand ennemy proche
+        // Lvl 3 : max HP + 10%
+        public float SoldierArmorBuff = 0.25f; // %
+        public float SoldierMRBuff = 0.25f; // %
+        public float SoldierRegenBuff = 1.0f; // % de la regen actuelle
+        public float SoldierMaxHPBuff = 0.10f; // % des HP max
+        public float SoldierRegenActivationRange = 3;
+        #endregion
+
+        #region Altruist
+        public float AltruistAllyRegenBonus = 2; // flat
+        public float AltruistHealBonus = 0.5f; // % des soins donnés
+        public float AltruistAllyMRBonus = 0.25f; // % de la mr
+        public float AltruistAllyArmorBonus = 0.25f; // % de l'armor
+        public float AltruistBonusCDR = 0.2f;
+        public float AltruistActivationRange = 3;
+        #endregion
     }
     /// <summary>
     /// Constantes de récompenses.
