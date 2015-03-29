@@ -379,6 +379,45 @@ namespace Codinsa2015.DebugHumanControler
             m_console.Output.AppendLine(msg);
             m_console.Output.ScrollDown();
         }
+
+        /// <summary>
+        /// Ajoute un visualiseur de stats pour le héros donné.
+        /// </summary>
+        [ScriptFunc("Ajoute un visualiseur de stats pour le héros donné.")]
+        public Components.StatsViewer add_hviewer(int heroId)
+        {
+            if (heroId >= GameServer.GetMap().Heroes.Count || heroId < 0)
+                puts("Le héros " + heroId + " n'existe pas.");
+
+            EntityBase entity = GameServer.GetMap().Heroes[heroId];
+            return add_eviewer(entity);
+        }
+        /// <summary>
+        /// Ajoute un visualiseur de stats pour l'entité d'id donné.
+        /// </summary>
+        [ScriptFunc("Ajoute un visualiseur de stats pour l'entité d'id donné.")]
+        public Components.StatsViewer add_viewer(int entityId)
+        {
+            if (!GameServer.GetMap().Entities.ContainsKey(entityId))
+                puts("Le l'entité " + entityId + " n'existe pas.");
+
+            EntityBase entity = GameServer.GetMap().Entities[entityId];
+            return add_eviewer(entity);
+        }
+
+        /// <summary>
+        /// Ajoute un visualiseur de stats pour l'entité donnée.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public Components.StatsViewer add_eviewer(EntityBase entity)
+        {
+            StatsViewer v = new StatsViewer(m_baseControler.EnhancedGuiManager, entity);
+            v.Size = new Point(150, 220);
+            v.Location = new Point(100, 100);
+
+            return v;
+        }
         #endregion
 
 
