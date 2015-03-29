@@ -13,6 +13,7 @@ namespace Codinsa2015.Server.Entities
         Root            = 0x0001,
         Silence         = 0x0002,
         Interruption    = 0x0004,
+        Blind           = 0x00400000,
         Stun            = Root | Silence | Interruption,
 
         // Stats

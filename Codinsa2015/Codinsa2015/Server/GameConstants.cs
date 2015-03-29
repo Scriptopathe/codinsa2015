@@ -315,7 +315,7 @@ namespace Codinsa2015.Server
         public float CooldownReduction;
         public EntityConstants()
         {
-            HPRegen = 1;
+            HPRegen = 0.1f;
             VisionRange = 8;
             MoveSpeed = 4;
             HP = 100;
@@ -361,7 +361,7 @@ namespace Codinsa2015.Server
             AttackDamage = 30;
             VisionRange = 9;
             AttackRange = 4;
-            HP = 300;
+            HP = 25;
         }
 
     }
@@ -410,6 +410,42 @@ namespace Codinsa2015.Server
 
         }
     }
+
+    /// <summary>
+    /// Constantes utilisées pour les spells actifs.
+    /// </summary>
+    public class ActiveSpellsConstants
+    {
+        public float[] Ranges = new float[] { 1, 4, 6, 8 };
+        public float[] Aoes   = new float[] { 0.5f, 1.5f, 2.5f, 3.5f};
+        public float[] HealApRatio = new float[] { 0.1f, 0.2f, 0.4f, 0.8f };
+        public float[] ShieldApRatio = new float[] { 0.2f, 0.5f, 1.0f, 2.0f };
+        public float[] ShieldDuration = new float[] { 1, 2, 3, 5 };
+        public float[] MoveSpeedAlterations = new float[] { 0.1f, 0.2f, 0.4f, 0.7f };
+        public float[] MoveSpeedDurations = new float[] { 1, 2, 3, 5 };
+        public float[] AoeDurations = new float[] { 1, 2, 3, 5 };
+        public float[] ApDamageFlat = new float[] { 5, 10, 15, 20 };
+        public float[] AdDamageFlat = new float[] { 5, 10, 15, 20 };
+        public float[] ApDamageRatios = new float[] { 0.2f, 0.5f, 1, 2 };
+        public float[] AdDamageRatios = new float[] { 0.2f, 0.5f, 1, 2 };
+        public float[] MrAlterations = new float[] { 10, 20, 50, 100 };
+        public float[] ArmorAlterations = new float[] { 10, 20, 50, 100 };
+        public float[] ResistAlterationDuration = new float[] { 1, 2, 3, 5 };
+        public float[] StunDurations = new float[] { 0.3f, 0.6f, 1, 1.5f };
+        public float[] RootDurations = new float[] { 0.3f, 0.6f, 1, 1.5f };
+        public float[] SilenceDurations = new float[] { 0.5f, 0.1f, 1.5f, 2.5f };
+        public float[] BlindDurations = new float[] { 0.5f, 0.1f, 1.5f, 2.5f };
+        public float[] DashLengths = new float[] { 2, 4, 6, 8 };
+        public float[] CDs = new float[] { 1, 3, 5, 7 };
+        public float[] FlatADAPBonuses = new float[] { 4, 8, 12, 20 };
+        public float[] ADAPBonusesDurations = new float[] { 1, 2, 3, 5 };
+        public float[] ScalingADAPBonuses = new float[] { 0.05f, 0.10f, 0.15f, 0.20f };
+        public float[] ProjectileSpeed = new float[] { 0.5f, 1, 1.5f, 2.0f };
+        public ActiveSpellsConstants()
+        {
+
+        }
+    }
     /// <summary>
     /// Représente toutes les constantes du jeu.
     /// Elles sont hierarchisées dans d'autres objets, afin que le fichier
@@ -427,6 +463,7 @@ namespace Codinsa2015.Server
         public MinibossConstants Minibosses;
         public EventConstants Events;
         public UniquePassiveConstants UniquePassives;
+        public ActiveSpellsConstants ActiveSpells;
         /// <summary>
         /// Crée une nouvelle instance de GameConstants avec des constantes par défaut.
         /// </summary>
@@ -442,6 +479,7 @@ namespace Codinsa2015.Server
             Minibosses = new MinibossConstants();
             BuffedCreeps = new CreepConstants();
             UniquePassives = new UniquePassiveConstants();
+            ActiveSpells = new ActiveSpellsConstants();
         }
 
         /// <summary>

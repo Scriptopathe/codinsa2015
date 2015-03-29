@@ -105,6 +105,7 @@ namespace Codinsa2015.Server.Spellcasts
                 // Position : on reste à la position de cast :D
                 case Spells.TargettingType.Position:
                     m_shape.Position = m_castInfo.TargetPosition;
+                    m_canTouch = true;
                     break;
                 // Targetted : on avance vers la cible.
                 case Spells.TargettingType.Targetted:
@@ -142,6 +143,10 @@ namespace Codinsa2015.Server.Spellcasts
         /// </summary>
         public override void OnCollide(EntityBase entity)
         {
+            // Si le sort n'est pas encore prêt à toucher l'entité.
+            if (!m_canTouch)
+                return;
+
             // On fait en sorte que cette méthode ne soit appelée
             // qu'une seule fois pour chaque entité.
             if (m_entityIgnoreList.Contains(entity))
@@ -149,9 +154,6 @@ namespace Codinsa2015.Server.Spellcasts
             else
                 m_entityIgnoreList.Add(entity);
 
-            // Si le sort n'est pas encore prêt à toucher l'entité.
-            if (!m_canTouch)
-                return;
 
             // Vérifie que le sort fonctionne sur l'entité
             if (!SourceSpell.HasEffectOn(entity, m_castInfo))

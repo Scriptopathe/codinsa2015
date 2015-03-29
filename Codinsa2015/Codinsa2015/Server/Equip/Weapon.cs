@@ -208,7 +208,9 @@ namespace Codinsa2015.Server.Equip
             // Vérifie que le cooldown de l'arme est à 0.
             if (m_cooldownSeconds > float.Epsilon)
                 return Spells.SpellUseResult.OnCooldown;
-            
+            if (hero.IsBlind)
+                return Spells.SpellUseResult.Blind;
+
             m_cooldownSeconds = 1.0f/Math.Max(hero.GetAttackSpeed(), 0.2f);
             
             Spells.SpellDescription attackSpell = GetAttackSpell();

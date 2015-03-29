@@ -233,7 +233,7 @@ namespace Codinsa2015.Server.Entities
         public EntityHero()
         {
             Spells = new List<Spell>();
-            Spells.Add(new Spells.FireballSpell(this, 4));
+            Spells.Add(Server.Spells.SpellFactory.Meteor(this)); //new Spells.FireballSpell(this, 4));
             Spells.Add(new Spells.DashForwardSpell(this));
             Spells.Add(new Spells.MovementSpeedBuffSpell(this));
             Spells.Add(new Spells.TargettedTowerSpell(this));

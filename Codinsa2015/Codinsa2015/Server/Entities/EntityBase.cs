@@ -764,7 +764,14 @@ namespace Codinsa2015.Server.Entities
         {
             get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Stun).Count != 0; }
         }
-
+        /// <summary>
+        /// Obtient une valeur indiquant si cette unité est Blinded (ne peut pas lancer d'attaque avec son arme).
+        /// </summary>
+        [Clank.ViewCreator.Export("bool", "Obtient une valeur indiquant si cette unité est aveuglé (ne peut pas lancer d'attaque avec son arme).")]
+        public bool IsBlind
+        {
+            get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.Blind).Count != 0; }
+        }
         /// <summary>
         /// Obtient une valeur indiquant si cette unité est invisible.
         /// </summary>

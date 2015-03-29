@@ -18,6 +18,7 @@ namespace Codinsa2015.Server.Spells
         InvalidTargettingType,
         OnCooldown,
         Silenced,
+        Blind,
         OutOfRange,
     }
 
@@ -180,7 +181,11 @@ namespace Codinsa2015.Server.Spells
                 Vector2 entityPosition = entity.Position;
                 if (Vector2.Distance(entityPosition, SourceCaster.Position) > Description.TargetType.Range)
                     return SpellUseResult.OutOfRange;
-                
+            }
+            else if((target.Type & TargettingType.Position) == TargettingType.Position)
+            {
+                if (Vector2.Distance(target.TargetPosition, SourceCaster.Position) > Description.TargetType.Range)
+                    return SpellUseResult.OutOfRange;
             }
 
             // Applique les effets du casting time.
