@@ -10,6 +10,8 @@ void EntityBaseView::serialize(std::ostream& output) {
 	output << ((float)this->GetMoveSpeed) << '\n';
 	// GetAttackSpeed
 	output << ((float)this->GetAttackSpeed) << '\n';
+	// GetHPRegen
+	output << ((float)this->GetHPRegen) << '\n';
 	// GetAttackDamage
 	output << ((float)this->GetAttackDamage) << '\n';
 	// GetArmor
@@ -18,6 +20,10 @@ void EntityBaseView::serialize(std::ostream& output) {
 	output << ((float)this->GetHP) << '\n';
 	// GetMaxHP
 	output << ((float)this->GetMaxHP) << '\n';
+	// UniquePassiveLevel
+	output << ((int)this->UniquePassiveLevel) << '\n';
+	// UniquePassive
+	output << ((int)this->UniquePassive) << '\n';
 	// Role
 	output << ((int)this->Role) << '\n';
 	// StateAlterations
@@ -36,6 +42,8 @@ void EntityBaseView::serialize(std::ostream& output) {
 	output << ((float)this->ShieldPoints) << '\n';
 	// HP
 	output << ((float)this->HP) << '\n';
+	// BaseHPRegen
+	output << ((float)this->BaseHPRegen) << '\n';
 	// BaseMaxHP
 	output << ((float)this->BaseMaxHP) << '\n';
 	// BaseMoveSpeed
@@ -62,6 +70,12 @@ void EntityBaseView::serialize(std::ostream& output) {
 	output << (this->IsSilenced ? 1 : 0) << '\n';
 	// IsStuned
 	output << (this->IsStuned ? 1 : 0) << '\n';
+	// IsDamageImmune
+	output << (this->IsDamageImmune ? 1 : 0) << '\n';
+	// IsControlImmune
+	output << (this->IsControlImmune ? 1 : 0) << '\n';
+	// IsBlind
+	output << (this->IsBlind ? 1 : 0) << '\n';
 	// IsStealthed
 	output << (this->IsStealthed ? 1 : 0) << '\n';
 	// HasTrueVision
@@ -89,6 +103,9 @@ EntityBaseView EntityBaseView::deserialize(std::istream& input) {
 	// GetAttackSpeed
 	float _obj_GetAttackSpeed; input >> _obj_GetAttackSpeed; input.ignore(1000, '\n');
 	_obj.GetAttackSpeed = (float)_obj_GetAttackSpeed;
+	// GetHPRegen
+	float _obj_GetHPRegen; input >> _obj_GetHPRegen; input.ignore(1000, '\n');
+	_obj.GetHPRegen = (float)_obj_GetHPRegen;
 	// GetAttackDamage
 	float _obj_GetAttackDamage; input >> _obj_GetAttackDamage; input.ignore(1000, '\n');
 	_obj.GetAttackDamage = (float)_obj_GetAttackDamage;
@@ -101,6 +118,12 @@ EntityBaseView EntityBaseView::deserialize(std::istream& input) {
 	// GetMaxHP
 	float _obj_GetMaxHP; input >> _obj_GetMaxHP; input.ignore(1000, '\n');
 	_obj.GetMaxHP = (float)_obj_GetMaxHP;
+	// UniquePassiveLevel
+	int _obj_UniquePassiveLevel; input >> _obj_UniquePassiveLevel; input.ignore(1000, '\n');
+	_obj.UniquePassiveLevel = (int)_obj_UniquePassiveLevel;
+	// UniquePassive
+	int _obj_UniquePassive; input >> _obj_UniquePassive; input.ignore(1000, '\n');
+	_obj.UniquePassive = (::EntityUniquePassives)_obj_UniquePassive;
 	// Role
 	int _obj_Role; input >> _obj_Role; input.ignore(1000, '\n');
 	_obj.Role = (::EntityHeroRole)_obj_Role;
@@ -128,6 +151,9 @@ EntityBaseView EntityBaseView::deserialize(std::istream& input) {
 	// HP
 	float _obj_HP; input >> _obj_HP; input.ignore(1000, '\n');
 	_obj.HP = (float)_obj_HP;
+	// BaseHPRegen
+	float _obj_BaseHPRegen; input >> _obj_BaseHPRegen; input.ignore(1000, '\n');
+	_obj.BaseHPRegen = (float)_obj_BaseHPRegen;
 	// BaseMaxHP
 	float _obj_BaseMaxHP; input >> _obj_BaseMaxHP; input.ignore(1000, '\n');
 	_obj.BaseMaxHP = (float)_obj_BaseMaxHP;
@@ -167,6 +193,15 @@ EntityBaseView EntityBaseView::deserialize(std::istream& input) {
 	// IsStuned
 	bool _obj_IsStuned; input >> _obj_IsStuned; input.ignore(1000, '\n');
 	_obj.IsStuned = (bool)_obj_IsStuned;
+	// IsDamageImmune
+	bool _obj_IsDamageImmune; input >> _obj_IsDamageImmune; input.ignore(1000, '\n');
+	_obj.IsDamageImmune = (bool)_obj_IsDamageImmune;
+	// IsControlImmune
+	bool _obj_IsControlImmune; input >> _obj_IsControlImmune; input.ignore(1000, '\n');
+	_obj.IsControlImmune = (bool)_obj_IsControlImmune;
+	// IsBlind
+	bool _obj_IsBlind; input >> _obj_IsBlind; input.ignore(1000, '\n');
+	_obj.IsBlind = (bool)_obj_IsBlind;
 	// IsStealthed
 	bool _obj_IsStealthed; input >> _obj_IsStealthed; input.ignore(1000, '\n');
 	_obj.IsStealthed = (bool)_obj_IsStealthed;

@@ -41,6 +41,9 @@ namespace Codinsa2015.Rendering
                 case "Fireball":
                     tex = Ressources.Fireball;
                     break;
+                default:
+                    tex = Ressources.SpellZone;
+                    break;
             }
 
             if (shape.ShapeType == Views.GenericShapeType.Circle)

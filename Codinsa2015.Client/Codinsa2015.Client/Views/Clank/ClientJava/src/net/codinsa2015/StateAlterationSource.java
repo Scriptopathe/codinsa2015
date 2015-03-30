@@ -7,7 +7,7 @@ public enum StateAlterationSource
 	Amulet(3),
 	Boots(4),
 	SpellActive(5),
-	SpellPassive(6);
+	UniquePassive(6);
 	int _value;
 	StateAlterationSource(int value) { _value = value; } 
 	public int getValue() { return _value; }

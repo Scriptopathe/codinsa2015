@@ -23,7 +23,7 @@ namespace Codinsa2015.Views
 		/// </summary>
 		public float GetAbilityPower;	
 		/// <summary>
-		/// Retourne la valeur de CDR effective de cette entité.
+		/// Retourne la valeur de CDR effective de cette entité. (de 0 à 0.40)
 		/// </summary>
 		public float GetCooldownReduction;	
 		/// <summary>
@@ -34,6 +34,10 @@ namespace Codinsa2015.Views
 		/// Obtient la vitesse d'attaque effective de l'entité.
 		/// </summary>
 		public float GetAttackSpeed;	
+		/// <summary>
+		/// Obtient la vitesse d'attaque effective de l'entité.
+		/// </summary>
+		public float GetHPRegen;	
 		/// <summary>
 		/// Obtient les points d'attaque effectifs de cette entité.
 		/// </summary>
@@ -50,6 +54,14 @@ namespace Codinsa2015.Views
 		/// Obtient les HP max actuels de cette entité.
 		/// </summary>
 		public float GetMaxHP;	
+		/// <summary>
+		/// niveau du passif unique
+		/// </summary>
+		public int UniquePassiveLevel;	
+		/// <summary>
+		/// passif unique de cette entité.
+		/// </summary>
+		public EntityUniquePassives UniquePassive;	
 		/// <summary>
 		/// Si cette entité est un héros, obtient le rôle de ce héros.
 		/// </summary>
@@ -78,6 +90,10 @@ namespace Codinsa2015.Views
 		/// Obtient les points de vie actuels de l'entité
 		/// </summary>
 		public float HP;	
+		/// <summary>
+		/// régénération de HP / s de base de cette unité.
+		/// </summary>
+		public float BaseHPRegen;	
 		/// <summary>
 		/// Obtient le nombre de points de vie maximum de base de cette entité.
 		/// </summary>
@@ -132,6 +148,19 @@ namespace Codinsa2015.Views
 		/// </summary>
 		public bool IsStuned;	
 		/// <summary>
+		/// Obtient une valeur indiquant si cette unité possède une immunité temporaire aux dégâts.
+		/// </summary>
+		public bool IsDamageImmune;	
+		/// <summary>
+		/// Obtient une valeur indiquant si cette unité possède une immunité temporaire aux contrôles.
+		/// </summary>
+		public bool IsControlImmune;	
+		/// <summary>
+		/// Obtient une valeur indiquant si cette unité est aveuglé (ne peut pas lancer d'attaque avec son
+		/// arme).
+		/// </summary>
+		public bool IsBlind;	
+		/// <summary>
 		/// Obtient une valeur indiquant si cette unité est invisible.
 		/// </summary>
 		public bool IsStealthed;	
@@ -164,6 +193,9 @@ namespace Codinsa2015.Views
 			// GetAttackSpeed
 			float _obj_GetAttackSpeed = Single.Parse(input.ReadLine());
 			_obj.GetAttackSpeed = (float)_obj_GetAttackSpeed;
+			// GetHPRegen
+			float _obj_GetHPRegen = Single.Parse(input.ReadLine());
+			_obj.GetHPRegen = (float)_obj_GetHPRegen;
 			// GetAttackDamage
 			float _obj_GetAttackDamage = Single.Parse(input.ReadLine());
 			_obj.GetAttackDamage = (float)_obj_GetAttackDamage;
@@ -176,6 +208,12 @@ namespace Codinsa2015.Views
 			// GetMaxHP
 			float _obj_GetMaxHP = Single.Parse(input.ReadLine());
 			_obj.GetMaxHP = (float)_obj_GetMaxHP;
+			// UniquePassiveLevel
+			int _obj_UniquePassiveLevel = Int32.Parse(input.ReadLine());
+			_obj.UniquePassiveLevel = (int)_obj_UniquePassiveLevel;
+			// UniquePassive
+			int _obj_UniquePassive = Int32.Parse(input.ReadLine());
+			_obj.UniquePassive = (EntityUniquePassives)_obj_UniquePassive;
 			// Role
 			int _obj_Role = Int32.Parse(input.ReadLine());
 			_obj.Role = (EntityHeroRole)_obj_Role;
@@ -202,6 +240,9 @@ namespace Codinsa2015.Views
 			// HP
 			float _obj_HP = Single.Parse(input.ReadLine());
 			_obj.HP = (float)_obj_HP;
+			// BaseHPRegen
+			float _obj_BaseHPRegen = Single.Parse(input.ReadLine());
+			_obj.BaseHPRegen = (float)_obj_BaseHPRegen;
 			// BaseMaxHP
 			float _obj_BaseMaxHP = Single.Parse(input.ReadLine());
 			_obj.BaseMaxHP = (float)_obj_BaseMaxHP;
@@ -241,6 +282,15 @@ namespace Codinsa2015.Views
 			// IsStuned
 			bool _obj_IsStuned = Int32.Parse(input.ReadLine()) == 0 ? false : true;
 			_obj.IsStuned = (bool)_obj_IsStuned;
+			// IsDamageImmune
+			bool _obj_IsDamageImmune = Int32.Parse(input.ReadLine()) == 0 ? false : true;
+			_obj.IsDamageImmune = (bool)_obj_IsDamageImmune;
+			// IsControlImmune
+			bool _obj_IsControlImmune = Int32.Parse(input.ReadLine()) == 0 ? false : true;
+			_obj.IsControlImmune = (bool)_obj_IsControlImmune;
+			// IsBlind
+			bool _obj_IsBlind = Int32.Parse(input.ReadLine()) == 0 ? false : true;
+			_obj.IsBlind = (bool)_obj_IsBlind;
 			// IsStealthed
 			bool _obj_IsStealthed = Int32.Parse(input.ReadLine()) == 0 ? false : true;
 			_obj.IsStealthed = (bool)_obj_IsStealthed;
@@ -267,6 +317,8 @@ namespace Codinsa2015.Views
 			output.WriteLine(((float)this.GetMoveSpeed).ToString());
 			// GetAttackSpeed
 			output.WriteLine(((float)this.GetAttackSpeed).ToString());
+			// GetHPRegen
+			output.WriteLine(((float)this.GetHPRegen).ToString());
 			// GetAttackDamage
 			output.WriteLine(((float)this.GetAttackDamage).ToString());
 			// GetArmor
@@ -275,6 +327,10 @@ namespace Codinsa2015.Views
 			output.WriteLine(((float)this.GetHP).ToString());
 			// GetMaxHP
 			output.WriteLine(((float)this.GetMaxHP).ToString());
+			// UniquePassiveLevel
+			output.WriteLine(((int)this.UniquePassiveLevel).ToString());
+			// UniquePassive
+			output.WriteLine(((int)this.UniquePassive).ToString());
 			// Role
 			output.WriteLine(((int)this.Role).ToString());
 			// StateAlterations
@@ -292,6 +348,8 @@ namespace Codinsa2015.Views
 			output.WriteLine(((float)this.ShieldPoints).ToString());
 			// HP
 			output.WriteLine(((float)this.HP).ToString());
+			// BaseHPRegen
+			output.WriteLine(((float)this.BaseHPRegen).ToString());
 			// BaseMaxHP
 			output.WriteLine(((float)this.BaseMaxHP).ToString());
 			// BaseMoveSpeed
@@ -318,6 +376,12 @@ namespace Codinsa2015.Views
 			output.WriteLine(this.IsSilenced ? 1 : 0);
 			// IsStuned
 			output.WriteLine(this.IsStuned ? 1 : 0);
+			// IsDamageImmune
+			output.WriteLine(this.IsDamageImmune ? 1 : 0);
+			// IsControlImmune
+			output.WriteLine(this.IsControlImmune ? 1 : 0);
+			// IsBlind
+			output.WriteLine(this.IsBlind ? 1 : 0);
 			// IsStealthed
 			output.WriteLine(this.IsStealthed ? 1 : 0);
 			// HasTrueVision

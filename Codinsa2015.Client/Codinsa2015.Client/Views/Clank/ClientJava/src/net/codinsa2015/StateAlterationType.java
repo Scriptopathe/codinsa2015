@@ -5,7 +5,6 @@ public enum StateAlterationType
 	Root(1),
 	Silence(2),
 	Interruption(4),
-	Stun(7),
 	CDR(8),
 	MoveSpeed(16),
 	ArmorBuff(32),
@@ -19,12 +18,20 @@ public enum StateAlterationType
 	AttackDamage(8192),
 	MagicDamage(16384),
 	TrueDamage(32768),
+	AllDamage(57344),
 	Heal(65536),
 	Stealth(131072),
 	Shield(524288),
 	Sight(1048576),
 	WardSight(1048576),
-	TrueSight(2097152);
+	TrueSight(2097152),
+	Blind(4194304),
+	Stun(4194311),
+	AllCC(4194311),
+	DamageImmune(16777216),
+	ControlImmune(33554432),
+	Cleanse(67108864),
+	All(268435455);
 	int _value;
 	StateAlterationType(int value) { _value = value; } 
 	public int getValue() { return _value; }

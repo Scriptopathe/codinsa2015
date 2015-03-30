@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import net.codinsa2015.EntityUniquePassives.*;
 import net.codinsa2015.EntityHeroRole.*;
 import net.codinsa2015.StateAlterationView.*;
 import java.util.ArrayList;
@@ -24,12 +25,14 @@ public class EntityBaseView
 	public Float GetMagicResist;
 	// Retourne la valeur d'AP effective de cette entité.
 	public Float GetAbilityPower;
-	// Retourne la valeur de CDR effective de cette entité.
+	// Retourne la valeur de CDR effective de cette entité. (de 0 à 0.40)
 	public Float GetCooldownReduction;
 	// Obtient la vitesse de déplacement de l'entité.
 	public Float GetMoveSpeed;
 	// Obtient la vitesse d'attaque effective de l'entité.
 	public Float GetAttackSpeed;
+	// Obtient la vitesse d'attaque effective de l'entité.
+	public Float GetHPRegen;
 	// Obtient les points d'attaque effectifs de cette entité.
 	public Float GetAttackDamage;
 	// Fonction utilisée pour obtenir les points d'armure effectifs sur cette unité.
@@ -38,6 +41,10 @@ public class EntityBaseView
 	public Float GetHP;
 	// Obtient les HP max actuels de cette entité.
 	public Float GetMaxHP;
+	// niveau du passif unique
+	public Integer UniquePassiveLevel;
+	// passif unique de cette entité.
+	public EntityUniquePassives UniquePassive;
 	// Si cette entité est un héros, obtient le rôle de ce héros.
 	public EntityHeroRole Role;
 	// Obtient la liste des altérations d'état affectées à cette entité.
@@ -52,6 +59,8 @@ public class EntityBaseView
 	public Float ShieldPoints;
 	// Obtient les points de vie actuels de l'entité
 	public Float HP;
+	// régénération de HP / s de base de cette unité.
+	public Float BaseHPRegen;
 	// Obtient le nombre de points de vie maximum de base de cette entité.
 	public Float BaseMaxHP;
 	// Obtient la vitesse de déplacement de base de l'entité.
@@ -79,6 +88,13 @@ public class EntityBaseView
 	// Obtient une valeur indiquant si cette unité est Stuned (ne peut pas bouger ni utiliser de
 	// sorts).
 	public Boolean IsStuned;
+	// Obtient une valeur indiquant si cette unité possède une immunité temporaire aux dégâts.
+	public Boolean IsDamageImmune;
+	// Obtient une valeur indiquant si cette unité possède une immunité temporaire aux contrôles.
+	public Boolean IsControlImmune;
+	// Obtient une valeur indiquant si cette unité est aveuglé (ne peut pas lancer d'attaque avec son
+	// arme).
+	public Boolean IsBlind;
 	// Obtient une valeur indiquant si cette unité est invisible.
 	public Boolean IsStealthed;
 	// Obtient une valeur indiquant si cette entité possède la vision pure.
@@ -104,6 +120,9 @@ public class EntityBaseView
 		// GetAttackSpeed
 		float _obj_GetAttackSpeed = Float.valueOf(input.readLine());
 		_obj.GetAttackSpeed = _obj_GetAttackSpeed;
+		// GetHPRegen
+		float _obj_GetHPRegen = Float.valueOf(input.readLine());
+		_obj.GetHPRegen = _obj_GetHPRegen;
 		// GetAttackDamage
 		float _obj_GetAttackDamage = Float.valueOf(input.readLine());
 		_obj.GetAttackDamage = _obj_GetAttackDamage;
@@ -116,6 +135,12 @@ public class EntityBaseView
 		// GetMaxHP
 		float _obj_GetMaxHP = Float.valueOf(input.readLine());
 		_obj.GetMaxHP = _obj_GetMaxHP;
+		// UniquePassiveLevel
+		int _obj_UniquePassiveLevel = Integer.valueOf(input.readLine());
+		_obj.UniquePassiveLevel = _obj_UniquePassiveLevel;
+		// UniquePassive
+		int _obj_UniquePassive = Integer.valueOf(input.readLine());
+		_obj.UniquePassive = EntityUniquePassives.fromValue(_obj_UniquePassive);
 		// Role
 		int _obj_Role = Integer.valueOf(input.readLine());
 		_obj.Role = EntityHeroRole.fromValue(_obj_Role);
@@ -142,6 +167,9 @@ public class EntityBaseView
 		// HP
 		float _obj_HP = Float.valueOf(input.readLine());
 		_obj.HP = _obj_HP;
+		// BaseHPRegen
+		float _obj_BaseHPRegen = Float.valueOf(input.readLine());
+		_obj.BaseHPRegen = _obj_BaseHPRegen;
 		// BaseMaxHP
 		float _obj_BaseMaxHP = Float.valueOf(input.readLine());
 		_obj.BaseMaxHP = _obj_BaseMaxHP;
@@ -181,6 +209,15 @@ public class EntityBaseView
 		// IsStuned
 		boolean _obj_IsStuned = Integer.valueOf(input.readLine()) == 0 ? false : true;
 		_obj.IsStuned = _obj_IsStuned;
+		// IsDamageImmune
+		boolean _obj_IsDamageImmune = Integer.valueOf(input.readLine()) == 0 ? false : true;
+		_obj.IsDamageImmune = _obj_IsDamageImmune;
+		// IsControlImmune
+		boolean _obj_IsControlImmune = Integer.valueOf(input.readLine()) == 0 ? false : true;
+		_obj.IsControlImmune = _obj_IsControlImmune;
+		// IsBlind
+		boolean _obj_IsBlind = Integer.valueOf(input.readLine()) == 0 ? false : true;
+		_obj.IsBlind = _obj_IsBlind;
 		// IsStealthed
 		boolean _obj_IsStealthed = Integer.valueOf(input.readLine()) == 0 ? false : true;
 		_obj.IsStealthed = _obj_IsStealthed;
@@ -207,6 +244,8 @@ public class EntityBaseView
 		output.append(((Float)this.GetMoveSpeed).toString() + "\n");
 		// GetAttackSpeed
 		output.append(((Float)this.GetAttackSpeed).toString() + "\n");
+		// GetHPRegen
+		output.append(((Float)this.GetHPRegen).toString() + "\n");
 		// GetAttackDamage
 		output.append(((Float)this.GetAttackDamage).toString() + "\n");
 		// GetArmor
@@ -215,6 +254,10 @@ public class EntityBaseView
 		output.append(((Float)this.GetHP).toString() + "\n");
 		// GetMaxHP
 		output.append(((Float)this.GetMaxHP).toString() + "\n");
+		// UniquePassiveLevel
+		output.append(((Integer)this.UniquePassiveLevel).toString() + "\n");
+		// UniquePassive
+		output.append(((Integer)(this.UniquePassive.getValue())).toString() + "\n");
 		// Role
 		output.append(((Integer)(this.Role.getValue())).toString() + "\n");
 		// StateAlterations
@@ -232,6 +275,8 @@ public class EntityBaseView
 		output.append(((Float)this.ShieldPoints).toString() + "\n");
 		// HP
 		output.append(((Float)this.HP).toString() + "\n");
+		// BaseHPRegen
+		output.append(((Float)this.BaseHPRegen).toString() + "\n");
 		// BaseMaxHP
 		output.append(((Float)this.BaseMaxHP).toString() + "\n");
 		// BaseMoveSpeed
@@ -258,6 +303,12 @@ public class EntityBaseView
 		output.append((this.IsSilenced ? 1 : 0) + "\n");
 		// IsStuned
 		output.append((this.IsStuned ? 1 : 0) + "\n");
+		// IsDamageImmune
+		output.append((this.IsDamageImmune ? 1 : 0) + "\n");
+		// IsControlImmune
+		output.append((this.IsControlImmune ? 1 : 0) + "\n");
+		// IsBlind
+		output.append((this.IsBlind ? 1 : 0) + "\n");
 		// IsStealthed
 		output.append((this.IsStealthed ? 1 : 0) + "\n");
 		// HasTrueVision

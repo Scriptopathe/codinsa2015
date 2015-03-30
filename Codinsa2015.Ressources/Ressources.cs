@@ -155,6 +155,7 @@ namespace Codinsa2015
         public static Texture2D RedCreep { get; set; }
         public static Texture2D BlueCreep { get; set; }
         public static Texture2D Fireball { get; set; }
+        public static Texture2D SpellZone { get; set; }
         /// <summary>
         /// Charge les ressources à partir du content manager passé en paramètre.
         /// </summary>
@@ -163,6 +164,7 @@ namespace Codinsa2015
         {
             Content = content;
             Device = device;
+            SpellZone = content.Load<Texture2D>("textures/effects/spellzone");
             Fireball = content.Load<Texture2D>("textures/effects/fireball");
             BlueCreep = content.Load<Texture2D>("textures/charsets/creep_bleu");
             RedCreep = content.Load<Texture2D>("textures/charsets/creep_rouge");

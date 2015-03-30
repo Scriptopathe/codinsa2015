@@ -17,8 +17,7 @@ namespace Codinsa2015.Views
 		/// <summary>
 		/// Shape utilisée par ce spell cast.
 		/// </summary>
-		public GenericShapeView Shape;
-        public string Name;
+		public GenericShapeView Shape;	
 		public static SpellcastBaseView Deserialize(System.IO.StreamReader input) {
 			SpellcastBaseView _obj =  new SpellcastBaseView();
 			// Shape

@@ -15,12 +15,14 @@ state {
 		public float GetMagicResist;
 		//Retourne la valeur d'AP effective de cette entité.
 		public float GetAbilityPower;
-		//Retourne la valeur de CDR effective de cette entité.
+		//Retourne la valeur de CDR effective de cette entité. (de 0 à 0.40)
 		public float GetCooldownReduction;
 		//Obtient la vitesse de déplacement de l'entité.
 		public float GetMoveSpeed;
 		//Obtient la vitesse d'attaque effective de l'entité.
 		public float GetAttackSpeed;
+		//Obtient la vitesse d'attaque effective de l'entité.
+		public float GetHPRegen;
 		//Obtient les points d'attaque effectifs de cette entité.
 		public float GetAttackDamage;
 		//Fonction utilisée pour obtenir les points d'armure effectifs sur cette unité.
@@ -29,6 +31,10 @@ state {
 		public float GetHP;
 		//Obtient les HP max actuels de cette entité.
 		public float GetMaxHP;
+		//niveau du passif unique
+		public int UniquePassiveLevel;
+		//passif unique de cette entité.
+		public EntityUniquePassives UniquePassive;
 		//Si cette entité est un héros, obtient le rôle de ce héros.
 		public EntityHeroRole Role;
 		//Obtient la liste des altérations d'état affectées à cette entité.
@@ -43,6 +49,8 @@ state {
 		public float ShieldPoints;
 		//Obtient les points de vie actuels de l'entité
 		public float HP;
+		//régénération de HP / s de base de cette unité.
+		public float BaseHPRegen;
 		//Obtient le nombre de points de vie maximum de base de cette entité.
 		public float BaseMaxHP;
 		//Obtient la vitesse de déplacement de base de l'entité.
@@ -69,6 +77,12 @@ state {
 		public bool IsSilenced;
 		//Obtient une valeur indiquant si cette unité est Stuned (ne peut pas bouger ni utiliser de sorts).
 		public bool IsStuned;
+		//Obtient une valeur indiquant si cette unité possède une immunité temporaire aux dégâts.
+		public bool IsDamageImmune;
+		//Obtient une valeur indiquant si cette unité possède une immunité temporaire aux contrôles.
+		public bool IsControlImmune;
+		//Obtient une valeur indiquant si cette unité est aveuglé (ne peut pas lancer d'attaque avec son arme).
+		public bool IsBlind;
 		//Obtient une valeur indiquant si cette unité est invisible.
 		public bool IsStealthed;
 		//Obtient une valeur indiquant si cette entité possède la vision pure.

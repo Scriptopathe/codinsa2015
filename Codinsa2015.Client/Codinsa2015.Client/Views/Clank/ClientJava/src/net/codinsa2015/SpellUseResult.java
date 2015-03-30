@@ -6,7 +6,8 @@ public enum SpellUseResult
 	InvalidTargettingType(2),
 	OnCooldown(3),
 	Silenced(4),
-	OutOfRange(5);
+	Blind(5),
+	OutOfRange(6);
 	int _value;
 	SpellUseResult(int value) { _value = value; } 
 	public int getValue() { return _value; }

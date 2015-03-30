@@ -4,6 +4,18 @@
 #include <iostream>
 #include <vector>
 #include <list>
+enum class EntityUniquePassives
+{
+	None = 0,
+	Hunter = 1,
+	Rugged = 2,
+	Unshakable = 4,
+	Strategist = 16,
+	Soldier = 32,
+	Altruistic = 64,
+	All = 65535
+};
+
 enum class EntityHeroRole
 {
 	Fighter = 0,
@@ -21,9 +33,6 @@ enum class EntityType
 	Tower = 24,
 	Team1Tower = 26,
 	Team2Tower = 28,
-	Inhibitor = 40,
-	Team1Inhibitor = 42,
-	Team2Inhibitor = 44,
 	Spawner = 72,
 	Team1Spawner = 74,
 	Team2Spawner = 76,
@@ -36,21 +45,23 @@ enum class EntityType
 	Team2Creep = 516,
 	Boss = 1280,
 	Miniboss = 2304,
-	AllObjectives = 3576,
-	AllTargettableNeutral = 4088,
+	AllObjectives = 3544,
+	AllTargettableNeutral = 4056,
 	Checkpoint = 16384,
 	Team1Checkpoint = 16386,
-	Team2CheckPoint = 16388,
+	Team2Checkpoint = 16388,
 	Player = 32768,
 	Team1Player = 32770,
 	Team2Player = 32772,
-	AllTeam1 = 33530,
-	AllTeam2 = 33532,
+	AllTeam1 = 33498,
+	AllTeam2 = 33500,
 	WardPlacement = 65536,
 	Ward = 131072,
 	Shop = 262144,
 	HeroSpawner = 524288,
-	AllSaved = 609784,
+	Team1HeroSpawner = 524290,
+	Team2HeroSpawner = 524292,
+	AllSaved = 609752,
 	All = 16777215
 };
 
@@ -63,9 +74,6 @@ enum class EntityTypeRelative
 	Tower = 24,
 	AllyTower = 26,
 	EnnemyTower = 28,
-	Inhibitor = 40,
-	AllyInhibitor = 42,
-	EnnemyInhibitor = 44,
 	Spawner = 72,
 	AllySpawner = 74,
 	EnnemySpawner = 76,
@@ -78,21 +86,23 @@ enum class EntityTypeRelative
 	EnnemyCreep = 516,
 	Boss = 1280,
 	Miniboss = 2304,
-	AllObjectives = 3576,
-	AllTargettableNeutral = 4088,
+	AllObjectives = 3544,
+	AllTargettableNeutral = 4056,
 	Checkpoint = 16384,
 	AllyCheckpoint = 16386,
 	EnnemyCheckpoint = 16388,
 	Player = 32768,
 	AllyPlayer = 32770,
 	EnnemyPlayer = 32772,
-	AllAlly = 33530,
-	AllEnnemy = 33532,
+	AllAlly = 33498,
+	AllEnnemy = 33500,
 	WardPlacement = 65536,
 	Ward = 131072,
 	Shop = 262144,
 	HeroSpawner = 524288,
-	AllSaved = 609784,
+	AllyHeroSpawner = 524290,
+	EnnemyHeroSpawner = 524292,
+	AllSaved = 609752,
 	All = 16777215
 };
 
@@ -104,7 +114,7 @@ enum class StateAlterationSource
 	Amulet = 3,
 	Boots = 4,
 	SpellActive = 5,
-	SpellPassive = 6
+	UniquePassive = 6
 };
 
 enum class StateAlterationType
@@ -113,7 +123,6 @@ enum class StateAlterationType
 	Root = 1,
 	Silence = 2,
 	Interruption = 4,
-	Stun = 7,
 	CDR = 8,
 	MoveSpeed = 16,
 	ArmorBuff = 32,
@@ -127,12 +136,20 @@ enum class StateAlterationType
 	AttackDamage = 8192,
 	MagicDamage = 16384,
 	TrueDamage = 32768,
+	AllDamage = 57344,
 	Heal = 65536,
 	Stealth = 131072,
 	Shield = 524288,
 	Sight = 1048576,
 	WardSight = 1048576,
-	TrueSight = 2097152
+	TrueSight = 2097152,
+	Blind = 4194304,
+	Stun = 4194311,
+	AllCC = 4194311,
+	DamageImmune = 16777216,
+	ControlImmune = 33554432,
+	Cleanse = 67108864,
+	All = 268435455
 };
 
 enum class DashDirectionType
@@ -185,7 +202,8 @@ enum class SpellUseResult
 	InvalidTargettingType = 2,
 	OnCooldown = 3,
 	Silenced = 4,
-	OutOfRange = 5
+	Blind = 5,
+	OutOfRange = 6
 };
 
 enum class TargettingType

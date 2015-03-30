@@ -12,12 +12,14 @@ public:
 	float GetMagicResist;
 	// Retourne la valeur d'AP effective de cette entité.
 	float GetAbilityPower;
-	// Retourne la valeur de CDR effective de cette entité.
+	// Retourne la valeur de CDR effective de cette entité. (de 0 à 0.40)
 	float GetCooldownReduction;
 	// Obtient la vitesse de déplacement de l'entité.
 	float GetMoveSpeed;
 	// Obtient la vitesse d'attaque effective de l'entité.
 	float GetAttackSpeed;
+	// Obtient la vitesse d'attaque effective de l'entité.
+	float GetHPRegen;
 	// Obtient les points d'attaque effectifs de cette entité.
 	float GetAttackDamage;
 	// Fonction utilisée pour obtenir les points d'armure effectifs sur cette unité.
@@ -26,6 +28,10 @@ public:
 	float GetHP;
 	// Obtient les HP max actuels de cette entité.
 	float GetMaxHP;
+	// niveau du passif unique
+	int UniquePassiveLevel;
+	// passif unique de cette entité.
+	EntityUniquePassives UniquePassive;
 	// Si cette entité est un héros, obtient le rôle de ce héros.
 	EntityHeroRole Role;
 	// Obtient la liste des altérations d'état affectées à cette entité.
@@ -40,6 +46,8 @@ public:
 	float ShieldPoints;
 	// Obtient les points de vie actuels de l'entité
 	float HP;
+	// régénération de HP / s de base de cette unité.
+	float BaseHPRegen;
 	// Obtient le nombre de points de vie maximum de base de cette entité.
 	float BaseMaxHP;
 	// Obtient la vitesse de déplacement de base de l'entité.
@@ -67,6 +75,13 @@ public:
 	// Obtient une valeur indiquant si cette unité est Stuned (ne peut pas bouger ni utiliser de
 	// sorts).
 	bool IsStuned;
+	// Obtient une valeur indiquant si cette unité possède une immunité temporaire aux dégâts.
+	bool IsDamageImmune;
+	// Obtient une valeur indiquant si cette unité possède une immunité temporaire aux contrôles.
+	bool IsControlImmune;
+	// Obtient une valeur indiquant si cette unité est aveuglé (ne peut pas lancer d'attaque avec son
+	// arme).
+	bool IsBlind;
 	// Obtient une valeur indiquant si cette unité est invisible.
 	bool IsStealthed;
 	// Obtient une valeur indiquant si cette entité possède la vision pure.
