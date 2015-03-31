@@ -13,7 +13,7 @@ namespace Codinsa2015
             bool generateClank = true;
             if (generateClank)
             {
-                string root = @"C:\Users\Josué\Documents\Josue\[Projets]\Projets C#\Clank\Codinsa2015\Codinsa2015\Server\Views\Clank\";
+                string root = @"..\..\..\Server\Views\Clank\";
                 var views = Clank.ViewCreator.Creator.CreateViews(System.Reflection.Assembly.GetExecutingAssembly());
                 views.Add("main.clank", Clank.ViewCreator.Creator.CreateMain(System.Reflection.Assembly.GetExecutingAssembly(), views));
                 views.Add("autoproject.clankproject", 
