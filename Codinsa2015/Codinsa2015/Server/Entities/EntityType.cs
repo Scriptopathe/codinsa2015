@@ -42,8 +42,8 @@ namespace Codinsa2015.Server.Entities
         AllTeam1 = Team1 | Tower | Spawner | Idol | Player | Creep,
         AllTeam2 = Team2 | Tower | Spawner | Idol | Player | Creep,
         AllObjectives = Tower | Spawner | Idol | Boss | Miniboss,
-        AllSaved = AllObjectives | Checkpoint | WardPlacement | HeroSpawner,
-        AllTargettableNeutral = Tower | Spawner | Idol | Boss | Miniboss | Creep | Monster,
+        AllSaved = AllObjectives | Checkpoint | WardPlacement | HeroSpawner | Shop,
+        AllTargettableNeutral = Boss | Miniboss | Creep,
         // Team
         Team1Tower = Team1 | Tower,
         Team2Tower = Team2 | Tower,
@@ -59,6 +59,8 @@ namespace Codinsa2015.Server.Entities
         Team2Checkpoint = Team2 | Checkpoint,
         Team1HeroSpawner = Team1 | HeroSpawner,
         Team2HeroSpawner = Team2 | HeroSpawner,
+        Team1Shop       = Team1 | Shop,
+        Team2Shop       = Team2 | Shop,
         Teams = Team1 | Team2,
         
         All = 0xFFFFFF,
@@ -101,7 +103,7 @@ namespace Codinsa2015.Server.Entities
         AllAlly         = Ally | Tower | Spawner | Idol | Player | Creep,
         AllObjectives   = Tower | Spawner | Idol | Boss | Miniboss,
         AllSaved        = AllObjectives | Checkpoint | WardPlacement | HeroSpawner,
-        AllTargettableNeutral = Tower | Spawner | Idol | Boss | Miniboss | Creep | Monster,
+        AllTargettableNeutral = Boss | Miniboss | Creep,
 
         // Team
         AllyTower       = Ally | Tower,

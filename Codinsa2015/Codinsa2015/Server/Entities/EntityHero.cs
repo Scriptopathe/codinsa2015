@@ -149,7 +149,7 @@ namespace Codinsa2015.Server.Entities
                 ApplyPassives(EquipmentType.Boots);
             }
         }
-        /// <summary>
+        /*/// <summary>
         /// Obtient l'amulette possédée par ce héros.
         /// </summary>
         public Equip.Amulet Amulet
@@ -160,7 +160,7 @@ namespace Codinsa2015.Server.Entities
                 m_amulet = value;
                 ApplyPassives(EquipmentType.Amulet);
             }
-        }
+        }*/
         /// <summary>
         /// Obtient l'armure équipée par ce héros.
         /// </summary>
@@ -206,8 +206,8 @@ namespace Codinsa2015.Server.Entities
                     src = StateAlterationSource.Armor; passiveEquip = m_armor; break;
                 case EquipmentType.Boots:
                     src = StateAlterationSource.Boots; passiveEquip = m_boots; break;
-                case EquipmentType.Amulet:
-                    src = StateAlterationSource.Amulet; passiveEquip = m_amulet; break;
+                /*case EquipmentType.Amulet:
+                    src = StateAlterationSource.Amulet; passiveEquip = m_amulet; break;*/
                 default:
                     throw new NotImplementedException();
             }
@@ -243,6 +243,7 @@ namespace Codinsa2015.Server.Entities
 
             Type |= EntityType.Player;
             VisionRange = 8;
+            PA = GameServer.GetScene().Constants.Heroes.StartPA;
             m_consummables = new ConsummableStack[2] {
                 new ConsummableStack(this, ConsummableType.Ward),
                 new ConsummableStack(this, ConsummableType.Unward)

@@ -86,6 +86,7 @@ namespace Codinsa2015.Server
         {
             Instance = this;
             m_scene = new Scene();
+            m_scene.LoadDB();
             m_battleLogs = new Tools.EventLog();
         }
 

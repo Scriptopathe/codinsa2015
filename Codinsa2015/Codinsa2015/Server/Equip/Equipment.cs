@@ -12,7 +12,7 @@ namespace Codinsa2015.Server.Equip
         Weapon,
         WeaponEnchant,
         Boots,
-        Amulet,
+        //Amulet,
     }
     /// <summary>
     /// Classe de base pour représenter un modèle d'équipement.
@@ -29,7 +29,7 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Prix de l'équipement en points d'amélioration.
         /// </summary>
-        public float Price { get; set; }
+        public virtual float Price { get; set; }
 
         /// <summary>
         /// Identifiant unique de l'armure.
@@ -40,7 +40,6 @@ namespace Codinsa2015.Server.Equip
         /// Obtient le type d'équipement de cet équipement.
         /// </summary>
         public abstract EquipmentType Type { get; set; }
-
         /// <summary>
         /// Crée une nouvelle instance d'armor.
         /// </summary>

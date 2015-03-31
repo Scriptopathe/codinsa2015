@@ -299,6 +299,18 @@ namespace Codinsa2015.Server
     }
 
     /// <summary>
+    /// Constantes concernant les héros.
+    /// </summary>
+    public class HeroConstants : EntityConstants
+    {
+        public float StartPA;
+        public HeroConstants() : base()
+        {
+            StartPA = 50000;
+            MoveSpeed *= 2;
+        }
+    }
+    /// <summary>
     /// Constantes concernant toutes les entités
     /// </summary>
     public class EntityConstants
@@ -449,6 +461,22 @@ namespace Codinsa2015.Server
 
         }
     }
+
+    /// <summary>
+    /// Regroupe les constantes relatives aux équipements.
+    /// </summary>
+    public class EquipConstants
+    {
+        public float UpgradeCost1 = 300.0f;
+        public float UpgradeCost2 = 300.0f;
+
+        #region Weapon
+        public float[] WeaponFlatAD = new float[] { 10, 20, 30, 40 };
+        public float[] WeaponScalingAD = new float[] { 0.80f, 1, 1.2f, 1.4f };
+
+        #endregion
+        public EquipConstants() { }
+    }
     /// <summary>
     /// Représente toutes les constantes du jeu.
     /// Elles sont hierarchisées dans d'autres objets, afin que le fichier
@@ -467,8 +495,9 @@ namespace Codinsa2015.Server
         public EventConstants Events;
         public UniquePassiveConstants UniquePassives;
         public ActiveSpellsConstants ActiveSpells;
-        public EntityConstants Heroes;
+        public HeroConstants Heroes;
         public TowerConstants Towers;
+        public EquipConstants Equip;
         /// <summary>
         /// Crée une nouvelle instance de GameConstants avec des constantes par défaut.
         /// </summary>
@@ -485,7 +514,8 @@ namespace Codinsa2015.Server
             BuffedCreeps = new CreepConstants();
             UniquePassives = new UniquePassiveConstants();
             ActiveSpells = new ActiveSpellsConstants();
-            Heroes = new EntityConstants();
+            Equip = new EquipConstants();
+            Heroes = new HeroConstants();
             Towers = new TowerConstants();
         }
 

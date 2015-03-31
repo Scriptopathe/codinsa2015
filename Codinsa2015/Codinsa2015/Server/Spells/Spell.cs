@@ -138,7 +138,7 @@ namespace Codinsa2015.Server.Spells
             if (!(Description.TargetType.AllowedTargetTypes.HasFlag(flag) ||
                  (Description.TargetType.AllowedTargetTypes.HasFlag(EntityTypeRelative.Me) && entity.ID == SourceCaster.ID)))
                 return false;
-
+            
             // Vérifie que si le sort est targetté, il on est bien sur la bonne cible.
             if (Description.TargetType.Type == Spells.TargettingType.Targetted &&
                 entity.ID != info.TargetId)

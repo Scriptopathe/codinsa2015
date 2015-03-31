@@ -47,6 +47,7 @@ namespace Codinsa2015.Server.Equip
             // Bottes
             Equip.PassiveEquipmentModel baseBoots = new Equip.PassiveEquipmentModel();
             baseBoots.Type = Equip.EquipmentType.Boots;
+            baseBoots.Name = "Bottes de base";
             baseBoots.Upgrades = new List<Equip.PassiveEquipmentUpgradeModel>() { 
                     new Equip.PassiveEquipmentUpgradeModel(
                         new List<StateAlterationModel>() 
@@ -65,73 +66,23 @@ namespace Codinsa2015.Server.Equip
 
             // Armure
             Equip.PassiveEquipmentModel baseArmor = new Equip.PassiveEquipmentModel();
+            baseArmor.Name = "Armure de base";
             baseArmor.Type = Equip.EquipmentType.Armor;
             baseArmor.Upgrades = new List<Equip.PassiveEquipmentUpgradeModel>() { 
                     new Equip.PassiveEquipmentUpgradeModel(
                         new List<StateAlterationModel>() { },
                         0)
                 };
+
+
             Armors.Add(baseArmor);
 
-            // Arme
-            Equip.WeaponModel model = new Equip.WeaponModel();
-            model.Name = "Arme de base";
-            model.Price = 0;
-            model.Upgrades = new List<Equip.WeaponUpgradeModel>()
-                {
-                    new Equip.WeaponUpgradeModel()
-                    {
-                        Cost = 400,
-                        PassiveAlterations = new List<StateAlterationModel>()
-                        {
-                            new StateAlterationModel()
-                            {
-                                BaseDuration = 1.0f,
-                                Type = StateAlterationType.AttackSpeed,
-                                FlatValue = 1
-                            }
-                        },
-                        Description = new Spells.SpellDescription()
-                        {
-                            BaseCooldown = 8.0f,
-                            CastingTime = 0.1f,
-                            CastingTimeAlterations = new List<StateAlterationModel>()
-                            {
-                                new StateAlterationModel()
-                                {
-                                    BaseDuration = 0.01f,
-                                    Type = StateAlterationType.Root
-                                }
-                            },
-                            
-                            TargetType = new Spells.SpellTargetInfo()
-                            {
-                                Type = Spells.TargettingType.Targetted,
-                                AllowedTargetTypes = EntityTypeRelative.AllEnnemy | EntityTypeRelative.AllTargettableNeutral,
-                                Range = 8,
-                                DieOnCollision = true,
-                                Duration = 1,
-                                AoeRadius = 0.3f
-                            },
-                            OnHitEffects = new List<StateAlterationModel>()
-                            {
-                                new StateAlterationModel()
-                                {
-                                    BaseDuration = 0,
-                                    FlatValue = 10,
-                                    SourcePercentADValue = 0.50f,
-                                    Type = StateAlterationType.AttackDamage,
-                                }
-                            },
-                           
-                        }
-                    }
-                };
+
 
             Equip.WeaponEnchantModel enchant = new Equip.WeaponEnchantModel()
             {
                 Name = "base",
-                Price = 0,
+                Price = 100,
 
             };
 
@@ -159,7 +110,7 @@ namespace Codinsa2015.Server.Equip
             Consummables.Add(unward);
             Consummables.Add(ward);
             Consummables.Add(empty);
-            Weapons.Add(model);
+            Weapons.Add(WeaponFactory.BaseWeapon());
             Enchants.Add(enchant);
         }
 
@@ -189,6 +140,19 @@ namespace Codinsa2015.Server.Equip
         public void Save(string file)
         {
             System.IO.File.WriteAllText(file, Tools.Serializer.Serialize<ShopDatabase>(this));
+        }
+
+        /// <summary>
+        /// Obtient le modèle d'équipement d'id donné.
+        /// </summary>
+        public EquipmentModel GetEquipmentById(int id)
+        {
+            foreach (var e in Weapons) { if (id == e.ID) return e; }
+            foreach (var e in Armors) { if (id == e.ID) return e; }
+            foreach (var e in Boots) { if (id == e.ID) return e; }
+            foreach (var e in Enchants) { if (id == e.ID) return e; }
+            foreach (var e in Consummables) { if (id == e.ID) return e; }
+            return null;
         }
     }
 }

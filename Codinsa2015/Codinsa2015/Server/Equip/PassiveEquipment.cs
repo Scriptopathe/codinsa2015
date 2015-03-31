@@ -53,6 +53,21 @@ namespace Codinsa2015.Server.Equip
         EquipmentType m_type;
 
         /// <summary>
+        /// Obtient le prix d'achat de l'équipement.
+        /// </summary>
+        public override float Price
+        {
+            get
+            {
+                return Upgrades[0].Cost;
+            }
+            set
+            {
+                throw new Codinsa2015.Exceptions.IdiotProgrammerException("fait pas ça.");
+            }
+        }
+
+        /// <summary>
         /// Type de l'équipement.
         /// </summary>
         public override EquipmentType Type

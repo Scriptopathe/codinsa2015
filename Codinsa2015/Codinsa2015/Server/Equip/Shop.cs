@@ -20,6 +20,7 @@ namespace Codinsa2015.Server.Equip
         EnchantForNoWeapon,
         StackOverflow,
         Success,
+        AlreadyMaxLevel,
     }
     /// <summary>
     /// Classe permettant la présentation de divers équipements.
@@ -30,7 +31,7 @@ namespace Codinsa2015.Server.Equip
     public class Shop
     {
         #region Variables
-        List<EquipmentModel> m_availableEquip;
+        ShopDatabase m_database;
         /// <summary>
         /// Entité propriétaire du shop.
         /// </summary>
@@ -44,9 +45,9 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Crée une nouvelle instance de shop, avec la liste des équipements donnée.
         /// </summary>
-        public Shop(List<EquipmentModel> equip, EntityBase owner, float shopRange)
+        public Shop(ShopDatabase db, EntityBase owner, float shopRange)
         {
-            m_availableEquip = equip;
+            m_database = db;
             m_owner = owner;
             m_shopRange = shopRange;
         }
@@ -60,7 +61,7 @@ namespace Codinsa2015.Server.Equip
             EquipmentModel model = null;
             switch(equipKind)
             {
-                case EquipmentType.Amulet: model = (hero.Amulet == null ? null : hero.Amulet.Model); hero.Amulet = null; break;
+                //case EquipmentType.Amulet: model = (hero.Amulet == null ? null : hero.Amulet.Model); hero.Amulet = null; break;
                 case EquipmentType.Armor: model = (hero.Armor == null ? null : hero.Armor.Model); hero.Armor = null; break;
                 case EquipmentType.Boots: model = (hero.Boots == null ? null : hero.Boots.Model); hero.Boots = null; break;
                 case EquipmentType.Weapon: model = (hero.Weapon == null ? null : hero.Weapon.Model); hero.Weapon = null; break;
@@ -116,11 +117,11 @@ namespace Codinsa2015.Server.Equip
             // Equipe l'arme au héros.
             switch(equip.Type)
             {
-                case EquipmentType.Amulet:
+                /*case EquipmentType.Amulet:
                     if (hero.Amulet != null)
                         return ShopTransactionResult.NoSlotAvailableOnHero;
                     hero.Amulet = new Amulet(hero, (PassiveEquipmentModel)equip); 
-                    break;
+                    break;*/
                 case EquipmentType.Armor:
                     if (hero.Armor != null)
                         return ShopTransactionResult.NoSlotAvailableOnHero;
@@ -152,6 +153,9 @@ namespace Codinsa2015.Server.Equip
             return ShopTransactionResult.Success;
         }
 
+
+
+
         /// <summary>
         /// Vends un consommable dans le slot donné du héros donné.
         /// </summary>
@@ -179,6 +183,7 @@ namespace Codinsa2015.Server.Equip
             hero.Consummables[slot].Count--;
             return ShopTransactionResult.Success;
         }
+
         /// <summary>
         /// Achète un consommable pour le héros donné, et le place dans le slot donné.
         /// </summary>
@@ -219,24 +224,33 @@ namespace Codinsa2015.Server.Equip
         /// </summary>
         public EquipmentModel GetEquipmentById(int equip)
         {
-            foreach(EquipmentModel model in m_availableEquip)
+            return m_database.GetEquipmentById(equip);
+        }
+        /// <summary>
+        /// Retourne une liste d'enchantements disponibles pour le héros donné.
+        /// </summary>
+        public List<EquipmentModel> GetEnchants(EntityHero hero)
+        {
+            List<EquipmentModel> items = new List<EquipmentModel>();
+            foreach (var item in m_database.Enchants)
             {
-                if (model.ID == equip)
-                    return model;
+                // TODO : un filtre éventuel.
+                items.Add(item);
             }
-            return null;
+            return items;
         }
         /// <summary>
         /// Retourne une liste d'elixirs disponibles pour le héros donné.
         /// </summary>
-        /// <param name="hero"></param>
-        /// <returns></returns>
         public List<EquipmentModel> GetConsummables(EntityHero hero)
         {
-            return m_availableEquip.Where(new Func<EquipmentModel, bool>((EquipmentModel e) =>
+            List<EquipmentModel> items = new List<EquipmentModel>();
+            foreach(var item in m_database.Consummables)
             {
-                return e.Type == EquipmentType.Consummable;
-            })).ToList();
+                // TODO : un filtre éventuel.
+                items.Add(item);
+            }
+            return items;
         }
 
         /// <summary>
@@ -244,10 +258,13 @@ namespace Codinsa2015.Server.Equip
         /// </summary>
         public List<EquipmentModel> GetWeapons(EntityHero hero)
         {
-            return m_availableEquip.Where(new Func<EquipmentModel, bool>((EquipmentModel e) =>
+            List<EquipmentModel> items = new List<EquipmentModel>();
+            foreach (var item in m_database.Weapons)
             {
-                return e.Type == EquipmentType.Weapon;
-            })).ToList();
+                // TODO : un filtre éventuel.
+                items.Add(item);
+            }
+            return items;
         }
 
         /// <summary>
@@ -257,10 +274,13 @@ namespace Codinsa2015.Server.Equip
         /// <returns></returns>
         public List<EquipmentModel> GetArmors(EntityHero hero)
         {
-            return m_availableEquip.Where(new Func<EquipmentModel, bool>((EquipmentModel e) =>
+            List<EquipmentModel> items = new List<EquipmentModel>();
+            foreach (var item in m_database.Armors)
             {
-                return e.Type == EquipmentType.Armor;
-            })).ToList();
+                // TODO : un filtre éventuel.
+                items.Add(item);
+            }
+            return items;
         }
 
         /// <summary>
@@ -268,21 +288,114 @@ namespace Codinsa2015.Server.Equip
         /// </summary>
         public List<EquipmentModel> GetBoots(EntityHero hero)
         {
-            return m_availableEquip.Where(new Func<EquipmentModel, bool>((EquipmentModel e) =>
+            List<EquipmentModel> items = new List<EquipmentModel>();
+            foreach (var item in m_database.Boots)
             {
-                return e.Type == EquipmentType.Boots;
-            })).ToList();
+                // TODO : un filtre éventuel.
+                items.Add(item);
+            }
+            return items;
+        }
+
+        #region Upgrades
+        /// <summary>
+        /// Demande au shop de procéder si possible à l'upgrade de l'arme du héros donné.
+        /// </summary>
+        public ShopTransactionResult UpgradeWeapon(EntityHero hero)
+        {
+            // Vérifie la distance au shop.
+            float dst = Vector2.Distance(hero.Position, m_owner.Position);
+            if (dst > m_shopRange)
+                return ShopTransactionResult.NotInShopRange;
+
+            // Le héros a-t-il une arme ?
+            if (hero.Weapon == null)
+                return ShopTransactionResult.UnavailableItem;
+
+            // Vérification du niveau.
+            int nextLevel = hero.Weapon.Level + 1;
+            if (nextLevel >= hero.Weapon.Model.Upgrades.Count)
+            {
+                return ShopTransactionResult.AlreadyMaxLevel;
+            }
+
+            // Vérification de l'argent disponible.
+            float price = hero.Weapon.Model.Upgrades[nextLevel].Cost;
+            if (price > hero.PA)
+                return ShopTransactionResult.NotEnoughMoney;
+
+            // Si c'est bon : on procède.
+            hero.PA -= price;
+
+            hero.Weapon.Upgrade();
+
+            return ShopTransactionResult.Success;
+        }
+        /// <summary>
+        /// Demande au shop de procéder si possible à l'upgrade des bottes du héros donné.
+        /// </summary>
+        public ShopTransactionResult UpgradeBoots(EntityHero hero)
+        {
+            // Vérifie la distance au shop.
+            float dst = Vector2.Distance(hero.Position, m_owner.Position);
+            if (dst > m_shopRange)
+                return ShopTransactionResult.NotInShopRange;
+
+            // Le héros a-t-il des bottes ?
+            if (hero.Boots == null)
+                return ShopTransactionResult.UnavailableItem;
+            // Vérification du niveau.
+            int nextLevel = hero.Boots.Level + 1;
+            if (nextLevel >= hero.Boots.Model.Upgrades.Count)
+            {
+                return ShopTransactionResult.AlreadyMaxLevel;
+            }
+
+            // Vérification de l'argent disponible.
+            float price = hero.Boots.Model.Upgrades[nextLevel].Cost;
+            if (price > hero.PA)
+                return ShopTransactionResult.NotEnoughMoney;
+
+            // Si c'est bon : on procède.
+            hero.PA -= price;
+
+            hero.Boots.Upgrade();
+
+            return ShopTransactionResult.Success;
         }
 
         /// <summary>
-        /// Retourne une liste des amulettes disponibles pour le héros donné.
+        /// Demande au shop de procéder si possible à l'upgrade de l'armure du héros donné.
         /// </summary>
-        public List<EquipmentModel> GetAmulets(EntityHero hero)
+        public ShopTransactionResult UpgradeArmor(EntityHero hero)
         {
-            return m_availableEquip.Where(new Func<EquipmentModel, bool>((EquipmentModel e) =>
+            // Vérifie la distance au shop.
+            float dst = Vector2.Distance(hero.Position, m_owner.Position);
+            if (dst > m_shopRange)
+                return ShopTransactionResult.NotInShopRange;
+
+            // Le héros a-t-il une armure ?
+            if (hero.Armor == null)
+                return ShopTransactionResult.UnavailableItem;
+            // Vérification du niveau.
+            int nextLevel = hero.Armor.Level + 1;
+            if (nextLevel >= hero.Armor.Model.Upgrades.Count)
             {
-                return e.Type == EquipmentType.Amulet;
-            })).ToList();
+                return ShopTransactionResult.AlreadyMaxLevel;
+            }
+
+            // Vérification de l'argent disponible.
+            float price = hero.Armor.Model.Upgrades[nextLevel].Cost;
+            if (price > hero.PA)
+                return ShopTransactionResult.NotEnoughMoney;
+
+            // Si c'est bon : on procède.
+            hero.PA -= price;
+
+            hero.Armor.Upgrade();
+
+            return ShopTransactionResult.Success;
         }
+        #endregion
     }
 }

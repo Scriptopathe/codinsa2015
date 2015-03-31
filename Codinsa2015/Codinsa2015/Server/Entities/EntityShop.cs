@@ -34,7 +34,7 @@ namespace Codinsa2015.Server.Entities
             : base()
         {
             Type = EntityType.Shop;
-            Shop = new Equip.Shop(new List<Equip.EquipmentModel>(), this, GameServer.GetScene().Constants.Structures.Shops.DefaultBuyRange);
+            Shop = new Equip.Shop(GameServer.GetScene().ShopDB, this, GameServer.GetScene().Constants.Structures.Shops.DefaultBuyRange);
         }
 
         /// <summary>

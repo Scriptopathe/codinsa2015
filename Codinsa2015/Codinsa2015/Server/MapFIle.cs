@@ -54,7 +54,8 @@ namespace Codinsa2015.Server
                 string y = (entity.Position.Y * scale).ToString();
                 if(entity.Type.HasFlag(EntityType.Structure) |
                     entity.Type.HasFlag(EntityType.WardPlacement) |
-                    entity.Type.HasFlag(EntityType.HeroSpawner))
+                    entity.Type.HasFlag(EntityType.HeroSpawner) |
+                    entity.Type.HasFlag(EntityType.Shop))
                     writer.WriteLine(entity.Type.ToString() + " " + x.ToString() + " " + y.ToString());
                 else if(entity.Type.HasFlag(EntityType.Checkpoint))
                 {
@@ -179,6 +180,13 @@ namespace Codinsa2015.Server
                                 break;
                             case EntityType.Idol:
                                 newEntity = new EntityIdol()
+                                {
+                                    Type = type,
+                                    Position = new Vector2(sX, sY)
+                                };
+                                break;
+                            case EntityType.Shop:
+                                newEntity = new EntityShop()
                                 {
                                     Type = type,
                                     Position = new Vector2(sX, sY)

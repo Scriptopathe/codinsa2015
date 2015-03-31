@@ -48,6 +48,20 @@ namespace Codinsa2015.Server.Equip
             Description = description;
             Cost = cost;
         }
+
+        /// <summary>
+        /// Retourne une copie complète de cet instance.
+        /// </summary>
+        /// <returns></returns>
+        public WeaponUpgradeModel Copy()
+        {
+            WeaponUpgradeModel copy = new WeaponUpgradeModel();
+            copy.Cost = Cost;
+            copy.PassiveAlterations = new List<Entities.StateAlterationModel>();
+            foreach (var alt in PassiveAlterations) { copy.PassiveAlterations.Add(alt.Copy()); }
+            copy.Description = Description.Copy();
+            return copy;
+        }
     }
 
     /// <summary>
@@ -92,7 +106,18 @@ namespace Codinsa2015.Server.Equip
             PassiveEffects = passives;
         }
 
-
+        /// <summary>
+        /// Retourne une copie de cette instance.
+        /// </summary>
+        /// <returns></returns>
+        public WeaponEnchantModel Copy()
+        {
+            WeaponEnchantModel copy = new WeaponEnchantModel();
+            foreach (var i in OnHitEffects) { copy.OnHitEffects.Add(i.Copy()); }
+            foreach (var i in PassiveEffects) { copy.PassiveEffects.Add(i.Copy()); }
+            foreach (var i in CastingEffects) { copy.CastingEffects.Add(i.Copy()); }
+            return copy;
+        }
         public override EquipmentType Type
         {
             get { return EquipmentType.WeaponEnchant; }
@@ -118,6 +143,9 @@ namespace Codinsa2015.Server.Equip
         /// Obtient le niveau actuel de l'arme.
         /// </summary>
         public int Level { get; private set; }
+
+        
+        
         /// <summary>
         /// Obtient le modèle de l'arme.
         /// </summary>
@@ -240,7 +268,21 @@ namespace Codinsa2015.Server.Equip
         /// </summary>
         public List<WeaponUpgradeModel> Upgrades { get; set; }
 
-        
+        /// <summary>
+        /// Obtient le prix de l'arme.
+        /// </summary>
+        public override float Price
+        {
+            get
+            {
+                return Upgrades[0].Cost;
+            }
+            set
+            {
+                throw new Codinsa2015.Exceptions.IdiotProgrammerException("fait pas ça.");
+            }
+        }
+
         /// <summary>
         /// Crée une nouvelle instance de WeaponModel.
         /// </summary>

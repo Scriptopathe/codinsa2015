@@ -85,10 +85,12 @@ main
 			WardPlacement = 65536,
 			Ward = 131072,
 			Shop = 262144,
+			Team1Shop = 262146,
+			Team2Shop = 262148,
 			HeroSpawner = 524288,
 			Team1HeroSpawner = 524290,
 			Team2HeroSpawner = 524292,
-			AllSaved = 609752,
+			AllSaved = 871896,
 			All = 16777215
 		}
 
@@ -214,7 +216,8 @@ main
 			NoSlotAvailableOnHero = 7,
 			EnchantForNoWeapon = 8,
 			StackOverflow = 9,
-			Success = 10
+			Success = 10,
+			AlreadyMaxLevel = 11
 		}
 
 		public enum GenericShapeType

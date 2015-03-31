@@ -129,7 +129,6 @@ namespace Codinsa2015.Server
 
             // Charge les constantes du jeu.
             LoadConstants();
-            LoadDB();
 
             // Initialise l'interpréteur de commandes.
             InitializeInterpreter();
@@ -169,7 +168,7 @@ namespace Codinsa2015.Server
         /// <summary>
         /// Charge la base de données du jeu.
         /// </summary>
-        void LoadDB()
+        public void LoadDB()
         {
             if (LOAD_DB_FILE && System.IO.File.Exists("shopdb.xml"))
             {
