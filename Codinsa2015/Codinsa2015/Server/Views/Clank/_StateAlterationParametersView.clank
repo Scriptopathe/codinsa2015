@@ -11,9 +11,11 @@ state {
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
-		//Position finale que le dash doit atteindre (si le targetting est Direction)
+		//Direction dans laquelle de dash doit aller. (si le targetting est Direction)
 		public Vector2 DashTargetDirection;
-		//Entité vers laquelle le dash doit se diriger (si le targetting du dash est Entity).
+		//Entité vers laquelle le dash doit se diriger (si le targetting du dash est TowardsEntity).
 		public int DashTargetEntity;
+		//Position finale du du dash (si targetting TowardsPosition)
+		public Vector2 DashTargetPosition;
 	}
 }

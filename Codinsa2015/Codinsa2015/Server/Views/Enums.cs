@@ -157,7 +157,8 @@ namespace Codinsa2015.Views
 	{
 		TowardsEntity = 0,
 		Direction = 1,
-		BackwardsCaster = 2
+		TowardsSpellPosition = 2,
+		BackwardsCaster = 3
 	}
 	
 	public enum ConsummableType
