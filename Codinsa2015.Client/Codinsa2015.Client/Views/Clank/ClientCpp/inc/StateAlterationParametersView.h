@@ -7,10 +7,12 @@ class StateAlterationParametersView
 {
 
 public: 
-	// Position finale que le dash doit atteindre (si le targetting est Direction)
+	// Direction dans laquelle de dash doit aller. (si le targetting est Direction)
 	Vector2 DashTargetDirection;
-	// Entité vers laquelle le dash doit se diriger (si le targetting du dash est Entity).
+	// Entité vers laquelle le dash doit se diriger (si le targetting du dash est TowardsEntity).
 	int DashTargetEntity;
+	// Position finale du du dash (si targetting TowardsPosition)
+	Vector2 DashTargetPosition;
 	void serialize(std::ostream& output);
 
 	static StateAlterationParametersView deserialize(std::istream& input);

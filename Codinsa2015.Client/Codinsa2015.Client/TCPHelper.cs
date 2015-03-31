@@ -52,7 +52,7 @@ namespace Codinsa2015
         {
             var tosend = UTF8.GetString(data);
 #if DEBUG
-            Console.WriteLine("sent " + data.Length.ToString() + "bytes:\n" + UTF8.GetString(data));
+            //Console.WriteLine("sent " + data.Length.ToString() + "bytes:\n" + UTF8.GetString(data));
 #endif
             s_socket.Send(UTF8.GetBytes(data.Length.ToString() + "\n"));
             s_socket.Send(data);
@@ -90,7 +90,7 @@ namespace Codinsa2015
                 }
             }
 #if DEBUG
-            Console.WriteLine("received " + dataLength.ToString() + " bytes: " + UTF8.GetString(dataBytes.ToArray()));
+            //Console.WriteLine("received " + dataLength.ToString() + " bytes: " + UTF8.GetString(dataBytes.ToArray()));
 #endif
             return dataBytes.ToArray();
         }

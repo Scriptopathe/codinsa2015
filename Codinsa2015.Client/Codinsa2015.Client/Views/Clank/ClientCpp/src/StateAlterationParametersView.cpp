@@ -4,6 +4,8 @@ void StateAlterationParametersView::serialize(std::ostream& output) {
 	this->DashTargetDirection.serialize(output);
 	// DashTargetEntity
 	output << ((int)this->DashTargetEntity) << '\n';
+	// DashTargetPosition
+	this->DashTargetPosition.serialize(output);
 }
 
 StateAlterationParametersView StateAlterationParametersView::deserialize(std::istream& input) {
@@ -14,6 +16,9 @@ StateAlterationParametersView StateAlterationParametersView::deserialize(std::is
 	// DashTargetEntity
 	int _obj_DashTargetEntity; input >> _obj_DashTargetEntity; input.ignore(1000, '\n');
 	_obj.DashTargetEntity = (int)_obj_DashTargetEntity;
+	// DashTargetPosition
+	Vector2 _obj_DashTargetPosition = Vector2::deserialize(input);
+	_obj.DashTargetPosition = (::Vector2)_obj_DashTargetPosition;
 	return _obj;
 }
 

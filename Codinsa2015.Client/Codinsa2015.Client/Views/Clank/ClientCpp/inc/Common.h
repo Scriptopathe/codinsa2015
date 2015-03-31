@@ -156,7 +156,8 @@ enum class DashDirectionType
 {
 	TowardsEntity = 0,
 	Direction = 1,
-	BackwardsCaster = 2
+	TowardsSpellPosition = 2,
+	BackwardsCaster = 3
 };
 
 enum class ConsummableType

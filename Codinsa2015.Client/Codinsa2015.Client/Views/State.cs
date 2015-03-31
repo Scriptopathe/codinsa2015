@@ -16,7 +16,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public EntityBaseView GetHero()
 		{
-			Console.WriteLine("[GetHero]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -35,7 +34,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public Vector2 GetPosition()
 		{
-			Console.WriteLine("[GetPosition]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -54,7 +52,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public MapView GetMapView()
 		{
-			Console.WriteLine("[GetMapView]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -73,7 +70,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public bool StartMoveTo(Vector2 position)
 		{
-			Console.WriteLine("[StartMoveTo]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -93,7 +89,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public bool IsAutoMoving()
 		{
-			Console.WriteLine("[IsAutoMoving]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -112,7 +107,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public bool EndMoveTo()
 		{
-			Console.WriteLine("[EndMoveTo]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -131,7 +125,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public List<EntityBaseView> GetEntitiesInSight()
 		{
-			Console.WriteLine("[GetEntitiesInSight]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -156,7 +149,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public EntityBaseView GetEntityById(int entityId)
 		{
-			Console.WriteLine("[GetEntityById]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -176,7 +168,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public bool UseSpell(int spellId,SpellCastTargetInfoView target)
 		{
-			Console.WriteLine("[UseSpell]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -197,7 +188,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public SceneMode GetMode()
 		{
-			Console.WriteLine("[GetMode]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -216,7 +206,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public SpellDescriptionView GetSpellCurrentLevelDescription(int spellId)
 		{
-			Console.WriteLine("[GetSpellCurrentLevelDescription]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -236,7 +225,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public SpellView GetSpell(int spellId)
 		{
-			Console.WriteLine("[GetSpell]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -256,7 +244,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public List<SpellView> GetSpells()
 		{
-			Console.WriteLine("[GetSpells]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
@@ -280,7 +267,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public List<SpellView> GetHeroSpells(int entityId)
 		{
-			Console.WriteLine("[GetHeroSpells]");
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";

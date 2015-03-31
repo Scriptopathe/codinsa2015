@@ -16,10 +16,12 @@ public class StateAlterationParametersView
 {
 
 
-	// Position finale que le dash doit atteindre (si le targetting est Direction)
+	// Direction dans laquelle de dash doit aller. (si le targetting est Direction)
 	public Vector2 DashTargetDirection;
-	// Entité vers laquelle le dash doit se diriger (si le targetting du dash est Entity).
+	// Entité vers laquelle le dash doit se diriger (si le targetting du dash est TowardsEntity).
 	public Integer DashTargetEntity;
+	// Position finale du du dash (si targetting TowardsPosition)
+	public Vector2 DashTargetPosition;
 	public static StateAlterationParametersView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		StateAlterationParametersView _obj =  new StateAlterationParametersView();
 		// DashTargetDirection
@@ -28,6 +30,9 @@ public class StateAlterationParametersView
 		// DashTargetEntity
 		int _obj_DashTargetEntity = Integer.valueOf(input.readLine());
 		_obj.DashTargetEntity = _obj_DashTargetEntity;
+		// DashTargetPosition
+		Vector2 _obj_DashTargetPosition = Vector2.deserialize(input);
+		_obj.DashTargetPosition = _obj_DashTargetPosition;
 		return _obj;
 	}
 
@@ -36,6 +41,8 @@ public class StateAlterationParametersView
 		this.DashTargetDirection.serialize(output);
 		// DashTargetEntity
 		output.append(((Integer)this.DashTargetEntity).toString() + "\n");
+		// DashTargetPosition
+		this.DashTargetPosition.serialize(output);
 	}
 
 }
