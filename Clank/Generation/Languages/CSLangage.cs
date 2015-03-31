@@ -14,7 +14,7 @@ namespace Clank.Core.Generation.Languages
     public class CSGenerator : ILanguageGenerator
     {
         public const string LANG_KEY = "cs";
-        public const bool PRINT_DEBUG = true;
+        public const bool PRINT_DEBUG = false;
         #region Variables
         Clank.Core.Model.ProjectFile m_project;
         #endregion
@@ -254,7 +254,7 @@ using System.Text;");
                 case JSONType.Float:
                     return "float " + dstVarName + " = Single.Parse(input.ReadLine());";
                 case JSONType.String:
-                    return "string " + dstVarName + " = input.Readline();";
+                    return "string " + dstVarName + " = input.ReadLine();";
                 case JSONType.Object:
                     return typename + " " + dstVarName + " = " + typename + ".Deserialize(input);";
                 case JSONType.Array:
