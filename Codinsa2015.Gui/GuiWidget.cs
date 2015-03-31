@@ -9,6 +9,10 @@ namespace Codinsa2015.EnhancedGui
 {
     public abstract class GuiWidget
     {
+        /// <summary>
+        /// Représente un objet que l'on peut associer librement à ce widget.
+        /// </summary>
+        public object UserData { get; set; }
         private Rectangle m_area;
         /// <summary>
         /// Obtient ou définit une référence vers le manager de ce widget.
