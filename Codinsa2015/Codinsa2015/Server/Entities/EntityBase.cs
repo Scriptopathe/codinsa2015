@@ -962,9 +962,9 @@ namespace Codinsa2015.Server.Entities
         /// Avance dans la direction du personnage, à la vitesse du personnage,
         /// pendant le temps écoulé durant la frame précédente.
         /// </summary>
-        public void MoveForward(GameTime time)
+        public void MoveForward(GameTime time, bool ignoreRoot=false)
         {
-            MoveTowards(Direction, (float)time.ElapsedGameTime.TotalSeconds, GetMoveSpeed());
+            MoveTowards(Direction, (float)time.ElapsedGameTime.TotalSeconds, GetMoveSpeed(), ignoreRoot);
         }
         /// <summary>
         /// Avance dans la direction donnée, à la vitesse du personnage,
@@ -1243,11 +1243,13 @@ namespace Codinsa2015.Server.Entities
             List<StateAlteration> dashAlterations = m_stateAlterations.GetInteractionsByType(StateAlterationType.Dash);
             foreach(StateAlteration alteration in dashAlterations)
             {
+                bool isKick = alteration.Source.ID != ID;
                 ApplyDash(alteration.Model.GetDashDirection(alteration.Source, this, alteration.Parameters), 
                     alteration.Model.DashSpeed,
                     alteration.RemainingTime,
                     (float)time.ElapsedGameTime.TotalSeconds,
-                    alteration.Model.DashGoThroughWall);
+                    alteration.Model.DashGoThroughWall,
+                    isKick);
             }
 
             // Cleanse les CC
@@ -1263,11 +1265,11 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Applique l'altération de dash passée en paramètre.
         /// </summary>
-        public void ApplyDash(Vector2 direction, float speed, float remainingDuration, float stepDuration, bool goThroughWalls)
+        public void ApplyDash(Vector2 direction, float speed, float remainingDuration, float stepDuration, bool goThroughWalls, bool isKick)
         {
             // Détermine si la direction finale est praticable.
             Vector2 finalPosition = Position + direction * speed * remainingDuration;
-
+            bool ignoreRoot = isKick;
             if(float.IsNaN(finalPosition.X) || float.IsNaN(finalPosition.Y))
                 return;
             
@@ -1276,11 +1278,12 @@ namespace Codinsa2015.Server.Entities
             // on cogne.
             if (goThroughWalls && GameServer.GetMap().GetPassabilityAt(finalPosition.X, finalPosition.Y))
             {
-                Position += direction * speed * stepDuration;
+                if(!IsRooted || isKick)
+                    Position += direction * speed * stepDuration;
             }
             else
             {
-                MoveTowards(direction, stepDuration, speed);
+                MoveTowards(direction, stepDuration, speed, isKick);
             }
 
             // Arrête le déplacement en cours après le dash.
@@ -1835,7 +1838,7 @@ namespace Codinsa2015.Server.Entities
         }
         #endregion
 
-        #region Misc        
+        #region Misc
         /// <summary>
         /// Ajoute un message de debug dans le battle log.
         /// </summary>

@@ -418,9 +418,9 @@ namespace Codinsa2015.Server
     public class ActiveSpellsConstants
     {
         public float[] Ranges = new float[] { 2, 4, 6, 8 };
-        public float[] Aoes   = new float[] { 0.5f, 1.5f, 2.5f, 3.5f};
+        public float[] Aoes   = new float[] { 0.4f, 0.8f, 1.5f, 2.5f};
         public float[] HealApRatio = new float[] { 0.1f, 0.2f, 0.4f, 0.8f };
-        public float[] ShieldApRatio = new float[] { 0.2f, 0.5f, 1.0f, 2.0f };
+        public float[] ShieldRatios = new float[] { 0.2f, 0.5f, 1.0f, 2.0f };
         public float[] ShieldDuration = new float[] { 1, 2, 3, 5 };
         public float[] MoveSpeedAlterations = new float[] { 0.1f, 0.2f, 0.4f, 0.7f };
         public float[] MoveSpeedDurations = new float[] { 1, 2, 3, 5 };
@@ -437,7 +437,7 @@ namespace Codinsa2015.Server
         public float[] SilenceDurations = new float[] { 0.5f, 0.1f, 1.5f, 2.5f };
         public float[] BlindDurations = new float[] { 0.5f, 0.1f, 1.5f, 2.5f };
         public float[] DashLengths = new float[] { 2, 4, 6, 8 };
-        public float[] CDs = new float[] { 1, 3, 5, 7 };
+        public float[] CDs = new float[] { 0.5f, 0.5f, 0.5f, 0.5f }; // new float[] { 1, 3, 5, 7 };
         public float[] AttackSpeedBonuses = new float[] { 0.20f, 0.40f, 0.60f, 0.80f };
         public float[] AttackSpeedBonusesDurations = new float[] { 1, 2, 3, 5 };
         public float[] FlatADAPBonuses = new float[] { 4, 8, 12, 20 };

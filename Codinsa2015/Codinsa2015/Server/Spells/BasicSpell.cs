@@ -29,6 +29,8 @@ namespace Codinsa2015.Server.Spells
         public override void SetupParameters(SpellCastTargetInfo target)
         {
             base.SetupParameters(target);
+            
+            target.AlterationParameters.DashTargetPosition = target.TargetPosition;
             target.AlterationParameters.DashTargetEntity = GameServer.GetMap().GetEntityById(target.TargetId);
         }
 

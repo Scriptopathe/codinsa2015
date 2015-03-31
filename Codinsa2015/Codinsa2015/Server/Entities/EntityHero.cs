@@ -233,11 +233,14 @@ namespace Codinsa2015.Server.Entities
         public EntityHero() : base()
         {
             LoadEntityConstants(GameServer.GetScene().Constants.Heroes);
+
+            // TODO : virer ça (DEBUG).
             Spells = new List<Spell>();
             Spells.Add(Server.Spells.SpellFactory.Meteor(this)); //new Spells.FireballSpell(this, 4));
             Spells.Add(Server.Spells.SpellFactory.BroForce(this)); //(new Spells.DashForwardSpell(this));
-            Spells.Add(Server.Spells.SpellFactory.Kick(this));
-            Spells.Add(new Spells.TargettedTowerSpell(this));
+            Spells.Add(Server.Spells.SpellFactory.Stasis(this));
+            Spells.Add(Server.Spells.SpellFactory.MaximumGravity(this));
+
             Type |= EntityType.Player;
             VisionRange = 8;
             m_consummables = new ConsummableStack[2] {

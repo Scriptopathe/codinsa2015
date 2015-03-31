@@ -314,6 +314,7 @@ namespace Codinsa2015.Server.Spells
                     Range = cst.Ranges[MEDIUM],
                     Type = TargettingType.Targetted,
                     Duration = 0
+                    
                 },
                 BaseCooldown = cst.CDs[HIGH],
                 OnHitEffects = new List<StateAlterationModel>()
@@ -322,14 +323,15 @@ namespace Codinsa2015.Server.Spells
                     new StateAlterationModel()
                     {
                         Type = StateAlterationType.Shield,
-                        SourcePercentAPValue = cst.ShieldApRatio[LOW],
+                        SourcePercentAPValue = cst.ShieldRatios[LOW],
                         BaseDuration = cst.ShieldDuration[MEDIUM],
+                        
                     },
                 }
             };
             SpellDescription lvl2 = lvl1.Copy();
             // bonus de MS moyen, durée moyenne
-            lvl2.OnHitEffects[0].SourcePercentAPValue = cst.ShieldApRatio[MEDIUM];
+            lvl2.OnHitEffects[0].SourcePercentAPValue = cst.ShieldRatios[MEDIUM];
             lvl2.OnHitEffects.Add(new StateAlterationModel()
             {
                 // bonus d'armure moyen, durée moyenne
@@ -338,7 +340,7 @@ namespace Codinsa2015.Server.Spells
                 BaseDuration = cst.ShieldDuration[MEDIUM] // même durée que le shield
             });
             SpellDescription lvl3 = lvl2.Copy();
-            lvl3.OnHitEffects[0].SourcePercentAPValue = cst.ShieldApRatio[HIGH];
+            lvl3.OnHitEffects[0].SourcePercentAPValue = cst.ShieldRatios[HIGH];
             // Bouclier grand, bonus move speed moyen court.
             lvl3.OnHitEffects.Add(new StateAlterationModel()
             {
@@ -533,6 +535,187 @@ namespace Codinsa2015.Server.Spells
             Spell spell = new BasicSpell(caster,
                 new List<SpellDescription>() { lvl1, lvl2, lvl3 },
                 "kick");
+
+            return spell;
+        }
+        /// <summary>
+        /// Sort Maximum gravity !
+        /// Attire tous les ennemis à proximité  au centre d'une zone
+        /// et les immobilise pendant un court instant.
+        /// </summary>
+        public static Spell MaximumGravity(EntityBase caster)
+        {
+            var cst = GameServer.GetScene().Constants.ActiveSpells;
+            SpellDescription lvl1 = new SpellDescription()
+            {
+                TargetType = new SpellTargetInfo()
+                {
+                    AllowedTargetTypes = EntityTypeRelative.EnnemyPlayer |
+                                         EntityTypeRelative.EnnemyCreep |
+                                         EntityTypeRelative.AllTargettableNeutral,
+                    AoeRadius = cst.Aoes[HIGH],
+                    DieOnCollision = false,
+                    Range = cst.Ranges[LOW],
+                    Type = TargettingType.Position,
+                    Duration = cst.AoeDurations[LOWER]
+                },
+                BaseCooldown = cst.CDs[HIGH],
+                OnHitEffects = new List<StateAlterationModel>()
+                {
+                    // Kick vers la position du spell
+                    new StateAlterationModel()
+                    {
+                        Type = StateAlterationType.Dash,
+                        DashDirType = DashDirectionType.TowardsSpellPosition,
+                        DashSpeed = 20,
+                        BaseDuration = 0.15f,
+                    },
+                }
+            };
+            SpellDescription lvl2 = lvl1.Copy();
+            // Ralentissement moyen durée moyenne
+            lvl2.OnHitEffects.Add(new StateAlterationModel()
+            {
+                Type = StateAlterationType.MoveSpeed,
+                BaseDuration = cst.MoveSpeedAlterations[MEDIUM],
+                FlatValue = -cst.MoveSpeedAlterations[MEDIUM]
+            });
+
+            SpellDescription lvl3 = lvl2.Copy();
+            // Root moyen
+            lvl3.OnHitEffects.Add(new StateAlterationModel()
+            {
+                Type = StateAlterationType.Root,
+                BaseDuration = cst.RootDurations[MEDIUM],
+            });
+
+            Spell spell = new BasicSpell(caster,
+                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+                "max-gravity");
+
+            return spell;
+        }
+        #endregion
+
+        #region DAMAAAAAAAGE
+        /// <summary>
+        /// Augmente brièvement les statistiques du lanceur.
+        /// </summary>
+        public static Spell Rage(EntityBase caster)
+        {
+            var cst = GameServer.GetScene().Constants.ActiveSpells;
+            SpellDescription lvl1 = new SpellDescription()
+            {
+                TargetType = new SpellTargetInfo()
+                {
+                    AllowedTargetTypes = EntityTypeRelative.Me,
+                    AoeRadius = 0,
+                    DieOnCollision = false,
+                    Range = 1,
+                    Type = TargettingType.Targetted,
+                    Duration = 0,
+                },
+                BaseCooldown = cst.CDs[MEDIUM],
+                OnHitEffects = new List<StateAlterationModel>()
+                {
+                    // Bonus de dégâts moyen durée faible
+                    new StateAlterationModel()
+                    {
+                        Type = StateAlterationType.AttackDamageBuff,
+                        BaseDuration = cst.ADAPBonusesDurations[LOW],
+                        FlatValue = cst.FlatADAPBonuses[LOW],
+                        SourcePercentADValue = cst.ScalingADAPBonuses[MEDIUM]
+                    },
+                }
+            };
+            SpellDescription lvl2 = lvl1.Copy();
+            // Bonus d'attack speed moyen durée moyenne
+            lvl2.OnHitEffects.Add(new StateAlterationModel()
+            {
+                Type = StateAlterationType.AttackSpeed,
+                BaseDuration = cst.AttackSpeedBonusesDurations[LOW],
+                FlatValue = cst.AttackSpeedBonuses[MEDIUM]
+            });
+
+            SpellDescription lvl3 = lvl2.Copy();
+
+            // Bonus d'attack speed : insane
+            lvl3.OnHitEffects[1].FlatValue = cst.AttackSpeedBonuses[HIGH];
+
+            // Bouclier moyen, durée faible.
+            lvl3.OnHitEffects.Add(new StateAlterationModel()
+            {
+                Type = StateAlterationType.Shield,
+                SourcePercentADValue = cst.ShieldRatios[LOW],
+                SourcePercentAPValue = cst.ShieldRatios[MEDIUM]
+            });
+
+            Spell spell = new BasicSpell(caster,
+                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+                "rage");
+
+            return spell;
+        }
+
+        /// <summary>
+        /// Rend son porteur invisible et immobile
+        /// et lui confère des bonus en sortie d'immobilité.
+        /// </summary>
+        public static Spell Stasis(EntityBase caster)
+        {
+            var cst = GameServer.GetScene().Constants.ActiveSpells;
+            SpellDescription lvl1 = new SpellDescription()
+            {
+                TargetType = new SpellTargetInfo()
+                {
+                    AllowedTargetTypes = EntityTypeRelative.Me,
+                    AoeRadius = 0,
+                    DieOnCollision = false,
+                    Range = 1,
+                    Type = TargettingType.Targetted,
+                    Duration = 0,
+                },
+                BaseCooldown = cst.CDs[HIGH],
+                CastingTime = cst.RootDurations[HIGH],
+                CastingTimeAlterations =  new List<StateAlterationModel>()
+                {
+                    // Auto-immobilisation + invisibilité.
+                    new StateAlterationModel()
+                    {
+                        Type = StateAlterationType.Root |
+                                StateAlterationType.Blind |
+                                StateAlterationType.Silence,
+                        BaseDuration = cst.RootDurations[HIGH],
+                    },                    
+                    new StateAlterationModel()
+                    {
+                        Type = StateAlterationType.Stealth,
+                        BaseDuration = cst.RootDurations[HIGH],
+                    },
+                }
+            };
+            SpellDescription lvl2 = lvl1.Copy();
+            // Bonus d'attack speed moyen durée moyenne
+            lvl2.OnHitEffects.Add(new StateAlterationModel()
+            {
+                Type = StateAlterationType.AttackSpeed,
+                BaseDuration = cst.AttackSpeedBonusesDurations[LOW],
+                FlatValue = cst.AttackSpeedBonuses[MEDIUM]
+            });
+
+            SpellDescription lvl3 = lvl2.Copy();
+
+            // Bonus d'attaque moyen, durée moyenne.
+            lvl3.OnHitEffects.Add(new StateAlterationModel()
+            {
+                Type = StateAlterationType.AttackDamageBuff,
+                FlatValue = cst.FlatADAPBonuses[MEDIUM],
+                BaseDuration = cst.ADAPBonusesDurations[MEDIUM]
+            });
+
+            Spell spell = new BasicSpell(caster,
+                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+                "stasis");
 
             return spell;
         }
