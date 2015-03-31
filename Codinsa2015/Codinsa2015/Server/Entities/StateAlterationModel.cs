@@ -75,6 +75,7 @@ namespace Codinsa2015.Server.Entities
     {
         TowardsEntity,
         Direction,
+        TowardsSpellPosition,
         BackwardsCaster,
     }
     /// <summary>
@@ -150,9 +151,12 @@ namespace Codinsa2015.Server.Entities
                     direction = parameters.DashTargetEntity.Position - source.Position;
                     direction = normalize(direction);
                     return direction;
+                case DashDirectionType.TowardsSpellPosition:
+                    direction = parameters.DashTargetPosition - source.Position;
+                    direction = normalize(direction);
+                    return direction;
                 case Entities.DashDirectionType.Direction:
-                    if(parameters.DashTargetDirection== null)
-                        throw new Exception("StateAlterationModel.GetDashDirection : target null & DashDirectionType == Position");
+
                     direction = parameters.DashTargetDirection; 
                     direction = normalize(direction);
                     return direction;

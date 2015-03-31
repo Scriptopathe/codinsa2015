@@ -12,24 +12,28 @@ namespace Codinsa2015.Server.Entities
     public class StateAlterationParameters
     {
         /// <summary>
-        /// Position finale que le dash doit atteindre.
+        /// Direction dans laquelle de dash doit aller.
         /// (si le targetting est Direction)
         /// </summary>
-        [Clank.ViewCreator.Export("Vector2", "Position finale que le dash doit atteindre (si le targetting est Direction)")]
+        [Clank.ViewCreator.Export("Vector2", "Direction dans laquelle de dash doit aller. (si le targetting est Direction)")]
         public Vector2 DashTargetDirection { get; set; }
 
         /// <summary>
         /// Entité vers laquelle le dash doit se diriger.
         /// (si le targetting du dash est Entity).
         /// </summary>
-        [Clank.ViewCreator.Export("int", "Entité vers laquelle le dash doit se diriger (si le targetting du dash est Entity).")]
+        [Clank.ViewCreator.Export("int", "Entité vers laquelle le dash doit se diriger (si le targetting du dash est TowardsEntity).")]
         public EntityBase DashTargetEntity { get; set; }
 
+        /// <summary>
+        /// Position finale du du dash (si le targetting du dash est TowardsPosition)
+        /// </summary>
+        [Clank.ViewCreator.Export("Vector2", "Position finale du du dash (si targetting TowardsPosition)")]
+        public Vector2 DashTargetPosition { get; set; }
 
         /// <summary>
         /// Retourne une vue de ces paramètres.
         /// </summary>
-        /// <returns></returns>
         public Views.StateAlterationParametersView ToView()
         {
             Views.StateAlterationParametersView view = new Views.StateAlterationParametersView();
@@ -38,6 +42,7 @@ namespace Codinsa2015.Server.Entities
                 view.DashTargetEntity = DashTargetEntity.ID;
             else
                 view.DashTargetEntity = -1;
+            view.DashTargetPosition = new Views.Vector2(DashTargetPosition.X, DashTargetPosition.Y);
             return view;
         }
     }

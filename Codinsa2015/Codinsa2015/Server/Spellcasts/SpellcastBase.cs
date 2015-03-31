@@ -50,6 +50,7 @@ namespace Codinsa2015.Server.Spellcasts
         /// <summary>
         /// Obtient ou définit le nom de ce spellcast (utilisé pour le texturing notamment).
         /// </summary>
+        [Clank.ViewCreator.Export("string", "nom de ce spellcast (utilisé pour le texturing notamment).")]
         public string Name { get; set; }
         #endregion
 

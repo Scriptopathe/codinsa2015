@@ -52,8 +52,6 @@ namespace Codinsa2015.Server.Spells
         {
             get
             {
-                if (Type != TargettingType.Position)
-                    throw new InvalidOperationException();
                 return m_targetPosition;
             }
             set
