@@ -193,7 +193,7 @@ namespace Codinsa2015.Server.Entities
 
 
             // Commencement de l'update.
-            EntityCollection entitiesInRange = GameServer.GetMap().Entities.GetAliveEntitiesInRange(this.Position, AttackRange);
+            EntityCollection entitiesInRange = GameServer.GetMap().Entities.GetAliveEntitiesInRange(this.Position, AttackRange).GetEntitiesInSight(Type & EntityType.Teams);
             EntityBase oldAggro = m_currentAgro;
 
             if (m_currentAgro != null && (m_currentAgro.IsDead || !HasSightOn(m_currentAgro)))
@@ -210,6 +210,12 @@ namespace Codinsa2015.Server.Entities
             EntityBase nearestTower = entitiesInRange.GetEntitiesByType(ennemyTower).NearestFrom(this.Position);
             if(nearestTower != null)
                 m_currentAgro = nearestTower;
+
+            // Idole
+            EntityType ennemyIdol = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyIdol, this.Type & (EntityType.Team1 | EntityType.Team2));
+            EntityBase nearestIdol = entitiesInRange.GetEntitiesByType(ennemyIdol).NearestFrom(this.Position);
+            if (nearestIdol != null)
+                m_currentAgro = nearestIdol;
 
             // Si on n'en trouve pas : on cherche le premier héros en range.
             EntityType ennemyHero = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyPlayer, this.Type & (EntityType.Team1 | EntityType.Team2));
