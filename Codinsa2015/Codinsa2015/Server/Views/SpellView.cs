@@ -11,7 +11,6 @@ namespace Codinsa2015.Views
 
 	public class SpellView
 	{
-
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		/// <summary>
@@ -21,7 +20,7 @@ namespace Codinsa2015.Views
 		/// <summary>
 		/// Id de l'entité possédant le sort.
 		/// </summary>
-		public int SourceCaster;	
+        public int SourceCaster;
 		/// <summary>
 		/// Représente les descriptions du spell pour les différents niveaux.
 		/// </summary>
