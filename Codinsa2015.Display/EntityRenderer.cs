@@ -50,6 +50,7 @@ namespace Codinsa2015.Rendering
                 || drawPos.X < m_mapRenderer.Viewport.Left - m_mapRenderer.UnitSize || drawPos.Y < m_mapRenderer.Viewport.Top - m_mapRenderer.UnitSize)
                 return;
 
+
             Color col = Color.White;
             Texture2D tex = Ressources.DummyTexture;
             float sx = 1;
@@ -93,8 +94,14 @@ namespace Codinsa2015.Rendering
                     break;
             }
 
+
             // Rectangle de dessin de l'entité
             Rectangle drawRect = new Rectangle(drawPos.X, drawPos.Y, (int)(m_mapRenderer.UnitSize * sx), (int)(m_mapRenderer.UnitSize * sy));
+
+
+            // 0 back, 1 front
+            float entityZ = 0.25f + ((drawPos.Y - tex.Height) / m_mapRenderer.SceneRenderer.MainRenderTarget.Height) / 2;
+
 
             // Dessin de la jauge
             int totalLength = (int)(drawRect.Width)*3/4;
@@ -106,18 +113,19 @@ namespace Codinsa2015.Rendering
 
             int offsetY = -drawRect.Height;
             int offsetX = -drawRect.Width / 2;
+
             Rectangle gaugeRect = new Rectangle(drawPos.X +  offsetX + (drawRect.Width - totalLength) / 2,
                 drawPos.Y + offsetY - 10,
                 totalLength,
                 totalH);
-
+            float gaugeZ = 0.25f + ((gaugeRect.Y - tex.Height) / m_mapRenderer.SceneRenderer.MainRenderTarget.Height) / 2;
             Color gaugeColor = blue ? Color.Blue : Color.Red;
             // Jauge vide
             batch.Draw(Ressources.LifebarEmpty,
                 gaugeRect,
                 null,
                 gaugeColor,
-                0, gaugeOrigin, SpriteEffects.None, 0.0f);
+                0, gaugeOrigin, SpriteEffects.None, gaugeZ);
 
             // Vie
             gaugeRect.Width = (int)(totalLength * percent);
@@ -125,7 +133,7 @@ namespace Codinsa2015.Rendering
                 gaugeRect,
                 null,
                 gaugeColor,
-                0, gaugeOrigin, SpriteEffects.None, 0.1f);
+                0, gaugeOrigin, SpriteEffects.None, gaugeZ + 0.00001f);
 
             if (entity.ShieldPoints > 0)
             {
@@ -136,11 +144,17 @@ namespace Codinsa2015.Rendering
                     gaugeRect,
                     null,
                     Color.White,
-                    0, gaugeOrigin, SpriteEffects.None, 0.2f);
+                    0, gaugeOrigin, SpriteEffects.None, gaugeZ + 0.00002f);
             }
             
             // Entité
             col.A = (byte)((m_mapRenderer.HasVision((type & Views.EntityType.Teams) ^ Views.EntityType.Teams, entityPosition)) ? 255 : 220);
+            if (entity.IsStealthed)
+                col.A = 120;
+
+            
+
+            // Dessin de l'entité
             batch.Draw(tex,
                 drawRect, 
                 null,
@@ -148,7 +162,27 @@ namespace Codinsa2015.Rendering
                 __angle,
                 new Vector2(tex.Width/2, tex.Height),
                 SpriteEffects.None,
-                0.0f);
+                entityZ);
+
+            // Roots
+            if (entity.IsSilenced)
+            {
+                int us = m_mapRenderer.UnitSize;
+                Rectangle drect = new Rectangle(gaugeRect.X + us, gaugeRect.Y, us/2, us/2);
+                batch.Draw(Ressources.SilenceIcon,
+                    drect,
+                    null,
+                    Color.White, 0.0f, new Vector2(0, 0), SpriteEffects.None, entityZ);
+            }
+            if(entity.IsBlind)
+            {
+                int us = m_mapRenderer.UnitSize;
+                Rectangle drect = new Rectangle(gaugeRect.X - us, gaugeRect.Y, us / 2, us / 2);
+                batch.Draw(Ressources.BlindIcon,
+                    drect,
+                    null,
+                    Color.White, 0.0f, new Vector2(0, 0), SpriteEffects.None, entityZ);
+            }
         }
         /// <summary>
         /// Dessine l'entité à la position donnée.

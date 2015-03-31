@@ -126,6 +126,10 @@ namespace Codinsa2015.Rendering
         /// Effet de flou gaussien.
         /// </summary>
         GraphicsHelpers.GaussianBlur m_blur;
+        /// <summary>
+        /// Scrolling de la map (px).
+        /// </summary>
+        Point m_scrolling;
         #endregion
 
         #region properties
@@ -144,7 +148,16 @@ namespace Codinsa2015.Rendering
         /// <summary>
         /// Obtient le scrolling de la map (px).
         /// </summary>
-        public Point Scrolling { get; set; }
+        public Point Scrolling
+        {
+            get { return m_scrolling; }
+            set
+            {
+                m_scrolling = value;
+                m_scrolling.X = Math.Max(0, Math.Min((Passability.GetLength(0) * UnitSize) - m_viewport.Width, m_scrolling.X));
+                m_scrolling.Y = Math.Max(0, Math.Min((Passability.GetLength(1) * UnitSize) - m_viewport.Height, m_scrolling.Y));
+            }
+        }
         /// <summary>
         /// Valeur divisant la taille du render target sur lesquels seront dessinés les tiles, en vue
         /// d'un filtrage bilinéaire matériel lors de la remise à l'échelle.
