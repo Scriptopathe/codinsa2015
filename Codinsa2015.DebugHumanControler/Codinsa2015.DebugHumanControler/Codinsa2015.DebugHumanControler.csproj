@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="Components\DeveloperConsole.cs" />
     <Compile Include="Components\Minimap.cs" />
+    <Compile Include="Components\ShopInterface.cs" />
     <Compile Include="Components\StatsViewer.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="HumanControler.cs" />

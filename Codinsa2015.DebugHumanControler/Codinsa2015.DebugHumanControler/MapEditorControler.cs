@@ -259,11 +259,11 @@ namespace Codinsa2015.DebugHumanControler
             
 
             // Sauvegarde
-            if( Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M))
+            /*if( Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.M))
             {
                 Save();
             }
-
+            */
             // Chargement
             if (Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.L))
             {
@@ -404,7 +404,25 @@ namespace Codinsa2015.DebugHumanControler
             EntityBase entity = GameServer.GetMap().Entities[entityId];
             return add_eviewer(entity);
         }
+        /// <summary>
+        /// Ajoute l'interface de shop.
+        /// </summary>
+        [ScriptFunc("Ajoute l'interface de shop. pour le héros d'id donné.")]
+        public Components.ShopInterface add_shop(int heroId)
+        {
+            if (heroId >= GameServer.GetMap().Heroes.Count || heroId < 0)
+                puts("Le héros " + heroId + " n'existe pas.");
 
+            // Héros
+            EntityHero entity = GameServer.GetMap().Heroes[heroId];
+
+            // Shop
+            var shops = GameServer.GetMap().Entities.GetEntitiesByType(EntityType.Shop | (entity.Type & EntityType.Teams));
+            if(shops.Count <= 0)
+                puts("Aucun shop n'existe pour la " + (entity.Type & EntityType.Teams) + "...");
+
+            return new ShopInterface(m_console, m_baseControler.EnhancedGuiManager, entity, ((EntityShop)shops.First().Value).Shop);
+        }
         /// <summary>
         /// Ajoute un visualiseur de stats pour l'entité donnée.
         /// </summary>
