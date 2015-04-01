@@ -469,6 +469,7 @@ namespace Codinsa2015.Server
     {
         public float UpgradeCost1 = 300.0f;
         public float UpgradeCost2 = 300.0f;
+        public float UpgradeCostBonusIfExpensive = 100.0f;
 
         #region Weapon
         public float[] WeaponFlatAD = new float[] { 10, 20, 30, 40 };
@@ -482,16 +483,17 @@ namespace Codinsa2015.Server
         #endregion
 
         #region Armor
-        public float[] ArmorBonusArmor = new float[] { 10, 20, 30, 40 };
+        public float[] ArmorBonusArmor = new float[] { 10, 20, 30, 40, 50 };
         public float ArmorBonusArmorStep = 10;
-        public float[] ArmorBonusRM = new float[] { 10, 20, 30, 40 };
+        public float[] ArmorBonusRM = new float[] { 10, 20, 30, 40, 50 };
         public float ArmorBonusRMStep = 10;
-        public float[] ArmorBonusHP = new float[] { 10, 20, 30, 40 };
+        public float[] ArmorBonusHP = new float[] { 10, 20, 30, 40, 50 };
         public float ArmorBonusHPStep = 10;
-        public float[] ArmorBonusRegen = new float[] { 10, 20, 30, 40 };
+        public float[] ArmorBonusRegen = new float[] { 10, 20, 30, 40, 50 };
         public float ArmorBonusRegenStep = 10;
-        public float[] ArmorBonusSpeed = new float[] { 10, 20, 30, 40 };
+        public float[] ArmorBonusSpeed = new float[] { 10, 20, 30, 40, 50 };
         public float ArmorBonusSpeedStep = 10;
+        public float[] ArmorCost = new float[] { 100, 200, 300, 400, 500 };
         #endregion
 
         #region 
