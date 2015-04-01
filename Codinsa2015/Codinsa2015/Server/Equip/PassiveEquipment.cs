@@ -43,6 +43,18 @@ namespace Codinsa2015.Server.Equip
             PassiveAlterations = passiveAlterations;
             Cost = cost;
         }
+
+        /// <summary>
+        /// Crée et retourne une copie complète de cette instance.
+        /// </summary>
+        /// <returns></returns>
+        public PassiveEquipmentUpgradeModel Copy()
+        {
+            PassiveEquipmentUpgradeModel copy = new PassiveEquipmentUpgradeModel();
+            copy.Cost = Cost;
+            foreach (var alt in PassiveAlterations) { copy.PassiveAlterations.Add(alt.Copy()); }
+            return copy;
+        }
     }
     /// <summary>
     /// Représente un modèle d'équipement passif.
