@@ -480,6 +480,19 @@ namespace Codinsa2015.Server
         public float[] UpgradeAdBonus = new float[] { 10, 20, 30, 40 };
         public float[] UpgradeAsBonus = new float[] { 0.1f, 0.15f, 0.2f, 0.25f };
         #endregion
+
+        #region Armor
+        public float[] ArmorBonusArmor = new float[] { 10, 20, 30, 40 };
+        public float ArmorBonusArmorStep = 10;
+        public float[] ArmorBonusRM = new float[] { 10, 20, 30, 40 };
+        public float ArmorBonusRMStep = 10;
+        public float[] ArmorBonusHP = new float[] { 10, 20, 30, 40 };
+        public float ArmorBonusHPStep = 10;
+        public float[] ArmorBonusRegen = new float[] { 10, 20, 30, 40 };
+        public float ArmorBonusRegenStep = 10;
+        public float[] ArmorBonusSpeed = new float[] { 10, 20, 30, 40 };
+        public float ArmorBonusSpeedStep = 10;
+        #endregion
         public EquipConstants() { }
     }
 
