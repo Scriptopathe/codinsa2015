@@ -117,7 +117,6 @@
     <Compile Include="Server\Equip\UnwardConsummable.cs" />
     <Compile Include="Server\Equip\WardConsummable.cs" />
     <Compile Include="Server\Equip\Weapon.cs" />
-    <Compile Include="Server\Equip\ArmorFactory.cs" />
     <Compile Include="Server\Equip\WeaponFactory.cs" />
     <Compile Include="Server\Events\EventBigBoss.cs" />
     <Compile Include="Server\Events\EventCamp.cs" />
