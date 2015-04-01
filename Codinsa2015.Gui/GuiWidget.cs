@@ -14,6 +14,8 @@ namespace Codinsa2015.EnhancedGui
         /// </summary>
         public object UserData { get; set; }
         private Rectangle m_area;
+        private GuiWidget m_parent;
+        private List<GuiWidget> m_children;
         /// <summary>
         /// Obtient ou définit une référence vers le manager de ce widget.
         /// </summary>
@@ -21,7 +23,19 @@ namespace Codinsa2015.EnhancedGui
         /// <summary>
         /// Obtient le parent de ce widget.
         /// </summary>
-        public GuiWidget Parent { get; set; }
+        public GuiWidget Parent
+        {
+            get { return m_parent; }
+            set
+            {
+                if(m_parent != null && m_parent != value)
+                {
+                    m_parent.m_children.Remove(this);
+                }
+                m_parent = value;
+                m_parent.m_children.Add(this);
+            }
+        }
         /// <summary>
         /// Obtient ou définit la zone sur laquelle est établi le widget par rapport à son parent.
         /// </summary>
@@ -57,6 +71,10 @@ namespace Codinsa2015.EnhancedGui
         public virtual void Dispose()
         {
             IsDisposed = true;
+            foreach(GuiWidget w in m_children)
+            {
+                w.Dispose();
+            }
         }
 
         /// <summary>
@@ -68,7 +86,7 @@ namespace Codinsa2015.EnhancedGui
             Manager = manager;
             IsVisible = true;
             IsDisposed = false;
-
+            m_children = new List<GuiWidget>();
         }
 
         #region Drawing
