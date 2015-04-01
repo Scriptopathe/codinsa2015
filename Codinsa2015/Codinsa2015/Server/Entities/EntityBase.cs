@@ -1175,7 +1175,23 @@ namespace Codinsa2015.Server.Entities
                 // Applique les dégâts de base du sort + dégâts bonus fonction de l'attaque de la source.
                 float trueDamageDealt = ApplyAttackDamage(alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
 
-
+                // Stats
+                EntityHero dst = this as EntityHero;
+                EntityHero src = alteration.Source as EntityHero;
+                if(dst != null && src != null)
+                {
+                    dst.Stats.TotalDamageTaken += trueDamageDealt;
+                    src.Stats.TotalDamageDealtToHeroes += trueDamageDealt;
+                    src.Stats.TotalDamageDealt += trueDamageDealt;
+                }
+                else if(src != null)
+                {
+                    src.Stats.TotalDamageDealt += trueDamageDealt;
+                    if(EntityType.AllObjectives.HasFlag(this.Type & EntityType.Teams))
+                        src.Stats.TotalDamageDealtToObjectives += trueDamageDealt;
+                    if (this.Type.HasFlag(EntityType.Structure))
+                        src.Stats.TotalDamageDealtToStructures += trueDamageDealt;
+                }
                 // Notifie le système de récompenses.
                 if(this is EntityHero && alteration.Source is EntityHero)
                 {
@@ -1195,9 +1211,27 @@ namespace Codinsa2015.Server.Entities
                     m_recentlyAggressiveEntities.Add(alteration.Source.ID, alteration.Source);
                     m_recentlyAgressiveEntitiesMemoryTime.Add(alteration.Source.ID, DamageTimeMemory);
                 }
+
                 // Applique les dégâts de base du sort + dégâts bonus fonction de l'attaque de la source.
                 float trueDamageDealt = ApplyMagicDamage(alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
 
+                // Stats
+                EntityHero dst = this as EntityHero;
+                EntityHero src = alteration.Source as EntityHero;
+                if (dst != null && src != null)
+                {
+                    dst.Stats.TotalDamageTaken += trueDamageDealt;
+                    src.Stats.TotalDamageDealtToHeroes += trueDamageDealt;
+                    src.Stats.TotalDamageDealt += trueDamageDealt;
+                }
+                else if (src != null)
+                {
+                    src.Stats.TotalDamageDealt += trueDamageDealt;
+                    if (EntityType.AllObjectives.HasFlag(this.Type & EntityType.Teams))
+                        src.Stats.TotalDamageDealtToObjectives += trueDamageDealt;
+                    if (this.Type.HasFlag(EntityType.Structure))
+                        src.Stats.TotalDamageDealtToStructures += trueDamageDealt;
+                }
 
                 // Notifie le système de récompenses.
                 if (this is EntityHero && alteration.Source is EntityHero)
@@ -1219,8 +1253,27 @@ namespace Codinsa2015.Server.Entities
                     m_recentlyAgressiveEntitiesMemoryTime.Add(alteration.Source.ID, DamageTimeMemory);
                 }
 
+                float trueDamageDealt = alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All);
+                // Stats
+                EntityHero dst = this as EntityHero;
+                EntityHero src = alteration.Source as EntityHero;
+                if (dst != null && src != null)
+                {
+                    dst.Stats.TotalDamageTaken += trueDamageDealt;
+                    src.Stats.TotalDamageDealtToHeroes += trueDamageDealt;
+                    src.Stats.TotalDamageDealt += trueDamageDealt;
+                }
+                else if (src != null)
+                {
+                    src.Stats.TotalDamageDealt += trueDamageDealt;
+                    if (EntityType.AllObjectives.HasFlag(this.Type & EntityType.Teams))
+                        src.Stats.TotalDamageDealtToObjectives += trueDamageDealt;
+                    if (this.Type.HasFlag(EntityType.Structure))
+                        src.Stats.TotalDamageDealtToStructures += trueDamageDealt;
+                }
+
                 // Applique les dégâts de base du sort + dégâts bonus fonction de l'attaque de la source.
-                ApplyTrueDamage(alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
+                ApplyTrueDamage(trueDamageDealt);
             }
 
             // Applique les soins
@@ -1353,8 +1406,8 @@ namespace Codinsa2015.Server.Entities
             }
             #endregion
 
-            // Notifications au système de récompenses.
-            #region Notify
+            // Notifications au système de récompenses
+            #region Rewards
             if (notify)
                 switch (alteration.Model.Type)
                 {
@@ -1369,6 +1422,28 @@ namespace Codinsa2015.Server.Entities
                         GameServer.GetScene().RewardSystem.NotifyBuffOrDebuffReception(alteration.Source,
                             this, alteration.Model,
                             alteration.Model.GetValue(alteration.Source, this, ScalingRatios.All));
+                        break;
+                }
+            #endregion
+
+            // Statistiques
+            #region Stats
+            EntityHero src = alteration.Source as EntityHero;
+            if (notify)
+                switch (alteration.Model.Type)
+                {
+                    case StateAlterationType.AttackDamageBuff:
+                    case StateAlterationType.MagicDamageBuff:
+                    case StateAlterationType.AttackSpeed:
+                    case StateAlterationType.ArmorBuff:
+                    case StateAlterationType.CDR:
+                    case StateAlterationType.MaxHP:
+                    case StateAlterationType.Regen:
+                    case StateAlterationType.MagicResistBuff:
+                        break;
+                    case StateAlterationType.Heal:
+                        if (src != null)
+                            src.Stats.TotalHealings += alteration.Model.GetValue(src, this, ScalingRatios.All);
                         break;
                 }
             #endregion

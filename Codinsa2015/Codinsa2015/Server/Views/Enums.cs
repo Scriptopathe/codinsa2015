@@ -46,8 +46,8 @@ namespace Codinsa2015.Views
 		Team2Creep = 516,
 		Boss = 1280,
 		Miniboss = 2304,
+		AllTargettableNeutral = 3328,
 		AllObjectives = 3544,
-		AllTargettableNeutral = 4056,
 		Checkpoint = 16384,
 		Team1Checkpoint = 16386,
 		Team2Checkpoint = 16388,
@@ -59,10 +59,12 @@ namespace Codinsa2015.Views
 		WardPlacement = 65536,
 		Ward = 131072,
 		Shop = 262144,
+		Team1Shop = 262146,
+		Team2Shop = 262148,
 		HeroSpawner = 524288,
 		Team1HeroSpawner = 524290,
 		Team2HeroSpawner = 524292,
-		AllSaved = 609752,
+		AllSaved = 871896,
 		All = 16777215
 	}
 	
@@ -88,7 +90,7 @@ namespace Codinsa2015.Views
 		Boss = 1280,
 		Miniboss = 2304,
 		AllObjectives = 3544,
-		AllTargettableNeutral = 4056,
+		AllTargettableNeutral = 3840,
 		Checkpoint = 16384,
 		AllyCheckpoint = 16386,
 		EnnemyCheckpoint = 16388,
@@ -188,7 +190,8 @@ namespace Codinsa2015.Views
 		NoSlotAvailableOnHero = 7,
 		EnchantForNoWeapon = 8,
 		StackOverflow = 9,
-		Success = 10
+		Success = 10,
+		AlreadyMaxLevel = 11
 	}
 	
 	public enum GenericShapeType
@@ -230,7 +233,8 @@ namespace Codinsa2015.Views
 	{
 		Lobby = 0,
 		Pick = 1,
-		Game = 2
+		Game = 2,
+		End = 3
 	}
 	
 }

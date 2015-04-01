@@ -11,7 +11,8 @@ public enum ShopTransactionResult
 	NoSlotAvailableOnHero(7),
 	EnchantForNoWeapon(8),
 	StackOverflow(9),
-	Success(10);
+	Success(10),
+	AlreadyMaxLevel(11);
 	int _value;
 	ShopTransactionResult(int value) { _value = value; } 
 	public int getValue() { return _value; }

@@ -270,6 +270,12 @@ namespace Codinsa2015.Server.Entities
 
 
         }
+
+        public override void Die()
+        {
+            base.Die();
+
+        }
         #endregion
 
         

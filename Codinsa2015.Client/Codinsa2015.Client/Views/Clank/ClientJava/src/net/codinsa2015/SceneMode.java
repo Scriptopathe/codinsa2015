@@ -3,7 +3,8 @@ public enum SceneMode
 {
 	Lobby(0),
 	Pick(1),
-	Game(2);
+	Game(2),
+	End(3);
 	int _value;
 	SceneMode(int value) { _value = value; } 
 	public int getValue() { return _value; }

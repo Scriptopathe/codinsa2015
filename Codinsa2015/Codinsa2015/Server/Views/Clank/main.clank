@@ -1,4 +1,4 @@
-#include stdtypes.clank
+﻿#include stdtypes.clank
 #include XNAMacros.clank
 main
 {
@@ -72,8 +72,8 @@ main
 			Team2Creep = 516,
 			Boss = 1280,
 			Miniboss = 2304,
+			AllTargettableNeutral = 3328,
 			AllObjectives = 3544,
-			AllTargettableNeutral = 4056,
 			Checkpoint = 16384,
 			Team1Checkpoint = 16386,
 			Team2Checkpoint = 16388,
@@ -116,7 +116,7 @@ main
 			Boss = 1280,
 			Miniboss = 2304,
 			AllObjectives = 3544,
-			AllTargettableNeutral = 4056,
+			AllTargettableNeutral = 3840,
 			Checkpoint = 16384,
 			AllyCheckpoint = 16386,
 			EnnemyCheckpoint = 16388,
@@ -259,7 +259,8 @@ main
 		{
 			Lobby = 0,
 			Pick = 1,
-			Game = 2
+			Game = 2,
+			End = 3
 		}
 
 	}

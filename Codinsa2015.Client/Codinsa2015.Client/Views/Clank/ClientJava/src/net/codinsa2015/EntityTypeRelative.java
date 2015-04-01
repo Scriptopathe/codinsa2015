@@ -21,7 +21,7 @@ public enum EntityTypeRelative
 	Boss(1280),
 	Miniboss(2304),
 	AllObjectives(3544),
-	AllTargettableNeutral(4056),
+	AllTargettableNeutral(3840),
 	Checkpoint(16384),
 	AllyCheckpoint(16386),
 	EnnemyCheckpoint(16388),

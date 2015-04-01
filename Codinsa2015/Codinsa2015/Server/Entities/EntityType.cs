@@ -43,7 +43,7 @@ namespace Codinsa2015.Server.Entities
         AllTeam2 = Team2 | Tower | Spawner | Idol | Player | Creep,
         AllObjectives = Tower | Spawner | Idol | Boss | Miniboss,
         AllSaved = AllObjectives | Checkpoint | WardPlacement | HeroSpawner | Shop,
-        AllTargettableNeutral = Boss | Miniboss | Creep,
+        AllTargettableNeutral = Boss | Miniboss | Monster,
         // Team
         Team1Tower = Team1 | Tower,
         Team2Tower = Team2 | Tower,

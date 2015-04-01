@@ -25,6 +25,7 @@ namespace Codinsa2015.Server.Equip
             if(nearest != null)
             {
                 nearest.PutWard(owner);
+                owner.Stats.TotalWardsUsed++;
                 UsingStarted = true;
                 return  ConsummableUseResult.SuccessAndDestroyed;
             }

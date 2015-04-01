@@ -60,6 +60,9 @@ namespace Codinsa2015.Server.Entities
             base.DoUpdate(time);
             UpdateAggro();
             Attack(time);
+            /*
+            if ((Type & EntityType.Teams) == EntityType.Team2)
+                HP -= 1f;*/
         }
         /// <summary>
         /// Attaque l'ennemi ayant l'agro.
@@ -130,6 +133,16 @@ namespace Codinsa2015.Server.Entities
                     }
                 }
             }
+        }
+
+
+        /// <summary>
+        /// La mort de l'idole mets fin au jeu.
+        /// </summary>
+        public override void Die()
+        {
+            base.Die();
+            GameServer.GetScene().EndGame();
         }
         #endregion
 

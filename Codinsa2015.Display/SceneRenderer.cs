@@ -194,6 +194,16 @@ namespace Codinsa2015.Rendering
                 case SceneMode.Pick:
                     m_pickPhaseRenderer.Draw(batch, time, m_mainRenderTarget);
                     break;
+                case SceneMode.End:
+                    switch(Mode)
+                    {
+                        case DataMode.Direct:
+                            DrawEndOfGameDirect(batch);
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
+                    break;
             }
 
             __dirty = true;
@@ -201,6 +211,46 @@ namespace Codinsa2015.Rendering
 
         #region Draw
 
+        /// <summary>
+        /// Dessine l'écran de fin du jeu.
+        /// </summary>
+        public void DrawEndOfGameDirect(SpriteBatch batch)
+        {
+            // Dessine l'état final du jeu.
+            batch.GraphicsDevice.SetRenderTarget(m_mainRenderTarget);
+            batch.GraphicsDevice.Clear(Color.White);
+            /*batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            batch.Draw(m_mainRenderTarget, new Microsoft.Xna.Framework.Vector2(0, 0), Color.Wheat);
+            batch.End();*/
+            batch.Begin();
+            Views.EntityType winner = (Views.EntityType)GameServer.GetSrvScene().GetWinnerTeam();
+            // Ecrit le nom des gagnants.
+            int[] yTeam = new int[2] { 200, 200 };
+            int[] xTeam = new int[2] { 450, 800 };
+
+            // Dessine le nom de l'équipe gagnante.
+            Texture2D tex = winner == EntityType.Team1 ? Ressources.Team1Wins : Ressources.Team2Wins;
+            batch.Draw(tex, new Microsoft.Xna.Framework.Vector2((m_mainRenderTarget.Width - tex.Width )/ 2,
+                (m_mainRenderTarget.Height - tex.Height) / 2), Color.White);
+
+            
+            // Affiche la composition des équipes.
+            foreach(var hero in MapRdr.Map.Heroes)
+            {
+                int teamId = (hero.Type & Server.Entities.EntityType.Teams) == Server.Entities.EntityType.Team1 ? 0 : 1;
+                Color color = teamId == 0 ? Color.Blue : Color.Red;
+                batch.DrawString(Ressources.CourrierFont, GameServer.GetSrvScene().GetControlerByHeroId(hero.ID).HeroName,
+                    new Microsoft.Xna.Framework.Vector2(xTeam[teamId], yTeam[teamId]), color);
+
+                if (((Views.EntityType)hero.Type & Views.EntityType.Teams) == winner)
+                {
+                    // traitement pour les vainqueurs ?
+                }
+                yTeam[teamId] += 40;
+            }
+
+            batch.End();
+        }
 
         #endregion
         #endregion

@@ -477,6 +477,18 @@ namespace Codinsa2015.Server
         #endregion
         public EquipConstants() { }
     }
+
+    /// <summary>
+    /// Constantes concernant l'idole;
+    /// </summary>
+    public class IdolConstants : EntityConstants
+    {
+
+        public IdolConstants()
+        {
+            
+        }
+    }
     /// <summary>
     /// Représente toutes les constantes du jeu.
     /// Elles sont hierarchisées dans d'autres objets, afin que le fichier
@@ -498,6 +510,7 @@ namespace Codinsa2015.Server
         public HeroConstants Heroes;
         public TowerConstants Towers;
         public EquipConstants Equip;
+        public IdolConstants IdolConstants;
         /// <summary>
         /// Crée une nouvelle instance de GameConstants avec des constantes par défaut.
         /// </summary>
@@ -517,6 +530,7 @@ namespace Codinsa2015.Server
             Equip = new EquipConstants();
             Heroes = new HeroConstants();
             Towers = new TowerConstants();
+            IdolConstants = new IdolConstants();
         }
 
         /// <summary>

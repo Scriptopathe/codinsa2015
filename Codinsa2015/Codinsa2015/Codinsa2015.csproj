@@ -122,6 +122,7 @@
     <Compile Include="Server\Events\GameEvent.cs" />
     <Compile Include="Server\Events\PlayerResurrectorEvent.cs" />
     <Compile Include="Server\GameConstants.cs" />
+    <Compile Include="Server\HeroStatistics.cs" />
     <Compile Include="Server\Map.cs" />
     <Compile Include="Server\MapFIle.cs" />
     <Compile Include="Server\Net\CommandServer.cs" />

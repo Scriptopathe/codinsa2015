@@ -249,7 +249,7 @@ namespace Codinsa2015.Server
             // On donne une récompense au tueur.
             RewardConstants constants = GameServer.GetScene().Constants.Rewards;
             killer.PA += constants.KillReward;
-
+            killer.Stats.TotalKills++;
             // Bonus de PA/Kill pour le passif rugged.
             if(killer.UniquePassive == EntityUniquePassives.Rugged && killer.UniquePassiveLevel == 2)
             {
@@ -266,7 +266,7 @@ namespace Codinsa2015.Server
                     if (assistant != null)
                     {
                         assistant.PA += constants.AssistReward;
-
+                        assistant.Stats.TotalAssists++;
                         // Bonus d'assist du combattant.
                         if (assistant.Role == EntityHeroRole.Fighter)
                             assistant.PA += constants.TankAssistBonus;
@@ -290,7 +290,7 @@ namespace Codinsa2015.Server
                     if (attacker != null && !rewarded.Contains(attacker))
                     {
                         attacker.PA += constants.AssistReward;
-
+                        attacker.Stats.TotalAssists++;
                         // Bonus du combattant.
                         if (attacker.Role == EntityHeroRole.Fighter)
                             attacker.PA += constants.TankAssistBonus;
@@ -314,6 +314,13 @@ namespace Codinsa2015.Server
             // Si l'unité est un creep, on offre une récompense aux héros proches.
             if(unit.Type.HasFlag(EntityType.Creep) || unit.Type.HasFlag(EntityType.Monster))
             {
+                if (killer != null)
+                {
+                    if (unit.Type.HasFlag(EntityType.Creep))
+                        killer.Stats.TotalCreepsSlain++;
+                    if (unit.Type.HasFlag(EntityType.Monster))
+                        killer.Stats.TotalNeutralMonstersSlain++;
+                }
                 foreach(EntityHero hero in m_allHeroes)
                 {
                     // Si le héros est dans l'équipe adverse du creep/monstre tué.
@@ -346,9 +353,12 @@ namespace Codinsa2015.Server
             }
 
             // Récompense du HUNTER
-            if(unit.Type.HasFlag(EntityType.Monster) && killer.UniquePassive == EntityUniquePassives.Hunter)
+            if (killer != null)
             {
-                killer.PA += GameServer.GetScene().Constants.UniquePassives.HunterBonusGold;
+                if (unit.Type.HasFlag(EntityType.Monster) && killer.UniquePassive == EntityUniquePassives.Hunter)
+                {
+                    killer.PA += GameServer.GetScene().Constants.UniquePassives.HunterBonusGold;
+                }
             }
         }
         #endregion

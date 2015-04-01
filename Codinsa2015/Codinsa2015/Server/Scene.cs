@@ -16,7 +16,8 @@ namespace Codinsa2015.Server
     {
         Lobby,
         Pick,
-        Game
+        Game,
+        End,
     }
     /// <summary>
     /// Scène du moteur de jeu.
@@ -361,11 +362,20 @@ namespace Codinsa2015.Server
         {
             if(Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Enter))
             {
-                Mode = SceneMode.Pick;
-                InitializePickPhase();
+                EndLobby();
             }
         }
 
+        /// <summary>
+        /// Mets fin à la phase de lobby.
+        /// </summary>
+        public void EndLobby()
+        {
+            if (Mode != SceneMode.Lobby)
+                throw new Exceptions.IdiotProgrammerException("nope");
+            Mode = SceneMode.Pick;
+            InitializePickPhase();
+        }
 
         /// <summary>
         /// Callback appelé lorsqu'un client se connecte au serveur.
@@ -431,12 +441,21 @@ namespace Codinsa2015.Server
 
             if (PickControler.IsReadyToGo() && Input.IsTrigger(Microsoft.Xna.Framework.Input.Keys.Enter))
             {
-                Mode = SceneMode.Game;
-                InitializeGameMode();
+                EndPickPhase();
             }
         }
 
+        /// <summary>
+        /// Mets fin à la phase de picks
+        /// </summary>
+        public void EndPickPhase()
+        {
+            if (Mode != SceneMode.Pick)
+                throw new Exceptions.IdiotProgrammerException("nope");
 
+            Mode = SceneMode.Game;
+            InitializeGameMode();
+        }
         #endregion
         #region Game mode
         /// <summary>
@@ -500,6 +519,49 @@ namespace Codinsa2015.Server
 
         }
 
+        /// <summary>
+        /// Termine la phase de jeu et amène sur l'écran des stats.
+        /// </summary>
+        public void EndGame()
+        {
+            if (Mode != SceneMode.Game)
+                throw new Exceptions.IdiotProgrammerException("nope");
+            Mode = SceneMode.End;
+            SaveStats();
+        }
+
+        /// <summary>
+        /// Sauvegarde les statistiques utilisées pour l'analyse de la partie.
+        /// </summary>
+        void SaveStats()
+        {
+            EntityType winningTeam = GetWinnerTeam();
+            StringBuilder b = new StringBuilder();
+            b.AppendLine("==============================");
+            b.AppendLine("====== RESUME DE PARTIE ======");
+            b.Append("Equipe gagnante : ");
+            foreach(var kvp in Map.Heroes)
+            {
+                if ((kvp.Type & EntityType.Teams) == winningTeam)
+                    b.Append(GetControlerByHeroId(kvp.ID).HeroName + ", ");
+            }
+            b.Remove(b.Length - 1, 1); b.AppendLine();
+            b.Append("Equipe perdante : ");
+            foreach (var kvp in Map.Heroes)
+            {
+                if ((kvp.Type & EntityType.Teams) != winningTeam)
+                    b.Append(GetControlerByHeroId(kvp.ID).HeroName + ", ");
+            }
+            b.Remove(b.Length - 1, 1); b.AppendLine();
+            b.AppendLine("====== STATISTIQUES ======");
+            foreach(var hero in Map.Heroes)
+            {
+                b.AppendLine("------ " + GetControlerByHeroId(hero.ID).HeroName + " ------");
+                b.AppendLine(hero.Stats.ToString());
+            }
+
+            System.IO.File.AppendAllText("resume.txt", b.ToString());
+        }
         #endregion
 
         /// <summary>
@@ -509,6 +571,9 @@ namespace Codinsa2015.Server
         {
             switch (Mode)
             {
+                case SceneMode.End:
+                    UpdateEnd();
+                    break;
                 case SceneMode.Game:
                     UpdateGameMode(time);
                     break;
@@ -521,6 +586,32 @@ namespace Codinsa2015.Server
             }
         }
 
+        /// <summary>
+        /// Mets à jour la phase de fin de jeu.
+        /// </summary>
+        public void UpdateEnd()
+        {
+
+        }
+
+        /// <summary>
+        /// Obtient la team ayant gagné le jeu (si fin du jeu).
+        /// </summary>
+        /// <returns></returns>
+        public EntityType GetWinnerTeam()
+        {
+            if (Mode != SceneMode.End)
+                throw new Exceptions.IdiotProgrammerException("nope");
+
+            var idols = Map.Entities.GetEntitiesByType(EntityType.Idol);
+            EntityType winner = 0;
+            foreach(var idol in idols)
+            {
+                if (!idol.Value.IsDead)
+                    winner |= idol.Value.Type & EntityType.Teams;
+            }
+            return winner;
+        }
         /// <summary>
         /// Supprime les ressources allouées.
         /// </summary>

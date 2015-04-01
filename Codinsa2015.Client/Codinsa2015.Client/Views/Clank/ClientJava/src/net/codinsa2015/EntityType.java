@@ -20,8 +20,8 @@ public enum EntityType
 	Team2Creep(516),
 	Boss(1280),
 	Miniboss(2304),
+	AllTargettableNeutral(3328),
 	AllObjectives(3544),
-	AllTargettableNeutral(4056),
 	Checkpoint(16384),
 	Team1Checkpoint(16386),
 	Team2Checkpoint(16388),
@@ -33,10 +33,12 @@ public enum EntityType
 	WardPlacement(65536),
 	Ward(131072),
 	Shop(262144),
+	Team1Shop(262146),
+	Team2Shop(262148),
 	HeroSpawner(524288),
 	Team1HeroSpawner(524290),
 	Team2HeroSpawner(524292),
-	AllSaved(609752),
+	AllSaved(871896),
 	All(16777215);
 	int _value;
 	EntityType(int value) { _value = value; } 

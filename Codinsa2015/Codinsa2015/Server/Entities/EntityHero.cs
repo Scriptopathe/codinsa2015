@@ -64,6 +64,10 @@ namespace Codinsa2015.Server.Entities
 
         #region Properties
         /// <summary>
+        /// Obtient les statistiques de jeu de ce héros.
+        /// </summary>
+        public HeroStatistics Stats { get; set; }
+        /// <summary>
         /// Obtient les consommables possédés par ce héros.
         /// </summary>
         public ConsummableStack[] Consummables
@@ -233,7 +237,7 @@ namespace Codinsa2015.Server.Entities
         public EntityHero() : base()
         {
             LoadEntityConstants(GameServer.GetScene().Constants.Heroes);
-
+            Stats = new HeroStatistics();
             // TODO : virer ça (DEBUG).
             Spells = new List<Spell>();
             Spells.Add(Server.Spells.SpellFactory.Meteor(this)); //new Spells.FireballSpell(this, 4));
@@ -274,6 +278,15 @@ namespace Codinsa2015.Server.Entities
             {
                 m_consummables[i].Update(time);
             }
+        }
+
+        /// <summary>
+        /// Fait mourir cette instance de EntityHero.
+        /// </summary>
+        public override void Die()
+        {
+            base.Die();
+            Stats.TotalDeaths++;
         }
         #endregion
 

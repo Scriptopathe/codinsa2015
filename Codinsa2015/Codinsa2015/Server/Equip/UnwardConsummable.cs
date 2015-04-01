@@ -44,6 +44,7 @@ namespace Codinsa2015.Server.Equip
                 if(nearest != null)
                 {
                     nearest.DestroyWard(owner);
+                    owner.Stats.TotalWardsDestroyed++;
                     return ConsummableUseResult.SuccessAndDestroyed;
                 }
             }
