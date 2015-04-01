@@ -24,6 +24,14 @@ namespace Codinsa2015.Server.Entities
             get;
             set;
         }
+
+        public override bool IsDamageImmune
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         #region Methods

@@ -20,6 +20,14 @@ namespace Codinsa2015.Server.Entities
             return;
         }
 
+        public override bool IsDamageImmune
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         /// <summary>
         /// Crée une nouvelle instance de EntityWardPlacement.
         /// </summary>

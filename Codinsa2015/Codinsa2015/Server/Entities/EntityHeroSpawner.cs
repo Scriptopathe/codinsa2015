@@ -7,7 +7,13 @@ namespace Codinsa2015.Server.Entities
 {
     public class EntityHeroSpawner : EntityBase
     {
-
+        public override bool IsDamageImmune
+        {
+            get
+            {
+                return true;
+            }
+        }
         protected override void ApplyTrueDamage(float damage)
         {
             return;

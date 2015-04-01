@@ -769,7 +769,7 @@ namespace Codinsa2015.Server.Entities
         /// Obtient une valeur indiquant si cette unité possède une immunité temporaire aux dégâts.
         /// </summary>
         [Clank.ViewCreator.Export("bool", "Obtient une valeur indiquant si cette unité possède une immunité temporaire aux dégâts.")]
-        public bool IsDamageImmune
+        public virtual bool IsDamageImmune
         {
             get { return m_stateAlterations.GetInteractionsByType(StateAlterationType.DamageImmune).Count != 0; }
         }
@@ -1108,7 +1108,6 @@ namespace Codinsa2015.Server.Entities
         {
             if (IsDisposing)
                 return;
-
             // Recherche le tueur de l'entité.
             float maxTime = float.MinValue;
             EntityHero killer = null;
@@ -1150,6 +1149,7 @@ namespace Codinsa2015.Server.Entities
         {
             IsDisposed = false;
             IsDisposing = false;
+            m_path = null;
             HP = GetMaxHP();
             m_stateAlterations.EndAlterations(StateAlterationSource.SpellActive);
             m_stateAlterations.EndAlterations(StateAlterationSource.UniquePassive);

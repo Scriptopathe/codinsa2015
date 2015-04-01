@@ -114,39 +114,42 @@ namespace Codinsa2015.Rendering
             int offsetY = -drawRect.Height;
             int offsetX = -drawRect.Width / 2;
 
-            Rectangle gaugeRect = new Rectangle(drawPos.X +  offsetX + (drawRect.Width - totalLength) / 2,
+            Rectangle gaugeRect = new Rectangle(drawPos.X + offsetX + (drawRect.Width - totalLength) / 2,
                 drawPos.Y + offsetY - 10,
                 totalLength,
                 totalH);
-            float gaugeZ = 0.25f + ((gaugeRect.Y - tex.Height) / m_mapRenderer.SceneRenderer.MainRenderTarget.Height) / 2;
-            Color gaugeColor = blue ? Color.Blue : Color.Red;
-            // Jauge vide
-            batch.Draw(Ressources.LifebarEmpty,
-                gaugeRect,
-                null,
-                gaugeColor,
-                0, gaugeOrigin, SpriteEffects.None, gaugeZ);
-
-            // Vie
-            gaugeRect.Width = (int)(totalLength * percent);
-            batch.Draw(Ressources.LifebarFull,
-                gaugeRect,
-                null,
-                gaugeColor,
-                0, gaugeOrigin, SpriteEffects.None, gaugeZ + 0.00001f);
-
-            if (entity.ShieldPoints > 0)
+            if (!entity.IsDamageImmune)
             {
-                // Shield
-                gaugeRect.X += (int)(totalLength * percent);
-                gaugeRect.Width = (int)(gaugeRect.Width * shieldPercent);
+
+                float gaugeZ = 0.25f + ((gaugeRect.Y - tex.Height) / m_mapRenderer.SceneRenderer.MainRenderTarget.Height) / 2;
+                Color gaugeColor = type.HasFlag(Views.EntityType.Team1) ? Color.Blue : (type.HasFlag(Views.EntityType.Team2) ? Color.Red : Color.White);
+                // Jauge vide
+                batch.Draw(Ressources.LifebarEmpty,
+                    gaugeRect,
+                    null,
+                    gaugeColor,
+                    0, gaugeOrigin, SpriteEffects.None, gaugeZ);
+
+                // Vie
+                gaugeRect.Width = (int)(totalLength * percent);
                 batch.Draw(Ressources.LifebarFull,
                     gaugeRect,
                     null,
-                    Color.White,
-                    0, gaugeOrigin, SpriteEffects.None, gaugeZ + 0.00002f);
+                    gaugeColor,
+                    0, gaugeOrigin, SpriteEffects.None, gaugeZ + 0.00001f);
+
+                if (entity.ShieldPoints > 0)
+                {
+                    // Shield
+                    gaugeRect.X += (int)(totalLength * percent);
+                    gaugeRect.Width = (int)(gaugeRect.Width * shieldPercent);
+                    batch.Draw(Ressources.LifebarFull,
+                        gaugeRect,
+                        null,
+                        Color.White,
+                        0, gaugeOrigin, SpriteEffects.None, gaugeZ + 0.00002f);
+                }
             }
-            
             // Entité
             col.A = (byte)((m_mapRenderer.HasVision((type & Views.EntityType.Teams) ^ Views.EntityType.Teams, entityPosition)) ? 255 : 220);
             if (entity.IsStealthed)
