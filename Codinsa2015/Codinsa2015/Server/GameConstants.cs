@@ -472,8 +472,13 @@ namespace Codinsa2015.Server
 
         #region Weapon
         public float[] WeaponFlatAD = new float[] { 10, 20, 30, 40 };
-        public float[] WeaponScalingAD = new float[] { 0.80f, 1, 1.2f, 1.4f };
-
+        public float[] WeaponBonusAD = new float[] { 0.80f, 1, 1.2f, 1.4f };
+        public float[] WeaponADRatio = new float[] { 1, 1.2f, 1.4f, 1.6f };
+        public float[] WeaponAttackSpeed = new float[] { 0.0f, 0.2f, 0.4f, 0.6f}; // s'ajoute à l'AS de base du perso
+        public float[] WeaponCost = new float[] { 100, 200, 300, 400 };
+        public float[] WeaponRanges = new float[] { 1, 2, 3, 4 };
+        public float[] UpgradeAdBonus = new float[] { 10, 20, 30, 40 };
+        public float[] UpgradeAsBonus = new float[] { 0.1f, 0.15f, 0.2f, 0.25f };
         #endregion
         public EquipConstants() { }
     }

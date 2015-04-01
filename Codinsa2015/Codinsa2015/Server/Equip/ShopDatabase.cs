@@ -111,6 +111,10 @@ namespace Codinsa2015.Server.Equip
             Consummables.Add(ward);
             Consummables.Add(empty);
             Weapons.Add(WeaponFactory.BaseWeapon());
+            Weapons.Add(WeaponFactory.Spear());
+            Weapons.Add(WeaponFactory.SwordAndShield());
+            Weapons.Add(WeaponFactory.Cutlass());
+            Weapons.Add(WeaponFactory.Hammer());
             Enchants.Add(enchant);
         }
 
