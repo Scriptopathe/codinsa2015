@@ -85,6 +85,7 @@
     <Compile Include="Server\Controlers\LobbyControler.cs" />
     <Compile Include="Server\Controlers\PickPhaseControler.cs" />
     <Compile Include="Server\Controlers\ShopInterface.cs" />
+    <Compile Include="Server\Entities\BootsFactory.cs" />
     <Compile Include="Server\Entities\EntityBase.cs" />
     <Compile Include="Server\Entities\EntityIdol.cs" />
     <Compile Include="Server\Entities\EntityBigBoss.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Server\Entities\StateAlterationModel.cs" />
     <Compile Include="Server\Equip\Armor.cs" />
     <Compile Include="Server\Equip\Amulet.cs" />
+    <Compile Include="Server\Equip\ArmorFactory.cs" />
     <Compile Include="Server\Equip\Boots.cs" />
     <Compile Include="Server\Equip\Consummable.cs" />
     <Compile Include="Server\Equip\Equipment.cs" />

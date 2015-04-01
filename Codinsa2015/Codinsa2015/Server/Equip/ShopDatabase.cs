@@ -45,47 +45,30 @@ namespace Codinsa2015.Server.Equip
 
 
             // Bottes
-            Equip.PassiveEquipmentModel baseBoots = new Equip.PassiveEquipmentModel();
-            baseBoots.Type = Equip.EquipmentType.Boots;
-            baseBoots.Name = "Bottes de base";
-            baseBoots.Upgrades = new List<Equip.PassiveEquipmentUpgradeModel>() { 
-                    new Equip.PassiveEquipmentUpgradeModel(
-                        new List<StateAlterationModel>() 
-                        {
-                            
-                            new StateAlterationModel()
-                            {
-                                Type = StateAlterationType.MoveSpeed,
-                                BaseDuration = 1.0f,
-                                FlatValue = 5f,
-                            }
-                        },
-                        0)
-                };
-            Boots.Add(baseBoots);
+            Boots.Add(BootsFactory.LightShoes());
+            Boots.Add(BootsFactory.LivingShoes());
+            Boots.Add(BootsFactory.SteelChose());
+            Boots.Add(BootsFactory.WhiteShoes());
+            Boots.Add(BootsFactory.Rangers());
 
-            // Armure
-            Equip.PassiveEquipmentModel baseArmor = new Equip.PassiveEquipmentModel();
-            baseArmor.Name = "Armure de base";
-            baseArmor.Type = Equip.EquipmentType.Armor;
-            baseArmor.Upgrades = new List<Equip.PassiveEquipmentUpgradeModel>() { 
-                    new Equip.PassiveEquipmentUpgradeModel(
-                        new List<StateAlterationModel>() { },
-                        0)
-                };
-
-
-            Armors.Add(baseArmor);
+            // Armures
+            Armors.Add(ArmorFactory.AdamantineHarness());
+            Armors.Add(ArmorFactory.ArcmageArmor());
+            Armors.Add(ArmorFactory.BloodArmor());
+            Armors.Add(ArmorFactory.PatchworkArmor());
+            Armors.Add(ArmorFactory.PricklyCoat());
 
 
 
+            // Enchantements
             Equip.WeaponEnchantModel enchant = new Equip.WeaponEnchantModel()
             {
                 Name = "base",
                 Price = 100,
-
             };
 
+
+            // Consommables
             Equip.ConsummableModel unward = new Equip.ConsummableModel()
             {
                 ConsummableType = Equip.ConsummableType.Unward,
@@ -110,6 +93,8 @@ namespace Codinsa2015.Server.Equip
             Consummables.Add(unward);
             Consummables.Add(ward);
             Consummables.Add(empty);
+
+            // Armes
             Weapons.Add(WeaponFactory.BaseWeapon());
             Weapons.Add(WeaponFactory.Spear());
             Weapons.Add(WeaponFactory.SwordAndShield());

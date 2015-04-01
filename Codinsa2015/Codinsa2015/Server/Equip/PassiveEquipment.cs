@@ -93,6 +93,11 @@ namespace Codinsa2015.Server.Equip
         /// </summary>
         public List<PassiveEquipmentUpgradeModel> Upgrades { get; set; }
 
+
+        public PassiveEquipmentModel()
+        {
+            Upgrades = new List<PassiveEquipmentUpgradeModel>();
+        }
         #endregion
     }
 
