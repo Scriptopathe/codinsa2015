@@ -52,15 +52,11 @@ namespace Codinsa2015.Server.Equip
             Boots.Add(BootsFactory.Rangers());
 
             // Armures
-            Equip.PassiveEquipmentModel baseArmor = new Equip.PassiveEquipmentModel();
-            baseArmor.Name = "Armure de base";
-            baseArmor.Type = Equip.EquipmentType.Armor;
-            baseArmor.Upgrades = new List<Equip.PassiveEquipmentUpgradeModel>() { 
-                    new Equip.PassiveEquipmentUpgradeModel(
-                        new List<StateAlterationModel>() { },
-                        0)
-                };
-            Armors.Add(baseArmor);
+            Armors.Add(ArmorFactory.AdamantineHarness());
+            Armors.Add(ArmorFactory.ArcmageArmor());
+            Armors.Add(ArmorFactory.BloodArmor());
+            Armors.Add(ArmorFactory.PatchworkArmor());
+            Armors.Add(ArmorFactory.PricklyCoat());
 
 
 
@@ -69,7 +65,6 @@ namespace Codinsa2015.Server.Equip
             {
                 Name = "base",
                 Price = 100,
-
             };
 
 
