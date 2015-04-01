@@ -493,6 +493,16 @@ namespace Codinsa2015.Server
         public float[] ArmorBonusSpeed = new float[] { 10, 20, 30, 40 };
         public float ArmorBonusSpeedStep = 10;
         #endregion
+
+        #region 
+        public float[] BootsMoveSpeed = new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f };
+        public float[] BootsArmor = new float[] { 5, 10, 15, 20, 15 };
+        public float[] BootsRM = new float[] { 5, 10, 15, 20, 15 };
+        public float[] BootsRegen = new float[] { 1, 2, 3, 4, 5 };
+        public float[] BootsHP = new float[] { 10, 20, 30, 40, 50 };
+        public float[] BootsPrices = new float[] { 50, 70, 90, 110, 120 };
+
+        #endregion
         public EquipConstants() { }
     }
 
