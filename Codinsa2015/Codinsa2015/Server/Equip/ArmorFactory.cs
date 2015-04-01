@@ -32,31 +32,31 @@ namespace Codinsa2015.Server.Equip
                 new StateAlterationModel()
                 {
                     Type = StateAlterationType.ArmorBuff,
-                    FlatValue = bonusArmor == null ? 0 : Math.Sign(bonusArmor.Value) * cst.ArmorBonusArmor[bonusArmor.Value]
+                    FlatValue = bonusArmor == null ? 0 : Math.Sign(bonusArmor.Value) * cst.ArmorBonusArmor[Math.Abs(bonusArmor.Value)]
                 },
                 // bonus de rm (1)
                 new StateAlterationModel()
                 {
                     Type = StateAlterationType.MagicResistBuff,
-                    FlatValue = bonusRM == null ? 0 : Math.Sign(bonusRM.Value) * cst.ArmorBonusRM[bonusRM.Value]
+                    FlatValue = bonusRM == null ? 0 : Math.Sign(bonusRM.Value) * cst.ArmorBonusRM[Math.Abs(bonusRM.Value)]
                 },
                 // bonus de HP (2)
                 new StateAlterationModel()
                 {
                     Type = StateAlterationType.MaxHP,
-                    FlatValue = bonusHP == null ? 0 : Math.Sign(bonusHP.Value) * cst.ArmorBonusHP[bonusHP.Value]
+                    FlatValue = bonusHP == null ? 0 : Math.Sign(bonusHP.Value) * cst.ArmorBonusHP[Math.Abs(bonusHP.Value)]
                 },
                 // bonus de regen hp (3)
                 new StateAlterationModel()
                 {
                     Type = StateAlterationType.Regen,
-                    FlatValue = regenHP == null ? 0 : Math.Sign(regenHP.Value) * cst.ArmorBonusRegen[regenHP.Value]
+                    FlatValue = regenHP == null ? 0 : Math.Sign(regenHP.Value) * cst.ArmorBonusRegen[Math.Abs(regenHP.Value)]
                 },
                 // bonus de speed (4)
                 new StateAlterationModel()
                 {
                     Type = StateAlterationType.MoveSpeed,
-                    FlatValue = bonusSpeed == null ? 0 : Math.Sign(bonusSpeed.Value) * cst.ArmorBonusSpeed[bonusSpeed.Value]
+                    FlatValue = bonusSpeed == null ? 0 : Math.Sign(bonusSpeed.Value) * cst.ArmorBonusSpeed[Math.Abs(bonusSpeed.Value)]
                 },
             };
         }
