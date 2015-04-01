@@ -19,13 +19,16 @@ namespace Codinsa2015.Client
             {
                 game.Run();
             }*/
-            
             string str = Console.ReadLine();
             TCPHelper.Initialize(Codinsa2015.Server.GameServer.__DEBUG_PORT, "127.0.0.1", str);
             State state = new State();
             Console.WriteLine("Client started...");
             List<Views.SpellView> spells = state.GetSpells();
             int spellId = 0;
+
+
+            Views.MapView mapView = state.GetMapView();
+            bool canWalk = mapView.Passability[8][9];
             while (true)
             {
                 var entities = state.GetEntitiesInSight();

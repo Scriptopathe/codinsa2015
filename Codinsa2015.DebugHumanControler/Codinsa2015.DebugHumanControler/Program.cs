@@ -15,7 +15,7 @@ namespace Codinsa2015.DebugHumanControler
             // Chargement de toutes les assemblys au démarrage
             // pour éviter des vieux laggs.
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
-
+            float f = Vector2.Distance(new Vector2(1, 2), new Vector2(1.5f, 3.5f));
             loadedAssemblies
                 .SelectMany(x => x.GetReferencedAssemblies())
                 .Distinct()
