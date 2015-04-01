@@ -45,26 +45,13 @@ namespace Codinsa2015.Server.Equip
 
 
             // Bottes
-            Equip.PassiveEquipmentModel baseBoots = new Equip.PassiveEquipmentModel();
-            baseBoots.Type = Equip.EquipmentType.Boots;
-            baseBoots.Name = "Bottes de base";
-            baseBoots.Upgrades = new List<Equip.PassiveEquipmentUpgradeModel>() { 
-                    new Equip.PassiveEquipmentUpgradeModel(
-                        new List<StateAlterationModel>() 
-                        {
-                            
-                            new StateAlterationModel()
-                            {
-                                Type = StateAlterationType.MoveSpeed,
-                                BaseDuration = 1.0f,
-                                FlatValue = 5f,
-                            }
-                        },
-                        0)
-                };
-            Boots.Add(baseBoots);
+            Boots.Add(BootsFactory.LightShoes());
+            Boots.Add(BootsFactory.LivingShoes());
+            Boots.Add(BootsFactory.SteelChose());
+            Boots.Add(BootsFactory.WhiteShoes());
+            Boots.Add(BootsFactory.Rangers());
 
-            // Armure
+            // Armures
             Equip.PassiveEquipmentModel baseArmor = new Equip.PassiveEquipmentModel();
             baseArmor.Name = "Armure de base";
             baseArmor.Type = Equip.EquipmentType.Armor;
@@ -73,12 +60,11 @@ namespace Codinsa2015.Server.Equip
                         new List<StateAlterationModel>() { },
                         0)
                 };
-
-
             Armors.Add(baseArmor);
 
 
 
+            // Enchantements
             Equip.WeaponEnchantModel enchant = new Equip.WeaponEnchantModel()
             {
                 Name = "base",
@@ -86,6 +72,8 @@ namespace Codinsa2015.Server.Equip
 
             };
 
+
+            // Consommables
             Equip.ConsummableModel unward = new Equip.ConsummableModel()
             {
                 ConsummableType = Equip.ConsummableType.Unward,
@@ -110,6 +98,8 @@ namespace Codinsa2015.Server.Equip
             Consummables.Add(unward);
             Consummables.Add(ward);
             Consummables.Add(empty);
+
+            // Armes
             Weapons.Add(WeaponFactory.BaseWeapon());
             Weapons.Add(WeaponFactory.Spear());
             Weapons.Add(WeaponFactory.SwordAndShield());
