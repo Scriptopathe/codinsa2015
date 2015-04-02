@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
-
+using Codinsa2015.Server.Balancing;
+using BS = Codinsa2015.Server.Balancing.IBalanceSystem<float>;
+using LinearBS = Codinsa2015.Server.Balancing.LinearBalanceSystem<float>;
+using ArrayBS = Codinsa2015.Server.Balancing.ArrayBalanceSystem<float>;
 namespace Codinsa2015.Server
 {
     /// <summary>
@@ -232,8 +235,8 @@ namespace Codinsa2015.Server
             Armor = 100;
             MagicResist = 200;
             AttackSpeed = 1.5f;
-            AttackDamage = 90;
-            AttackRange = 6f;
+            AttackDamage = 150;
+            AttackRange = 8f;
         }
     }
 
@@ -254,15 +257,17 @@ namespace Codinsa2015.Server
     /// </summary>
     public class SpawnerConstants : EntityConstants
     {
-        public float CreepsPerWave;
-        public float WavesInterval;
-        public float Rows;
+        public int CreepsPerWave; // nombre de creeps par vague
+        public float CreepSpawnDelay; // délai entre le spawn de 2 creeps.
+        public float WavesInterval; // délai entre l'apparition de 2 vagues
+        public int Rows;          // nombre de lignes de sbires.
 
         public SpawnerConstants() : base()
         {
-            CreepsPerWave = 6.0f;
-            WavesInterval = 30.0f;
-            Rows = 3;
+            CreepsPerWave = 0;//16;
+            WavesInterval = 45.0f;
+            CreepSpawnDelay = 0.1f;
+            Rows = 4;
         }
     }
 
@@ -275,7 +280,7 @@ namespace Codinsa2015.Server
         public float SellingPriceFactor;
         public ShopConstants()
         {
-            DefaultBuyRange = 4.0f;
+            DefaultBuyRange = 6.0f;
             SellingPriceFactor = 0.9f;
         }
     }
@@ -353,7 +358,7 @@ namespace Codinsa2015.Server
             VisionRange = 4.0f;
             MoveSpeed = 4.0f;
             AttackSpeed = 1.0f;
-            AttackDamage = 40;
+            AttackDamage = 5;
             AttackRange = 5f;
             Armor = 10f;
         }
@@ -429,33 +434,33 @@ namespace Codinsa2015.Server
     /// </summary>
     public class ActiveSpellsConstants
     {
-        public float[] Ranges = new float[] { 2, 4, 6, 8 };
-        public float[] Aoes   = new float[] { 0.4f, 0.8f, 1.5f, 2.5f};
-        public float[] HealApRatio = new float[] { 0.1f, 0.2f, 0.4f, 0.8f };
-        public float[] ShieldRatios = new float[] { 0.2f, 0.5f, 1.0f, 2.0f };
-        public float[] ShieldDuration = new float[] { 1, 2, 3, 5 };
-        public float[] MoveSpeedAlterations = new float[] { 0.1f, 0.2f, 0.4f, 0.7f };
-        public float[] MoveSpeedDurations = new float[] { 1, 2, 3, 5 };
-        public float[] AoeDurations = new float[] { 0.2f, 2, 3, 5 };
-        public float[] ApDamageFlat = new float[] { 5, 10, 15, 20 };
-        public float[] AdDamageFlat = new float[] { 5, 10, 15, 20 };
-        public float[] ApDamageRatios = new float[] { 0.2f, 0.5f, 1, 2 };
-        public float[] AdDamageRatios = new float[] { 0.2f, 0.5f, 1, 2 };
-        public float[] MrAlterations = new float[] { 10, 20, 50, 100 };
-        public float[] ArmorAlterations = new float[] { 10, 20, 50, 100 };
-        public float[] ResistAlterationDuration = new float[] { 1, 2, 3, 5 };
-        public float[] StunDurations = new float[] { 0.3f, 0.6f, 1, 1.5f };
-        public float[] RootDurations = new float[] { 0.3f, 0.6f, 1, 1.5f };
-        public float[] SilenceDurations = new float[] { 0.5f, 0.1f, 1.5f, 2.5f };
-        public float[] BlindDurations = new float[] { 0.5f, 0.1f, 1.5f, 2.5f };
-        public float[] DashLengths = new float[] { 2, 4, 6, 8 };
-        public float[] CDs = new float[] { 0.5f, 0.5f, 0.5f, 0.5f }; // new float[] { 1, 3, 5, 7 };
-        public float[] AttackSpeedBonuses = new float[] { 0.20f, 0.40f, 0.60f, 0.80f };
-        public float[] AttackSpeedBonusesDurations = new float[] { 1, 2, 3, 5 };
-        public float[] FlatADAPBonuses = new float[] { 4, 8, 12, 20 };
-        public float[] ADAPBonusesDurations = new float[] { 1, 2, 3, 5 };
-        public float[] ScalingADAPBonuses = new float[] { 0.05f, 0.10f, 0.15f, 0.20f };
-        public float[] ProjectileSpeed = new float[] { 0.5f, 1, 1.5f, 2.0f };
+        public ArrayBS Ranges = new float[] { 2, 4, 6, 8 };
+        public ArrayBS Aoes   = new float[] { 0.4f, 0.8f, 1.5f, 2.5f};
+        public ArrayBS HealApRatio = new float[] { 0.1f, 0.2f, 0.4f, 0.8f };
+        public ArrayBS ShieldRatios = new float[] { 0.2f, 0.5f, 1.0f, 2.0f };
+        public ArrayBS ShieldDuration = new float[] { 1, 2, 3, 5 };
+        public ArrayBS MoveSpeedAlterations = new float[] { 0.1f, 0.2f, 0.4f, 0.7f };
+        public ArrayBS MoveSpeedDurations = new float[] { 1, 2, 3, 5 };
+        public ArrayBS AoeDurations = new float[] { 0.2f, 2, 3, 5 };
+        public ArrayBS ApDamageFlat = new float[] { 5, 10, 15, 20 };
+        public ArrayBS AdDamageFlat = new float[] { 5, 10, 15, 20 };
+        public ArrayBS ApDamageRatios = new float[] { 0.2f, 0.5f, 1, 2 };
+        public ArrayBS AdDamageRatios = new float[] { 0.2f, 0.5f, 1, 2 };
+        public ArrayBS MrAlterations = new float[] { 10, 20, 50, 100 };
+        public ArrayBS ArmorAlterations = new float[] { 10, 20, 50, 100 };
+        public ArrayBS ResistAlterationDuration = new float[] { 1, 2, 3, 5 };
+        public ArrayBS StunDurations = new float[] { 0.3f, 0.6f, 1, 1.5f };
+        public ArrayBS RootDurations = new float[] { 0.3f, 0.6f, 1, 1.5f };
+        public ArrayBS SilenceDurations = new float[] { 0.5f, 0.1f, 1.5f, 2.5f };
+        public ArrayBS BlindDurations = new float[] { 0.5f, 0.1f, 1.5f, 2.5f };
+        public ArrayBS DashLengths = new float[] { 2, 4, 6, 8 };
+        public ArrayBS CDs = new float[] { 0.5f, 0.5f, 0.5f, 0.5f }; // new float[] { 1, 3, 5, 7 };
+        public ArrayBS AttackSpeedBonuses = new float[] { 0.20f, 0.40f, 0.60f, 0.80f };
+        public ArrayBS AttackSpeedBonusesDurations = new float[] { 1, 2, 3, 5 };
+        public ArrayBS FlatADAPBonuses = new float[] { 4, 8, 12, 20 };
+        public ArrayBS ADAPBonusesDurations = new float[] { 1, 2, 3, 5 };
+        public ArrayBS ScalingADAPBonuses = new float[] { 0.05f, 0.10f, 0.15f, 0.20f };
+        public ArrayBS ProjectileSpeed = new float[] { 0.5f, 1, 1.5f, 2.0f };
         public ActiveSpellsConstants()
         {
 
@@ -469,42 +474,48 @@ namespace Codinsa2015.Server
     {
         public float UpgradeCost1 = 300.0f;
         public float UpgradeCost2 = 300.0f;
-        public float UpgradeCostBonusIfExpensive = 100.0f;
+
+        #region 
+        public LinearBS EquipAdFlatOnHit = new LinearBS(10, 10);
+        public LinearBS EquipAdRatioOnHit = new LinearBS(1, 0.2f);
+        public LinearBS EquipBonusAdFlat = new LinearBS(5f, 5f);
+        public LinearBS EquipBonusSourcePercentAd = new LinearBS(0.8f, 0.2f);
+        public LinearBS EquipBonusApFlat = new LinearBS(5f, 5f);
+        public LinearBS EquipBonusAttackSpeed = new LinearBS(0.20f, 0.2f);
+        public LinearBS EquipCost = new LinearBS(100, 50);
+        public LinearBS EquipRange = new LinearBS(1, 1);
+        public LinearBS EquipBonusArmor = new LinearBS(10, 10);
+        public LinearBS EquipBonusMR = new LinearBS(10, 10);
+        public LinearBS EquipBonusMaxHP = new LinearBS(10, 10);
+        public LinearBS EquipBonusMoveSpeed = new LinearBS(0.1f, 0.1f);
+        public LinearBS EquipBonusRegen = new LinearBS(1, 0.5f);
+        public LinearBS EquipBonusCDR = new LinearBS(0.05f, 0.025f);
+
+        public LinearBS EquipOnHitEffectFlatHeal = new LinearBS(4, 1);
+        public LinearBS EnchantOnHitEffectsDuration = new LinearBS(0.50f, 0.25f);
+        #endregion
+
 
         #region Weapon
-        public float[] WeaponFlatAD = new float[] { 10, 20, 30, 40 };
-        public float[] WeaponBonusAD = new float[] { 0.80f, 1, 1.2f, 1.4f };
-        public float[] WeaponADRatio = new float[] { 1, 1.2f, 1.4f, 1.6f };
-        public float[] WeaponAttackSpeed = new float[] { 0.0f, 0.2f, 0.4f, 0.6f}; // s'ajoute à l'AS de base du perso
-        public float[] WeaponCost = new float[] { 100, 200, 300, 400 };
-        public float[] WeaponRanges = new float[] { 1, 2, 3, 4 };
-        public float[] UpgradeAdBonus = new float[] { 10, 20, 30, 40 };
-        public float[] UpgradeAsBonus = new float[] { 0.1f, 0.15f, 0.2f, 0.25f };
+        public ArrayBS UpgradeAdBonus = new float[] { 10, 20, 30, 40 };
+        public ArrayBS UpgradeAsBonus = new float[] { 0.1f, 0.15f, 0.2f, 0.25f };
         #endregion
 
         #region Armor
-        public float[] ArmorBonusArmor = new float[] { 10, 20, 30, 40, 50 };
+        public float UpgradeCostBonusIfExpensive = 100.0f;
+        public ArrayBS ArmorBonusArmor = new float[] { 10, 20, 30, 40, 50 };
         public float ArmorBonusArmorStep = 10;
-        public float[] ArmorBonusRM = new float[] { 10, 20, 30, 40, 50 };
+        public ArrayBS ArmorBonusRM = new float[] { 10, 20, 30, 40, 50 };
         public float ArmorBonusRMStep = 10;
-        public float[] ArmorBonusHP = new float[] { 10, 20, 30, 40, 50 };
+        public ArrayBS ArmorBonusHP = new float[] { 10, 20, 30, 40, 50 };
         public float ArmorBonusHPStep = 10;
-        public float[] ArmorBonusRegen = new float[] { 10, 20, 30, 40, 50 };
+        public ArrayBS ArmorBonusRegen = new float[] { 10, 20, 30, 40, 50 };
         public float ArmorBonusRegenStep = 10;
-        public float[] ArmorBonusSpeed = new float[] { 10, 20, 30, 40, 50 };
+        public ArrayBS ArmorBonusSpeed = new float[] { 10, 20, 30, 40, 50 };
         public float ArmorBonusSpeedStep = 10;
-        public float[] ArmorCost = new float[] { 100, 200, 300, 400, 500 };
+        public ArrayBS ArmorCost = new float[] { 100, 200, 300, 400, 500 };
         #endregion
 
-        #region 
-        public float[] BootsMoveSpeed = new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f };
-        public float[] BootsArmor = new float[] { 5, 10, 15, 20, 15 };
-        public float[] BootsRM = new float[] { 5, 10, 15, 20, 15 };
-        public float[] BootsRegen = new float[] { 1, 2, 3, 4, 5 };
-        public float[] BootsHP = new float[] { 10, 20, 30, 40, 50 };
-        public float[] BootsPrices = new float[] { 50, 70, 90, 110, 120 };
-
-        #endregion
         public EquipConstants() { }
     }
 

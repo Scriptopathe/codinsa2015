@@ -280,21 +280,21 @@ namespace Codinsa2015.Server.Entities
         public float GetValue(EntityBase source, EntityBase destination, ScalingRatios ratios)
         {
             float totalValue = FlatValue;
-            if ((ratios & ScalingRatios.SrcAd) == ScalingRatios.SrcAd)
+            if ((ratios & ScalingRatios.SrcAd) == ScalingRatios.SrcAd && SourcePercentADValue != 0)
                 totalValue += SourcePercentADValue * source.GetAttackDamage();
-            if ((ratios & ScalingRatios.SrcArmor) == ScalingRatios.SrcArmor)
+            if ((ratios & ScalingRatios.SrcArmor) == ScalingRatios.SrcArmor && SourcePercentArmorValue != 0)
                 totalValue += SourcePercentArmorValue * source.GetArmor();
-            if ((ratios & ScalingRatios.SrcHP) == ScalingRatios.SrcHP)
+            if ((ratios & ScalingRatios.SrcHP) == ScalingRatios.SrcHP && SourcePercentHPValue != 0)
                 totalValue += SourcePercentHPValue * source.GetHP();
-            if ((ratios & ScalingRatios.SrcMaxHP) == ScalingRatios.SrcMaxHP)
+            if ((ratios & ScalingRatios.SrcMaxHP) == ScalingRatios.SrcMaxHP && SourcePercentMaxHPValue != 0)
                 totalValue += SourcePercentMaxHPValue * source.GetMaxHP();
-            if ((ratios & ScalingRatios.SrcAP) == ScalingRatios.SrcAP)
+            if ((ratios & ScalingRatios.SrcAP) == ScalingRatios.SrcAP && SourcePercentAPValue != 0)
                 totalValue += SourcePercentAPValue * source.GetAbilityPower();
-            if ((ratios & ScalingRatios.SrcMR) == ScalingRatios.SrcMR)
+            if ((ratios & ScalingRatios.SrcMR) == ScalingRatios.SrcMR && SourcePercentRMValue != 0)
                 totalValue += SourcePercentRMValue * source.GetMagicResist();
 
 
-
+            /*
             if ((ratios & ScalingRatios.DstAd) == ScalingRatios.DstAd)
                 totalValue += DestPercentADValue * destination.GetAttackDamage();
             if ((ratios & ScalingRatios.DstArmor) == ScalingRatios.DstArmor)
@@ -306,7 +306,7 @@ namespace Codinsa2015.Server.Entities
             if ((ratios & ScalingRatios.DstAP) == ScalingRatios.DstAP)
                 totalValue += DestPercentAPValue * destination.GetAbilityPower();
             if ((ratios & ScalingRatios.SrcMR) == ScalingRatios.SrcMR)
-                totalValue += DestPercentRMValue * destination.GetMagicResist();
+                totalValue += DestPercentRMValue * destination.GetMagicResist();*/
 
             // Application des bonus.
             if(destination.Type.HasFlag(EntityType.Structure))

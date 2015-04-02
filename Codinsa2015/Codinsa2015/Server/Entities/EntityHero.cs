@@ -244,6 +244,8 @@ namespace Codinsa2015.Server.Entities
             Spells.Add(Server.Spells.SpellFactory.BroForce(this)); //(new Spells.DashForwardSpell(this));
             Spells.Add(Server.Spells.SpellFactory.Stasis(this));
             Spells.Add(Server.Spells.SpellFactory.MaximumGravity(this));
+            Weapon = new Equip.Weapon(this, Server.Equip.WeaponFactory.Hammer());
+            Weapon.Enchant = Equip.EnchantFactory.Fury();
 
             Type |= EntityType.Player;
             VisionRange = 8;

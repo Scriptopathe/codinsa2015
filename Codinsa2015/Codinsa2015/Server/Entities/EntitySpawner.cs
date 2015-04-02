@@ -64,16 +64,11 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         public EntitySpawner() : base()
         {
-            BaseArmor = 40;
-            BaseAttackDamage = 60;
-            BaseMagicResist = 40;
-            BaseMaxHP = 1200;
-            HP = BaseMaxHP;
-            BaseMoveSpeed = 0f;
-            SpawnInterval = 30;
-            CreepsPerWave = 16; // 6
-            SpawnDecay = 0.1f;
-            RowCount = 4;
+            var cst = GameServer.GetScene().Constants.Structures.Spawners;
+            RowCount = cst.Rows;
+            SpawnDecay = cst.CreepSpawnDelay;
+            CreepsPerWave = cst.CreepsPerWave;
+            SpawnInterval = cst.WavesInterval;
             Type |= EntityType.Spawner;
         }
 
@@ -96,6 +91,7 @@ namespace Codinsa2015.Server.Entities
                         var idol = idolCandidates.First().Value;
                         SpawnPosition = idol.Position;
                     }
+
                     GameServer.GetScene().EventSheduler.Schedule(new Scheduler.ActionDelegate(() =>
                     {
                         EntityCreep creep = new EntityCreep()
