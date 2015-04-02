@@ -269,6 +269,44 @@ namespace Codinsa2015.Server.Entities
         [Clank.ViewCreator.Export("float", "Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.")]
         public float CreepBonus { get; set; }
 
+
+        /// <summary>
+        /// Obtient un string permettant de visualiser cette altération.
+        /// </summary>
+        public string Debug_Stats
+        {
+            get
+            {
+                StringBuilder b = new StringBuilder();
+                b.Append(Type + "{ ");
+
+                b.Append("FlatValue = " + FlatValue);
+                switch(Type)
+                {
+                    case StateAlterationType.AttackDamageBuff:
+                    case StateAlterationType.AttackDamage:
+                        b.Append(", SourcePercentADValue = " + SourcePercentADValue);
+                        break;
+                    case StateAlterationType.MagicDamage:
+                    case StateAlterationType.MagicDamageBuff:
+                        b.Append(", SourcePercentAPValue = " + SourcePercentAPValue);
+                        break;
+                    case StateAlterationType.MaxHP:
+                        b.Append(", SourcePercentMaxHP = " + SourcePercentMaxHPValue);
+                        break;
+                    case StateAlterationType.ArmorBuff:
+                        b.Append(", SourcePercentArmor = " + SourcePercentArmorValue);
+                        break;
+                    case StateAlterationType.MagicResistBuff:
+                        b.Append(", SourcePercentMagicResist = " + SourcePercentRMValue);
+                        break;
+
+                }
+                b.Append(" }");
+
+                return b.ToString();
+            }
+        }
         /// <summary>
         /// Calcule la valeur totale de l'altération d'état en fonction des différents scalings passés en 
         /// paramètres au moyen de "ratios".

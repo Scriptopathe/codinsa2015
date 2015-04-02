@@ -181,6 +181,26 @@ namespace Codinsa2015.Server.Equip
         /// Obtient le propriétaire de l'arme.
         /// </summary>
         public Entities.EntityHero Owner { get; set; }
+
+        /// <summary>
+        /// Retourne un string utilisé pour le debug et représentant les caracts de l'arme.
+        /// </summary>
+        public string Debug_Stats
+        {
+            get
+            {
+                StringBuilder b = new StringBuilder();
+                foreach(var alt in Model.Upgrades[Level].PassiveAlterations)
+                {
+                    b.AppendLine("passive: " + alt.Debug_Stats);
+                }
+                foreach(var alt in Model.Upgrades[Level].Description.OnHitEffects)
+                {
+                    b.AppendLine("onhit: " + alt.Debug_Stats);
+                }
+                return b.ToString();
+            }
+        }
         #endregion
 
         #region Methods
