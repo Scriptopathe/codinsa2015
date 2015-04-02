@@ -267,10 +267,22 @@ namespace Codinsa2015.Server.Entities
             if(Weapon != null)
                 Weapon.Update(time);
 
+            UpdateMovement(time);
+
             // Mets à jour les spells et applique les passifs.
             foreach (Spell spell in Spells) { spell.UpdateCooldown((float)time.ElapsedGameTime.TotalSeconds); spell.ApplyPassives(); }
         }
 
+        /// <summary>
+        /// Mise à jour du mouvement.
+        /// </summary>
+        void UpdateMovement(GameTime time)
+        {
+            if (Path != null && IsBlockedByWall)
+            {
+                StartMoveTo(Path.LastPosition());
+            }
+        }
         /// <summary>
         /// Mets à jour les consommables.
         /// </summary>
@@ -304,6 +316,16 @@ namespace Codinsa2015.Server.Entities
         #endregion
 
         #region DEBUG
+        public override string Debug_Stats
+        {
+            get
+            {
+                StringBuilder b = new StringBuilder(base.Debug_Stats);
+                b.AppendLine("==== Weapon ====");
+                b.AppendLine(Weapon.Debug_Stats);
+                return b.ToString();
+            }
+        }
         #endregion
 
     }

@@ -1032,8 +1032,9 @@ namespace Codinsa2015.Server.Entities
                 int bottom = (int)(Position.Y) + 1;
 
                 // On limite le mouvement au bord de la case.
-                newDst.X = Math.Min(right - 0.02f, Math.Max(left+0.02f, dst.X));
-                newDst.Y = Math.Min(bottom - 0.02f, Math.Max(top+0.02f, dst.Y));
+                const float margin = 0.02f;
+                newDst.X = Math.Min(right - margin, Math.Max(left + margin, dst.X));
+                newDst.Y = Math.Min(bottom - margin, Math.Max(top + margin, dst.Y));
 
                 m_movementBlockedCounter = 5;
             }
@@ -1923,6 +1924,28 @@ namespace Codinsa2015.Server.Entities
             GameServer.GetBattleLog().AddMessage("[from: " + this.ToString() + "] " + message);
         }
 
+        /// <summary>
+        /// Affiche des stats de debug.
+        /// </summary>
+        public virtual string Debug_Stats
+        {
+            get
+            {
+                StringBuilder b = new StringBuilder();
+                b.AppendLine("-- " + ToString() + " (" + ID + ")");
+                b.AppendLine(String.Format("Max HP = {0}", GetMaxHP()));
+                b.AppendLine(String.Format("Shield = {0}", ShieldPoints));
+                b.AppendLine(String.Format("HP     = {0}", GetHP()));
+                b.AppendLine(String.Format("Regen  = {0} HP/s", GetHPRegen()));
+                b.AppendLine(String.Format("Armor  = {0}", GetArmor()));
+                b.AppendLine(String.Format("MR     = {0}", GetMagicResist()));
+                b.AppendLine(String.Format("AD     = {0}", GetAttackDamage()));
+                b.AppendLine(String.Format("AP     = {0}", GetAbilityPower()));
+                b.AppendLine(String.Format("MS     = {0}", GetMoveSpeed()));
+                b.AppendLine(String.Format("AS     = {0}", GetAttackSpeed()));
+                return b.ToString();
+            }
+        }
         /// <summary>
         /// Indique si oui ou non l'entité est à la position donné (avec une erreur convenablement
         /// calculée).
