@@ -284,7 +284,7 @@ namespace Codinsa2015.DebugHumanControler
                 float dst = Vector2.Distance(pos, Hero.Position);
                 // Obtient les entités targettables par le héros à portée.
                 var entities = GameServer.GetMap().Entities.GetEntitiesInSight(Hero.Type).
-                    GetAliveEntitiesInRange(pos, 2).Where(delegate(KeyValuePair<int, EntityBase> kvp)
+                    GetAliveEntitiesInRange(pos, 1).Where(delegate(KeyValuePair<int, EntityBase> kvp)
                     {
                         EntityType ennemyteam = (Hero.Type & EntityType.Teams) ^ EntityType.Teams;
                         return kvp.Value.Type.HasFlag(ennemyteam) || EntityType.AllTargettableNeutral.HasFlag(kvp.Value.Type);
@@ -301,16 +301,27 @@ namespace Codinsa2015.DebugHumanControler
                         {
                             m_hero.EndMoveTo();
                             m_hero.Path = null;
+                            hasAttacked = true;
                         }
                     }
 
-                    hasAttacked = dst > Hero.Weapon.GetAttackSpell().TargetType.Range;
+                    // hasAttacked = dst > Hero.Weapon.GetAttackSpell().TargetType.Range;
 
                 }
-                // Si on effectue une auto attaque
-                if (entities.Count == 0 ||
-                    !hasAttacked)
-                    m_hero.Path = new Trajectory(new List<Vector2>() { pos });
+                // Si on effectue pas d'auto attaque => on peut avancer.
+                if (entities.Count == 0 || !hasAttacked)
+                {
+                    // Si on peut bouger en ligne droite, on le fait
+                    if(m_client.Controler.GetMap().CanMoveLine(this.Hero.Position, pos))
+                    {
+                        m_hero.Path = new Trajectory(new List<Vector2>() { pos });
+                    }
+                    else
+                    {
+                        // Sinon : on calcule le chemin.
+                        m_hero.StartMoveTo(pos);
+                    }
+                }
 
 
             }

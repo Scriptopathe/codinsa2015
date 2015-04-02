@@ -312,6 +312,32 @@ namespace Codinsa2015.Server
         }
 
         /// <summary>
+        /// Obtient une valeur indiquant si un déplacement en ligne droite de startPos vers
+        /// dstPos est possible.
+        /// </summary>
+        public bool CanMoveLine(Vector2 startPos, Vector2 dstPos)
+        {
+            if (startPos == dstPos)
+                return true;
+            if (GetPassabilityAt(startPos) == false || GetPassabilityAt(dstPos) == false)
+                return false;
+
+            Vector2 current = startPos;
+            Vector2 direction = dstPos - startPos; direction.Normalize();
+            float currentDst = 0;
+            float step = 1;
+            float maxDist = Vector2.Distance(startPos, dstPos);
+            while(currentDst <= maxDist)
+            {
+                current += direction * step;
+                currentDst += step;
+
+                if (!GetPassabilityAtUnsafe((int)current.X, (int)current.Y))
+                    return false;
+            }
+            return true;
+        }
+        /// <summary>
         /// Positionne le bit de passabilité à la position (x, y) à la valeur donnée.
         /// </summary>
         public void SetPassabilityAt(float x, float y, bool value)
