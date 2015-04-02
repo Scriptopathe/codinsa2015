@@ -26,7 +26,7 @@ namespace Codinsa2015.Server.Balancing
 
                 dynamic startValue = m_startValue;
                 dynamic scalingValue = m_scalingValue;
-                return (T)(startValue + scalingValue * index);
+                return (T)(startValue + scalingValue * (index - 1));
             }
         }
 
