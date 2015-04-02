@@ -63,6 +63,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -80,12 +81,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\IdiotProgrammerException.cs" />
+    <Compile Include="Server\Balancing\ArrayBalanceSystem.cs" />
+    <Compile Include="Server\Balancing\IBalanceSystem.cs" />
+    <Compile Include="Server\Balancing\LinearBalanceSystem.cs" />
     <Compile Include="Server\Controlers\IAControler.cs" />
     <Compile Include="Server\Controlers\ControlerBase.cs" />
     <Compile Include="Server\Controlers\LobbyControler.cs" />
     <Compile Include="Server\Controlers\PickPhaseControler.cs" />
     <Compile Include="Server\Controlers\ShopInterface.cs" />
-    <Compile Include="Server\Entities\BootsFactory.cs" />
+    <Compile Include="Server\Equip\PassiveEquipFactory.cs" />
     <Compile Include="Server\Entities\EntityBase.cs" />
     <Compile Include="Server\Entities\EntityIdol.cs" />
     <Compile Include="Server\Entities\EntityBigBoss.cs" />
@@ -110,6 +114,7 @@
     <Compile Include="Server\Equip\ArmorFactory.cs" />
     <Compile Include="Server\Equip\Boots.cs" />
     <Compile Include="Server\Equip\Consummable.cs" />
+    <Compile Include="Server\Equip\EnchantFactory.cs" />
     <Compile Include="Server\Equip\Equipment.cs" />
     <Compile Include="Server\Equip\PassiveEquipment.cs" />
     <Compile Include="Server\Equip\Shop.cs" />
