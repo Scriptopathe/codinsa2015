@@ -279,24 +279,40 @@ namespace Codinsa2015.Server
         static Node[,] s_nodemapCache;
 
         /// <summary>
-        /// Retourne le plus court chemin entre deux positions, en prenant en compt les obstacles
-        /// 
-        /// AMELIORATION : trier l'open set => lowest F score : top du set
+        /// Linéarise une trajectoire.
         /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
-        public static List<Vector2> Astar(Vector2 debut, Vector2 fin, int maxAllowedMoves = 1000)
+        public static List<Vector2> Linearize(List<Vector2> trajectory)
         {
-            if (!GameServer.GetMap().GetPassabilityAt(fin) || !GameServer.GetMap().GetPassabilityAt(debut))
+            List<Vector2> newTraj = new List<Vector2>();
+            Vector2 last = trajectory.First();
+            newTraj.Add(last);
+            for (int i = 1; i < trajectory.Count; i++)
+            {
+                if (!GameServer.GetMap().CanMoveLine(last, trajectory[i]))
+                {
+                    newTraj.Add(trajectory[i - 1]);
+                    last = trajectory[i];
+                }
+            }
+            newTraj.Add(trajectory.Last());
+            return newTraj;
+        }
+
+        /// <summary>
+        /// Retourne le plus court chemin entre deux positions, en prenant en compt les obstacles
+        /// </summary>
+        /// <returns></returns>
+        public static List<Vector2> Astar(Vector2 startPos, Vector2 endPos, int maxAllowedMoves = 1000)
+        {
+            if (!GameServer.GetMap().GetPassabilityAt(endPos) || !GameServer.GetMap().GetPassabilityAt(startPos))
                 return new List<Vector2>();
 
-            Point start = new Point((int)debut.X, (int)debut.Y);
-            Point end = new Point((int)fin.X, (int)fin.Y);
+            Point start = new Point((int)startPos.X, (int)startPos.Y);
+            Point end = new Point((int)endPos.X, (int)endPos.Y);
 
             // Création du graphe utilisé pour l'astar
             Node[,] nodemap;
-            nodemap = CreerGraphe();
+            nodemap = CreateGraph();
 
             // Contient les noeuds qui ont déjà été évalués.
             HashSet<Point> closedset = new HashSet<Point>();
@@ -322,7 +338,7 @@ namespace Codinsa2015.Server
                 // Si on a trouvé la fin, on s'arrête.
                 if (Vector2.DistanceSquared(new Vector2(current.Position.X, current.Position.Y), new Vector2(end.X, end.Y)) < 0.1f)
                 {
-                    var lst =  ReconstructPath(nodemap[end.X, end.Y], cameFrom);
+                    var lst = Linearize(ReconstructPath(nodemap[end.X, end.Y], cameFrom));
                     return lst;
                 }
 
@@ -386,7 +402,7 @@ namespace Codinsa2015.Server
         /// Retourne un graphe de noeud, permettant d'effectuer efficacement l'astar, ainsi que la recherche de cases disponibles pour l'unité.
         /// </summary>
         /// <returns></returns>
-        public static Node[,] CreerGraphe()
+        public static Node[,] CreateGraph()
         {
             Point mapSize = new Point(GameServer.GetMap().Passability.GetLength(0), GameServer.GetMap().Passability.GetLength(1));
 

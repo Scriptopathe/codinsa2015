@@ -325,18 +325,24 @@ namespace Codinsa2015.Server
             Vector2 current = startPos;
             Vector2 direction = dstPos - startPos; direction.Normalize();
             float currentDst = 0;
-            float step = 1;
+            float step = 0.41f;
             float maxDist = Vector2.Distance(startPos, dstPos);
             while(currentDst <= maxDist)
             {
                 current += direction * step;
                 currentDst += step;
 
-                if (!GetPassabilityAtUnsafe((int)current.X, (int)current.Y))
+                if (!GetPassabilityAtUnsafe((int)current.X, (int)current.Y) ||
+                    !GetPassabilityAtUnsafe((int)current.X - 1, (int)current.Y - 1) ||
+                    !GetPassabilityAtUnsafe((int)current.X + 1, (int)current.Y - 1) ||
+                    !GetPassabilityAtUnsafe((int)current.X - 1, (int)current.Y + 1) ||
+                    !GetPassabilityAtUnsafe((int)current.X+1, (int)current.Y+1))
                     return false;
             }
             return true;
         }
+
+
         /// <summary>
         /// Positionne le bit de passabilité à la position (x, y) à la valeur donnée.
         /// </summary>
