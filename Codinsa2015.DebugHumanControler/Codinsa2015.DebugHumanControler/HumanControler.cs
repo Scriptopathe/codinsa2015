@@ -278,7 +278,7 @@ namespace Codinsa2015.DebugHumanControler
             // Mouvement du héros.
             var ms = Input.GetMouseState();
             Vector2 pos = MapRdr.ToMapSpace(new Vector2(ms.X, ms.Y));
-            if (Input.IsRightClickPressed() && GameServer.GetMap().GetPassabilityAt(pos))
+            if (Input.IsRightClickTrigger() && GameServer.GetMap().GetPassabilityAt(pos))
             {
 
                 float dst = Vector2.Distance(pos, Hero.Position);
@@ -297,15 +297,15 @@ namespace Codinsa2015.DebugHumanControler
                     if (entities.Count != 0)
                     {
 
-                        if (Hero.Weapon.Use(Hero, entities.First().Value) == SpellUseResult.Success)
+                        float range = Hero.Weapon.GetAttackSpell().TargetType.Range;
+                        if (Hero.Weapon.Use(Hero, entities.First().Value) == SpellUseResult.Success ||
+                            Vector2.Distance(m_hero.Position, entities.First().Value.Position) <= range)
                         {
                             m_hero.EndMoveTo();
                             m_hero.Path = null;
                             hasAttacked = true;
                         }
                     }
-
-                    // hasAttacked = dst > Hero.Weapon.GetAttackSpell().TargetType.Range;
 
                 }
                 // Si on effectue pas d'auto attaque => on peut avancer.
@@ -324,11 +324,6 @@ namespace Codinsa2015.DebugHumanControler
                 }
 
 
-            }
-
-            if (m_hero.Path != null && m_hero.IsBlockedByWall)
-            {
-                m_hero.StartMoveTo(m_hero.Path.LastPosition());
             }
 
             // Vision range
