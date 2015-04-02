@@ -264,7 +264,7 @@ namespace Codinsa2015.Server
 
         public SpawnerConstants() : base()
         {
-            CreepsPerWave = 0;//16;
+            CreepsPerWave = 16;
             WavesInterval = 45.0f;
             CreepSpawnDelay = 0.1f;
             Rows = 4;
@@ -336,12 +336,12 @@ namespace Codinsa2015.Server
             VisionRange = 8;
             MoveSpeed = 4;
             HP = 10000;
-            Armor = 10;
+            Armor = 25;
             MagicResist = 10;
             CooldownReduction = 0;
-            AttackDamage = 10;
+            AttackDamage = 4;
             AttackSpeed = 1.0f;
-            AbilityPower = 50;
+            AbilityPower = 15;
         }
     }
 
@@ -379,7 +379,7 @@ namespace Codinsa2015.Server
             AttackDamage = 30;
             VisionRange = 9;
             AttackRange = 4;
-            HP = 25;
+            HP = 100;
         }
 
     }
@@ -405,23 +405,23 @@ namespace Codinsa2015.Server
     public class RoleConstants
     {
         // Fighter
-        public float FighterAttackSpeedMultiplier = 2;
-        public float FighterAttackDamageMultiplier = 2;
-        public float FighterTrueDamageMultiplier = 2;
-        public float FighterMagicDamageMultiplier = 2;
-        public float FighterStealthDurationMultiplier = 2;
+        public float FighterAttackSpeedMultiplier = 1.3f;
+        public float FighterAttackDamageMultiplier = 1.3f;
+        public float FighterTrueDamageMultiplier = 1.3f;
+        public float FighterMagicDamageMultiplier = 1.3f;
+        public float FighterStealthDurationMultiplier = 1.3f;
         
         // Mage
-        public float MageHealValueMultiplier = 2;
-        public float MageShieldValueMultiplier = 2;
-        public float MageSilenceDurationMultiplier = 2;
-        public float MageSightDurationMultiplier = 2;
+        public float MageHealValueMultiplier = 1.3f;
+        public float MageShieldValueMultiplier = 1.3f;
+        public float MageSilenceDurationMultiplier = 1.3f;
+        public float MageSightDurationMultiplier = 1.3f;
 
         // Tank
-        public float TankMoveSpeedBonusMultiplier = 2;
-        public float TankArmorBonusMultiplier = 2;
-        public float TankRMBonusMultiplier = 2;
-        public float TankStunDurationMultiplier = 2;
+        public float TankMoveSpeedBonusMultiplier = 1.3f;
+        public float TankArmorBonusMultiplier = 1.3f;
+        public float TankRMBonusMultiplier = 1.3f;
+        public float TankStunDurationMultiplier = 1.3f;
 
         public RoleConstants()
         {
@@ -476,14 +476,14 @@ namespace Codinsa2015.Server
         public float UpgradeCost2 = 300.0f;
 
         #region 
-        public LinearBS EquipAdFlatOnHit = new LinearBS(10, 10);
-        public LinearBS EquipAdRatioOnHit = new LinearBS(1, 0.2f);
-        public LinearBS EquipBonusAdFlat = new LinearBS(5f, 5f);
+        public LinearBS EquipAdFlatOnHit = new LinearBS(2, 2);
+        public LinearBS EquipAdRatioOnHit = new LinearBS(0.8f, 0.2f);
+        public LinearBS EquipBonusAdFlat = new LinearBS(2f, 1.5f);
         public LinearBS EquipBonusSourcePercentAd = new LinearBS(0.8f, 0.2f);
-        public LinearBS EquipBonusApFlat = new LinearBS(5f, 5f);
+        public LinearBS EquipBonusApFlat = new LinearBS(2f, 1.5f);
         public LinearBS EquipBonusAttackSpeed = new LinearBS(0.20f, 0.2f);
         public LinearBS EquipCost = new LinearBS(100, 50);
-        public LinearBS EquipRange = new LinearBS(1, 1);
+        public LinearBS EquipRange = new LinearBS(2, 2);
         public LinearBS EquipBonusArmor = new LinearBS(10, 10);
         public LinearBS EquipBonusMR = new LinearBS(10, 10);
         public LinearBS EquipBonusMaxHP = new LinearBS(10, 10);

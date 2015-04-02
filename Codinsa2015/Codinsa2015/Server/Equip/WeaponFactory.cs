@@ -24,7 +24,7 @@ namespace Codinsa2015.Server.Equip
         public static List<StateAlterationModel> CastingTimeAlteration = new List<StateAlterationModel>() {
             new StateAlterationModel()
             {
-                BaseDuration = 0.01f,
+                BaseDuration = 0.1f,
                 Type = StateAlterationType.Root
             }
         };
@@ -65,7 +65,7 @@ namespace Codinsa2015.Server.Equip
                 new StateAlterationModel()
                 {
                     BaseDuration = 1.0f,
-                    Type = StateAlterationType.AttackSpeed,
+                    Type = StateAlterationType.AttackDamageBuff,
                     FlatValue = cst.EquipBonusAdFlat[bonusAd]
                 }
             };
