@@ -195,9 +195,11 @@ namespace Codinsa2015.Server.Spells
             SetupParameters(target);
 
             // Applique les effets du casting time.
+            string altId = "spell-casting-time-" + this.Name;
+            SourceCaster.StateAlterations.EndAlterations(altId);
             foreach(var alterationModel in Description.CastingTimeAlterations)
             {
-                SourceCaster.AddAlteration(new Entities.StateAlteration("spell-casting-time",
+                SourceCaster.AddAlteration(new Entities.StateAlteration(altId,
                     SourceCaster,
                     alterationModel, 
                     target.AlterationParameters,

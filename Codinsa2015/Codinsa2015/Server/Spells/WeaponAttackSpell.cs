@@ -38,7 +38,7 @@ namespace Codinsa2015.Server.Spells
         public WeaponAttackSpell(EntityBase caster, SpellDescription attack, Equip.WeaponEnchantModel enchant)
         {
             SourceCaster = caster;
-            Name = "Weapon";
+            Name = "weapon-" + caster.ID;
             
             attack = attack.Copy();
             
