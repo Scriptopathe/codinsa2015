@@ -49,16 +49,17 @@ namespace Codinsa2015.Server
                     m_trajectoryUnits = value;
                 else
                 {
-                    int i = 0;
+                    /*int i = 0;
                     while ((i < value.Count - 1) && ok)
                     {
                         ok = ((Math.Abs(value[i].X - value[i + 1].X) + Math.Abs(value[i].Y - value[i + 1].Y)) - 1) <= 0.0001f;
                         i++;
                     }
-                    if (ok)
+                    if (ok || true)
                         m_trajectoryUnits = value;
                     else
-                        throw new Exception("La distance entre les points de la trajectoire n'est pas toujours inférieure ou égale à 1");
+                        throw new Exception("La distance entre les points de la trajectoire n'est pas toujours inférieure ou égale à 1");*/
+                    m_trajectoryUnits = value;
                 }
             }
         }
