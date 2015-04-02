@@ -24,9 +24,6 @@ namespace Codinsa2015.Server.Equip
     }
     /// <summary>
     /// Classe permettant la présentation de divers équipements.
-    /// 
-    /// Les shops sont chargés depuis des fichiers xml.
-    /// TODO : buy and sell consummable.
     /// </summary>
     public class Shop
     {
@@ -59,6 +56,12 @@ namespace Codinsa2015.Server.Equip
         public ShopTransactionResult Sell(EntityHero hero, EquipmentType equipKind)
         {
             EquipmentModel model = null;
+
+            // Vérifie la distance au shop.
+            float dst = Vector2.Distance(hero.Position, m_owner.Position);
+            if (dst > m_shopRange)
+                return ShopTransactionResult.NotInShopRange;
+
             switch(equipKind)
             {
                 //case EquipmentType.Amulet: model = (hero.Amulet == null ? null : hero.Amulet.Model); hero.Amulet = null; break;
@@ -70,7 +73,8 @@ namespace Codinsa2015.Server.Equip
                         model = null;
                     else if (hero.Weapon.Enchant == null)
                         model = null;
-
+                    else
+                        model = hero.Weapon.Enchant;
                     if(model != null)
                     {
                         hero.Weapon.Enchant = null;
@@ -83,10 +87,6 @@ namespace Codinsa2015.Server.Equip
             if (model == null)
                 return ShopTransactionResult.NoItemToSell;
 
-            // Vérifie la distance au shop.
-            float dst = Vector2.Distance(hero.Position, m_owner.Position);
-            if (dst > m_shopRange)
-                return ShopTransactionResult.NotInShopRange;
 
 
             float factor = GameServer.GetScene().Constants.Structures.Shops.SellingPriceFactor;
@@ -210,7 +210,7 @@ namespace Codinsa2015.Server.Equip
                 return ShopTransactionResult.NoSlotAvailableOnHero;
 
             // Dépassement de la stack du consommable : erreur
-            if (hero.Consummables[slot].Model.MaxStackSize >= hero.Consummables[slot].Count)
+            if (hero.Consummables[slot].Count >= hero.Consummables[slot].Model.MaxStackSize)
                 return ShopTransactionResult.StackOverflow;
 
             // Achat !!

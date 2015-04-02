@@ -206,7 +206,8 @@ namespace Codinsa2015.Server.Equip
         {
             List<Entities.StateAlterationModel> lst = new List<Entities.StateAlterationModel>();
             lst.AddRange(Model.Upgrades[Level].PassiveAlterations);
-            lst.AddRange(Enchant.PassiveEffects);
+            if(Enchant != null)
+                lst.AddRange(Enchant.PassiveEffects);
             return lst;
         }
         /// <summary>

@@ -43,13 +43,12 @@ namespace Codinsa2015.Server.Equip
             Boots = new List<PassiveEquipmentModel>();
             Consummables = new List<ConsummableModel>();
 
-
             // Bottes
-            Boots.Add(BootsFactory.LightShoes());
-            Boots.Add(BootsFactory.LivingShoes());
-            Boots.Add(BootsFactory.SteelChose());
-            Boots.Add(BootsFactory.WhiteShoes());
-            Boots.Add(BootsFactory.Rangers());
+            Boots.Add(PassiveEquipFactory.LightShoes());
+            Boots.Add(PassiveEquipFactory.LivingShoes());
+            Boots.Add(PassiveEquipFactory.SteelChose());
+            Boots.Add(PassiveEquipFactory.WhiteShoes());
+            Boots.Add(PassiveEquipFactory.Rangers());
 
             // Armures
             Armors.Add(ArmorFactory.AdamantineHarness());
@@ -58,15 +57,21 @@ namespace Codinsa2015.Server.Equip
             Armors.Add(ArmorFactory.PatchworkArmor());
             Armors.Add(ArmorFactory.PricklyCoat());
 
-
-
             // Enchantements
-            Equip.WeaponEnchantModel enchant = new Equip.WeaponEnchantModel()
-            {
-                Name = "base",
-                Price = 100,
-            };
+            Enchants.Add(EnchantFactory.Cold());
+            Enchants.Add(EnchantFactory.Destroyer());
+            Enchants.Add(EnchantFactory.Fury());
+            Enchants.Add(EnchantFactory.Precision());
+            Enchants.Add(EnchantFactory.Soften());
+            Enchants.Add(EnchantFactory.Vampire());
+            Enchants.Add(EnchantFactory.Runic());
 
+            // Armes
+            Weapons.Add(WeaponFactory.BaseWeapon());
+            Weapons.Add(WeaponFactory.Spear());
+            Weapons.Add(WeaponFactory.SwordAndShield());
+            Weapons.Add(WeaponFactory.Cutlass());
+            Weapons.Add(WeaponFactory.Hammer());
 
             // Consommables
             Equip.ConsummableModel unward = new Equip.ConsummableModel()
@@ -94,13 +99,6 @@ namespace Codinsa2015.Server.Equip
             Consummables.Add(ward);
             Consummables.Add(empty);
 
-            // Armes
-            Weapons.Add(WeaponFactory.BaseWeapon());
-            Weapons.Add(WeaponFactory.Spear());
-            Weapons.Add(WeaponFactory.SwordAndShield());
-            Weapons.Add(WeaponFactory.Cutlass());
-            Weapons.Add(WeaponFactory.Hammer());
-            Enchants.Add(enchant);
         }
 
         /// <summary>

@@ -12,10 +12,10 @@ namespace Codinsa2015.Server.Equip
     /// </summary>
     public static class WeaponFactory
     {
-        public const int LOWER = 0;
-        public const int LOW = 1;
-        public const int MEDIUM = 2;
-        public const int HIGH = 3;
+        public const int LOWER = 1;
+        public const int LOW = 2;
+        public const int MEDIUM = 3;
+        public const int HIGH = 4;
 
         /// <summary>
         /// Casting time alteration commune à toutes les armes.
@@ -38,9 +38,9 @@ namespace Codinsa2015.Server.Equip
             {
                 Type = Spells.TargettingType.Targetted,
                 AllowedTargetTypes = EntityTypeRelative.AllEnnemy | EntityTypeRelative.AllTargettableNeutral,
-                Range = GameServer.GetScene().Constants.Equip.WeaponRanges[range],
+                Range = GameServer.GetScene().Constants.Equip.EquipRange[range],
                 DieOnCollision = true,
-                Duration = 1,
+                Duration = 0.2f,
                 AoeRadius = 0.3f
             };
         }
@@ -59,14 +59,14 @@ namespace Codinsa2015.Server.Equip
                 {
                     BaseDuration = 1.0f,
                     Type = StateAlterationType.AttackSpeed,
-                    FlatValue = cst.WeaponAttackSpeed[attackSpeed]
+                    FlatValue = cst.EquipBonusAttackSpeed[attackSpeed]
                 },
                 // bonus d'ad
                 new StateAlterationModel()
                 {
                     BaseDuration = 1.0f,
                     Type = StateAlterationType.AttackSpeed,
-                    FlatValue = cst.WeaponBonusAD[bonusAd]
+                    FlatValue = cst.EquipBonusAdFlat[bonusAd]
                 }
             };
         }
@@ -80,8 +80,8 @@ namespace Codinsa2015.Server.Equip
             return new StateAlterationModel()
             {
                 BaseDuration = 0,
-                FlatValue = cst.WeaponFlatAD[flatDmg], // dégâts de base de l'arme.
-                SourcePercentADValue = cst.WeaponBonusAD[adRatio], // dégâts en fonction de l'AD du héros.
+                FlatValue = cst.EquipAdFlatOnHit[flatDmg], // dégâts de base de l'arme.
+                SourcePercentADValue = cst.EquipBonusSourcePercentAd[adRatio], // dégâts en fonction de l'AD du héros.
                 Type = StateAlterationType.AttackDamage,
             };
         }
@@ -151,7 +151,7 @@ namespace Codinsa2015.Server.Equip
             WeaponUpgradeModel lvl1 = new Equip.WeaponUpgradeModel()
             {
                 // ++ Coût
-                Cost = cst.WeaponCost[LOW],
+                Cost = cst.EquipCost[LOW],
 
                 // Décrit le spell d'attaque de l'arme.
                 Description = new Spells.SpellDescription()
@@ -211,7 +211,7 @@ namespace Codinsa2015.Server.Equip
             WeaponUpgradeModel lvl1 = new Equip.WeaponUpgradeModel()
             {
                 // ++ Coût
-                Cost = cst.WeaponCost[LOW],
+                Cost = cst.EquipCost[LOW],
 
                 // Décrit le spell d'attaque de l'arme.
                 Description = new Spells.SpellDescription()
@@ -277,7 +277,7 @@ namespace Codinsa2015.Server.Equip
             WeaponUpgradeModel lvl1 = new Equip.WeaponUpgradeModel()
             {
                 // ++ Coût
-                Cost = cst.WeaponCost[LOW],
+                Cost = cst.EquipCost[LOW],
 
                 // Décrit le spell d'attaque de l'arme.
                 Description = new Spells.SpellDescription()
@@ -336,7 +336,7 @@ namespace Codinsa2015.Server.Equip
             WeaponUpgradeModel lvl1 = new Equip.WeaponUpgradeModel()
             {
                 // ++ Coût
-                Cost = cst.WeaponCost[LOW],
+                Cost = cst.EquipCost[LOW],
 
                 // Décrit le spell d'attaque de l'arme.
                 Description = new Spells.SpellDescription()
