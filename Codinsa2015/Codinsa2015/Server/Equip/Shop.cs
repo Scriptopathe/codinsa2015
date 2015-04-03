@@ -299,6 +299,22 @@ namespace Codinsa2015.Server.Equip
 
         #region Upgrades
         /// <summary>
+        /// Upgrade l'équipement du type donné.
+        /// </summary>
+        public ShopTransactionResult UpgradeEquip(EntityHero hero, EquipmentType type)
+        {
+            switch(type)
+            {
+                case EquipmentType.Armor:
+                    return UpgradeArmor(hero);
+                case EquipmentType.Weapon:
+                    return UpgradeWeapon(hero);
+                case EquipmentType.Boots:
+                    return UpgradeBoots(hero);
+            }
+            return ShopTransactionResult.UnavailableItem;
+        }
+        /// <summary>
         /// Demande au shop de procéder si possible à l'upgrade de l'arme du héros donné.
         /// </summary>
         public ShopTransactionResult UpgradeWeapon(EntityHero hero)

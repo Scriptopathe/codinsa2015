@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Codinsa2015.Server.Equip
 {
+    [Clank.ViewCreator.Enum("Enumère les différents types d'équipement.")]
     public enum EquipmentType
     {
         Consummable,
@@ -34,6 +35,7 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Identifiant unique de l'armure.
         /// </summary>
+        [Clank.ViewCreator.Access("int", "ID de l'équipement")]
         public int ID { get; set; }
 
         /// <summary>

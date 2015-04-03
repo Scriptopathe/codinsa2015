@@ -62,6 +62,20 @@ namespace Codinsa2015.Server.Equip
             copy.Description = Description.Copy();
             return copy;
         }
+
+        public Views.WeaponUpgradeModelView ToView()
+        {
+            Views.WeaponUpgradeModelView view = new Views.WeaponUpgradeModelView();
+            view.Cost = Cost;
+            view.Description = Description.ToView();
+            view.PassiveAlterations = new List<Views.StateAlterationModelView>();
+            foreach(var alt in PassiveAlterations)
+            {
+                view.PassiveAlterations.Add(alt.ToView());
+            }
+
+            return view;
+        }
     }
 
     /// <summary>
@@ -118,6 +132,17 @@ namespace Codinsa2015.Server.Equip
             foreach (var i in CastingEffects) { copy.CastingEffects.Add(i.Copy()); }
             return copy;
         }
+
+        public Views.WeaponEnchantModelView ToView()
+        {
+            Views.WeaponEnchantModelView view = new Views.WeaponEnchantModelView();
+            view.OnHitEffects = new List<Views.StateAlterationModelView>();
+            foreach (var e in OnHitEffects) { view.OnHitEffects.Add(e.ToView()); }
+            foreach (var e in PassiveEffects) { view.PassiveEffects.Add(e.ToView()); }
+            foreach (var e in CastingEffects) { view.CastingEffects.Add(e.ToView()); }
+            return view;
+        }
+
         public override EquipmentType Type
         {
             get { return EquipmentType.WeaponEnchant; }
@@ -287,11 +312,13 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Représente les upgrades de l'arme.
         /// </summary>
+        [Clank.ViewCreator.Export("List<WeaponUpgradeModelView>", "Liste des upgrades possibles de l'arme.")]
         public List<WeaponUpgradeModel> Upgrades { get; set; }
 
         /// <summary>
         /// Obtient le prix de l'arme.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "Prix d'achat de l'arme")]
         public override float Price
         {
             get
@@ -304,6 +331,18 @@ namespace Codinsa2015.Server.Equip
             }
         }
 
+        /// <summary>
+        /// Obtient une vue sur cette instance.
+        /// </summary>
+        /// <returns></returns>
+        public Views.WeaponModelView ToView()
+        {
+            Views.WeaponModelView view = new Views.WeaponModelView();
+            view.Upgrades = new List<Views.WeaponUpgradeModelView>();
+            foreach (var upgrade in Upgrades) { view.Upgrades.Add(upgrade.ToView()); }
+            view.Price = Price;
+            return view;
+        }
         /// <summary>
         /// Crée une nouvelle instance de WeaponModel.
         /// </summary>

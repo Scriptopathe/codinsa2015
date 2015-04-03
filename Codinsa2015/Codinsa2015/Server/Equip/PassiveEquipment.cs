@@ -55,6 +55,15 @@ namespace Codinsa2015.Server.Equip
             foreach (var alt in PassiveAlterations) { copy.PassiveAlterations.Add(alt.Copy()); }
             return copy;
         }
+
+        public Views.PassiveEquipmentUpgradeModelView ToView()
+        {
+            Views.PassiveEquipmentUpgradeModelView view = new Views.PassiveEquipmentUpgradeModelView();
+            view.Cost = Cost;
+            view.PassiveAlterations = new List<Views.StateAlterationModelView>();
+            foreach (var alt in PassiveAlterations) { view.PassiveAlterations.Add(alt.ToView()); }
+            return view;
+        }
     }
     /// <summary>
     /// Représente un modèle d'équipement passif.
@@ -67,6 +76,7 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Obtient le prix d'achat de l'équipement.
         /// </summary>
+        [Clank.ViewCreator.Export("float", "prix d'achat de l'équipement")]
         public override float Price
         {
             get
@@ -91,8 +101,18 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Obtient ou définit la liste des upgrades de cet équipement.
         /// </summary>
+        [Clank.ViewCreator.Export("List<PassiveEquipmentUpgradeModelView>", "liste des upgrades de cet équipement.")]
         public List<PassiveEquipmentUpgradeModel> Upgrades { get; set; }
 
+        
+        public Views.PassiveEquipmentModelView ToView()
+        {
+            Views.PassiveEquipmentModelView view = new Views.PassiveEquipmentModelView();
+            view.Price = Price;
+            view.Upgrades = new List<Views.PassiveEquipmentUpgradeModelView>();
+            foreach (var upgrade in Upgrades) { view.Upgrades.Add(upgrade.ToView()); }
+            return view;
+        }
 
         public PassiveEquipmentModel()
         {
@@ -131,7 +151,6 @@ namespace Codinsa2015.Server.Equip
             set
             {
                 m_model = value;
-                //Owner.ApplyPassives(Type);
             }
         }
 
@@ -171,5 +190,6 @@ namespace Codinsa2015.Server.Equip
             lst.AddRange(Model.Upgrades[Level].PassiveAlterations);
             return lst;
         }
+
     }
 }
