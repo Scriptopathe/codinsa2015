@@ -64,22 +64,7 @@ namespace Codinsa2015.Server.Controlers
          * Contient les fonctions auxquelles vont faire appel les IAs.
          * ----------------------------------------------------------------*/
         #region misc
-        /// <summary>
-        /// Achète l'arme dont le numéro est celui donné, au shop d'id donné.
-        /// </summary>
-        /// <returns>Retourne true si l'arme a pu être achetée, false sinon.</returns>
-        public bool ShopWeapon(int shopId, int weaponId)
-        {
-            Entities.EntityShop shopEntity = GameServer.GetMap().GetEntityById(shopId) as Entities.EntityShop;
 
-            // Contrôle de l'id.
-            if (shopEntity == null)
-                return false;
-
-            Equip.Shop shop = shopEntity.Shop;
-
-            return ShopItem(shopId, weaponId, shop.GetWeapons(Hero));
-        }
         #endregion
         #region IFACE-Get
         /// <summary>
@@ -100,47 +85,194 @@ namespace Codinsa2015.Server.Controlers
 
         #region  Game IFACE
         const string controlerAccessStr = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId)";
+
+        #region Shop
         /// <summary>
-        /// Achète l'armure dont le numéro est celui donné, au shop d'id donné.
+        /// Achète un objet d'id donné au shop.
+        /// Les ids peuvent être obtenus via ShopGetWeapons(), ShopGetArmors(), ShopGetBoots() etc...
         /// </summary>
-        /// <returns>Retourne true si l'armure a pu être achetée, false sinon.</returns>
-        public bool ShopItem(int shopId, int itemId, List<Equip.EquipmentModel> collection)
+        [Clank.ViewCreator.Access(controlerAccessStr, "Achète et équipe un objet d'id donné au shop. Les ids peuvent être obtenus via ShopGetWeapons()," + 
+        "ShopGetArmors(), ShopGetBoots() etc...")]
+        public Views.ShopTransactionResult ShopPurchaseItem(int equipId)
         {
-            Entities.EntityShop shopEntity = GameServer.GetMap().GetEntityById(shopId) as Entities.EntityShop;
+            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
+                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
 
-            // Contrôle de l'id.
-            if (shopEntity == null)
-                return false;
-
-            // Shop
-            Equip.Shop shop = shopEntity.Shop;
-            IEnumerable<Equip.EquipmentModel> requestedItem = collection.Where(new Func<Equip.EquipmentModel, bool>((Equip.EquipmentModel e) =>
-            {
-                return e.ID == itemId;
-            }));
-
-            // Contrôle : id de l'armure correct ?
-            if (requestedItem.Count() == 0)
-                return false;
-
-            // On a trouvé la bonne armure : vérification du solde du héros.
-            Equip.EquipmentModel equip = requestedItem.First();
-
-            // Prix trop élevé.
-            if (equip.Price > Hero.PA)
-                return false;
-
-            if (equip.Type == Equip.EquipmentType.Armor)
-                Hero.Armor = new Equip.Armor(Hero, (Equip.PassiveEquipmentModel)equip);
-            else if (equip is Equip.WeaponModel)
-                Hero.Weapon = new Equip.Weapon(Hero, (Equip.WeaponModel)equip) { Enchant = Hero.Weapon.Enchant };
-            
-
-            Hero.PA -= equip.Price;
-
-            return true;
+            return (Views.ShopTransactionResult)shopEntity.Shop.Purchase(this.Hero, equipId);
         }
-        
+
+        /// <summary>
+        /// Achète un consommable pour le héros donné, et le place dans le slot donné.
+        /// </summary>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Achète un consommable d'id donné, et le place dans le slot donné.")]
+        public Views.ShopTransactionResult ShopPurchaseConsummable(int consummableId, int slot)
+        {
+            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
+                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+
+            return (Views.ShopTransactionResult)shopEntity.Shop.PurchaseConsummable(this.Hero, consummableId, slot);
+        }
+
+        /// <summary>
+        /// Vend l'équipement passé en paramètre au shop.
+        /// </summary>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Vend l'équipement du type passé en paramètre. (vends l'arme si Weapon, l'armure si Armor etc...)")]
+        public Views.ShopTransactionResult ShopSell(Views.EquipmentType equipType)
+        {
+            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
+                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+
+            return (Views.ShopTransactionResult)shopEntity.Shop.Sell(this.Hero, (Equip.EquipmentType)equipType);
+        }
+
+        /// <summary>
+        /// Vends un consommable situé dans le slot donné.
+        /// </summary>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Vends un consommable situé dans le slot donné.")]
+        public Views.ShopTransactionResult ShopSellConsummable(int slot)
+        {
+            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
+                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+
+            return (Views.ShopTransactionResult)shopEntity.Shop.SellConsummable(this.Hero, slot);
+        }
+
+        /// <summary>
+        /// Effectue une upgrade d'un équipement indiqué en paramètre.
+        /// </summary>
+        [Clank.ViewCreator.Access(controlerAccessStr, "Effectue une upgrade d'un équipement indiqué en paramètre.")]
+        public Views.ShopTransactionResult ShopUpgrade(Views.EquipmentType equipType)
+        {
+            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
+                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+
+            return (Views.ShopTransactionResult)shopEntity.Shop.UpgradeEquip(Hero, (Equip.EquipmentType)equipType);
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient la liste des modèles d'armes disponibles au shop.")]
+        public List<Views.WeaponModelView> ShopGetWeapons()
+        {
+
+            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
+                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+
+            
+            List<Equip.EquipmentModel> items = shopEntity.Shop.GetWeapons(Hero);
+            List<Views.WeaponModelView> views = new List<Views.WeaponModelView>();
+            foreach(var item in items)
+            {
+                views.Add(((Equip.WeaponModel)item).ToView());
+            }
+            return views;
+        }
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient la liste des modèles d'armures disponibles au shop.")]
+        public List<Views.PassiveEquipmentModelView> ShopGetArmors()
+        {
+
+            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
+                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+
+
+            List<Equip.EquipmentModel> items = shopEntity.Shop.GetArmors(Hero);
+            List<Views.PassiveEquipmentModelView> views = new List<Views.PassiveEquipmentModelView>();
+            foreach (var item in items)
+            {
+                views.Add(((Equip.PassiveEquipmentModel)item).ToView());
+            }
+            return views;
+        }
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient la liste des modèles de bottes disponibles au shop.")]
+        public List<Views.PassiveEquipmentModelView> ShopGetBoots()
+        {
+
+            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
+                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+
+
+            List<Equip.EquipmentModel> items = shopEntity.Shop.GetBoots(Hero);
+            List<Views.PassiveEquipmentModelView> views = new List<Views.PassiveEquipmentModelView>();
+            foreach (var item in items)
+            {
+                views.Add(((Equip.PassiveEquipmentModel)item).ToView());
+            }
+            return views;
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient la liste des enchantements disponibles au shop.")]
+        public List<Views.WeaponEnchantModelView> ShopGetEnchants()
+        {
+
+            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
+                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+
+
+            List<Equip.EquipmentModel> items = shopEntity.Shop.GetEnchants(Hero);
+            List<Views.WeaponEnchantModelView> views = new List<Views.WeaponEnchantModelView>();
+            foreach (var item in items)
+            {
+                views.Add(((Equip.WeaponEnchantModel)item).ToView());
+            }
+            return views;
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)")]
+        public int GetWeaponId()
+        {
+            if (Hero.Weapon == null)
+                return -1;
+            return Hero.Weapon.Model.ID;
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient le niveau du modèle d'arme équipé par le héros. (-1 si aucune arme équipée)")]
+        public int GetWeaponLevel()
+        {
+            if (Hero.Weapon == null)
+                return -1;
+            return Hero.Weapon.Level;
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient l'id du modèle d'armure équipé par le héros. (-1 si aucun)")]
+        public int GetArmorId()
+        {
+            if (Hero.Armor == null)
+                return -1;
+            return Hero.Armor.Model.ID;
+        }
+
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient le niveau du modèle d'armure équipé par le héros. (-1 si aucune armure équipée)")]
+        public int GetArmorLevel()
+        {
+            if (Hero.Armor == null)
+                return -1;
+            return Hero.Armor.Level;
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient l'id du modèle de bottes équipé par le héros. (-1 si aucun)")]
+        public int GetBootsId()
+        {
+            if (Hero.Boots == null)
+                return -1;
+            return Hero.Boots.Model.ID;
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient le niveau du modèle de bottes équipé par le héros. (-1 si aucune paire équipée)")]
+        public int GetBootsLevel()
+        {
+            if (Hero.Boots == null)
+                return -1;
+            return Hero.Boots.Level;
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient l'id du modèle d'enchantement d'arme équipé par le héros. (-1 si aucun)")]
+        public int GetWeaponEnchantId()
+        {
+            if (Hero.Weapon == null || Hero.Weapon.Enchant == null)
+                return -1;
+            return Hero.Weapon.Enchant.ID;
+        }
+
+        #endregion
         /// <summary>
         /// Retourne une vue vers le héros contrôlé par ce contrôleur.
         /// </summary>
