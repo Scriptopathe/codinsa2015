@@ -139,10 +139,10 @@ public class EntityBaseView
 		int _obj_UniquePassiveLevel = Integer.valueOf(input.readLine());
 		_obj.UniquePassiveLevel = _obj_UniquePassiveLevel;
 		// UniquePassive
-		int _obj_UniquePassive = Integer.valueOf(input.readLine());
+		EntityUniquePassives _obj_UniquePassive = EntityUniquePassives.fromValue(Integer.valueOf(input.readLine()));
 		_obj.UniquePassive = EntityUniquePassives.fromValue(_obj_UniquePassive);
 		// Role
-		int _obj_Role = Integer.valueOf(input.readLine());
+		EntityHeroRole _obj_Role = EntityHeroRole.fromValue(Integer.valueOf(input.readLine()));
 		_obj.Role = EntityHeroRole.fromValue(_obj_Role);
 		// StateAlterations
 		ArrayList<StateAlterationView> _obj_StateAlterations = new ArrayList<StateAlterationView>();
@@ -180,7 +180,7 @@ public class EntityBaseView
 		boolean _obj_IsDead = Integer.valueOf(input.readLine()) == 0 ? false : true;
 		_obj.IsDead = _obj_IsDead;
 		// Type
-		int _obj_Type = Integer.valueOf(input.readLine());
+		EntityType _obj_Type = EntityType.fromValue(Integer.valueOf(input.readLine()));
 		_obj.Type = EntityType.fromValue(_obj_Type);
 		// ID
 		int _obj_ID = Integer.valueOf(input.readLine());

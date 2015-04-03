@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 
-namespace Codinsa2015.Views
+namespace Codinsa2015.Views.Client
 {
 
 	public class EntityBaseView
@@ -212,10 +212,10 @@ namespace Codinsa2015.Views
 			int _obj_UniquePassiveLevel = Int32.Parse(input.ReadLine());
 			_obj.UniquePassiveLevel = (int)_obj_UniquePassiveLevel;
 			// UniquePassive
-			int _obj_UniquePassive = Int32.Parse(input.ReadLine());
+			EntityUniquePassives _obj_UniquePassive = (EntityUniquePassives)Int32.Parse(input.ReadLine());
 			_obj.UniquePassive = (EntityUniquePassives)_obj_UniquePassive;
 			// Role
-			int _obj_Role = Int32.Parse(input.ReadLine());
+			EntityHeroRole _obj_Role = (EntityHeroRole)Int32.Parse(input.ReadLine());
 			_obj.Role = (EntityHeroRole)_obj_Role;
 			// StateAlterations
 			List<StateAlterationView> _obj_StateAlterations = new List<StateAlterationView>();
@@ -253,7 +253,7 @@ namespace Codinsa2015.Views
 			bool _obj_IsDead = Int32.Parse(input.ReadLine()) == 0 ? false : true;
 			_obj.IsDead = (bool)_obj_IsDead;
 			// Type
-			int _obj_Type = Int32.Parse(input.ReadLine());
+			EntityType _obj_Type = (EntityType)Int32.Parse(input.ReadLine());
 			_obj.Type = (EntityType)_obj_Type;
 			// ID
 			int _obj_ID = Int32.Parse(input.ReadLine());

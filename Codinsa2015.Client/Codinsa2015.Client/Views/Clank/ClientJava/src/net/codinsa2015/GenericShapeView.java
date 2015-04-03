@@ -37,7 +37,7 @@ public class GenericShapeView
 		Vector2 _obj_Size = Vector2.deserialize(input);
 		_obj.Size = _obj_Size;
 		// ShapeType
-		int _obj_ShapeType = Integer.valueOf(input.readLine());
+		GenericShapeType _obj_ShapeType = GenericShapeType.fromValue(Integer.valueOf(input.readLine()));
 		_obj.ShapeType = GenericShapeType.fromValue(_obj_ShapeType);
 		return _obj;
 	}

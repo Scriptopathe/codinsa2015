@@ -2,11 +2,288 @@
  * Contient toutes les informations concernant l'état du serveur.
  */
 #include "../inc/State.h"
+//  Achète et équipe un objet d'id donné au shop. Les ids peuvent être obtenus via
+// ShopGetWeapons(),ShopGetArmors(), ShopGetBoots() etc...
+ShopTransactionResult State::ShopPurchaseItem(int equipId)
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)0) << '\n';
+	output << ((int)equipId) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue_asInt; input >> returnValue; input.ignore(1000, '\n');
+	ShopTransactionResult returnValue = (ShopTransactionResult)returnValue_asInt;
+	return (ShopTransactionResult)returnValue;
+}
+
+
+
+//  Achète un consommable d'id donné, et le place dans le slot donné.
+ShopTransactionResult State::ShopPurchaseConsummable(int consummableId,int slot)
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)1) << '\n';
+	output << ((int)consummableId) << '\n';
+	output << ((int)slot) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue_asInt; input >> returnValue; input.ignore(1000, '\n');
+	ShopTransactionResult returnValue = (ShopTransactionResult)returnValue_asInt;
+	return (ShopTransactionResult)returnValue;
+}
+
+
+
+//  Vend l'équipement du type passé en paramètre. (vends l'arme si Weapon, l'armure si Armor
+// etc...)
+ShopTransactionResult State::ShopSell(EquipmentType equipType)
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)2) << '\n';
+	output << ((int)equipType) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue_asInt; input >> returnValue; input.ignore(1000, '\n');
+	ShopTransactionResult returnValue = (ShopTransactionResult)returnValue_asInt;
+	return (ShopTransactionResult)returnValue;
+}
+
+
+
+//  Vends un consommable situé dans le slot donné.
+ShopTransactionResult State::ShopSellConsummable(int slot)
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)3) << '\n';
+	output << ((int)slot) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue_asInt; input >> returnValue; input.ignore(1000, '\n');
+	ShopTransactionResult returnValue = (ShopTransactionResult)returnValue_asInt;
+	return (ShopTransactionResult)returnValue;
+}
+
+
+
+//  Effectue une upgrade d'un équipement indiqué en paramètre.
+ShopTransactionResult State::ShopUpgrade(EquipmentType equipType)
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)4) << '\n';
+	output << ((int)equipType) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue_asInt; input >> returnValue; input.ignore(1000, '\n');
+	ShopTransactionResult returnValue = (ShopTransactionResult)returnValue_asInt;
+	return (ShopTransactionResult)returnValue;
+}
+
+
+
+//  Obtient la liste des modèles d'armes disponibles au shop.
+std::vector<WeaponModelView> State::ShopGetWeapons()
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)5) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	std::vector<WeaponModelView> returnValue = std::vector<WeaponModelView>();
+	int returnValue_count; input >> returnValue_count; input.ignore(1000, '\n');
+	for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+		WeaponModelView returnValue_e = WeaponModelView::deserialize(input);
+		returnValue.push_back((WeaponModelView)returnValue_e);
+	}
+
+	return (std::vector<WeaponModelView>)returnValue;
+}
+
+
+
+//  Obtient la liste des modèles d'armures disponibles au shop.
+std::vector<PassiveEquipmentModelView> State::ShopGetArmors()
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)6) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	std::vector<PassiveEquipmentModelView> returnValue = std::vector<PassiveEquipmentModelView>();
+	int returnValue_count; input >> returnValue_count; input.ignore(1000, '\n');
+	for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+		PassiveEquipmentModelView returnValue_e = PassiveEquipmentModelView::deserialize(input);
+		returnValue.push_back((PassiveEquipmentModelView)returnValue_e);
+	}
+
+	return (std::vector<PassiveEquipmentModelView>)returnValue;
+}
+
+
+
+//  Obtient la liste des modèles de bottes disponibles au shop.
+std::vector<PassiveEquipmentModelView> State::ShopGetBoots()
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)7) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	std::vector<PassiveEquipmentModelView> returnValue = std::vector<PassiveEquipmentModelView>();
+	int returnValue_count; input >> returnValue_count; input.ignore(1000, '\n');
+	for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+		PassiveEquipmentModelView returnValue_e = PassiveEquipmentModelView::deserialize(input);
+		returnValue.push_back((PassiveEquipmentModelView)returnValue_e);
+	}
+
+	return (std::vector<PassiveEquipmentModelView>)returnValue;
+}
+
+
+
+//  Obtient la liste des enchantements disponibles au shop.
+std::vector<WeaponEnchantModelView> State::ShopGetEnchants()
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)8) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	std::vector<WeaponEnchantModelView> returnValue = std::vector<WeaponEnchantModelView>();
+	int returnValue_count; input >> returnValue_count; input.ignore(1000, '\n');
+	for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+		WeaponEnchantModelView returnValue_e = WeaponEnchantModelView::deserialize(input);
+		returnValue.push_back((WeaponEnchantModelView)returnValue_e);
+	}
+
+	return (std::vector<WeaponEnchantModelView>)returnValue;
+}
+
+
+
+//  Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
+int State::GetWeaponId()
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)9) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue; input >> returnValue; input.ignore(1000, '\n');
+	return (int)returnValue;
+}
+
+
+
+//  Obtient le niveau du modèle d'arme équipé par le héros. (-1 si aucune arme équipée)
+int State::GetWeaponLevel()
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)10) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue; input >> returnValue; input.ignore(1000, '\n');
+	return (int)returnValue;
+}
+
+
+
+//  Obtient l'id du modèle d'armure équipé par le héros. (-1 si aucun)
+int State::GetArmorId()
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)11) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue; input >> returnValue; input.ignore(1000, '\n');
+	return (int)returnValue;
+}
+
+
+
+//  Obtient le niveau du modèle d'armure équipé par le héros. (-1 si aucune armure équipée)
+int State::GetArmorLevel()
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)12) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue; input >> returnValue; input.ignore(1000, '\n');
+	return (int)returnValue;
+}
+
+
+
+//  Obtient l'id du modèle de bottes équipé par le héros. (-1 si aucun)
+int State::GetBootsId()
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)13) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue; input >> returnValue; input.ignore(1000, '\n');
+	return (int)returnValue;
+}
+
+
+
+//  Obtient le niveau du modèle de bottes équipé par le héros. (-1 si aucune paire équipée)
+int State::GetBootsLevel()
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)14) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue; input >> returnValue; input.ignore(1000, '\n');
+	return (int)returnValue;
+}
+
+
+
+//  Obtient l'id du modèle d'enchantement d'arme équipé par le héros. (-1 si aucun)
+int State::GetWeaponEnchantId()
+{
+	std::ostringstream output = std::ostringstream(std::ios::out);
+	output << ((int)15) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	int returnValue; input >> returnValue; input.ignore(1000, '\n');
+	return (int)returnValue;
+}
+
+
+
 //  Retourne une vue vers le héros contrôlé par ce contrôleur.
 EntityBaseView State::GetHero()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)0) << '\n';
+	output << ((int)16) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -21,7 +298,7 @@ EntityBaseView State::GetHero()
 Vector2 State::GetPosition()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)1) << '\n';
+	output << ((int)17) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -36,7 +313,7 @@ Vector2 State::GetPosition()
 MapView State::GetMapView()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)2) << '\n';
+	output << ((int)18) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -51,7 +328,7 @@ MapView State::GetMapView()
 bool State::StartMoveTo(Vector2 position)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)3) << '\n';
+	output << ((int)19) << '\n';
 	position.serialize(output);
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -67,7 +344,7 @@ bool State::StartMoveTo(Vector2 position)
 bool State::IsAutoMoving()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)4) << '\n';
+	output << ((int)20) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -82,7 +359,7 @@ bool State::IsAutoMoving()
 bool State::EndMoveTo()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)5) << '\n';
+	output << ((int)21) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -97,7 +374,7 @@ bool State::EndMoveTo()
 std::vector<EntityBaseView> State::GetEntitiesInSight()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)6) << '\n';
+	output << ((int)22) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -119,7 +396,7 @@ std::vector<EntityBaseView> State::GetEntitiesInSight()
 EntityBaseView State::GetEntityById(int entityId)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)7) << '\n';
+	output << ((int)23) << '\n';
 	output << ((int)entityId) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -135,7 +412,7 @@ EntityBaseView State::GetEntityById(int entityId)
 bool State::UseSpell(int spellId,SpellCastTargetInfoView target)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)8) << '\n';
+	output << ((int)24) << '\n';
 	output << ((int)spellId) << '\n';
 	target.serialize(output);
 	output.flush();
@@ -152,12 +429,13 @@ bool State::UseSpell(int spellId,SpellCastTargetInfoView target)
 SceneMode State::GetMode()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)9) << '\n';
+	output << ((int)25) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
 	TCPHelper::tcpreceive(input);
-	int returnValue; input >> returnValue; input.ignore(1000, '\n');
+	int returnValue_asInt; input >> returnValue; input.ignore(1000, '\n');
+	SceneMode returnValue = (SceneMode)returnValue_asInt;
 	return (SceneMode)returnValue;
 }
 
@@ -167,7 +445,7 @@ SceneMode State::GetMode()
 SpellDescriptionView State::GetSpellCurrentLevelDescription(int spellId)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)10) << '\n';
+	output << ((int)26) << '\n';
 	output << ((int)spellId) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -183,7 +461,7 @@ SpellDescriptionView State::GetSpellCurrentLevelDescription(int spellId)
 SpellView State::GetSpell(int spellId)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)11) << '\n';
+	output << ((int)27) << '\n';
 	output << ((int)spellId) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -199,7 +477,7 @@ SpellView State::GetSpell(int spellId)
 std::vector<SpellView> State::GetSpells()
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)12) << '\n';
+	output << ((int)28) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -220,7 +498,7 @@ std::vector<SpellView> State::GetSpells()
 std::vector<SpellView> State::GetHeroSpells(int entityId)
 {
 	std::ostringstream output = std::ostringstream(std::ios::out);
-	output << ((int)13) << '\n';
+	output << ((int)29) << '\n';
 	output << ((int)entityId) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);

@@ -32,7 +32,7 @@ public class SpellTargetInfoView
 	public static SpellTargetInfoView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellTargetInfoView _obj =  new SpellTargetInfoView();
 		// Type
-		int _obj_Type = Integer.valueOf(input.readLine());
+		TargettingType _obj_Type = TargettingType.fromValue(Integer.valueOf(input.readLine()));
 		_obj.Type = TargettingType.fromValue(_obj_Type);
 		// Range
 		float _obj_Range = Float.valueOf(input.readLine());
@@ -47,7 +47,7 @@ public class SpellTargetInfoView
 		boolean _obj_DieOnCollision = Integer.valueOf(input.readLine()) == 0 ? false : true;
 		_obj.DieOnCollision = _obj_DieOnCollision;
 		// AllowedTargetTypes
-		int _obj_AllowedTargetTypes = Integer.valueOf(input.readLine());
+		EntityTypeRelative _obj_AllowedTargetTypes = EntityTypeRelative.fromValue(Integer.valueOf(input.readLine()));
 		_obj.AllowedTargetTypes = EntityTypeRelative.fromValue(_obj_AllowedTargetTypes);
 		return _obj;
 	}

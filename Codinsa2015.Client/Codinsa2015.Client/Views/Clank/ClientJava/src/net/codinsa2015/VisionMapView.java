@@ -27,7 +27,7 @@ public class VisionMapView
 			ArrayList<VisionFlags> _obj_Vision_e = new ArrayList<VisionFlags>();
 			int _obj_Vision_e_count = Integer.valueOf(input.readLine());
 			for(int _obj_Vision_e_i = 0; _obj_Vision_e_i < _obj_Vision_e_count; _obj_Vision_e_i++) {
-				int _obj_Vision_e_e = Integer.valueOf(input.readLine());
+				VisionFlags _obj_Vision_e_e = VisionFlags.fromValue(Integer.valueOf(input.readLine()));
 				_obj_Vision_e.add(VisionFlags.fromValue(_obj_Vision_e_e));
 			}
 			_obj_Vision.add((ArrayList<VisionFlags>)_obj_Vision_e);

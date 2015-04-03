@@ -29,7 +29,7 @@ public class SpellCastTargetInfoView
 	public static SpellCastTargetInfoView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellCastTargetInfoView _obj =  new SpellCastTargetInfoView();
 		// Type
-		int _obj_Type = Integer.valueOf(input.readLine());
+		TargettingType _obj_Type = TargettingType.fromValue(Integer.valueOf(input.readLine()));
 		_obj.Type = TargettingType.fromValue(_obj_Type);
 		// TargetPosition
 		Vector2 _obj_TargetPosition = Vector2.deserialize(input);

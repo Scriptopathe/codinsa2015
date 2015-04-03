@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 
-namespace Codinsa2015.Views
+namespace Codinsa2015.Views.Client
 {
 
 	public class WeaponUpgradeModelView

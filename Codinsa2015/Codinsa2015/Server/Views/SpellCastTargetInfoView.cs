@@ -34,7 +34,7 @@ namespace Codinsa2015.Views
 		public static SpellCastTargetInfoView Deserialize(System.IO.StreamReader input) {
 			SpellCastTargetInfoView _obj =  new SpellCastTargetInfoView();
 			// Type
-			int _obj_Type = Int32.Parse(input.ReadLine());
+			TargettingType _obj_Type = (TargettingType)Int32.Parse(input.ReadLine());
 			_obj.Type = (TargettingType)_obj_Type;
 			// TargetPosition
 			Vector2 _obj_TargetPosition = Vector2.Deserialize(input);

@@ -7,8 +7,10 @@ main
 	#include _StateAlterationView.clank
 	#include _StateAlterationModelView.clank
 	#include _PassiveEquipmentUpgradeModelView.clank
+	#include _PassiveEquipmentModelView.clank
 	#include _WeaponUpgradeModelView.clank
 	#include _WeaponEnchantModelView.clank
+	#include _WeaponModelView.clank
 	#include _MapView.clank
 	#include _CircleShapeView.clank
 	#include _GenericShapeView.clank
@@ -204,6 +206,15 @@ main
 			NotUnits = 3
 		}
 
+		public enum EquipmentType
+		{
+			Consummable = 0,
+			Armor = 1,
+			Weapon = 2,
+			WeaponEnchant = 3,
+			Boots = 4
+		}
+
 		public enum ShopTransactionResult
 		{
 			ItemDoesNotExist = 0,
@@ -266,6 +277,38 @@ main
 	}
 	macro
 	{
+		// Achète et équipe un objet d'id donné au shop. Les ids peuvent être obtenus via ShopGetWeapons(),ShopGetArmors(), ShopGetBoots() etc...
+		ShopTransactionResult ShopPurchaseItem_macro(int clientId,int equipId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopPurchaseItem($(equipId))"; }
+		// Achète un consommable d'id donné, et le place dans le slot donné.
+		ShopTransactionResult ShopPurchaseConsummable_macro(int clientId,int consummableId,int slot) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopPurchaseConsummable($(consummableId),$(slot))"; }
+		// Vend l'équipement du type passé en paramètre. (vends l'arme si Weapon, l'armure si Armor etc...)
+		ShopTransactionResult ShopSell_macro(int clientId,EquipmentType equipType) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopSell($(equipType))"; }
+		// Vends un consommable situé dans le slot donné.
+		ShopTransactionResult ShopSellConsummable_macro(int clientId,int slot) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopSellConsummable($(slot))"; }
+		// Effectue une upgrade d'un équipement indiqué en paramètre.
+		ShopTransactionResult ShopUpgrade_macro(int clientId,EquipmentType equipType) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopUpgrade($(equipType))"; }
+		// Obtient la liste des modèles d'armes disponibles au shop.
+		List<WeaponModelView> ShopGetWeapons_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetWeapons()"; }
+		// Obtient la liste des modèles d'armures disponibles au shop.
+		List<PassiveEquipmentModelView> ShopGetArmors_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetArmors()"; }
+		// Obtient la liste des modèles de bottes disponibles au shop.
+		List<PassiveEquipmentModelView> ShopGetBoots_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetBoots()"; }
+		// Obtient la liste des enchantements disponibles au shop.
+		List<WeaponEnchantModelView> ShopGetEnchants_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetEnchants()"; }
+		// Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
+		int GetWeaponId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetWeaponId()"; }
+		// Obtient le niveau du modèle d'arme équipé par le héros. (-1 si aucune arme équipée)
+		int GetWeaponLevel_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetWeaponLevel()"; }
+		// Obtient l'id du modèle d'armure équipé par le héros. (-1 si aucun)
+		int GetArmorId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetArmorId()"; }
+		// Obtient le niveau du modèle d'armure équipé par le héros. (-1 si aucune armure équipée)
+		int GetArmorLevel_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetArmorLevel()"; }
+		// Obtient l'id du modèle de bottes équipé par le héros. (-1 si aucun)
+		int GetBootsId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetBootsId()"; }
+		// Obtient le niveau du modèle de bottes équipé par le héros. (-1 si aucune paire équipée)
+		int GetBootsLevel_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetBootsLevel()"; }
+		// Obtient l'id du modèle d'enchantement d'arme équipé par le héros. (-1 si aucun)
+		int GetWeaponEnchantId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetWeaponEnchantId()"; }
 		// Retourne une vue vers le héros contrôlé par ce contrôleur.
 		EntityBaseView GetHero_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHero()"; }
 		// Retourne la position du héros.
@@ -298,6 +341,102 @@ main
 	} // macro
 	access
 	{
+		// Achète et équipe un objet d'id donné au shop. Les ids peuvent être obtenus via ShopGetWeapons(),ShopGetArmors(), ShopGetBoots() etc...
+		public ShopTransactionResult ShopPurchaseItem(int equipId)
+		{ 
+			return ShopPurchaseItem_macro(clientId,equipId);
+		}
+
+		// Achète un consommable d'id donné, et le place dans le slot donné.
+		public ShopTransactionResult ShopPurchaseConsummable(int consummableId,int slot)
+		{ 
+			return ShopPurchaseConsummable_macro(clientId,consummableId,slot);
+		}
+
+		// Vend l'équipement du type passé en paramètre. (vends l'arme si Weapon, l'armure si Armor etc...)
+		public ShopTransactionResult ShopSell(EquipmentType equipType)
+		{ 
+			return ShopSell_macro(clientId,equipType);
+		}
+
+		// Vends un consommable situé dans le slot donné.
+		public ShopTransactionResult ShopSellConsummable(int slot)
+		{ 
+			return ShopSellConsummable_macro(clientId,slot);
+		}
+
+		// Effectue une upgrade d'un équipement indiqué en paramètre.
+		public ShopTransactionResult ShopUpgrade(EquipmentType equipType)
+		{ 
+			return ShopUpgrade_macro(clientId,equipType);
+		}
+
+		// Obtient la liste des modèles d'armes disponibles au shop.
+		public List<WeaponModelView> ShopGetWeapons()
+		{ 
+			return ShopGetWeapons_macro(clientId);
+		}
+
+		// Obtient la liste des modèles d'armures disponibles au shop.
+		public List<PassiveEquipmentModelView> ShopGetArmors()
+		{ 
+			return ShopGetArmors_macro(clientId);
+		}
+
+		// Obtient la liste des modèles de bottes disponibles au shop.
+		public List<PassiveEquipmentModelView> ShopGetBoots()
+		{ 
+			return ShopGetBoots_macro(clientId);
+		}
+
+		// Obtient la liste des enchantements disponibles au shop.
+		public List<WeaponEnchantModelView> ShopGetEnchants()
+		{ 
+			return ShopGetEnchants_macro(clientId);
+		}
+
+		// Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
+		public int GetWeaponId()
+		{ 
+			return GetWeaponId_macro(clientId);
+		}
+
+		// Obtient le niveau du modèle d'arme équipé par le héros. (-1 si aucune arme équipée)
+		public int GetWeaponLevel()
+		{ 
+			return GetWeaponLevel_macro(clientId);
+		}
+
+		// Obtient l'id du modèle d'armure équipé par le héros. (-1 si aucun)
+		public int GetArmorId()
+		{ 
+			return GetArmorId_macro(clientId);
+		}
+
+		// Obtient le niveau du modèle d'armure équipé par le héros. (-1 si aucune armure équipée)
+		public int GetArmorLevel()
+		{ 
+			return GetArmorLevel_macro(clientId);
+		}
+
+		// Obtient l'id du modèle de bottes équipé par le héros. (-1 si aucun)
+		public int GetBootsId()
+		{ 
+			return GetBootsId_macro(clientId);
+		}
+
+		// Obtient le niveau du modèle de bottes équipé par le héros. (-1 si aucune paire équipée)
+		public int GetBootsLevel()
+		{ 
+			return GetBootsLevel_macro(clientId);
+		}
+
+		// Obtient l'id du modèle d'enchantement d'arme équipé par le héros. (-1 si aucun)
+		public int GetWeaponEnchantId()
+		{ 
+			return GetWeaponEnchantId_macro(clientId);
+		}
+
 		// Retourne une vue vers le héros contrôlé par ce contrôleur.
 		public EntityBaseView GetHero()
 		{ 

@@ -100,7 +100,7 @@ namespace Codinsa2015.Views
 		public static StateAlterationModelView Deserialize(System.IO.StreamReader input) {
 			StateAlterationModelView _obj =  new StateAlterationModelView();
 			// Type
-			int _obj_Type = Int32.Parse(input.ReadLine());
+			StateAlterationType _obj_Type = (StateAlterationType)Int32.Parse(input.ReadLine());
 			_obj.Type = (StateAlterationType)_obj_Type;
 			// BaseDuration
 			float _obj_BaseDuration = Single.Parse(input.ReadLine());
@@ -109,7 +109,7 @@ namespace Codinsa2015.Views
 			bool _obj_DashGoThroughWall = Int32.Parse(input.ReadLine()) == 0 ? false : true;
 			_obj.DashGoThroughWall = (bool)_obj_DashGoThroughWall;
 			// DashDirType
-			int _obj_DashDirType = Int32.Parse(input.ReadLine());
+			DashDirectionType _obj_DashDirType = (DashDirectionType)Int32.Parse(input.ReadLine());
 			_obj.DashDirType = (DashDirectionType)_obj_DashDirType;
 			// FlatValue
 			float _obj_FlatValue = Single.Parse(input.ReadLine());

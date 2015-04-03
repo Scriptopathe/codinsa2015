@@ -13,7 +13,8 @@ void SpellCastTargetInfoView::serialize(std::ostream& output) {
 SpellCastTargetInfoView SpellCastTargetInfoView::deserialize(std::istream& input) {
 	SpellCastTargetInfoView _obj = SpellCastTargetInfoView();
 	// Type
-	int _obj_Type; input >> _obj_Type; input.ignore(1000, '\n');
+	int _obj_Type_asInt; input >> _obj_Type; input.ignore(1000, '\n');
+	TargettingType _obj_Type = (TargettingType)_obj_Type_asInt;
 	_obj.Type = (::TargettingType)_obj_Type;
 	// TargetPosition
 	Vector2 _obj_TargetPosition = Vector2::deserialize(input);

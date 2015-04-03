@@ -41,7 +41,7 @@ namespace Codinsa2015.Views
 		public static SpellTargetInfoView Deserialize(System.IO.StreamReader input) {
 			SpellTargetInfoView _obj =  new SpellTargetInfoView();
 			// Type
-			int _obj_Type = Int32.Parse(input.ReadLine());
+			TargettingType _obj_Type = (TargettingType)Int32.Parse(input.ReadLine());
 			_obj.Type = (TargettingType)_obj_Type;
 			// Range
 			float _obj_Range = Single.Parse(input.ReadLine());
@@ -56,7 +56,7 @@ namespace Codinsa2015.Views
 			bool _obj_DieOnCollision = Int32.Parse(input.ReadLine()) == 0 ? false : true;
 			_obj.DieOnCollision = (bool)_obj_DieOnCollision;
 			// AllowedTargetTypes
-			int _obj_AllowedTargetTypes = Int32.Parse(input.ReadLine());
+			EntityTypeRelative _obj_AllowedTargetTypes = (EntityTypeRelative)Int32.Parse(input.ReadLine());
 			_obj.AllowedTargetTypes = (EntityTypeRelative)_obj_AllowedTargetTypes;
 			return _obj;
 		}

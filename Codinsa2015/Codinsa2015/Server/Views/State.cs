@@ -12,6 +12,120 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 		/// <summary>
+		///  Achète et équipe un objet d'id donné au shop. Les ids peuvent être obtenus via
+		/// ShopGetWeapons(),ShopGetArmors(), ShopGetBoots() etc...
+		/// </summary>
+		public ShopTransactionResult ShopPurchaseItem(int equipId, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopPurchaseItem(equipId);
+		}	
+		/// <summary>
+		///  Achète un consommable d'id donné, et le place dans le slot donné.
+		/// </summary>
+		public ShopTransactionResult ShopPurchaseConsummable(int consummableId, int slot, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopPurchaseConsummable(consummableId,slot);
+		}	
+		/// <summary>
+		///  Vend l'équipement du type passé en paramètre. (vends l'arme si Weapon, l'armure si Armor
+		/// etc...)
+		/// </summary>
+		public ShopTransactionResult ShopSell(EquipmentType equipType, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopSell(equipType);
+		}	
+		/// <summary>
+		///  Vends un consommable situé dans le slot donné.
+		/// </summary>
+		public ShopTransactionResult ShopSellConsummable(int slot, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopSellConsummable(slot);
+		}	
+		/// <summary>
+		///  Effectue une upgrade d'un équipement indiqué en paramètre.
+		/// </summary>
+		public ShopTransactionResult ShopUpgrade(EquipmentType equipType, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopUpgrade(equipType);
+		}	
+		/// <summary>
+		///  Obtient la liste des modèles d'armes disponibles au shop.
+		/// </summary>
+		public List<WeaponModelView> ShopGetWeapons(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetWeapons();
+		}	
+		/// <summary>
+		///  Obtient la liste des modèles d'armures disponibles au shop.
+		/// </summary>
+		public List<PassiveEquipmentModelView> ShopGetArmors(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetArmors();
+		}	
+		/// <summary>
+		///  Obtient la liste des modèles de bottes disponibles au shop.
+		/// </summary>
+		public List<PassiveEquipmentModelView> ShopGetBoots(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetBoots();
+		}	
+		/// <summary>
+		///  Obtient la liste des enchantements disponibles au shop.
+		/// </summary>
+		public List<WeaponEnchantModelView> ShopGetEnchants(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetEnchants();
+		}	
+		/// <summary>
+		///  Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
+		/// </summary>
+		public int GetWeaponId(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetWeaponId();
+		}	
+		/// <summary>
+		///  Obtient le niveau du modèle d'arme équipé par le héros. (-1 si aucune arme équipée)
+		/// </summary>
+		public int GetWeaponLevel(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetWeaponLevel();
+		}	
+		/// <summary>
+		///  Obtient l'id du modèle d'armure équipé par le héros. (-1 si aucun)
+		/// </summary>
+		public int GetArmorId(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetArmorId();
+		}	
+		/// <summary>
+		///  Obtient le niveau du modèle d'armure équipé par le héros. (-1 si aucune armure équipée)
+		/// </summary>
+		public int GetArmorLevel(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetArmorLevel();
+		}	
+		/// <summary>
+		///  Obtient l'id du modèle de bottes équipé par le héros. (-1 si aucun)
+		/// </summary>
+		public int GetBootsId(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetBootsId();
+		}	
+		/// <summary>
+		///  Obtient le niveau du modèle de bottes équipé par le héros. (-1 si aucune paire équipée)
+		/// </summary>
+		public int GetBootsLevel(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetBootsLevel();
+		}	
+		/// <summary>
+		///  Obtient l'id du modèle d'enchantement d'arme équipé par le héros. (-1 si aucun)
+		/// </summary>
+		public int GetWeaponEnchantId(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetWeaponEnchantId();
+		}	
+		/// <summary>
 		///  Retourne une vue vers le héros contrôlé par ce contrôleur.
 		/// </summary>
 		public EntityBaseView GetHero(int clientId)
@@ -120,59 +234,67 @@ namespace Codinsa2015.Views
 			switch(functionId)
 			{
 			case 0:
+				int arg0_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				EntityBaseView retValue0 = GetHero(clientId);
-				retValue0.Serialize(output);
+				ShopTransactionResult retValue0 = ShopPurchaseItem(arg0_0, clientId);
+				output.WriteLine(((int)retValue0).ToString());
 				output.Close();
 				return s.ToArray();
 			case 1:
+				int arg1_0 = Int32.Parse(input.ReadLine());
+				int arg1_1 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				Vector2 retValue1 = GetPosition(clientId);
-				retValue1.Serialize(output);
+				ShopTransactionResult retValue1 = ShopPurchaseConsummable(arg1_0, arg1_1, clientId);
+				output.WriteLine(((int)retValue1).ToString());
 				output.Close();
 				return s.ToArray();
 			case 2:
+				EquipmentType arg2_0 = (EquipmentType)Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				MapView retValue2 = GetMapView(clientId);
-				retValue2.Serialize(output);
+				ShopTransactionResult retValue2 = ShopSell(arg2_0, clientId);
+				output.WriteLine(((int)retValue2).ToString());
 				output.Close();
 				return s.ToArray();
 			case 3:
-				Vector2 arg3_0 = Vector2.Deserialize(input);
+				int arg3_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				bool retValue3 = StartMoveTo(arg3_0, clientId);
-				output.WriteLine(retValue3 ? 1 : 0);
+				ShopTransactionResult retValue3 = ShopSellConsummable(arg3_0, clientId);
+				output.WriteLine(((int)retValue3).ToString());
 				output.Close();
 				return s.ToArray();
 			case 4:
+				EquipmentType arg4_0 = (EquipmentType)Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				bool retValue4 = IsAutoMoving(clientId);
-				output.WriteLine(retValue4 ? 1 : 0);
+				ShopTransactionResult retValue4 = ShopUpgrade(arg4_0, clientId);
+				output.WriteLine(((int)retValue4).ToString());
 				output.Close();
 				return s.ToArray();
 			case 5:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				bool retValue5 = EndMoveTo(clientId);
-				output.WriteLine(retValue5 ? 1 : 0);
+				List<WeaponModelView> retValue5 = ShopGetWeapons(clientId);
+				output.WriteLine(retValue5.Count.ToString());
+				for(int retValue5_it = 0; retValue5_it < retValue5.Count;retValue5_it++) {
+					retValue5[retValue5_it].Serialize(output);
+				}
 				output.Close();
 				return s.ToArray();
 			case 6:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<EntityBaseView> retValue6 = GetEntitiesInSight(clientId);
+				List<PassiveEquipmentModelView> retValue6 = ShopGetArmors(clientId);
 				output.WriteLine(retValue6.Count.ToString());
 				for(int retValue6_it = 0; retValue6_it < retValue6.Count;retValue6_it++) {
 					retValue6[retValue6_it].Serialize(output);
@@ -180,70 +302,208 @@ namespace Codinsa2015.Views
 				output.Close();
 				return s.ToArray();
 			case 7:
-				int arg7_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				EntityBaseView retValue7 = GetEntityById(arg7_0, clientId);
-				retValue7.Serialize(output);
+				List<PassiveEquipmentModelView> retValue7 = ShopGetBoots(clientId);
+				output.WriteLine(retValue7.Count.ToString());
+				for(int retValue7_it = 0; retValue7_it < retValue7.Count;retValue7_it++) {
+					retValue7[retValue7_it].Serialize(output);
+				}
 				output.Close();
 				return s.ToArray();
 			case 8:
-				int arg8_0 = Int32.Parse(input.ReadLine());
-				SpellCastTargetInfoView arg8_1 = SpellCastTargetInfoView.Deserialize(input);
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				bool retValue8 = UseSpell(arg8_0, arg8_1, clientId);
-				output.WriteLine(retValue8 ? 1 : 0);
+				List<WeaponEnchantModelView> retValue8 = ShopGetEnchants(clientId);
+				output.WriteLine(retValue8.Count.ToString());
+				for(int retValue8_it = 0; retValue8_it < retValue8.Count;retValue8_it++) {
+					retValue8[retValue8_it].Serialize(output);
+				}
 				output.Close();
 				return s.ToArray();
 			case 9:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SceneMode retValue9 = GetMode(clientId);
+				int retValue9 = GetWeaponId(clientId);
 				output.WriteLine(((int)retValue9).ToString());
 				output.Close();
 				return s.ToArray();
 			case 10:
-				int arg10_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SpellDescriptionView retValue10 = GetSpellCurrentLevelDescription(arg10_0, clientId);
-				retValue10.Serialize(output);
+				int retValue10 = GetWeaponLevel(clientId);
+				output.WriteLine(((int)retValue10).ToString());
 				output.Close();
 				return s.ToArray();
 			case 11:
-				int arg11_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SpellView retValue11 = GetSpell(arg11_0, clientId);
-				retValue11.Serialize(output);
+				int retValue11 = GetArmorId(clientId);
+				output.WriteLine(((int)retValue11).ToString());
 				output.Close();
 				return s.ToArray();
 			case 12:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<SpellView> retValue12 = GetSpells(clientId);
-				output.WriteLine(retValue12.Count.ToString());
-				for(int retValue12_it = 0; retValue12_it < retValue12.Count;retValue12_it++) {
-					retValue12[retValue12_it].Serialize(output);
-				}
+				int retValue12 = GetArmorLevel(clientId);
+				output.WriteLine(((int)retValue12).ToString());
 				output.Close();
 				return s.ToArray();
 			case 13:
-				int arg13_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<SpellView> retValue13 = GetHeroSpells(arg13_0, clientId);
-				output.WriteLine(retValue13.Count.ToString());
-				for(int retValue13_it = 0; retValue13_it < retValue13.Count;retValue13_it++) {
-					retValue13[retValue13_it].Serialize(output);
+				int retValue13 = GetBootsId(clientId);
+				output.WriteLine(((int)retValue13).ToString());
+				output.Close();
+				return s.ToArray();
+			case 14:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				int retValue14 = GetBootsLevel(clientId);
+				output.WriteLine(((int)retValue14).ToString());
+				output.Close();
+				return s.ToArray();
+			case 15:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				int retValue15 = GetWeaponEnchantId(clientId);
+				output.WriteLine(((int)retValue15).ToString());
+				output.Close();
+				return s.ToArray();
+			case 16:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				EntityBaseView retValue16 = GetHero(clientId);
+				retValue16.Serialize(output);
+				output.Close();
+				return s.ToArray();
+			case 17:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				Vector2 retValue17 = GetPosition(clientId);
+				retValue17.Serialize(output);
+				output.Close();
+				return s.ToArray();
+			case 18:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				MapView retValue18 = GetMapView(clientId);
+				retValue18.Serialize(output);
+				output.Close();
+				return s.ToArray();
+			case 19:
+				Vector2 arg19_0 = Vector2.Deserialize(input);
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				bool retValue19 = StartMoveTo(arg19_0, clientId);
+				output.WriteLine(retValue19 ? 1 : 0);
+				output.Close();
+				return s.ToArray();
+			case 20:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				bool retValue20 = IsAutoMoving(clientId);
+				output.WriteLine(retValue20 ? 1 : 0);
+				output.Close();
+				return s.ToArray();
+			case 21:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				bool retValue21 = EndMoveTo(clientId);
+				output.WriteLine(retValue21 ? 1 : 0);
+				output.Close();
+				return s.ToArray();
+			case 22:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				List<EntityBaseView> retValue22 = GetEntitiesInSight(clientId);
+				output.WriteLine(retValue22.Count.ToString());
+				for(int retValue22_it = 0; retValue22_it < retValue22.Count;retValue22_it++) {
+					retValue22[retValue22_it].Serialize(output);
+				}
+				output.Close();
+				return s.ToArray();
+			case 23:
+				int arg23_0 = Int32.Parse(input.ReadLine());
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				EntityBaseView retValue23 = GetEntityById(arg23_0, clientId);
+				retValue23.Serialize(output);
+				output.Close();
+				return s.ToArray();
+			case 24:
+				int arg24_0 = Int32.Parse(input.ReadLine());
+				SpellCastTargetInfoView arg24_1 = SpellCastTargetInfoView.Deserialize(input);
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				bool retValue24 = UseSpell(arg24_0, arg24_1, clientId);
+				output.WriteLine(retValue24 ? 1 : 0);
+				output.Close();
+				return s.ToArray();
+			case 25:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				SceneMode retValue25 = GetMode(clientId);
+				output.WriteLine(((int)retValue25).ToString());
+				output.Close();
+				return s.ToArray();
+			case 26:
+				int arg26_0 = Int32.Parse(input.ReadLine());
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				SpellDescriptionView retValue26 = GetSpellCurrentLevelDescription(arg26_0, clientId);
+				retValue26.Serialize(output);
+				output.Close();
+				return s.ToArray();
+			case 27:
+				int arg27_0 = Int32.Parse(input.ReadLine());
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				SpellView retValue27 = GetSpell(arg27_0, clientId);
+				retValue27.Serialize(output);
+				output.Close();
+				return s.ToArray();
+			case 28:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				List<SpellView> retValue28 = GetSpells(clientId);
+				output.WriteLine(retValue28.Count.ToString());
+				for(int retValue28_it = 0; retValue28_it < retValue28.Count;retValue28_it++) {
+					retValue28[retValue28_it].Serialize(output);
+				}
+				output.Close();
+				return s.ToArray();
+			case 29:
+				int arg29_0 = Int32.Parse(input.ReadLine());
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				List<SpellView> retValue29 = GetHeroSpells(arg29_0, clientId);
+				output.WriteLine(retValue29.Count.ToString());
+				for(int retValue29_it = 0; retValue29_it < retValue29.Count;retValue29_it++) {
+					retValue29[retValue29_it].Serialize(output);
 				}
 				output.Close();
 				return s.ToArray();

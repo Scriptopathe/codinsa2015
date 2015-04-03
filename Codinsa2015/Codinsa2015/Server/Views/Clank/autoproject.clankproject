@@ -8,8 +8,10 @@
     <string>_StateAlterationView.clank</string>
     <string>_StateAlterationModelView.clank</string>
     <string>_PassiveEquipmentUpgradeModelView.clank</string>
+    <string>_PassiveEquipmentModelView.clank</string>
     <string>_WeaponUpgradeModelView.clank</string>
     <string>_WeaponEnchantModelView.clank</string>
+    <string>_WeaponModelView.clank</string>
     <string>_MapView.clank</string>
     <string>_CircleShapeView.clank</string>
     <string>_GenericShapeView.clank</string>

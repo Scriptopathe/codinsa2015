@@ -63,7 +63,7 @@ public class StateAlterationModelView
 	public static StateAlterationModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		StateAlterationModelView _obj =  new StateAlterationModelView();
 		// Type
-		int _obj_Type = Integer.valueOf(input.readLine());
+		StateAlterationType _obj_Type = StateAlterationType.fromValue(Integer.valueOf(input.readLine()));
 		_obj.Type = StateAlterationType.fromValue(_obj_Type);
 		// BaseDuration
 		float _obj_BaseDuration = Float.valueOf(input.readLine());
@@ -72,7 +72,7 @@ public class StateAlterationModelView
 		boolean _obj_DashGoThroughWall = Integer.valueOf(input.readLine()) == 0 ? false : true;
 		_obj.DashGoThroughWall = _obj_DashGoThroughWall;
 		// DashDirType
-		int _obj_DashDirType = Integer.valueOf(input.readLine());
+		DashDirectionType _obj_DashDirType = DashDirectionType.fromValue(Integer.valueOf(input.readLine()));
 		_obj.DashDirType = DashDirectionType.fromValue(_obj_DashDirType);
 		// FlatValue
 		float _obj_FlatValue = Float.valueOf(input.readLine());

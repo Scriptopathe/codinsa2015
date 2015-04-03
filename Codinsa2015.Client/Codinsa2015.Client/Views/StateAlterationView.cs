@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 
-namespace Codinsa2015.Views
+namespace Codinsa2015.Views.Client
 {
 
 	public class StateAlterationView
@@ -40,7 +40,7 @@ namespace Codinsa2015.Views
 			int _obj_Source = Int32.Parse(input.ReadLine());
 			_obj.Source = (int)_obj_Source;
 			// SourceType
-			int _obj_SourceType = Int32.Parse(input.ReadLine());
+			StateAlterationSource _obj_SourceType = (StateAlterationSource)Int32.Parse(input.ReadLine());
 			_obj.SourceType = (StateAlterationSource)_obj_SourceType;
 			// Model
 			StateAlterationModelView _obj_Model = StateAlterationModelView.Deserialize(input);

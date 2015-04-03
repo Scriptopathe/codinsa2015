@@ -178,6 +178,15 @@ namespace Codinsa2015.Views
 		NotUnits = 3
 	}
 	
+	public enum EquipmentType
+	{
+		Consummable = 0,
+		Armor = 1,
+		Weapon = 2,
+		WeaponEnchant = 3,
+		Boots = 4
+	}
+	
 	public enum ShopTransactionResult
 	{
 		ItemDoesNotExist = 0,

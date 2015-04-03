@@ -177,6 +177,15 @@ enum class ConsummableUseResult
 	NotUnits = 3
 };
 
+enum class EquipmentType
+{
+	Consummable = 0,
+	Armor = 1,
+	Weapon = 2,
+	WeaponEnchant = 3,
+	Boots = 4
+};
+
 enum class ShopTransactionResult
 {
 	ItemDoesNotExist = 0,

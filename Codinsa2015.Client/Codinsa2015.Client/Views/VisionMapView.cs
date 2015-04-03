@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 
-namespace Codinsa2015.Views
+namespace Codinsa2015.Views.Client
 {
 
 	public class VisionMapView
@@ -27,7 +27,7 @@ namespace Codinsa2015.Views
 				List<VisionFlags> _obj_Vision_e = new List<VisionFlags>();
 				int _obj_Vision_e_count = Int32.Parse(input.ReadLine());
 				for(int _obj_Vision_e_i = 0; _obj_Vision_e_i < _obj_Vision_e_count; _obj_Vision_e_i++) {
-					int _obj_Vision_e_e = Int32.Parse(input.ReadLine());
+					VisionFlags _obj_Vision_e_e = (VisionFlags)Int32.Parse(input.ReadLine());
 					_obj_Vision_e.Add((VisionFlags)_obj_Vision_e_e);
 				}
 				_obj_Vision.Add((List<VisionFlags>)_obj_Vision_e);

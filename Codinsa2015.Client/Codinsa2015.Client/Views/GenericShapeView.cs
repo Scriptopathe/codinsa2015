@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 
-namespace Codinsa2015.Views
+namespace Codinsa2015.Views.Client
 {
 
 	public class GenericShapeView
@@ -42,7 +42,7 @@ namespace Codinsa2015.Views
 			Vector2 _obj_Size = Vector2.Deserialize(input);
 			_obj.Size = (Vector2)_obj_Size;
 			// ShapeType
-			int _obj_ShapeType = Int32.Parse(input.ReadLine());
+			GenericShapeType _obj_ShapeType = (GenericShapeType)Int32.Parse(input.ReadLine());
 			_obj.ShapeType = (GenericShapeType)_obj_ShapeType;
 			return _obj;
 		}

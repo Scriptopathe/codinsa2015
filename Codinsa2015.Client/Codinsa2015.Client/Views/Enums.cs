@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-namespace Codinsa2015.Views
+namespace Codinsa2015.Views.Client
 {
 
 	public enum EntityUniquePassives
@@ -176,6 +176,15 @@ namespace Codinsa2015.Views
 		SuccessAndDestroyed = 1,
 		Fail = 2,
 		NotUnits = 3
+	}
+	
+	public enum EquipmentType
+	{
+		Consummable = 0,
+		Armor = 1,
+		Weapon = 2,
+		WeaponEnchant = 3,
+		Boots = 4
 	}
 	
 	public enum ShopTransactionResult
