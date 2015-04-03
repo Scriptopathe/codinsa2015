@@ -21,6 +21,10 @@ public class SpellModelView
 	public Integer ID;
 	// Obtient la liste des descriptions des niveaux de ce sort.
 	public ArrayList<SpellLevelDescriptionView> Levels;
+	public SpellModelView() {
+		Levels = new ArrayList<SpellLevelDescriptionView>();
+	}
+
 	public static SpellModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellModelView _obj =  new SpellModelView();
 		// ID

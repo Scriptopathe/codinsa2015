@@ -24,6 +24,9 @@ public class SpellView
 	public Integer Model;
 	// Niveau actuel du spell.
 	public Integer Level;
+	public SpellView() {
+	}
+
 	public static SpellView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellView _obj =  new SpellView();
 		// CurrentCooldown

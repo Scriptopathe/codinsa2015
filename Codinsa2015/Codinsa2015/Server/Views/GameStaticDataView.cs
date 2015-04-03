@@ -38,6 +38,15 @@ namespace Codinsa2015.Views
 		/// Obtient une vue sur les données statiques de la carte (telles que sa table de passabilité).
 		/// </summary>
 		public MapView Map;	
+		public GameStaticDataView() {
+			Weapons = new List<WeaponModelView>();
+			Armors = new List<PassiveEquipmentModelView>();
+			Boots = new List<PassiveEquipmentModelView>();
+			Enchants = new List<WeaponEnchantModelView>();
+			Spells = new List<SpellModelView>();
+			Map = new MapView();
+		}
+
 		public static GameStaticDataView Deserialize(System.IO.StreamReader input) {
 			GameStaticDataView _obj =  new GameStaticDataView();
 			// Weapons

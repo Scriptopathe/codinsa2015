@@ -22,6 +22,10 @@ namespace Codinsa2015.Views.Client
 		/// Rayon du cercle.
 		/// </summary>
 		public float Radius;	
+		public CircleShapeView() {
+			Position = new Vector2();
+		}
+
 		public static CircleShapeView Deserialize(System.IO.StreamReader input) {
 			CircleShapeView _obj =  new CircleShapeView();
 			// Position

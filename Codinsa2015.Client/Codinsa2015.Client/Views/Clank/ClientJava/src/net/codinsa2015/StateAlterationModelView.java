@@ -60,6 +60,9 @@ public class StateAlterationModelView
 	public Float MonsterBonus;
 	// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.
 	public Float CreepBonus;
+	public StateAlterationModelView() {
+	}
+
 	public static StateAlterationModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		StateAlterationModelView _obj =  new StateAlterationModelView();
 		// Type

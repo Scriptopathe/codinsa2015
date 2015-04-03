@@ -22,6 +22,11 @@ public class StateAlterationParametersView
 	public Integer DashTargetEntity;
 	// Position finale du du dash (si targetting TowardsPosition)
 	public Vector2 DashTargetPosition;
+	public StateAlterationParametersView() {
+		DashTargetDirection = new Vector2();
+		DashTargetPosition = new Vector2();
+	}
+
 	public static StateAlterationParametersView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		StateAlterationParametersView _obj =  new StateAlterationParametersView();
 		// DashTargetDirection

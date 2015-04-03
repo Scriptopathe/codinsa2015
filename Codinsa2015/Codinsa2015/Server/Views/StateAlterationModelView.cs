@@ -97,6 +97,9 @@ namespace Codinsa2015.Views
 		/// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.
 		/// </summary>
 		public float CreepBonus;	
+		public StateAlterationModelView() {
+		}
+
 		public static StateAlterationModelView Deserialize(System.IO.StreamReader input) {
 			StateAlterationModelView _obj =  new StateAlterationModelView();
 			// Type

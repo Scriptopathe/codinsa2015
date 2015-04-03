@@ -17,6 +17,10 @@ public class MapView
 
 	// Tableau de passabilité de la map. true : passable, false : non passable.
 	public ArrayList<ArrayList<Boolean>> Passability;
+	public MapView() {
+		Passability = new ArrayList<ArrayList<Boolean>>();
+	}
+
 	public static MapView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		MapView _obj =  new MapView();
 		// Passability

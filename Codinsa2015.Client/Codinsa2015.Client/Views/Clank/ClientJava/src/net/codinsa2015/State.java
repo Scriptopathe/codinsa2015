@@ -650,6 +650,9 @@ public class State
 		return null;
 	}
 
+	public State() {
+	}
+
 	public static State deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		State _obj =  new State();
 		return _obj;

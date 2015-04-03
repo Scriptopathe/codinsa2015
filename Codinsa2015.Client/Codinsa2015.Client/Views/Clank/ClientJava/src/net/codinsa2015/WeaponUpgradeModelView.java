@@ -24,6 +24,11 @@ public class WeaponUpgradeModelView
 	public ArrayList<StateAlterationModelView> PassiveAlterations;
 	// Obtient le coût de cette upgrade.
 	public Float Cost;
+	public WeaponUpgradeModelView() {
+		Description = new SpellLevelDescriptionView();
+		PassiveAlterations = new ArrayList<StateAlterationModelView>();
+	}
+
 	public static WeaponUpgradeModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		WeaponUpgradeModelView _obj =  new WeaponUpgradeModelView();
 		// Description

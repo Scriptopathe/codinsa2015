@@ -18,6 +18,10 @@ namespace Codinsa2015.Views.Client
 		/// Tableau de passabilité de la map. true : passable, false : non passable.
 		/// </summary>
 		public List<List<bool>> Passability;	
+		public MapView() {
+			Passability = new List<List<bool>>();
+		}
+
 		public static MapView Deserialize(System.IO.StreamReader input) {
 			MapView _obj =  new MapView();
 			// Passability

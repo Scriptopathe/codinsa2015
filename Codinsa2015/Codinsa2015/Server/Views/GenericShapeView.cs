@@ -30,6 +30,11 @@ namespace Codinsa2015.Views
 		/// Représente le type de la forme.
 		/// </summary>
 		public GenericShapeType ShapeType;	
+		public GenericShapeView() {
+			Position = new Vector2();
+			Size = new Vector2();
+		}
+
 		public static GenericShapeView Deserialize(System.IO.StreamReader input) {
 			GenericShapeView _obj =  new GenericShapeView();
 			// Position

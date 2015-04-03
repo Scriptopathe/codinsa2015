@@ -22,6 +22,9 @@ namespace Codinsa2015.Views.Client
 		}	
 		public float X;	
 		public float Y;	
+		public Vector2() {
+		}
+
 		public static Vector2 Deserialize(System.IO.StreamReader input) {
 			Vector2 _obj =  new Vector2();
 			// X

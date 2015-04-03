@@ -162,7 +162,7 @@
     <Compile Include="Server\Views\PassiveEquipmentUpgradeModelView.cs" />
     <Compile Include="Server\Views\SpellcastBaseView.cs" />
     <Compile Include="Server\Views\SpellCastTargetInfoView.cs" />
-    <Compile Include="Server\Views\SpellDescriptionView.cs" />
+    <Compile Include="Server\Views\SpellLevelDescriptionView.cs" />
     <Compile Include="Server\Views\SpellModelView.cs" />
     <Compile Include="Server\Views\SpellTargetInfoView.cs" />
     <Compile Include="Server\Views\SpellView.cs" />

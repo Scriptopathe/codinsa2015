@@ -22,6 +22,10 @@ namespace Codinsa2015.Views
 		/// Obtient le coût de l'upgrade.
 		/// </summary>
 		public float Cost;	
+		public PassiveEquipmentUpgradeModelView() {
+			PassiveAlterations = new List<StateAlterationModelView>();
+		}
+
 		public static PassiveEquipmentUpgradeModelView Deserialize(System.IO.StreamReader input) {
 			PassiveEquipmentUpgradeModelView _obj =  new PassiveEquipmentUpgradeModelView();
 			// PassiveAlterations

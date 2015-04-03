@@ -220,6 +220,9 @@ using System.Text;");
                 }
             }
 
+            // Constructeur
+            builder.AppendLine(Tools.StringUtils.Indent(GenerateConstructor(declaration), 2));
+
             builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializer(declaration), 2));
             builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializer(declaration), 2));
             builder.AppendLine("\t}");
@@ -227,6 +230,29 @@ using System.Text;");
             return builder.ToString();
         }
 
+        /// <summary>
+        /// Génère un constructeur initialisant tous les champs bien comme il faut.
+        /// </summary>
+        /// <param name="decl"></param>
+        /// <returns></returns>
+        public string GenerateConstructor(ClassDeclaration decl)
+        {
+            StringBuilder b = new StringBuilder();
+            b.AppendLine("public " + decl.Name + "() {");
+            var varDecls = decl.Instructions.Where(inst => inst is VariableDeclarationInstruction).ToList();
+            
+            foreach(var vdecl in varDecls)
+            {
+                var d = vdecl as VariableDeclarationInstruction;
+                if(d.Var.Type.BaseType.JType == JSONType.Array || d.Var.Type.BaseType.JType == JSONType.Object)
+                {
+                    b.AppendLine("\t" + d.Var.Name + " = new " + GenerateTypeInstanceName(d.Var.Type) + "();");
+                }
+            }
+
+            b.AppendLine("}");
+            return b.ToString();
+        }
         #region Deserialization
         /// <summary>
         /// Génère une fonction de désérialisation pour la classe donnée.

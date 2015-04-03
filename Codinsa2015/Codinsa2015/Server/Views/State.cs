@@ -492,6 +492,9 @@ namespace Codinsa2015.Views
 			return new byte[0];
 		}
 	
+		public State() {
+		}
+
 		public static State Deserialize(System.IO.StreamReader input) {
 			State _obj =  new State();
 			return _obj;

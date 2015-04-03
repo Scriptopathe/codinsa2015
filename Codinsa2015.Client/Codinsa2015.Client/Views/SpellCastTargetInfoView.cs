@@ -31,6 +31,11 @@ namespace Codinsa2015.Views.Client
 		/// Retourne l'id de la cible, si le type de cibale (Type) est TargettingType.Targetted.
 		/// </summary>
 		public int TargetId;	
+		public SpellCastTargetInfoView() {
+			TargetPosition = new Vector2();
+			TargetDirection = new Vector2();
+		}
+
 		public static SpellCastTargetInfoView Deserialize(System.IO.StreamReader input) {
 			SpellCastTargetInfoView _obj =  new SpellCastTargetInfoView();
 			// Type

@@ -26,6 +26,12 @@ namespace Codinsa2015.Views.Client
 		/// Obtient les effets passifs appliqués par l'enchantement.
 		/// </summary>
 		public List<StateAlterationModelView> PassiveEffects;	
+		public WeaponEnchantModelView() {
+			OnHitEffects = new List<StateAlterationModelView>();
+			CastingEffects = new List<StateAlterationModelView>();
+			PassiveEffects = new List<StateAlterationModelView>();
+		}
+
 		public static WeaponEnchantModelView Deserialize(System.IO.StreamReader input) {
 			WeaponEnchantModelView _obj =  new WeaponEnchantModelView();
 			// OnHitEffects

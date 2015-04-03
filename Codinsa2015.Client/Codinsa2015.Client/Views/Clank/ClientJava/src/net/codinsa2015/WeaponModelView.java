@@ -21,6 +21,10 @@ public class WeaponModelView
 	public ArrayList<WeaponUpgradeModelView> Upgrades;
 	// Prix d'achat de l'arme
 	public Float Price;
+	public WeaponModelView() {
+		Upgrades = new ArrayList<WeaponUpgradeModelView>();
+	}
+
 	public static WeaponModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		WeaponModelView _obj =  new WeaponModelView();
 		// Upgrades

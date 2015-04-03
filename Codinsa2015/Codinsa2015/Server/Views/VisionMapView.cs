@@ -18,6 +18,10 @@ namespace Codinsa2015.Views
 		/// Représente la vision qu'ont les 2 équipes sur l'ensemble de la map.
 		/// </summary>
 		public List<List<VisionFlags>> Vision;	
+		public VisionMapView() {
+			Vision = new List<List<VisionFlags>>();
+		}
+
 		public static VisionMapView Deserialize(System.IO.StreamReader input) {
 			VisionMapView _obj =  new VisionMapView();
 			// Vision

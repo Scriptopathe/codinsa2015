@@ -26,6 +26,9 @@ public class Vector2
 	}
 	public Float X;
 	public Float Y;
+	public Vector2() {
+	}
+
 	public static Vector2 deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		Vector2 _obj =  new Vector2();
 		// X

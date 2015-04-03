@@ -22,6 +22,10 @@ namespace Codinsa2015.Views
 		/// nom de ce spellcast (utilisé pour le texturing notamment).
 		/// </summary>
 		public string Name;	
+		public SpellcastBaseView() {
+			Shape = new GenericShapeView();
+		}
+
 		public static SpellcastBaseView Deserialize(System.IO.StreamReader input) {
 			SpellcastBaseView _obj =  new SpellcastBaseView();
 			// Shape

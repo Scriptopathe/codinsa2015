@@ -20,6 +20,10 @@ public class SpellcastBaseView
 	public GenericShapeView Shape;
 	// nom de ce spellcast (utilisé pour le texturing notamment).
 	public String Name;
+	public SpellcastBaseView() {
+		Shape = new GenericShapeView();
+	}
+
 	public static SpellcastBaseView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellcastBaseView _obj =  new SpellcastBaseView();
 		// Shape

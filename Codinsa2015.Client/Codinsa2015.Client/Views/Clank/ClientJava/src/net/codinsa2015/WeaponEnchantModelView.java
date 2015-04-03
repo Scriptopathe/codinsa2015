@@ -23,6 +23,12 @@ public class WeaponEnchantModelView
 	public ArrayList<StateAlterationModelView> CastingEffects;
 	// Obtient les effets passifs appliqués par l'enchantement.
 	public ArrayList<StateAlterationModelView> PassiveEffects;
+	public WeaponEnchantModelView() {
+		OnHitEffects = new ArrayList<StateAlterationModelView>();
+		CastingEffects = new ArrayList<StateAlterationModelView>();
+		PassiveEffects = new ArrayList<StateAlterationModelView>();
+	}
+
 	public static WeaponEnchantModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		WeaponEnchantModelView _obj =  new WeaponEnchantModelView();
 		// OnHitEffects

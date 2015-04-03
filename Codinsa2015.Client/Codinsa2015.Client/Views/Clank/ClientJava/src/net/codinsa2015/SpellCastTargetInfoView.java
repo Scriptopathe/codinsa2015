@@ -26,6 +26,11 @@ public class SpellCastTargetInfoView
 	public Vector2 TargetDirection;
 	// Retourne l'id de la cible, si le type de cibale (Type) est TargettingType.Targetted.
 	public Integer TargetId;
+	public SpellCastTargetInfoView() {
+		TargetPosition = new Vector2();
+		TargetDirection = new Vector2();
+	}
+
 	public static SpellCastTargetInfoView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellCastTargetInfoView _obj =  new SpellCastTargetInfoView();
 		// Type

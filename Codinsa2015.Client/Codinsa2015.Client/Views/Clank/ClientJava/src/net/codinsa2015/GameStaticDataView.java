@@ -33,6 +33,15 @@ public class GameStaticDataView
 	public ArrayList<SpellModelView> Spells;
 	// Obtient une vue sur les données statiques de la carte (telles que sa table de passabilité).
 	public MapView Map;
+	public GameStaticDataView() {
+		Weapons = new ArrayList<WeaponModelView>();
+		Armors = new ArrayList<PassiveEquipmentModelView>();
+		Boots = new ArrayList<PassiveEquipmentModelView>();
+		Enchants = new ArrayList<WeaponEnchantModelView>();
+		Spells = new ArrayList<SpellModelView>();
+		Map = new MapView();
+	}
+
 	public static GameStaticDataView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		GameStaticDataView _obj =  new GameStaticDataView();
 		// Weapons

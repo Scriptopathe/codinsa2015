@@ -25,6 +25,11 @@ public class GenericShapeView
 	public Vector2 Size;
 	// Représente le type de la forme.
 	public GenericShapeType ShapeType;
+	public GenericShapeView() {
+		Position = new Vector2();
+		Size = new Vector2();
+	}
+
 	public static GenericShapeView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		GenericShapeView _obj =  new GenericShapeView();
 		// Position

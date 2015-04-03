@@ -172,6 +172,11 @@ namespace Codinsa2015.Views.Client
 		/// Retourne la range à laquelle cette entité donne la vision.
 		/// </summary>
 		public float VisionRange;	
+		public EntityBaseView() {
+			Direction = new Vector2();
+			Position = new Vector2();
+		}
+
 		public static EntityBaseView Deserialize(System.IO.StreamReader input) {
 			EntityBaseView _obj =  new EntityBaseView();
 			// GetMagicResist

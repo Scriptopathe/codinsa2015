@@ -29,6 +29,9 @@ public class SpellTargetInfoView
 	public Boolean DieOnCollision;
 	// Retourne le type de cibles pouvant être touchées par ce sort.
 	public EntityTypeRelative AllowedTargetTypes;
+	public SpellTargetInfoView() {
+	}
+
 	public static SpellTargetInfoView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellTargetInfoView _obj =  new SpellTargetInfoView();
 		// Type

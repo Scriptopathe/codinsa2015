@@ -31,6 +31,9 @@ namespace Codinsa2015.Views.Client
 		/// Niveau actuel du spell.
 		/// </summary>
 		public int Level;	
+		public SpellView() {
+		}
+
 		public static SpellView Deserialize(System.IO.StreamReader input) {
 			SpellView _obj =  new SpellView();
 			// CurrentCooldown

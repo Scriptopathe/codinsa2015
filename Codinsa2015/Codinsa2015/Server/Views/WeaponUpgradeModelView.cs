@@ -26,6 +26,11 @@ namespace Codinsa2015.Views
 		/// Obtient le coût de cette upgrade.
 		/// </summary>
 		public float Cost;	
+		public WeaponUpgradeModelView() {
+			Description = new SpellLevelDescriptionView();
+			PassiveAlterations = new List<StateAlterationModelView>();
+		}
+
 		public static WeaponUpgradeModelView Deserialize(System.IO.StreamReader input) {
 			WeaponUpgradeModelView _obj =  new WeaponUpgradeModelView();
 			// Description

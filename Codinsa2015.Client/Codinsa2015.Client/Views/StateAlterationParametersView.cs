@@ -26,6 +26,11 @@ namespace Codinsa2015.Views.Client
 		/// Position finale du du dash (si targetting TowardsPosition)
 		/// </summary>
 		public Vector2 DashTargetPosition;	
+		public StateAlterationParametersView() {
+			DashTargetDirection = new Vector2();
+			DashTargetPosition = new Vector2();
+		}
+
 		public static StateAlterationParametersView Deserialize(System.IO.StreamReader input) {
 			StateAlterationParametersView _obj =  new StateAlterationParametersView();
 			// DashTargetDirection

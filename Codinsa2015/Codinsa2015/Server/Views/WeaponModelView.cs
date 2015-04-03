@@ -22,6 +22,10 @@ namespace Codinsa2015.Views
 		/// Prix d'achat de l'arme
 		/// </summary>
 		public float Price;	
+		public WeaponModelView() {
+			Upgrades = new List<WeaponUpgradeModelView>();
+		}
+
 		public static WeaponModelView Deserialize(System.IO.StreamReader input) {
 			WeaponModelView _obj =  new WeaponModelView();
 			// Upgrades

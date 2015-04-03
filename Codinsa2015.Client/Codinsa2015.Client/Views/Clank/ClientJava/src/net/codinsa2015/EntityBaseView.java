@@ -99,6 +99,11 @@ public class EntityBaseView
 	public Boolean HasWardVision;
 	// Retourne la range à laquelle cette entité donne la vision.
 	public Float VisionRange;
+	public EntityBaseView() {
+		Direction = new Vector2();
+		Position = new Vector2();
+	}
+
 	public static EntityBaseView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		EntityBaseView _obj =  new EntityBaseView();
 		// GetMagicResist

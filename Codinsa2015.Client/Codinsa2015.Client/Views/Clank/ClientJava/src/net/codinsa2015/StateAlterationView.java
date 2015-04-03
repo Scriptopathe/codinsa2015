@@ -28,6 +28,11 @@ public class StateAlterationView
 	public StateAlterationParametersView Parameters;
 	// Temps restant en secondes pour l'altération d'état.
 	public Float RemainingTime;
+	public StateAlterationView() {
+		Model = new StateAlterationModelView();
+		Parameters = new StateAlterationParametersView();
+	}
+
 	public static StateAlterationView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		StateAlterationView _obj =  new StateAlterationView();
 		// Source

@@ -22,6 +22,10 @@ namespace Codinsa2015.Views.Client
 		/// liste des upgrades de cet équipement.
 		/// </summary>
 		public List<PassiveEquipmentUpgradeModelView> Upgrades;	
+		public PassiveEquipmentModelView() {
+			Upgrades = new List<PassiveEquipmentUpgradeModelView>();
+		}
+
 		public static PassiveEquipmentModelView Deserialize(System.IO.StreamReader input) {
 			PassiveEquipmentModelView _obj =  new PassiveEquipmentModelView();
 			// Price

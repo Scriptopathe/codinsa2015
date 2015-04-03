@@ -23,30 +23,44 @@ namespace Codinsa2015.Client
             TCPHelper.Initialize(Codinsa2015.Server.GameServer.__DEBUG_PORT, "127.0.0.1", str);
             State state = new State();
             Console.WriteLine("Client started...");
+
+            // On récupère des données concernant la map.
             Views.GameStaticDataView data = state.GetStaticData();
             Console.WriteLine("Got static data");
+
+            // On récupère les id de nos spells.
             List<int> mySpells = state.GetMySpells();
            
             Console.WriteLine("Got spells");
             int spellId = 0;
             while (true)
             {
+                // On récupère les entités en vue.
                 var entities = state.GetEntitiesInSight();
                 Console.WriteLine("Entities in sight : " + entities.Count);
                 if(entities.Count != 0)
                 {
                     var entity = entities[0];
+                    // Si le déplacement auto est terminé, on démarre un autre déplacement.
                     if(!state.IsAutoMoving())
                     {
                         Console.WriteLine("Moving to entity " + entity.ID + ", position = " + entity.Position);
                         state.StartMoveTo(entity.Position);
                     }
+
                     spellId++; spellId %= mySpells.Count;
+                    // On récupère la description de notre sort : elle indique comment l'utiliser ainsi que ses
+                    // caractéristiques.
                     Views.SpellLevelDescriptionView spell = state.GetSpellCurrentLevelDescription(spellId);
+
                     Views.EntityBaseView e = state.GetEntityById(1);
                     var positionView = state.GetMyPosition();
+
+                    // Transformation des vector2 en vecteurs XNA.
                     Vector2 position = new Vector2(positionView.X, positionView.Y);
                     Vector2 entityPosition = new Vector2(entity.Position.X, entity.Position.Y);
+
+                    // On utilise le spell.
                     Console.WriteLine("Using spell n° " + spellId + ", targetting type = " + spell.TargetType.Type);
                     switch(spell.TargetType.Type)
                     {

@@ -34,6 +34,12 @@ namespace Codinsa2015.Views.Client
 		/// Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.
 		/// </summary>
 		public List<StateAlterationModelView> OnHitEffects;	
+		public SpellLevelDescriptionView() {
+			CastingTimeAlterations = new List<StateAlterationModelView>();
+			TargetType = new SpellTargetInfoView();
+			OnHitEffects = new List<StateAlterationModelView>();
+		}
+
 		public static SpellLevelDescriptionView Deserialize(System.IO.StreamReader input) {
 			SpellLevelDescriptionView _obj =  new SpellLevelDescriptionView();
 			// BaseCooldown

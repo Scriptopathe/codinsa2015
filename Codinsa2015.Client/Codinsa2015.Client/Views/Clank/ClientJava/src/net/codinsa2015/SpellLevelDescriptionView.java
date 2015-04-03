@@ -28,6 +28,12 @@ public class SpellLevelDescriptionView
 	public SpellTargetInfoView TargetType;
 	// Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.
 	public ArrayList<StateAlterationModelView> OnHitEffects;
+	public SpellLevelDescriptionView() {
+		CastingTimeAlterations = new ArrayList<StateAlterationModelView>();
+		TargetType = new SpellTargetInfoView();
+		OnHitEffects = new ArrayList<StateAlterationModelView>();
+	}
+
 	public static SpellLevelDescriptionView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		SpellLevelDescriptionView _obj =  new SpellLevelDescriptionView();
 		// BaseCooldown

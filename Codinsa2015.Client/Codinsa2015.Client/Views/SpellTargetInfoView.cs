@@ -38,6 +38,9 @@ namespace Codinsa2015.Views.Client
 		/// Retourne le type de cibles pouvant être touchées par ce sort.
 		/// </summary>
 		public EntityTypeRelative AllowedTargetTypes;	
+		public SpellTargetInfoView() {
+		}
+
 		public static SpellTargetInfoView Deserialize(System.IO.StreamReader input) {
 			SpellTargetInfoView _obj =  new SpellTargetInfoView();
 			// Type

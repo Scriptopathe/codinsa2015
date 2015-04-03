@@ -34,6 +34,11 @@ namespace Codinsa2015.Views
 		/// Temps restant en secondes pour l'altération d'état.
 		/// </summary>
 		public float RemainingTime;	
+		public StateAlterationView() {
+			Model = new StateAlterationModelView();
+			Parameters = new StateAlterationParametersView();
+		}
+
 		public static StateAlterationView Deserialize(System.IO.StreamReader input) {
 			StateAlterationView _obj =  new StateAlterationView();
 			// Source

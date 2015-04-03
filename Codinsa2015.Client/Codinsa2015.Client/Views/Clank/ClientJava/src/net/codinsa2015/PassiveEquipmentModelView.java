@@ -21,6 +21,10 @@ public class PassiveEquipmentModelView
 	public Float Price;
 	// liste des upgrades de cet équipement.
 	public ArrayList<PassiveEquipmentUpgradeModelView> Upgrades;
+	public PassiveEquipmentModelView() {
+		Upgrades = new ArrayList<PassiveEquipmentUpgradeModelView>();
+	}
+
 	public static PassiveEquipmentModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		PassiveEquipmentModelView _obj =  new PassiveEquipmentModelView();
 		// Price

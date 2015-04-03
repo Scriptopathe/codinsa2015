@@ -22,6 +22,10 @@ namespace Codinsa2015.Views
 		/// Obtient la liste des descriptions des niveaux de ce sort.
 		/// </summary>
 		public List<SpellLevelDescriptionView> Levels;	
+		public SpellModelView() {
+			Levels = new List<SpellLevelDescriptionView>();
+		}
+
 		public static SpellModelView Deserialize(System.IO.StreamReader input) {
 			SpellModelView _obj =  new SpellModelView();
 			// ID
