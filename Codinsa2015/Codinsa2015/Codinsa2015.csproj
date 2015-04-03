@@ -157,6 +157,7 @@
     <Compile Include="Server\Views\Enums.cs" />
     <Compile Include="Server\Views\GenericShapeView.cs" />
     <Compile Include="Server\Views\MapView.cs" />
+    <Compile Include="Server\Views\PassiveEquipmentModelView.cs" />
     <Compile Include="Server\Views\PassiveEquipmentUpgradeModelView.cs" />
     <Compile Include="Server\Views\SpellcastBaseView.cs" />
     <Compile Include="Server\Views\SpellCastTargetInfoView.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="Server\Views\Vector2_mod.cs" />
     <Compile Include="Server\Views\VisionMapView.cs" />
     <Compile Include="Server\Views\WeaponEnchantModelView.cs" />
+    <Compile Include="Server\Views\WeaponModelView.cs" />
     <Compile Include="Server\Views\WeaponUpgradeModelView.cs" />
     <Compile Include="Server\VisionMap.cs" />
     <Compile Include="GameClient.cs" />
