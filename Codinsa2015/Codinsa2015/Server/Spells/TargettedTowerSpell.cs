@@ -41,8 +41,7 @@ namespace Codinsa2015.Server.Spells
         public TargettedTowerSpell(EntityBase caster)
         {
             SourceCaster = caster;
-            Name = "TowerSpell";
-            Levels = new List<SpellDescription>() { new SpellDescription()
+            Model = new SpellModel(new List<SpellLevelDescription>() { new SpellLevelDescription()
             {
                 
                 TargetType = new SpellTargetInfo()
@@ -73,7 +72,7 @@ namespace Codinsa2015.Server.Spells
                         SourcePercentADValue = 10.0f,
                     },
                 }
-            }};
+            }}, "TowerSpell");
             CurrentCooldown = 0.0f;
         }
     }

@@ -40,10 +40,11 @@ namespace Codinsa2015.Server.Spells
     public abstract class Spell
     {
         #region Properties
+
         /// <summary>
         /// Référence vers la description du spell au niveau actuel du spell.
         /// </summary>
-        public SpellDescription Description
+        public SpellLevelDescription Description
         {
             get { return Levels[Level]; }
         }
@@ -71,11 +72,21 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Représente les descriptions du spell pour les différents niveaux.
         /// </summary>
-        [Clank.ViewCreator.Export("List<SpellDescriptionView>", "Représente les descriptions du spell pour les différents niveaux.")]
-        public List<SpellDescription> Levels
+        [Clank.ViewCreator.Export("int", "Représente l'id du modèle du spell. Ce modèle décrit les différents effets du spell pour chacun de ses niveaux")]
+        public SpellModel Model
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Obtient la description des différents niveaux du spell.
+        /// (Raccourci pour Model.Levels)
+        /// </summary>
+        public List<SpellLevelDescription> Levels
+        {
+            get { return Model.Levels; }
+            set { Model.Levels = value;}
         }
 
         /// <summary>
@@ -111,8 +122,8 @@ namespace Codinsa2015.Server.Spells
         /// </summary>
         public string Name
         {
-            get;
-            set;
+            get { return Model.Name; }
+            set { Model.Name = value; }
         }
         #endregion
 
@@ -251,6 +262,13 @@ namespace Codinsa2015.Server.Spells
         {
             CurrentCooldown = Math.Max(0.0f, CurrentCooldown - elapsedSeconds);
         }
+
+        /// <summary>
+        /// Crée une nouvelle instance de Spell et initialise son ID.
+        /// </summary>
+        public Spell()
+        {
+        }
         #endregion
 
         /// <summary>
@@ -262,9 +280,7 @@ namespace Codinsa2015.Server.Spells
             Views.SpellView view = new Views.SpellView();
             view.CurrentCooldown = CurrentCooldown;
             view.Level = Level;
-            view.Levels = new List<Views.SpellDescriptionView>();
-            foreach (var lvl in Levels)
-                view.Levels.Add(lvl.ToView());
+            view.Model = Model.ID;
             view.SourceCaster = SourceCaster.ID;
             return view;
         }

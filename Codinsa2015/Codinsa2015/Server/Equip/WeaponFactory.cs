@@ -106,7 +106,7 @@ namespace Codinsa2015.Server.Equip
                 PassiveAlterations = Passives(LOW, LOW),
 
                 // Décrit le spell d'attaque de l'arme.
-                Description = new Spells.SpellDescription()
+                Description = new Spells.SpellLevelDescription()
                 {
                     // Pour les armes : le cd doit être de 1.
                     BaseCooldown = 1.0f,
@@ -154,7 +154,7 @@ namespace Codinsa2015.Server.Equip
                 Cost = cst.EquipCost[LOW],
 
                 // Décrit le spell d'attaque de l'arme.
-                Description = new Spells.SpellDescription()
+                Description = new Spells.SpellLevelDescription()
                 {
                     // Pour les armes : le cd doit être de 1.
                     BaseCooldown = 1.0f,
@@ -214,7 +214,7 @@ namespace Codinsa2015.Server.Equip
                 Cost = cst.EquipCost[LOW],
 
                 // Décrit le spell d'attaque de l'arme.
-                Description = new Spells.SpellDescription()
+                Description = new Spells.SpellLevelDescription()
                 {
                     // Pour les armes : le cd doit être de 1.
                     BaseCooldown = 1.0f,
@@ -280,7 +280,7 @@ namespace Codinsa2015.Server.Equip
                 Cost = cst.EquipCost[LOW],
 
                 // Décrit le spell d'attaque de l'arme.
-                Description = new Spells.SpellDescription()
+                Description = new Spells.SpellLevelDescription()
                 {
                     // Pour les armes : le cd doit être de 1.
                     BaseCooldown = 1.0f,
@@ -339,7 +339,7 @@ namespace Codinsa2015.Server.Equip
                 Cost = cst.EquipCost[LOW],
 
                 // Décrit le spell d'attaque de l'arme.
-                Description = new Spells.SpellDescription()
+                Description = new Spells.SpellLevelDescription()
                 {
                     // Pour les armes : le cd doit être de 1.
                     BaseCooldown = 1.0f,

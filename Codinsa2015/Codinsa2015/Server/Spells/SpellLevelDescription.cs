@@ -21,7 +21,7 @@ namespace Codinsa2015.Server.Spells
     /// Les valeurs dans un objet SpellDescription identifie à chaque fois UNE VERSION d'un sort
     /// (il peut y avoir un SpellDescription par niveau du sort pour chaque sort).
     /// </summary>
-    public class SpellDescription
+    public class SpellLevelDescription
     {
         /// <summary>
         /// Cooldown de base du sort.
@@ -70,7 +70,7 @@ namespace Codinsa2015.Server.Spells
         [Clank.ViewCreator.Export("List<StateAlterationModelView>", "Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.")]
         public List<StateAlterationModel> OnHitEffects { get; set; }
 
-        public SpellDescription()
+        public SpellLevelDescription()
         {
             OnHitEffects = new List<StateAlterationModel>();
             CastingTimeAlterations = new List<StateAlterationModel>();
@@ -80,9 +80,9 @@ namespace Codinsa2015.Server.Spells
         /// Retourne une vue représentant cette instance.
         /// </summary>
         /// <returns></returns>
-        public Views.SpellDescriptionView ToView()
+        public Views.SpellLevelDescriptionView ToView()
         {
-            Views.SpellDescriptionView view = new Views.SpellDescriptionView();
+            Views.SpellLevelDescriptionView view = new Views.SpellLevelDescriptionView();
             view.BaseCooldown = BaseCooldown;
             view.CastingTime = CastingTime;
             view.CastingTimeAlterations = new List<Views.StateAlterationModelView>();
@@ -102,9 +102,9 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Obtient une copue de cet objet.
         /// </summary>
-        public SpellDescription Copy()
+        public SpellLevelDescription Copy()
         {
-            SpellDescription desc = new SpellDescription();
+            SpellLevelDescription desc = new SpellLevelDescription();
             desc.BaseCooldown = BaseCooldown;
             desc.CastingTime = CastingTime;
 

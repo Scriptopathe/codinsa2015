@@ -240,10 +240,10 @@ namespace Codinsa2015.Server.Entities
             Stats = new HeroStatistics();
             // TODO : virer ça (DEBUG).
             Spells = new List<Spell>();
-            Spells.Add(Server.Spells.SpellFactory.Meteor(this)); //new Spells.FireballSpell(this, 4));
-            Spells.Add(Server.Spells.SpellFactory.BroForce(this)); //(new Spells.DashForwardSpell(this));
-            Spells.Add(Server.Spells.SpellFactory.Stasis(this));
-            Spells.Add(Server.Spells.SpellFactory.MaximumGravity(this));
+            Spells.Add(new Spells.BasicSpell(this, Server.Spells.SpellFactory.Meteor())); //new Spells.FireballSpell(this, 4));
+            Spells.Add(new Spells.BasicSpell(this, Server.Spells.SpellFactory.BroForce())); //(new Spells.DashForwardSpell(this));
+            Spells.Add(new Spells.BasicSpell(this, Server.Spells.SpellFactory.Stasis()));
+            Spells.Add(new Spells.BasicSpell(this, Server.Spells.SpellFactory.MaximumGravity()));
             Weapon = new Equip.Weapon(this, Server.Equip.WeaponFactory.Hammer());
             Weapon.Enchant = Equip.EnchantFactory.Fury();
 

@@ -8,6 +8,14 @@ using Codinsa2015.Server.Entities;
 
 namespace Codinsa2015.Server.Controlers
 {
+    [Clank.ViewCreator.Enum("Enumère les différentes valeurs de retour possibles lorsqu'un joueur tente de pick un spell lors de la phase de picks.")]
+    public enum PickResult
+    {
+        Success,
+        NotYourTurn,
+        SpellNotAvailable,
+        InvalidOperation,
+    }
     /// <summary>
     /// Représente le contrôleur du lobby : 
     /// Cette classe est responsable de la maintenance de l'état du lobby, de sa mise
@@ -24,8 +32,8 @@ namespace Codinsa2015.Server.Controlers
         /// Liste des héros de chaque équipe.
         /// </summary>
         List<List<EntityHero>> m_heroes;
-        List<Spells.Spell> m_activeSpells;
-        List<Spells.Spell> m_passiveSpells;
+        List<int> m_activeSpells;
+        List<EntityUniquePassives> m_passiveSpells;
 
         /// <summary>
         /// Représente le numéro du tour de pick actuel.
@@ -41,8 +49,18 @@ namespace Codinsa2015.Server.Controlers
 
         #region Properties
         public List<List<EntityHero>> GetHeroes() { return m_heroes; }
-        public List<Spells.Spell> GetActiveSpells() { return m_activeSpells; }
-        public List<Spells.Spell> GetPassiveSpells() { return m_passiveSpells; }
+        public List<int> GetActiveSpells() { return m_activeSpells; }
+        public List<EntityUniquePassives> GetPassiveSpells() { return m_passiveSpells; }
+
+        public List<Spells.SpellModel> GetActiveSpellModels()
+        {
+            List<Spells.SpellModel> models = new List<Spells.SpellModel>();
+            foreach(int id in GetActiveSpells())
+            {
+                models.Add(GameServer.GetScene().ShopDB.GetSpellById(id));
+            }
+            return models;
+        }
         public int GetPickTurn() { return m_pickTurn; }
         public string CurrentMessage
         {
@@ -80,11 +98,11 @@ namespace Codinsa2015.Server.Controlers
 
 
             // Passive spells
-            m_passiveSpells = new List<Spells.Spell>() { new Spells.DashForwardSpell(null), new Spells.FireballSpell(null), new Spells.MovementSpeedBuffSpell(null), new Spells.TargettedTowerSpell(null),
-                                                         new Spells.DashForwardSpell(null), new Spells.FireballSpell(null), new Spells.MovementSpeedBuffSpell(null), new Spells.TargettedTowerSpell(null) };
+            m_passiveSpells = new List<EntityUniquePassives>() {  EntityUniquePassives.Altruistic, EntityUniquePassives.Hunter,
+                 EntityUniquePassives.Rugged, EntityUniquePassives.Soldier, EntityUniquePassives.Strategist, EntityUniquePassives.Unshakable};
 
-            m_activeSpells = new List<Spells.Spell>() { new Spells.DashForwardSpell(null), new Spells.FireballSpell(null), new Spells.MovementSpeedBuffSpell(null), new Spells.TargettedTowerSpell(null),
-                                                         new Spells.DashForwardSpell(null), new Spells.FireballSpell(null), new Spells.MovementSpeedBuffSpell(null), new Spells.TargettedTowerSpell(null) };
+            var db = GameServer.GetScene().ShopDB;
+            m_activeSpells = db.Spells.Select(new Func<Spells.SpellModel, int>(model => model.ID)).ToList();
         }
 
         /// <summary>
@@ -115,7 +133,8 @@ namespace Codinsa2015.Server.Controlers
                 if (elapsedTimeSinceLastUpdate > HumanTimeoutSeconds)
                 {
                     // Affiche le timeout
-                    string iaName = m_scene.GetControlerByHeroId(GetPickingHeroId()).HeroName;
+                    var controler = m_scene.GetControlerByHeroId(GetPickingHeroId());
+                    string iaName = controler == null ? "<none>" : controler.HeroName;
                     m_currentMessage = iaName + " : temps expiré ! Aucune compétence choisie !";
 
 
@@ -166,31 +185,34 @@ namespace Codinsa2015.Server.Controlers
                     playerId = (m_pickTurn % heroesCount) / 2;
                     break;
             }
-
+            if (playerId >= m_heroes[teamId].Count)
+                return -1;
             return m_heroes[teamId][playerId].ID;
         }
 
 
+
         /// <summary>
-        /// Obtient la liste des spells actuellement proposés.
+        /// Obtient une valeur indiquant si on doit pick un spell actif à ce tour.
         /// </summary>
         /// <returns></returns>
-        public List<Spells.Spell> GetCurrentSpells()
+        public bool IsPickingActive()
         {
             int heroesCount = m_heroes[0].Count * 2;
             int turnId = m_pickTurn / heroesCount;
             switch (turnId)
             {
                 case 0:
-                    return m_passiveSpells;
+                    return false;
                 case 1:
-                    return m_activeSpells;
+                    return true;
                 case 2:
-                    return m_activeSpells;
+                    return true;
                    
             }
-            return new List<Spells.Spell>();
+            return true;
         }
+
         #endregion
 
         #region API
@@ -208,41 +230,75 @@ namespace Codinsa2015.Server.Controlers
         /// Si ce n'est pas le tour du héros donné, ou que le spell dont l'id est donné n'existe pas,
         /// retourne false.
         /// </summary>
-        public bool PickSpell(int heroId, int spellId, int clientId)
+        public PickResult PickActiveSpell(int heroId, int spellId)
         {
             // Vérification : l'appel de fonction doit venir du client correspondant au
             // héros.
-            if ((m_scene.GetControlerByHeroId(heroId) != m_scene.GetControler(clientId)) &&
-                clientId != GameServer.__INTERNAl_CLIENT_ID)
-            {
-                return false;
-            }
-
             if (heroId != GetPickingHeroId() || IsReadyToGo())
-                return false;
+                return PickResult.NotYourTurn;
 
-            List<Spells.Spell> spells = GetCurrentSpells();
-            if (spellId >= spells.Count)
-                return false;
+            bool isPickingActive = IsPickingActive();
+            if (!isPickingActive)
+                return PickResult.InvalidOperation;
+
+            if(!m_activeSpells.Contains(spellId))
+                return PickResult.SpellNotAvailable;
 
             // Marque le dernier temps de réponse.
             m_lastControlerUpdate = DateTime.Now;
+            string iaName = m_scene.GetControlerByHeroId(heroId).HeroName;
 
+            var spell = GameServer.GetScene().ShopDB.GetSpellById(spellId);
             // Ajoute le spell au héros
-            m_scene.GetControlerByHeroId(heroId).Hero.Spells.Add(spells[spellId]);
-            spells[spellId].SourceCaster = m_scene.GetControlerByHeroId(heroId).Hero;
+            m_scene.GetControlerByHeroId(heroId).Hero.Spells.Add( 
+                new Spells.BasicSpell(m_scene.GetControlerByHeroId(heroId).Hero, spell));
 
             // Affiche la compétence choisie.
-            string iaName = m_scene.GetControlerByHeroId(heroId).HeroName;
-            m_currentMessage = iaName + " a choisi la compétence '" + spells[spellId].Name + "'.";
-
+            m_currentMessage = iaName + " a choisi la compétence '" + spell.Name + "'.";
             // Supprime le spell de la liste.
-            spells.RemoveAt(spellId);
+            m_activeSpells.Remove(spellId);
 
+
+            m_lastControlerUpdate = DateTime.Now;
             m_pickTurn++;
-            return true;
+            return PickResult.Success;
         }
+        /// <summary>
+        /// Si c'est le tour du héros donné, pick le spell donné pour ce héros et retourne true.
+        /// Si ce n'est pas le tour du héros donné, ou que le spell dont l'id est donné n'existe pas,
+        /// retourne false.
+        /// </summary>
+        public PickResult PickPassiveSpell(int heroId, Entities.EntityUniquePassives spellId)
+        {
+            // Vérification : l'appel de fonction doit venir du client correspondant au
+            // héros.
+            if (heroId != GetPickingHeroId() || IsReadyToGo())
+                return PickResult.NotYourTurn;
 
+            bool isPickingActive = IsPickingActive();
+            if (isPickingActive)
+                return PickResult.InvalidOperation;
+
+            if (!m_passiveSpells.Contains(spellId))
+                return PickResult.SpellNotAvailable;
+
+
+            // Marque le dernier temps de réponse.
+            m_lastControlerUpdate = DateTime.Now;
+            string iaName = m_scene.GetControlerByHeroId(heroId).HeroName;
+
+            // Ajoute le spell au héros
+            m_scene.GetControlerByHeroId(heroId).Hero.UniquePassive = spellId;
+            // Affiche la compétence choisie.
+            m_currentMessage = iaName + " a choisi la compétence passive '" + spellId.ToString() + "'.";
+            // Supprime le spell de la liste.
+            m_passiveSpells.Remove(spellId);
+
+
+            m_lastControlerUpdate = DateTime.Now;
+            m_pickTurn++;
+            return PickResult.Success;
+        }
         /// <summary>
         /// Retourne true si la phase de picks est terminée.
         /// </summary>

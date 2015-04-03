@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Codinsa2015.Server.Entities;
+using Codinsa2015.Server.Spells;
 namespace Codinsa2015.Server.Equip
 {
     /// <summary>
@@ -32,6 +33,19 @@ namespace Codinsa2015.Server.Equip
         /// Obtient les différents types de consommables.
         /// </summary>
         public List<ConsummableModel> Consummables { get; set; }
+
+        /// <summary>
+        /// Obtient la liste des sorts existants.
+        /// </summary>
+        public List<Spells.SpellModel> Spells { get; set; }
+
+        public Spells.SpellModel GetSpellById(int id)
+        {
+            var models = Spells.Where(new Func<SpellModel, bool>(model => model.ID == id));
+            if (models.Count() != 0)
+                return models.First();
+            return null;
+        }
         /// <summary>
         /// Crée une nouvelle instance de ShopDatabase vide.
         /// </summary>
@@ -42,7 +56,7 @@ namespace Codinsa2015.Server.Equip
             Armors = new List<PassiveEquipmentModel>();
             Boots = new List<PassiveEquipmentModel>();
             Consummables = new List<ConsummableModel>();
-
+            Spells = new List<SpellModel>();
             // Bottes
             Boots.Add(PassiveEquipFactory.LightShoes());
             Boots.Add(PassiveEquipFactory.LivingShoes());
@@ -73,6 +87,19 @@ namespace Codinsa2015.Server.Equip
             Weapons.Add(WeaponFactory.Cutlass());
             Weapons.Add(WeaponFactory.Hammer());
 
+            // Sorts
+            Spells.Add(SpellFactory.Go());
+            Spells.Add(SpellFactory.BroForce());
+            Spells.Add(SpellFactory.Bim());
+            Spells.Add(SpellFactory.HoldOn());
+            Spells.Add(SpellFactory.Kick());
+            Spells.Add(SpellFactory.LaserBeam());
+            Spells.Add(SpellFactory.MagicBeam());
+            Spells.Add(SpellFactory.MaximumGravity());
+            Spells.Add(SpellFactory.Meteor());
+            Spells.Add(SpellFactory.Rage());
+            Spells.Add(SpellFactory.Stasis());
+            Spells.Add(SpellFactory.WarCry());
             // Consommables
             Equip.ConsummableModel unward = new Equip.ConsummableModel()
             {

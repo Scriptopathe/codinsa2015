@@ -47,13 +47,10 @@ namespace Codinsa2015.Server.Spells
         /// Crée une nouvelle instance de BasicSpell.
         /// </summary>
         /// <param name="caster"></param>
-        public BasicSpell(EntityBase caster,
-            List<SpellDescription> levels, 
-            string name)
+        public BasicSpell(EntityBase caster, SpellModel model)
         {
             SourceCaster = caster;
-            Name = name;
-            Levels = levels;
+            Model = model;
             CurrentCooldown = 0.0f;
         }
     }

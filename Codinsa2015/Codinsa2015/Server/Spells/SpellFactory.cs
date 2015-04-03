@@ -21,10 +21,10 @@ namespace Codinsa2015.Server.Spells
         /// Un projectile autoguidé à courte portée lancé régulièrement
         /// 
         /// </summary>
-        public static Spell MagicBeam(EntityBase caster)
+        public static SpellModel MagicBeam()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
                 TargetType = new SpellTargetInfo()
                 {
@@ -47,7 +47,7 @@ namespace Codinsa2015.Server.Spells
                     },
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             // Slow mini durée mini
             lvl2.OnHitEffects.Add(new StateAlterationModel()
             {
@@ -56,7 +56,7 @@ namespace Codinsa2015.Server.Spells
                 BaseDuration = cst.ResistAlterationDuration[LOWER]
             });
 
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
             // buff de dégâts magiques court
             lvl3.CastingTimeAlterations.Add(new StateAlterationModel()
                 {
@@ -65,8 +65,7 @@ namespace Codinsa2015.Server.Spells
                     BaseDuration = cst.ADAPBonusesDurations[LOW]
                 });
 
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+            SpellModel spell = new SpellModel(new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
                 "magic-beam");
 
             return spell;
@@ -76,10 +75,10 @@ namespace Codinsa2015.Server.Spells
         /// Spell laser beam.
         /// Envoie un projectile en ligne droite infligeant des dégâts au premier ennemi touché.
         /// </summary>
-        public static Spell LaserBeam(EntityBase caster)
+        public static SpellModel LaserBeam()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
                 TargetType = new SpellTargetInfo()
                 {
@@ -102,7 +101,7 @@ namespace Codinsa2015.Server.Spells
                     },
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             lvl2.OnHitEffects.Add(new StateAlterationModel()
                 {
                     Type = StateAlterationType.MagicDamageBuff,
@@ -110,15 +109,14 @@ namespace Codinsa2015.Server.Spells
                     BaseDuration = cst.ResistAlterationDuration[HIGH]
                 });
 
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
             lvl3.OnHitEffects.Add(new StateAlterationModel()
             {
                 Type = StateAlterationType.Blind,
                 BaseDuration = cst.BlindDurations[MEDIUM],
             });
 
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+            SpellModel spell = new SpellModel(new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
                 "laser-beam");
 
             return spell;
@@ -128,10 +126,10 @@ namespace Codinsa2015.Server.Spells
         /// Spell météore.
         /// Inflige des dégâts en AOE via un gros caillou qui tombe du ciel.
         /// </summary>
-        public static Spell Meteor(EntityBase caster)
+        public static SpellModel Meteor()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
                 TargetType = new SpellTargetInfo()
                 {
@@ -162,18 +160,17 @@ namespace Codinsa2015.Server.Spells
                     }
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             lvl2.OnHitEffects[0].FlatValue = cst.ApDamageFlat[MEDIUM];
 
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
             lvl3.OnHitEffects[1] = new StateAlterationModel()
             {
                 Type = StateAlterationType.Stun,
                 BaseDuration = cst.StunDurations[LOW],
             };
 
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() {lvl1, lvl2, lvl3},
+            SpellModel spell = new SpellModel(new List<SpellLevelDescription>() {lvl1, lvl2, lvl3},
                 "meteor");
 
             return spell;
@@ -186,10 +183,10 @@ namespace Codinsa2015.Server.Spells
         /// Sort "hold-on".
         /// Soigne légérement un allié, et augmente son armure pendant un court moment.
         /// </summary>
-        public static Spell HoldOn(EntityBase caster)
+        public static SpellModel HoldOn()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
                 TargetType = new SpellTargetInfo()
                 {
@@ -212,7 +209,7 @@ namespace Codinsa2015.Server.Spells
                     },
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             // Bonus d'armure moyen durée faible
             lvl2.OnHitEffects.Add(new StateAlterationModel()
                 {
@@ -221,7 +218,7 @@ namespace Codinsa2015.Server.Spells
                     BaseDuration = cst.ResistAlterationDuration[LOW]
                 });
 
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
             // Bonus de dégâts moyens durée faible
             lvl3.OnHitEffects.Add(new StateAlterationModel()
             {
@@ -230,8 +227,7 @@ namespace Codinsa2015.Server.Spells
                 BaseDuration = cst.ADAPBonusesDurations[LOW],
             });
 
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+            SpellModel spell = new SpellModel(new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
                 "hold on!");
 
             return spell;
@@ -241,10 +237,10 @@ namespace Codinsa2015.Server.Spells
         /// Sort "go".
         /// Accélère les alliés proches (et confifère une immunité courte au CC au lvl 3).
         /// </summary>
-        public static Spell Go(EntityBase caster)
+        public static SpellModel Go()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
                 TargetType = new SpellTargetInfo()
                 {
@@ -267,11 +263,11 @@ namespace Codinsa2015.Server.Spells
                     },
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             // bonus de MS moyen, durée moyenne
             lvl2.OnHitEffects[0].FlatValue = cst.MoveSpeedAlterations[MEDIUM];
 
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
             // Bonus de dégâts moyens durée faible
             lvl3.OnHitEffects.Add(new StateAlterationModel()
             {
@@ -279,8 +275,7 @@ namespace Codinsa2015.Server.Spells
                 BaseDuration = cst.StunDurations[LOWER],
             });
 
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+            SpellModel spell = new SpellModel(new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
                 "go!");
 
             return spell;
@@ -290,10 +285,10 @@ namespace Codinsa2015.Server.Spells
         /// Sort bro-force.
         /// Dashe vers un allié et lui octroie un bouclier pendant un cours instant.
         /// </summary>
-        public static Spell BroForce(EntityBase caster)
+        public static SpellModel BroForce()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
                 CastingTime = 0.2f,
                 CastingTimeAlterations = new List<StateAlterationModel>()
@@ -329,7 +324,7 @@ namespace Codinsa2015.Server.Spells
                     },
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             // bonus de MS moyen, durée moyenne
             lvl2.OnHitEffects[0].SourcePercentAPValue = cst.ShieldRatios[MEDIUM];
             lvl2.OnHitEffects.Add(new StateAlterationModel()
@@ -339,7 +334,7 @@ namespace Codinsa2015.Server.Spells
                 FlatValue = cst.ArmorAlterations[MEDIUM],
                 BaseDuration = cst.ShieldDuration[MEDIUM] // même durée que le shield
             });
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
             lvl3.OnHitEffects[0].SourcePercentAPValue = cst.ShieldRatios[HIGH];
             // Bouclier grand, bonus move speed moyen court.
             lvl3.OnHitEffects.Add(new StateAlterationModel()
@@ -349,8 +344,8 @@ namespace Codinsa2015.Server.Spells
                 BaseDuration = cst.MoveSpeedDurations[LOW]
             });
 
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+            SpellModel spell = new SpellModel(
+                new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
                 "bro-force");
 
             return spell;
@@ -361,10 +356,10 @@ namespace Codinsa2015.Server.Spells
         /// Sort war-cry.
         /// Augmente les dégâts des alliés pendant un cours instant.
         /// </summary>
-        public static Spell WarCry(EntityBase caster)
+        public static SpellModel WarCry()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
 
                 TargetType = new SpellTargetInfo()
@@ -395,12 +390,12 @@ namespace Codinsa2015.Server.Spells
                     },
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             // bonus de d'ad et ap forts
             lvl2.OnHitEffects[0].FlatValue = cst.AdDamageFlat[HIGH];
             lvl2.OnHitEffects[1].FlatValue = cst.ApDamageFlat[HIGH];
 
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
 
             // bonus move speed moyen court.
             lvl3.OnHitEffects.Add(new StateAlterationModel()
@@ -416,8 +411,8 @@ namespace Codinsa2015.Server.Spells
                 FlatValue = cst.AttackSpeedBonuses[MEDIUM],
                 BaseDuration = cst.AttackSpeedBonusesDurations[LOW]
             });
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+            SpellModel spell = new SpellModel(
+                new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
                 "bro-force");
 
             return spell;
@@ -429,10 +424,10 @@ namespace Codinsa2015.Server.Spells
         /// Sort bim!.
         /// Stunne un ennemi pendant une courte durée.
         /// </summary>
-        public static Spell Bim(EntityBase caster)
+        public static SpellModel Bim()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
 
                 TargetType = new SpellTargetInfo()
@@ -456,7 +451,7 @@ namespace Codinsa2015.Server.Spells
                     },
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             // dégâts de sorts faibles
             lvl2.OnHitEffects.Add(new StateAlterationModel()
             {
@@ -466,11 +461,11 @@ namespace Codinsa2015.Server.Spells
                 SourcePercentAPValue = cst.ApDamageRatios[LOW]
             });
 
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
             lvl3.TargetType.DieOnCollision = false;
 
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+            SpellModel spell = new SpellModel(
+                new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
                 "bim!");
 
             return spell;
@@ -479,10 +474,10 @@ namespace Codinsa2015.Server.Spells
         /// Sort Kick !
         /// Projette un ennemi en arrière.
         /// </summary>
-        public static Spell Kick(EntityBase caster)
+        public static SpellModel Kick()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
 
                 TargetType = new SpellTargetInfo()
@@ -514,7 +509,7 @@ namespace Codinsa2015.Server.Spells
                     }
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             // Ralentissement grand, durée faible.
             lvl2.OnHitEffects.Add(new StateAlterationModel()
             {
@@ -523,7 +518,7 @@ namespace Codinsa2015.Server.Spells
                 FlatValue = -cst.MoveSpeedAlterations[HIGH],
             });
 
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
             // Baisse d'armure moyenne, durée moyenne.
             lvl3.OnHitEffects.Add(new StateAlterationModel()
             {
@@ -532,8 +527,8 @@ namespace Codinsa2015.Server.Spells
                 FlatValue = -cst.ArmorAlterations[MEDIUM]
             });
 
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+            SpellModel spell = new SpellModel(
+                new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
                 "kick");
 
             return spell;
@@ -543,10 +538,10 @@ namespace Codinsa2015.Server.Spells
         /// Attire tous les ennemis à proximité  au centre d'une zone
         /// et les immobilise pendant un court instant.
         /// </summary>
-        public static Spell MaximumGravity(EntityBase caster)
+        public static SpellModel MaximumGravity()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
                 TargetType = new SpellTargetInfo()
                 {
@@ -572,7 +567,7 @@ namespace Codinsa2015.Server.Spells
                     },
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             // Ralentissement moyen durée moyenne
             lvl2.OnHitEffects.Add(new StateAlterationModel()
             {
@@ -581,7 +576,7 @@ namespace Codinsa2015.Server.Spells
                 FlatValue = -cst.MoveSpeedAlterations[MEDIUM]
             });
 
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
             // Root moyen
             lvl3.OnHitEffects.Add(new StateAlterationModel()
             {
@@ -589,8 +584,8 @@ namespace Codinsa2015.Server.Spells
                 BaseDuration = cst.RootDurations[MEDIUM],
             });
 
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+            SpellModel spell = new SpellModel(
+                new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
                 "max-gravity");
 
             return spell;
@@ -601,10 +596,10 @@ namespace Codinsa2015.Server.Spells
         /// <summary>
         /// Augmente brièvement les statistiques du lanceur.
         /// </summary>
-        public static Spell Rage(EntityBase caster)
+        public static SpellModel Rage()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
                 TargetType = new SpellTargetInfo()
                 {
@@ -628,7 +623,7 @@ namespace Codinsa2015.Server.Spells
                     },
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             // Bonus d'attack speed moyen durée moyenne
             lvl2.OnHitEffects.Add(new StateAlterationModel()
             {
@@ -637,7 +632,7 @@ namespace Codinsa2015.Server.Spells
                 FlatValue = cst.AttackSpeedBonuses[MEDIUM]
             });
 
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
 
             // Bonus d'attack speed : insane
             lvl3.OnHitEffects[1].FlatValue = cst.AttackSpeedBonuses[HIGH];
@@ -650,8 +645,8 @@ namespace Codinsa2015.Server.Spells
                 SourcePercentAPValue = cst.ShieldRatios[MEDIUM]
             });
 
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+            SpellModel spell = new SpellModel(
+                new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
                 "rage");
 
             return spell;
@@ -661,10 +656,10 @@ namespace Codinsa2015.Server.Spells
         /// Rend son porteur invisible et immobile
         /// et lui confère des bonus en sortie d'immobilité.
         /// </summary>
-        public static Spell Stasis(EntityBase caster)
+        public static SpellModel Stasis()
         {
             var cst = GameServer.GetScene().Constants.ActiveSpells;
-            SpellDescription lvl1 = new SpellDescription()
+            SpellLevelDescription lvl1 = new SpellLevelDescription()
             {
                 TargetType = new SpellTargetInfo()
                 {
@@ -694,7 +689,7 @@ namespace Codinsa2015.Server.Spells
                     },
                 }
             };
-            SpellDescription lvl2 = lvl1.Copy();
+            SpellLevelDescription lvl2 = lvl1.Copy();
             // Bonus d'attack speed moyen durée moyenne
             lvl2.OnHitEffects.Add(new StateAlterationModel()
             {
@@ -703,7 +698,7 @@ namespace Codinsa2015.Server.Spells
                 FlatValue = cst.AttackSpeedBonuses[MEDIUM]
             });
 
-            SpellDescription lvl3 = lvl2.Copy();
+            SpellLevelDescription lvl3 = lvl2.Copy();
 
             // Bonus d'attaque moyen, durée moyenne.
             lvl3.OnHitEffects.Add(new StateAlterationModel()
@@ -713,8 +708,8 @@ namespace Codinsa2015.Server.Spells
                 BaseDuration = cst.ADAPBonusesDurations[MEDIUM]
             });
 
-            Spell spell = new BasicSpell(caster,
-                new List<SpellDescription>() { lvl1, lvl2, lvl3 },
+            SpellModel spell = new SpellModel(
+                new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
                 "stasis");
 
             return spell;

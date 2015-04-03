@@ -13,28 +13,28 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Obtient la description de l'upgrade.
         /// </summary>
-        [Clank.ViewCreator.Export("SpellDescriptionView", "Obtient la description de l'upgrade")]
-        public Spells.SpellDescription Description { get; set; }
+        [Clank.ViewCreator.Export("SpellLevelDescriptionView", "Obtient du sort que lance l'arme à ce niveau d'upgrade.")]
+        public Spells.SpellLevelDescription Description { get; set; }
 
         /// <summary>
         /// Obtient les altérations d'état appliquées passivement par cette arme.
         /// </summary>
-        [Clank.ViewCreator.Export("List<StateAlterationModelView>", "")]
+        [Clank.ViewCreator.Export("List<StateAlterationModelView>", "Obtient les altérations d'état appliquées passivement par l'arme à ce niveau d'upgrade.")]
         public List<Entities.StateAlterationModel> PassiveAlterations { get; set; }
 
         /// <summary>
         /// Obtient le coût de l'upgrade.
         /// </summary>
-        [Clank.ViewCreator.Export("float", "Obtient le coût de l'upgrade.")]
+        [Clank.ViewCreator.Export("float", "Obtient le coût de cette upgrade.")]
         public float Cost { get; set; }
 
         /// <summary>
-        /// Crée une nouvelle instance de WeaponUpgrade.
+        /// Crée une nouvelle instance de WeaponUpgradeModel.
         /// </summary>
         public WeaponUpgradeModel()
         {
             PassiveAlterations = new List<Entities.StateAlterationModel>();
-            Description = new Spells.SpellDescription();
+            Description = new Spells.SpellLevelDescription();
             Cost = 0;
         }
 
@@ -42,7 +42,7 @@ namespace Codinsa2015.Server.Equip
         /// Crée une nouvelle instance de Weapon upgrade initialisée avec
         /// les valeurs données.
         /// </summary>
-        public WeaponUpgradeModel(Spells.SpellDescription description, List<Entities.StateAlterationModel> passiveAlterations, float cost)
+        public WeaponUpgradeModel(Spells.SpellLevelDescription description, List<Entities.StateAlterationModel> passiveAlterations, float cost)
         {
             PassiveAlterations = new List<Entities.StateAlterationModel>();
             Description = description;
@@ -137,6 +137,8 @@ namespace Codinsa2015.Server.Equip
         {
             Views.WeaponEnchantModelView view = new Views.WeaponEnchantModelView();
             view.OnHitEffects = new List<Views.StateAlterationModelView>();
+            view.CastingEffects = new List<Views.StateAlterationModelView>();
+            view.PassiveEffects = new List<Views.StateAlterationModelView>();
             foreach (var e in OnHitEffects) { view.OnHitEffects.Add(e.ToView()); }
             foreach (var e in PassiveEffects) { view.PassiveEffects.Add(e.ToView()); }
             foreach (var e in CastingEffects) { view.CastingEffects.Add(e.ToView()); }
@@ -243,7 +245,7 @@ namespace Codinsa2015.Server.Equip
         /// <summary>
         /// Obtient le spell d'attaque actuel de cette arme.
         /// </summary>
-        public Spells.SpellDescription GetAttackSpell() { return Model.Upgrades[Level].Description; }
+        public Spells.SpellLevelDescription GetAttackSpell() { return Model.Upgrades[Level].Description; }
         /// <summary>
         /// Obtient les passifs procurés par cette arme et ses enchantements.
         /// </summary>
@@ -287,7 +289,7 @@ namespace Codinsa2015.Server.Equip
 
             m_cooldownSeconds = 1.0f/Math.Max(hero.GetAttackSpeed(), 0.2f);
             
-            Spells.SpellDescription attackSpell = GetAttackSpell();
+            Spells.SpellLevelDescription attackSpell = GetAttackSpell();
             Spells.WeaponAttackSpell spell = new Spells.WeaponAttackSpell(hero, attackSpell, Enchant);
             return spell.Use(new Spells.SpellCastTargetInfo() { Type = Spells.TargettingType.Targetted, TargetId = entity.ID }, true);
         }

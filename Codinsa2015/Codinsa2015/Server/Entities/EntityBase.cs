@@ -162,9 +162,7 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         EntityCollection m_recentlyAggressiveEntities;
         Dictionary<int, float> m_recentlyAgressiveEntitiesMemoryTime;
-        #region Details
 
-        #endregion
         #endregion
 
         #endregion
@@ -206,7 +204,7 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Obtient la liste des altérations d'état affectées à cette entité.
         /// </summary>
-        [Clank.ViewCreator.Export("List<StateAlterationView>", "Obtient la liste des altérations d'état affectées à cette entité.")]
+        //[Clank.ViewCreator.Export("List<StateAlterationView>", "Obtient la liste des altérations d'état affectées à cette entité.")]
         public StateAlterationCollection StateAlterations
         {
             get { return m_stateAlterations; }

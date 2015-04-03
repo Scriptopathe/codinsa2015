@@ -35,22 +35,18 @@ namespace Codinsa2015.Server.Spells
         /// Crée une nouvelle instance de FireballSpell.
         /// </summary>
         /// <param name="caster"></param>
-        public WeaponAttackSpell(EntityBase caster, SpellDescription attack, Equip.WeaponEnchantModel enchant)
+        public WeaponAttackSpell(EntityBase caster, SpellLevelDescription attack, Equip.WeaponEnchantModel enchant)
         {
             SourceCaster = caster;
-            Name = "weapon-" + caster.ID;
-            
             attack = attack.Copy();
-            
             if(enchant.OnHitEffects != null)
                 attack.OnHitEffects.AddRange(enchant.OnHitEffects);
             if(enchant.CastingEffects != null)
                 attack.CastingTimeAlterations.AddRange(enchant.CastingEffects);
-
-            Levels = new List<SpellDescription>() 
+            Model = new SpellModel(new List<SpellLevelDescription>() 
             { 
                 attack,
-            };
+            }, "weapon-" + caster.ID);
             CurrentCooldown = 0.0f;
         }
     }

@@ -41,8 +41,8 @@ namespace Codinsa2015.Server.Spells
             EntityTypeRelative allowedTargets = EntityTypeRelative.AllEnnemy | EntityTypeRelative.AllTargettableNeutral)
         {
             SourceCaster = caster;
-            Name = "Fireball";
-            Levels = new List<SpellDescription>() { new SpellDescription()
+            Model = new SpellModel(
+            new List<SpellLevelDescription>() { new SpellLevelDescription()
             {
                 
                 TargetType = new SpellTargetInfo()
@@ -73,7 +73,7 @@ namespace Codinsa2015.Server.Spells
                         SourcePercentADValue = 1.0f,
                     },
                 }
-            }};
+            }}, "Fireball");
             CurrentCooldown = 0.0f;
         }
     }
