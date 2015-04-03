@@ -87,7 +87,7 @@ namespace Codinsa2015.Server.Controlers
             PickPassive,
         }
 
-        // [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.")]
+        [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.")]
         public PickAction Picks_NextAction()
         {
             if(GameServer.GetScene().Mode != SceneMode.Pick)
@@ -104,12 +104,26 @@ namespace Codinsa2015.Server.Controlers
                     return PickAction.PickPassive;
             }
         }
+        [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.")]
+        public List<int> Picks_GetActiveSpells(int id)
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Pick)
+                return new List<int>();
+            return GameServer.GetScene().PickControler.GetActiveSpells();
+        }
 
-        // todo : pick active
-        // get_actives
-        // get passives
+        [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs disponibles.")]
+        public List<Views.EntityUniquePassives> Picks_GetPassiveSpells(int id)
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Pick)
+                return new List<Views.EntityUniquePassives>();
+            var lst = GameServer.GetScene().PickControler.GetPassiveSpells();
+            List<Views.EntityUniquePassives> view = new List<Views.EntityUniquePassives>();
+            foreach (var l in lst) { view.Add((Views.EntityUniquePassives)l); }
+            return view;
+        }
 
-        // [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).")]
+        [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).")]
         public PickResult Picks_PickPassive(Views.EntityUniquePassives passive)
         {
             if (GameServer.GetScene().Mode != SceneMode.Pick)
@@ -120,10 +134,21 @@ namespace Codinsa2015.Server.Controlers
             if (!myTurn || isPickingActive)
                 return PickResult.NotYourTurn;
 
-            if(!GameServer.GetScene().PickControler.GetPassiveSpells().Contains(p))
-                return PickResult.SpellNotAvailable;
-
             return GameServer.GetScene().PickControler.PickPassiveSpell(this.Hero.ID, p);
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, permet à l'IA de pick un spell actif dont l'id est donné (si c'est son tour).")]
+        public PickResult Picks_PickActive(int spell)
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Pick)
+                return PickResult.NotYourTurn;
+            bool myTurn = GameServer.GetScene().PickControler.IsMyTurn(Hero.ID);
+            bool isPickingActive = GameServer.GetScene().PickControler.IsPickingActive();
+            
+            if (!myTurn || !isPickingActive)
+                return PickResult.NotYourTurn;
+
+            return GameServer.GetScene().PickControler.PickActiveSpell(this.Hero.ID, spell);
         }
 
         #endregion

@@ -396,7 +396,8 @@ namespace Codinsa2015.Server
         public void AddHero(int clientId, Entities.EntityHero hero, Controlers.ControlerBase controler)
         {
             if (__initDone)
-                throw new Exceptions.IdiotProgrammerException("L'appel à AddHero est impossible quand la phase de jeu a été initialisée");
+                return;
+                // throw new Exceptions.IdiotProgrammerException("L'appel à AddHero est impossible quand la phase de jeu a été initialisée");
             
             // Génère un id de contrôleur.
             int controlerId = hero.ID;
