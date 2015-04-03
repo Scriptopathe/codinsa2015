@@ -314,7 +314,7 @@ namespace Clank.Core.Generation.Languages
                 sb.AppendLine("\t// " + attr.Name);
                 sb.AppendLine(Tools.StringUtils.Indent(GenerateDeserializationInstruction(attr, intermediateVariableName)));
                 
-                if(attr.Type.BaseType.IsEnum)
+                if(attr.Type.BaseType.IsEnum && false)
                 {
                     sb.AppendLine("\t" + objName + "." + attr.Name + " = " + varTypename + ".fromValue(" + intermediateVariableName + ");");
                 }
@@ -352,7 +352,7 @@ namespace Clank.Core.Generation.Languages
                 case JSONType.Float:
                     return "float " + dstVarName + " = Float.valueOf(input.readLine());";
                 case JSONType.String:
-                    return "String " + dstVarName + " = input.readline();";
+                    return "String " + dstVarName + " = input.readLine();";
                 case JSONType.Object:
                     return typename + " " + dstVarName + " = " + typename + ".deserialize(input);";
                 case JSONType.Array:
@@ -379,7 +379,7 @@ namespace Clank.Core.Generation.Languages
                             Type = elementType
                         }, elementVarName)));
 
-                    if(elementType.BaseType.IsEnum)
+                    if(elementType.BaseType.IsEnum && false)
                         builder.AppendLine("\t" + dstVarName + ".add(" + elementTypename + ".fromValue(" + elementVarName + "));");
                     else
                         builder.AppendLine("\t" + dstVarName + ".add((" + elementTypename + ")" + elementVarName + ");");
@@ -638,7 +638,7 @@ namespace Clank.Core.Generation.Languages
                     Type = func.ReturnType
                 }, "returnValue")));
 
-            if(func.ReturnType.BaseType.IsEnum)
+            if(func.ReturnType.BaseType.IsEnum && false)
                 builder.AppendLine("\treturn " + GenerateTypeInstanceName(func.ReturnType) + ".fromValue(returnValue);");
             else
                 builder.AppendLine("\treturn returnValue;");

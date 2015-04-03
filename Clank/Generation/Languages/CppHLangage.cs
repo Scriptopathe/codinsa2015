@@ -525,9 +525,9 @@ namespace Clank.Core.Generation.Languages
         /// <returns></returns>
         string GenerateTypeName(ClankType type)
         {
-            if(type.IsMacro)
+            if (type.IsMacro)
             {
-                
+
                 // Pour les types macro, on remplace le nom du type par le nom du type natif.
                 Model.MacroContainer.MacroClass mcClass = m_project.Macros.FindClassByType(type);
                 if (!mcClass.LanguageToTypeName.ContainsKey(LANG_KEY))
@@ -538,7 +538,10 @@ namespace Clank.Core.Generation.Languages
                 return mcClass.LanguageToTypeName[LANG_KEY];
             }
             else
-                return type.Name;
+                if (type.Name == "string")
+                    return "std::string";
+                else
+                    return type.Name;
         }
         /// <summary>
         /// Génère le code d'un accès à un membre d'une énumération.
