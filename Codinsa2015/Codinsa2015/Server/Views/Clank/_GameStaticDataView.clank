@@ -1,0 +1,27 @@
+// Généré automatiquement (Clank.ViewCreator)
+
+
+state {
+	public serializable class GameStaticDataView
+	{
+
+		// Rajoute les statements using et le bon namespace pour la classe state.
+		void getClassMetadata_cs()
+		{
+			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string namespace = "Codinsa2015.Views";
+		}
+		//Obtient une liste de tous les modèles d'armes du jeu
+		public List<WeaponModelView> Weapons;
+		//Obtient une liste de tous les modèles d'armures du jeu
+		public List<PassiveEquipmentModelView> Armors;
+		//Obtient une liste de tous les modèles de bottes du jeu
+		public List<PassiveEquipmentModelView> Boots;
+		//Obtient une liste de tous les modèles d'enchantements d'arme du jeu
+		public List<WeaponEnchantModelView> Enchants;
+		//Obtient une liste de tous les modèles de sorts du jeu.
+		public List<SpellModelView> Spells;
+		//Obtient une vue sur les données statiques de la carte (telles que sa table de passabilité).
+		public MapView Map;
+	}
+}

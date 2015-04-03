@@ -1,0 +1,25 @@
+// Généré automatiquement (Clank.ViewCreator)
+
+
+state {
+	public serializable class SpellLevelDescriptionView
+	{
+
+		// Rajoute les statements using et le bon namespace pour la classe state.
+		void getClassMetadata_cs()
+		{
+			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string namespace = "Codinsa2015.Views";
+		}
+		//Cooldown de base du sort.
+		public float BaseCooldown;
+		//Casting time du sort.
+		public float CastingTime;
+		//Altération d'état appliquée pendant le casting time.
+		public List<StateAlterationModelView> CastingTimeAlterations;
+		//Indique la manière dont le ciblage du sort est effectué.
+		public SpellTargetInfoView TargetType;
+		//Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.
+		public List<StateAlterationModelView> OnHitEffects;
+	}
+}

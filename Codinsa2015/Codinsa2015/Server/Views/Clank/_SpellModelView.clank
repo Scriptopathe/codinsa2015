@@ -1,0 +1,19 @@
+// Généré automatiquement (Clank.ViewCreator)
+
+
+state {
+	public serializable class SpellModelView
+	{
+
+		// Rajoute les statements using et le bon namespace pour la classe state.
+		void getClassMetadata_cs()
+		{
+			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string namespace = "Codinsa2015.Views";
+		}
+		//ID du spell permettant de le retrouver dans le tableau de sorts du jeu.
+		public int ID;
+		//Obtient la liste des descriptions des niveaux de ce sort.
+		public List<SpellLevelDescriptionView> Levels;
+	}
+}
