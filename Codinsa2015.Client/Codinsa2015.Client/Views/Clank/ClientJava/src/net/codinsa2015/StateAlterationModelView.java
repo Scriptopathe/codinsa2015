@@ -64,7 +64,7 @@ public class StateAlterationModelView
 		StateAlterationModelView _obj =  new StateAlterationModelView();
 		// Type
 		StateAlterationType _obj_Type = StateAlterationType.fromValue(Integer.valueOf(input.readLine()));
-		_obj.Type = StateAlterationType.fromValue(_obj_Type);
+		_obj.Type = _obj_Type;
 		// BaseDuration
 		float _obj_BaseDuration = Float.valueOf(input.readLine());
 		_obj.BaseDuration = _obj_BaseDuration;
@@ -73,7 +73,7 @@ public class StateAlterationModelView
 		_obj.DashGoThroughWall = _obj_DashGoThroughWall;
 		// DashDirType
 		DashDirectionType _obj_DashDirType = DashDirectionType.fromValue(Integer.valueOf(input.readLine()));
-		_obj.DashDirType = DashDirectionType.fromValue(_obj_DashDirType);
+		_obj.DashDirType = _obj_DashDirType;
 		// FlatValue
 		float _obj_FlatValue = Float.valueOf(input.readLine());
 		_obj.FlatValue = _obj_FlatValue;

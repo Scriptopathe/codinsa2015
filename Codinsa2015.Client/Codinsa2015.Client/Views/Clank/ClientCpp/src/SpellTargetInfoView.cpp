@@ -17,7 +17,7 @@ void SpellTargetInfoView::serialize(std::ostream& output) {
 SpellTargetInfoView SpellTargetInfoView::deserialize(std::istream& input) {
 	SpellTargetInfoView _obj = SpellTargetInfoView();
 	// Type
-	int _obj_Type_asInt; input >> _obj_Type; input.ignore(1000, '\n');
+	int _obj_Type_asInt; input >> _obj_Type_asInt; input.ignore(1000, '\n');
 	TargettingType _obj_Type = (TargettingType)_obj_Type_asInt;
 	_obj.Type = (::TargettingType)_obj_Type;
 	// Range
@@ -33,7 +33,7 @@ SpellTargetInfoView SpellTargetInfoView::deserialize(std::istream& input) {
 	bool _obj_DieOnCollision; input >> _obj_DieOnCollision; input.ignore(1000, '\n');
 	_obj.DieOnCollision = (bool)_obj_DieOnCollision;
 	// AllowedTargetTypes
-	int _obj_AllowedTargetTypes_asInt; input >> _obj_AllowedTargetTypes; input.ignore(1000, '\n');
+	int _obj_AllowedTargetTypes_asInt; input >> _obj_AllowedTargetTypes_asInt; input.ignore(1000, '\n');
 	EntityTypeRelative _obj_AllowedTargetTypes = (EntityTypeRelative)_obj_AllowedTargetTypes_asInt;
 	_obj.AllowedTargetTypes = (::EntityTypeRelative)_obj_AllowedTargetTypes;
 	return _obj;

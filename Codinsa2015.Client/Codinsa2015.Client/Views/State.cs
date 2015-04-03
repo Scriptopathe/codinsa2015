@@ -133,9 +133,9 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
-		/// Obtient la liste des modèles d'armures disponibles au shop.
+		/// Obtient la liste des id des modèles d'armures disponibles au shop.
 		/// </summary>
-		public List<PassiveEquipmentModelView> ShopGetArmors()
+		public List<int> ShopGetArmors()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -146,19 +146,19 @@ namespace Codinsa2015.Views.Client
 			byte[] response = TCPHelper.Receive();
 			s = new System.IO.MemoryStream(response);
 			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			List<PassiveEquipmentModelView> returnValue = new List<PassiveEquipmentModelView>();
+			List<int> returnValue = new List<int>();
 			int returnValue_count = Int32.Parse(input.ReadLine());
 			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
-				PassiveEquipmentModelView returnValue_e = PassiveEquipmentModelView.Deserialize(input);
-				returnValue.Add((PassiveEquipmentModelView)returnValue_e);
+				int returnValue_e = Int32.Parse(input.ReadLine());
+				returnValue.Add((int)returnValue_e);
 			}
-			return (List<PassiveEquipmentModelView>)returnValue;
+			return (List<int>)returnValue;
 		}
 	
 		/// <summary>
-		/// Obtient la liste des modèles de bottes disponibles au shop.
+		/// Obtient la liste des id des modèles de bottes disponibles au shop.
 		/// </summary>
-		public List<PassiveEquipmentModelView> ShopGetBoots()
+		public List<int> ShopGetBoots()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -169,19 +169,19 @@ namespace Codinsa2015.Views.Client
 			byte[] response = TCPHelper.Receive();
 			s = new System.IO.MemoryStream(response);
 			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			List<PassiveEquipmentModelView> returnValue = new List<PassiveEquipmentModelView>();
+			List<int> returnValue = new List<int>();
 			int returnValue_count = Int32.Parse(input.ReadLine());
 			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
-				PassiveEquipmentModelView returnValue_e = PassiveEquipmentModelView.Deserialize(input);
-				returnValue.Add((PassiveEquipmentModelView)returnValue_e);
+				int returnValue_e = Int32.Parse(input.ReadLine());
+				returnValue.Add((int)returnValue_e);
 			}
-			return (List<PassiveEquipmentModelView>)returnValue;
+			return (List<int>)returnValue;
 		}
 	
 		/// <summary>
-		/// Obtient la liste des enchantements disponibles au shop.
+		/// Obtient la liste des id des enchantements disponibles au shop.
 		/// </summary>
-		public List<WeaponEnchantModelView> ShopGetEnchants()
+		public List<int> ShopGetEnchants()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -192,19 +192,19 @@ namespace Codinsa2015.Views.Client
 			byte[] response = TCPHelper.Receive();
 			s = new System.IO.MemoryStream(response);
 			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			List<WeaponEnchantModelView> returnValue = new List<WeaponEnchantModelView>();
+			List<int> returnValue = new List<int>();
 			int returnValue_count = Int32.Parse(input.ReadLine());
 			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
-				WeaponEnchantModelView returnValue_e = WeaponEnchantModelView.Deserialize(input);
-				returnValue.Add((WeaponEnchantModelView)returnValue_e);
+				int returnValue_e = Int32.Parse(input.ReadLine());
+				returnValue.Add((int)returnValue_e);
 			}
-			return (List<WeaponEnchantModelView>)returnValue;
+			return (List<int>)returnValue;
 		}
 	
 		/// <summary>
 		/// Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
 		/// </summary>
-		public int GetWeaponId()
+		public int GetMyWeaponId()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -222,7 +222,7 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Obtient le niveau du modèle d'arme équipé par le héros. (-1 si aucune arme équipée)
 		/// </summary>
-		public int GetWeaponLevel()
+		public int GetMyWeaponLevel()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -240,7 +240,7 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Obtient l'id du modèle d'armure équipé par le héros. (-1 si aucun)
 		/// </summary>
-		public int GetArmorId()
+		public int GetMyArmorId()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -258,7 +258,7 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Obtient le niveau du modèle d'armure équipé par le héros. (-1 si aucune armure équipée)
 		/// </summary>
-		public int GetArmorLevel()
+		public int GetMyArmorLevel()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -276,7 +276,7 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Obtient l'id du modèle de bottes équipé par le héros. (-1 si aucun)
 		/// </summary>
-		public int GetBootsId()
+		public int GetMyBootsId()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -294,7 +294,7 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Obtient le niveau du modèle de bottes équipé par le héros. (-1 si aucune paire équipée)
 		/// </summary>
-		public int GetBootsLevel()
+		public int GetMyBootsLevel()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -312,7 +312,7 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Obtient l'id du modèle d'enchantement d'arme équipé par le héros. (-1 si aucun)
 		/// </summary>
-		public int GetWeaponEnchantId()
+		public int GetMyWeaponEnchantId()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -330,7 +330,7 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Retourne une vue vers le héros contrôlé par ce contrôleur.
 		/// </summary>
-		public EntityBaseView GetHero()
+		public EntityBaseView GetMyHero()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -348,7 +348,7 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Retourne la position du héros.
 		/// </summary>
-		public Vector2 GetPosition()
+		public Vector2 GetMyPosition()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -364,24 +364,6 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
-		/// Retourne les informations concernant la map actuelle
-		/// </summary>
-		public MapView GetMapView()
-		{
-			System.IO.MemoryStream s = new System.IO.MemoryStream();
-			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
-				output.NewLine = "\n";
-			output.WriteLine(((int)18).ToString());
-			output.Close();
-			TCPHelper.Send(s.ToArray());
-			byte[] response = TCPHelper.Receive();
-			s = new System.IO.MemoryStream(response);
-			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			MapView returnValue = MapView.Deserialize(input);
-			return (MapView)returnValue;
-		}
-	
-		/// <summary>
 		/// Déplace le joueur vers la position donnée en utilisant l'A*.
 		/// </summary>
 		public bool StartMoveTo(Vector2 position)
@@ -389,7 +371,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)19).ToString());
+			output.WriteLine(((int)18).ToString());
 			position.Serialize(output);
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -408,7 +390,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)20).ToString());
+			output.WriteLine(((int)19).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -426,7 +408,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)21).ToString());
+			output.WriteLine(((int)20).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -444,7 +426,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)22).ToString());
+			output.WriteLine(((int)21).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -468,7 +450,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)23).ToString());
+			output.WriteLine(((int)22).ToString());
 			output.WriteLine(((int)entityId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -480,9 +462,32 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
+		/// Obtient les id des spells possédés par le héros.
+		/// </summary>
+		public List<int> GetMySpells()
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)23).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			List<int> returnValue = new List<int>();
+			int returnValue_count = Int32.Parse(input.ReadLine());
+			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+				int returnValue_e = Int32.Parse(input.ReadLine());
+				returnValue.Add((int)returnValue_e);
+			}
+			return (List<int>)returnValue;
+		}
+	
+		/// <summary>
 		/// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 		/// </summary>
-		public bool UseSpell(int spellId,SpellCastTargetInfoView target)
+		public bool UseMySpell(int spellId,SpellCastTargetInfoView target)
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -500,6 +505,25 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
+		/// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		/// </summary>
+		public SpellView GetMySpell(int spellId)
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)25).ToString());
+			output.WriteLine(((int)spellId).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			SpellView returnValue = SpellView.Deserialize(input);
+			return (SpellView)returnValue;
+		}
+	
+		/// <summary>
 		/// Obtient le mode actuel de la scène.
 		/// </summary>
 		public SceneMode GetMode()
@@ -507,7 +531,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)25).ToString());
+			output.WriteLine(((int)26).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -520,26 +544,7 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Obtient la description du spell dont l'id est donné en paramètre.
 		/// </summary>
-		public SpellDescriptionView GetSpellCurrentLevelDescription(int spellId)
-		{
-			System.IO.MemoryStream s = new System.IO.MemoryStream();
-			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
-				output.NewLine = "\n";
-			output.WriteLine(((int)26).ToString());
-			output.WriteLine(((int)spellId).ToString());
-			output.Close();
-			TCPHelper.Send(s.ToArray());
-			byte[] response = TCPHelper.Receive();
-			s = new System.IO.MemoryStream(response);
-			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			SpellDescriptionView returnValue = SpellDescriptionView.Deserialize(input);
-			return (SpellDescriptionView)returnValue;
-		}
-	
-		/// <summary>
-		/// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
-		/// </summary>
-		public SpellView GetSpell(int spellId)
+		public SpellLevelDescriptionView GetSpellCurrentLevelDescription(int spellId)
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -551,14 +556,14 @@ namespace Codinsa2015.Views.Client
 			byte[] response = TCPHelper.Receive();
 			s = new System.IO.MemoryStream(response);
 			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			SpellView returnValue = SpellView.Deserialize(input);
-			return (SpellView)returnValue;
+			SpellLevelDescriptionView returnValue = SpellLevelDescriptionView.Deserialize(input);
+			return (SpellLevelDescriptionView)returnValue;
 		}
 	
 		/// <summary>
-		/// Obtient la liste des spells du héros contrôlé.
+		/// Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
 		/// </summary>
-		public List<SpellView> GetSpells()
+		public GameStaticDataView GetStaticData()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -569,37 +574,8 @@ namespace Codinsa2015.Views.Client
 			byte[] response = TCPHelper.Receive();
 			s = new System.IO.MemoryStream(response);
 			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			List<SpellView> returnValue = new List<SpellView>();
-			int returnValue_count = Int32.Parse(input.ReadLine());
-			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
-				SpellView returnValue_e = SpellView.Deserialize(input);
-				returnValue.Add((SpellView)returnValue_e);
-			}
-			return (List<SpellView>)returnValue;
-		}
-	
-		/// <summary>
-		/// Obtient les spells possédés par le héros dont l'id est passé en paramètre.
-		/// </summary>
-		public List<SpellView> GetHeroSpells(int entityId)
-		{
-			System.IO.MemoryStream s = new System.IO.MemoryStream();
-			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
-				output.NewLine = "\n";
-			output.WriteLine(((int)29).ToString());
-			output.WriteLine(((int)entityId).ToString());
-			output.Close();
-			TCPHelper.Send(s.ToArray());
-			byte[] response = TCPHelper.Receive();
-			s = new System.IO.MemoryStream(response);
-			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			List<SpellView> returnValue = new List<SpellView>();
-			int returnValue_count = Int32.Parse(input.ReadLine());
-			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
-				SpellView returnValue_e = SpellView.Deserialize(input);
-				returnValue.Add((SpellView)returnValue_e);
-			}
-			return (List<SpellView>)returnValue;
+			GameStaticDataView returnValue = GameStaticDataView.Deserialize(input);
+			return (GameStaticDataView)returnValue;
 		}
 	
 		public static State Deserialize(System.IO.StreamReader input) {

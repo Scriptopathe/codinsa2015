@@ -26,12 +26,6 @@ void EntityBaseView::serialize(std::ostream& output) {
 	output << ((int)this->UniquePassive) << '\n';
 	// Role
 	output << ((int)this->Role) << '\n';
-	// StateAlterations
-	output << this->StateAlterations.size() << '\n';
-	for(int StateAlterations_it = 0; StateAlterations_it < this->StateAlterations.size(); StateAlterations_it++) {
-		this->StateAlterations[StateAlterations_it].serialize(output);
-	}
-
 	// BaseArmor
 	output << ((float)this->BaseArmor) << '\n';
 	// Direction
@@ -122,22 +116,13 @@ EntityBaseView EntityBaseView::deserialize(std::istream& input) {
 	int _obj_UniquePassiveLevel; input >> _obj_UniquePassiveLevel; input.ignore(1000, '\n');
 	_obj.UniquePassiveLevel = (int)_obj_UniquePassiveLevel;
 	// UniquePassive
-	int _obj_UniquePassive_asInt; input >> _obj_UniquePassive; input.ignore(1000, '\n');
+	int _obj_UniquePassive_asInt; input >> _obj_UniquePassive_asInt; input.ignore(1000, '\n');
 	EntityUniquePassives _obj_UniquePassive = (EntityUniquePassives)_obj_UniquePassive_asInt;
 	_obj.UniquePassive = (::EntityUniquePassives)_obj_UniquePassive;
 	// Role
-	int _obj_Role_asInt; input >> _obj_Role; input.ignore(1000, '\n');
+	int _obj_Role_asInt; input >> _obj_Role_asInt; input.ignore(1000, '\n');
 	EntityHeroRole _obj_Role = (EntityHeroRole)_obj_Role_asInt;
 	_obj.Role = (::EntityHeroRole)_obj_Role;
-	// StateAlterations
-	std::vector<StateAlterationView> _obj_StateAlterations = std::vector<StateAlterationView>();
-	int _obj_StateAlterations_count; input >> _obj_StateAlterations_count; input.ignore(1000, '\n');
-	for(int _obj_StateAlterations_i = 0; _obj_StateAlterations_i < _obj_StateAlterations_count; _obj_StateAlterations_i++) {
-		StateAlterationView _obj_StateAlterations_e = StateAlterationView::deserialize(input);
-		_obj_StateAlterations.push_back((StateAlterationView)_obj_StateAlterations_e);
-	}
-
-	_obj.StateAlterations = (::std::vector<StateAlterationView>)_obj_StateAlterations;
 	// BaseArmor
 	float _obj_BaseArmor; input >> _obj_BaseArmor; input.ignore(1000, '\n');
 	_obj.BaseArmor = (float)_obj_BaseArmor;
@@ -166,7 +151,7 @@ EntityBaseView EntityBaseView::deserialize(std::istream& input) {
 	bool _obj_IsDead; input >> _obj_IsDead; input.ignore(1000, '\n');
 	_obj.IsDead = (bool)_obj_IsDead;
 	// Type
-	int _obj_Type_asInt; input >> _obj_Type; input.ignore(1000, '\n');
+	int _obj_Type_asInt; input >> _obj_Type_asInt; input.ignore(1000, '\n');
 	EntityType _obj_Type = (EntityType)_obj_Type_asInt;
 	_obj.Type = (::EntityType)_obj_Type;
 	// ID

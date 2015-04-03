@@ -23,16 +23,16 @@ namespace Codinsa2015.Client
             TCPHelper.Initialize(Codinsa2015.Server.GameServer.__DEBUG_PORT, "127.0.0.1", str);
             State state = new State();
             Console.WriteLine("Client started...");
-            List<Views.SpellView> spells = state.GetSpells();
+            Views.GameStaticDataView data = state.GetStaticData();
+            Console.WriteLine("Got static data");
+            List<int> mySpells = state.GetMySpells();
+           
+            Console.WriteLine("Got spells");
             int spellId = 0;
-
-
-            Views.MapView mapView = state.GetMapView();
-            bool canWalk = mapView.Passability[8][9];
             while (true)
             {
                 var entities = state.GetEntitiesInSight();
-
+                Console.WriteLine("Entities in sight : " + entities.Count);
                 if(entities.Count != 0)
                 {
                     var entity = entities[0];
@@ -41,12 +41,10 @@ namespace Codinsa2015.Client
                         Console.WriteLine("Moving to entity " + entity.ID + ", position = " + entity.Position);
                         state.StartMoveTo(entity.Position);
                     }
-
-                    spellId++; spellId %= spells.Count;
-
-                    Views.SpellDescriptionView spell = state.GetSpellCurrentLevelDescription(spellId);
+                    spellId++; spellId %= mySpells.Count;
+                    Views.SpellLevelDescriptionView spell = state.GetSpellCurrentLevelDescription(spellId);
                     Views.EntityBaseView e = state.GetEntityById(1);
-                    var positionView = state.GetPosition();
+                    var positionView = state.GetMyPosition();
                     Vector2 position = new Vector2(positionView.X, positionView.Y);
                     Vector2 entityPosition = new Vector2(entity.Position.X, entity.Position.Y);
                     Console.WriteLine("Using spell n° " + spellId + ", targetting type = " + spell.TargetType.Type);
@@ -59,15 +57,15 @@ namespace Codinsa2015.Client
                                 dir = new Vector2(1, 0);
 
                             Views.Vector2 dirView = new Views.Vector2(dir.X, dir.Y);
-                            state.UseSpell(spellId, new Views.SpellCastTargetInfoView() { TargetDirection = dirView, Type = Views.TargettingType.Direction });
+                            state.UseMySpell(spellId, new Views.SpellCastTargetInfoView() { TargetDirection = dirView, Type = Views.TargettingType.Direction });
                             break;
 
                         case Views.TargettingType.Position:
-                            state.UseSpell(spellId, new Views.SpellCastTargetInfoView() { TargetPosition = entity.Position, Type = Views.TargettingType.Position });
+                            state.UseMySpell(spellId, new Views.SpellCastTargetInfoView() { TargetPosition = entity.Position, Type = Views.TargettingType.Position });
                             break;
 
                         case Views.TargettingType.Targetted:
-                            state.UseSpell(spellId, new Views.SpellCastTargetInfoView() { TargetId = entity.ID, Type = Views.TargettingType.Targetted });
+                            state.UseMySpell(spellId, new Views.SpellCastTargetInfoView() { TargetId = entity.ID, Type = Views.TargettingType.Targetted });
                             break;
                     }
 

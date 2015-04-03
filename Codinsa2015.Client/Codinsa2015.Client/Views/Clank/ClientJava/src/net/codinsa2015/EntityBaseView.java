@@ -10,8 +10,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import net.codinsa2015.EntityUniquePassives.*;
 import net.codinsa2015.EntityHeroRole.*;
-import net.codinsa2015.StateAlterationView.*;
-import java.util.ArrayList;
 import net.codinsa2015.Vector2.*;
 import net.codinsa2015.EntityType.*;
 
@@ -47,8 +45,6 @@ public class EntityBaseView
 	public EntityUniquePassives UniquePassive;
 	// Si cette entité est un héros, obtient le rôle de ce héros.
 	public EntityHeroRole Role;
-	// Obtient la liste des altérations d'état affectées à cette entité.
-	public ArrayList<StateAlterationView> StateAlterations;
 	// Représente les points d'armure de base de cette entité.
 	public Float BaseArmor;
 	// Représente la direction de cette entité.
@@ -140,18 +136,10 @@ public class EntityBaseView
 		_obj.UniquePassiveLevel = _obj_UniquePassiveLevel;
 		// UniquePassive
 		EntityUniquePassives _obj_UniquePassive = EntityUniquePassives.fromValue(Integer.valueOf(input.readLine()));
-		_obj.UniquePassive = EntityUniquePassives.fromValue(_obj_UniquePassive);
+		_obj.UniquePassive = _obj_UniquePassive;
 		// Role
 		EntityHeroRole _obj_Role = EntityHeroRole.fromValue(Integer.valueOf(input.readLine()));
-		_obj.Role = EntityHeroRole.fromValue(_obj_Role);
-		// StateAlterations
-		ArrayList<StateAlterationView> _obj_StateAlterations = new ArrayList<StateAlterationView>();
-		int _obj_StateAlterations_count = Integer.valueOf(input.readLine());
-		for(int _obj_StateAlterations_i = 0; _obj_StateAlterations_i < _obj_StateAlterations_count; _obj_StateAlterations_i++) {
-			StateAlterationView _obj_StateAlterations_e = StateAlterationView.deserialize(input);
-			_obj_StateAlterations.add((StateAlterationView)_obj_StateAlterations_e);
-		}
-		_obj.StateAlterations = _obj_StateAlterations;
+		_obj.Role = _obj_Role;
 		// BaseArmor
 		float _obj_BaseArmor = Float.valueOf(input.readLine());
 		_obj.BaseArmor = _obj_BaseArmor;
@@ -181,7 +169,7 @@ public class EntityBaseView
 		_obj.IsDead = _obj_IsDead;
 		// Type
 		EntityType _obj_Type = EntityType.fromValue(Integer.valueOf(input.readLine()));
-		_obj.Type = EntityType.fromValue(_obj_Type);
+		_obj.Type = _obj_Type;
 		// ID
 		int _obj_ID = Integer.valueOf(input.readLine());
 		_obj.ID = _obj_ID;
@@ -260,11 +248,6 @@ public class EntityBaseView
 		output.append(((Integer)(this.UniquePassive.getValue())).toString() + "\n");
 		// Role
 		output.append(((Integer)(this.Role.getValue())).toString() + "\n");
-		// StateAlterations
-		output.append(String.valueOf(this.StateAlterations.size()) + "\n");
-		for(int StateAlterations_it = 0; StateAlterations_it < this.StateAlterations.size();StateAlterations_it++) {
-			this.StateAlterations.get(StateAlterations_it).serialize(output);
-		}
 		// BaseArmor
 		output.append(((Float)this.BaseArmor).toString() + "\n");
 		// Direction

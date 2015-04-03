@@ -45,7 +45,7 @@ void StateAlterationModelView::serialize(std::ostream& output) {
 StateAlterationModelView StateAlterationModelView::deserialize(std::istream& input) {
 	StateAlterationModelView _obj = StateAlterationModelView();
 	// Type
-	int _obj_Type_asInt; input >> _obj_Type; input.ignore(1000, '\n');
+	int _obj_Type_asInt; input >> _obj_Type_asInt; input.ignore(1000, '\n');
 	StateAlterationType _obj_Type = (StateAlterationType)_obj_Type_asInt;
 	_obj.Type = (::StateAlterationType)_obj_Type;
 	// BaseDuration
@@ -55,7 +55,7 @@ StateAlterationModelView StateAlterationModelView::deserialize(std::istream& inp
 	bool _obj_DashGoThroughWall; input >> _obj_DashGoThroughWall; input.ignore(1000, '\n');
 	_obj.DashGoThroughWall = (bool)_obj_DashGoThroughWall;
 	// DashDirType
-	int _obj_DashDirType_asInt; input >> _obj_DashDirType; input.ignore(1000, '\n');
+	int _obj_DashDirType_asInt; input >> _obj_DashDirType_asInt; input.ignore(1000, '\n');
 	DashDirectionType _obj_DashDirType = (DashDirectionType)_obj_DashDirType_asInt;
 	_obj.DashDirType = (::DashDirectionType)_obj_DashDirType;
 	// FlatValue

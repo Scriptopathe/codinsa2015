@@ -1,6 +1,5 @@
 #pragma once
 #include "Common.h"
-#include "StateAlterationView.h"
 #include "Vector2.h"
 
 
@@ -34,8 +33,6 @@ public:
 	EntityUniquePassives UniquePassive;
 	// Si cette entité est un héros, obtient le rôle de ce héros.
 	EntityHeroRole Role;
-	// Obtient la liste des altérations d'état affectées à cette entité.
-	std::vector<StateAlterationView> StateAlterations;
 	// Représente les points d'armure de base de cette entité.
 	float BaseArmor;
 	// Représente la direction de cette entité.

@@ -11,11 +11,11 @@ state {
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
-		//Obtient la description de l'upgrade
-		public SpellDescriptionView Description;
-		//
+		//Obtient du sort que lance l'arme à ce niveau d'upgrade.
+		public SpellLevelDescriptionView Description;
+		//Obtient les altérations d'état appliquées passivement par l'arme à ce niveau d'upgrade.
 		public List<StateAlterationModelView> PassiveAlterations;
-		//Obtient le coût de l'upgrade.
+		//Obtient le coût de cette upgrade.
 		public float Cost;
 	}
 }

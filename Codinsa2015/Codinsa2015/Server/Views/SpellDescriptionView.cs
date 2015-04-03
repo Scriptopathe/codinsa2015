@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 namespace Codinsa2015.Views
 {
 
-	public class SpellDescriptionView
+	public class SpellLevelDescriptionView
 	{
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
@@ -34,8 +34,8 @@ namespace Codinsa2015.Views
 		/// Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.
 		/// </summary>
 		public List<StateAlterationModelView> OnHitEffects;	
-		public static SpellDescriptionView Deserialize(System.IO.StreamReader input) {
-			SpellDescriptionView _obj =  new SpellDescriptionView();
+		public static SpellLevelDescriptionView Deserialize(System.IO.StreamReader input) {
+			SpellLevelDescriptionView _obj =  new SpellLevelDescriptionView();
 			// BaseCooldown
 			float _obj_BaseCooldown = Single.Parse(input.ReadLine());
 			_obj.BaseCooldown = (float)_obj_BaseCooldown;

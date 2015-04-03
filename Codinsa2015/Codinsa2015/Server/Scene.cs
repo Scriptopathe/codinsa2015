@@ -24,7 +24,7 @@ namespace Codinsa2015.Server
     /// </summary>
     public class Scene
     {
-        public const bool SKIP_PICKS = true;
+        public const bool SKIP_PICKS = false;
         public const bool LOAD_DB_FILE = false;
         #region Variables
 
@@ -480,6 +480,9 @@ namespace Codinsa2015.Server
                 while (m_commands.Count != 0)
                 {
                     var tup = m_commands.Dequeue();
+#if DEBUG
+                    CommandServer.Send(tup.Item1, State.ProcessRequest(tup.Item2, tup.Item1));
+#else
                     try
                     {
                         CommandServer.Send(tup.Item1, State.ProcessRequest(tup.Item2, tup.Item1));
@@ -493,6 +496,7 @@ namespace Codinsa2015.Server
                             e.StackTrace, 
                             e));
                     }
+#endif
                 }
             }
         }

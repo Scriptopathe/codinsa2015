@@ -22,7 +22,7 @@ GenericShapeView GenericShapeView::deserialize(std::istream& input) {
 	Vector2 _obj_Size = Vector2::deserialize(input);
 	_obj.Size = (::Vector2)_obj_Size;
 	// ShapeType
-	int _obj_ShapeType_asInt; input >> _obj_ShapeType; input.ignore(1000, '\n');
+	int _obj_ShapeType_asInt; input >> _obj_ShapeType_asInt; input.ignore(1000, '\n');
 	GenericShapeType _obj_ShapeType = (GenericShapeType)_obj_ShapeType_asInt;
 	_obj.ShapeType = (::GenericShapeType)_obj_ShapeType;
 	return _obj;

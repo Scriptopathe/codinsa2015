@@ -67,10 +67,6 @@ namespace Codinsa2015.Views.Client
 		/// </summary>
 		public EntityHeroRole Role;	
 		/// <summary>
-		/// Obtient la liste des altérations d'état affectées à cette entité.
-		/// </summary>
-		public List<StateAlterationView> StateAlterations;	
-		/// <summary>
 		/// Représente les points d'armure de base de cette entité.
 		/// </summary>
 		public float BaseArmor;	
@@ -217,14 +213,6 @@ namespace Codinsa2015.Views.Client
 			// Role
 			EntityHeroRole _obj_Role = (EntityHeroRole)Int32.Parse(input.ReadLine());
 			_obj.Role = (EntityHeroRole)_obj_Role;
-			// StateAlterations
-			List<StateAlterationView> _obj_StateAlterations = new List<StateAlterationView>();
-			int _obj_StateAlterations_count = Int32.Parse(input.ReadLine());
-			for(int _obj_StateAlterations_i = 0; _obj_StateAlterations_i < _obj_StateAlterations_count; _obj_StateAlterations_i++) {
-				StateAlterationView _obj_StateAlterations_e = StateAlterationView.Deserialize(input);
-				_obj_StateAlterations.Add((StateAlterationView)_obj_StateAlterations_e);
-			}
-			_obj.StateAlterations = (List<StateAlterationView>)_obj_StateAlterations;
 			// BaseArmor
 			float _obj_BaseArmor = Single.Parse(input.ReadLine());
 			_obj.BaseArmor = (float)_obj_BaseArmor;
@@ -333,11 +321,6 @@ namespace Codinsa2015.Views.Client
 			output.WriteLine(((int)this.UniquePassive).ToString());
 			// Role
 			output.WriteLine(((int)this.Role).ToString());
-			// StateAlterations
-			output.WriteLine(this.StateAlterations.Count.ToString());
-			for(int StateAlterations_it = 0; StateAlterations_it < this.StateAlterations.Count;StateAlterations_it++) {
-				this.StateAlterations[StateAlterations_it].Serialize(output);
-			}
 			// BaseArmor
 			output.WriteLine(((float)this.BaseArmor).ToString());
 			// Direction

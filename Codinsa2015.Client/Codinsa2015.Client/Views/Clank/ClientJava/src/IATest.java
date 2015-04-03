@@ -12,7 +12,7 @@ public class IATest {
 
 		SceneMode mode = state.GetMode();
 		System.out.println(mode);
-		ArrayList<SpellView> spells = state.GetSpells();
+		ArrayList<Integer> spells = state.GetMySpells();
 		int spellId = 0;
 		while (true)
 		{

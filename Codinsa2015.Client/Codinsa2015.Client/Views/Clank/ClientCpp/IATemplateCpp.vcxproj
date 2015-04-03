@@ -83,12 +83,16 @@
     <ClInclude Include="inc\CircleShapeView.h" />
     <ClInclude Include="inc\Common.h" />
     <ClInclude Include="inc\EntityBaseView.h" />
+    <ClInclude Include="inc\GameStaticDataView.h" />
     <ClInclude Include="inc\GenericShapeView.h" />
     <ClInclude Include="inc\MapView.h" />
+    <ClInclude Include="inc\PassiveEquipmentModelView.h" />
     <ClInclude Include="inc\PassiveEquipmentUpgradeModelView.h" />
     <ClInclude Include="inc\SpellcastBaseView.h" />
     <ClInclude Include="inc\SpellCastTargetInfoView.h" />
     <ClInclude Include="inc\SpellDescriptionView.h" />
+    <ClInclude Include="inc\SpellLevelDescriptionView.h" />
+    <ClInclude Include="inc\SpellModelView.h" />
     <ClInclude Include="inc\SpellTargetInfoView.h" />
     <ClInclude Include="inc\SpellView.h" />
     <ClInclude Include="inc\State.h" />
@@ -99,18 +103,23 @@
     <ClInclude Include="inc\Vector2.h" />
     <ClInclude Include="inc\VisionMapView.h" />
     <ClInclude Include="inc\WeaponEnchantModelView.h" />
+    <ClInclude Include="inc\WeaponModelView.h" />
     <ClInclude Include="inc\WeaponUpgradeModelView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\CircleShapeView.cpp" />
     <ClCompile Include="src\EntityBaseView.cpp" />
+    <ClCompile Include="src\GameStaticDataView.cpp" />
     <ClCompile Include="src\GenericShapeView.cpp" />
     <ClCompile Include="src\MapView.cpp" />
+    <ClCompile Include="src\PassiveEquipmentModelView.cpp" />
     <ClCompile Include="src\PassiveEquipmentUpgradeModelView.cpp" />
     <ClCompile Include="src\SpellcastBaseView.cpp" />
     <ClCompile Include="src\SpellCastTargetInfoView.cpp" />
     <ClCompile Include="src\SpellDescriptionView.cpp" />
+    <ClCompile Include="src\SpellLevelDescriptionView.cpp" />
+    <ClCompile Include="src\SpellModelView.cpp" />
     <ClCompile Include="src\SpellTargetInfoView.cpp" />
     <ClCompile Include="src\SpellView.cpp" />
     <ClCompile Include="src\State.cpp" />
@@ -121,6 +130,7 @@
     <ClCompile Include="src\Vector2.cpp" />
     <ClCompile Include="src\VisionMapView.cpp" />
     <ClCompile Include="src\WeaponEnchantModelView.cpp" />
+    <ClCompile Include="src\WeaponModelView.cpp" />
     <ClCompile Include="src\WeaponUpgradeModelView.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

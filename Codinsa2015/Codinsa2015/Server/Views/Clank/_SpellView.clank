@@ -15,8 +15,8 @@ state {
 		public float CurrentCooldown;
 		//Id de l'entité possédant le sort.
 		public int SourceCaster;
-		//Représente les descriptions du spell pour les différents niveaux.
-		public List<SpellDescriptionView> Levels;
+		//Représente l'id du modèle du spell. Ce modèle décrit les différents effets du spell pour chacun de ses niveaux
+		public int Model;
 		//Niveau actuel du spell.
 		public int Level;
 	}

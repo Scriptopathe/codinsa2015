@@ -18,7 +18,7 @@ StateAlterationView StateAlterationView::deserialize(std::istream& input) {
 	int _obj_Source; input >> _obj_Source; input.ignore(1000, '\n');
 	_obj.Source = (int)_obj_Source;
 	// SourceType
-	int _obj_SourceType_asInt; input >> _obj_SourceType; input.ignore(1000, '\n');
+	int _obj_SourceType_asInt; input >> _obj_SourceType_asInt; input.ignore(1000, '\n');
 	StateAlterationSource _obj_SourceType = (StateAlterationSource)_obj_SourceType_asInt;
 	_obj.SourceType = (::StateAlterationSource)_obj_SourceType;
 	// Model

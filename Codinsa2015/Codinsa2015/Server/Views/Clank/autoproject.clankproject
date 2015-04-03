@@ -3,6 +3,7 @@
   <Name>Codinsa2015</Name>
   <SavePath />
   <SourceFiles>
+    <string>_GameStaticDataView.clank</string>
     <string>_EntityBaseView.clank</string>
     <string>_StateAlterationParametersView.clank</string>
     <string>_StateAlterationView.clank</string>
@@ -17,8 +18,9 @@
     <string>_GenericShapeView.clank</string>
     <string>_SpellcastBaseView.clank</string>
     <string>_SpellView.clank</string>
+    <string>_SpellModelView.clank</string>
     <string>_SpellCastTargetInfoView.clank</string>
-    <string>_SpellDescriptionView.clank</string>
+    <string>_SpellLevelDescriptionView.clank</string>
     <string>_SpellTargetInfoView.clank</string>
     <string>_VisionMapView.clank</string>
     <string>main.clank</string>

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import net.codinsa2015.SpellDescriptionView.*;
+import net.codinsa2015.SpellLevelDescriptionView.*;
 import net.codinsa2015.StateAlterationModelView.*;
 import java.util.ArrayList;
 
@@ -18,16 +18,16 @@ public class WeaponUpgradeModelView
 {
 
 
-	// Obtient la description de l'upgrade
-	public SpellDescriptionView Description;
-	// 
+	// Obtient du sort que lance l'arme à ce niveau d'upgrade.
+	public SpellLevelDescriptionView Description;
+	// Obtient les altérations d'état appliquées passivement par l'arme à ce niveau d'upgrade.
 	public ArrayList<StateAlterationModelView> PassiveAlterations;
-	// Obtient le coût de l'upgrade.
+	// Obtient le coût de cette upgrade.
 	public Float Cost;
 	public static WeaponUpgradeModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		WeaponUpgradeModelView _obj =  new WeaponUpgradeModelView();
 		// Description
-		SpellDescriptionView _obj_Description = SpellDescriptionView.deserialize(input);
+		SpellLevelDescriptionView _obj_Description = SpellLevelDescriptionView.deserialize(input);
 		_obj.Description = _obj_Description;
 		// PassiveAlterations
 		ArrayList<StateAlterationModelView> _obj_PassiveAlterations = new ArrayList<StateAlterationModelView>();

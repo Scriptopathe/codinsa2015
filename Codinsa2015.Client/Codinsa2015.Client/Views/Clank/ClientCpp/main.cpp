@@ -10,7 +10,7 @@ int main()
 		TCPHelper::initialize("127.0.0.1", 5000, "IA en C++ !!");
 		State state;
 		cout << "Client started" << endl;
-		vector<SpellView> spells = state.GetSpells();
+		vector<int> spells = state.GetMySpells();
 		int spellId = 0;
 		while (true)
 		{

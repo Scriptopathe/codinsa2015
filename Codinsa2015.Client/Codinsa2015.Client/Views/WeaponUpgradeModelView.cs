@@ -15,22 +15,22 @@ namespace Codinsa2015.Views.Client
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		/// <summary>
-		/// Obtient la description de l'upgrade
+		/// Obtient du sort que lance l'arme à ce niveau d'upgrade.
 		/// </summary>
-		public SpellDescriptionView Description;	
+		public SpellLevelDescriptionView Description;	
 		/// <summary>
-		/// 
+		/// Obtient les altérations d'état appliquées passivement par l'arme à ce niveau d'upgrade.
 		/// </summary>
 		public List<StateAlterationModelView> PassiveAlterations;	
 		/// <summary>
-		/// Obtient le coût de l'upgrade.
+		/// Obtient le coût de cette upgrade.
 		/// </summary>
 		public float Cost;	
 		public static WeaponUpgradeModelView Deserialize(System.IO.StreamReader input) {
 			WeaponUpgradeModelView _obj =  new WeaponUpgradeModelView();
 			// Description
-			SpellDescriptionView _obj_Description = SpellDescriptionView.Deserialize(input);
-			_obj.Description = (SpellDescriptionView)_obj_Description;
+			SpellLevelDescriptionView _obj_Description = SpellLevelDescriptionView.Deserialize(input);
+			_obj.Description = (SpellLevelDescriptionView)_obj_Description;
 			// PassiveAlterations
 			List<StateAlterationModelView> _obj_PassiveAlterations = new List<StateAlterationModelView>();
 			int _obj_PassiveAlterations_count = Int32.Parse(input.ReadLine());

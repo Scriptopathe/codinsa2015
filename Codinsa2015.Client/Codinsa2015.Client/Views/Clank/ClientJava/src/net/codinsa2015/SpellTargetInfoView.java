@@ -33,7 +33,7 @@ public class SpellTargetInfoView
 		SpellTargetInfoView _obj =  new SpellTargetInfoView();
 		// Type
 		TargettingType _obj_Type = TargettingType.fromValue(Integer.valueOf(input.readLine()));
-		_obj.Type = TargettingType.fromValue(_obj_Type);
+		_obj.Type = _obj_Type;
 		// Range
 		float _obj_Range = Float.valueOf(input.readLine());
 		_obj.Range = _obj_Range;
@@ -48,7 +48,7 @@ public class SpellTargetInfoView
 		_obj.DieOnCollision = _obj_DieOnCollision;
 		// AllowedTargetTypes
 		EntityTypeRelative _obj_AllowedTargetTypes = EntityTypeRelative.fromValue(Integer.valueOf(input.readLine()));
-		_obj.AllowedTargetTypes = EntityTypeRelative.fromValue(_obj_AllowedTargetTypes);
+		_obj.AllowedTargetTypes = _obj_AllowedTargetTypes;
 		return _obj;
 	}
 

@@ -35,7 +35,7 @@ public class StateAlterationView
 		_obj.Source = _obj_Source;
 		// SourceType
 		StateAlterationSource _obj_SourceType = StateAlterationSource.fromValue(Integer.valueOf(input.readLine()));
-		_obj.SourceType = StateAlterationSource.fromValue(_obj_SourceType);
+		_obj.SourceType = _obj_SourceType;
 		// Model
 		StateAlterationModelView _obj_Model = StateAlterationModelView.deserialize(input);
 		_obj.Model = _obj_Model;

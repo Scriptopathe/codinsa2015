@@ -4,14 +4,12 @@
 #pragma once
 #include "Common.h"
 #include "WeaponModelView.h"
-#include "PassiveEquipmentModelView.h"
-#include "WeaponEnchantModelView.h"
 #include "EntityBaseView.h"
 #include "Vector2.h"
-#include "MapView.h"
 #include "SpellCastTargetInfoView.h"
-#include "SpellDescriptionView.h"
 #include "SpellView.h"
+#include "SpellLevelDescriptionView.h"
+#include "GameStaticDataView.h"
 
 
 class State
@@ -38,44 +36,41 @@ public:
 	//  Obtient la liste des modèles d'armes disponibles au shop.
 	std::vector<WeaponModelView> ShopGetWeapons();
 
-	//  Obtient la liste des modèles d'armures disponibles au shop.
-	std::vector<PassiveEquipmentModelView> ShopGetArmors();
+	//  Obtient la liste des id des modèles d'armures disponibles au shop.
+	std::vector<int> ShopGetArmors();
 
-	//  Obtient la liste des modèles de bottes disponibles au shop.
-	std::vector<PassiveEquipmentModelView> ShopGetBoots();
+	//  Obtient la liste des id des modèles de bottes disponibles au shop.
+	std::vector<int> ShopGetBoots();
 
-	//  Obtient la liste des enchantements disponibles au shop.
-	std::vector<WeaponEnchantModelView> ShopGetEnchants();
+	//  Obtient la liste des id des enchantements disponibles au shop.
+	std::vector<int> ShopGetEnchants();
 
 	//  Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
-	int GetWeaponId();
+	int GetMyWeaponId();
 
 	//  Obtient le niveau du modèle d'arme équipé par le héros. (-1 si aucune arme équipée)
-	int GetWeaponLevel();
+	int GetMyWeaponLevel();
 
 	//  Obtient l'id du modèle d'armure équipé par le héros. (-1 si aucun)
-	int GetArmorId();
+	int GetMyArmorId();
 
 	//  Obtient le niveau du modèle d'armure équipé par le héros. (-1 si aucune armure équipée)
-	int GetArmorLevel();
+	int GetMyArmorLevel();
 
 	//  Obtient l'id du modèle de bottes équipé par le héros. (-1 si aucun)
-	int GetBootsId();
+	int GetMyBootsId();
 
 	//  Obtient le niveau du modèle de bottes équipé par le héros. (-1 si aucune paire équipée)
-	int GetBootsLevel();
+	int GetMyBootsLevel();
 
 	//  Obtient l'id du modèle d'enchantement d'arme équipé par le héros. (-1 si aucun)
-	int GetWeaponEnchantId();
+	int GetMyWeaponEnchantId();
 
 	//  Retourne une vue vers le héros contrôlé par ce contrôleur.
-	EntityBaseView GetHero();
+	EntityBaseView GetMyHero();
 
 	//  Retourne la position du héros.
-	Vector2 GetPosition();
-
-	//  Retourne les informations concernant la map actuelle
-	MapView GetMapView();
+	Vector2 GetMyPosition();
 
 	//  Déplace le joueur vers la position donnée en utilisant l'A*.
 	bool StartMoveTo(Vector2 position);
@@ -93,23 +88,23 @@ public:
 	// refusé)
 	EntityBaseView GetEntityById(int entityId);
 
+	//  Obtient les id des spells possédés par le héros.
+	std::vector<int> GetMySpells();
+
 	//  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
-	bool UseSpell(int spellId,SpellCastTargetInfoView target);
+	bool UseMySpell(int spellId,SpellCastTargetInfoView target);
+
+	//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+	SpellView GetMySpell(int spellId);
 
 	//  Obtient le mode actuel de la scène.
 	SceneMode GetMode();
 
 	//  Obtient la description du spell dont l'id est donné en paramètre.
-	SpellDescriptionView GetSpellCurrentLevelDescription(int spellId);
+	SpellLevelDescriptionView GetSpellCurrentLevelDescription(int spellId);
 
-	//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
-	SpellView GetSpell(int spellId);
-
-	//  Obtient la liste des spells du héros contrôlé.
-	std::vector<SpellView> GetSpells();
-
-	//  Obtient les spells possédés par le héros dont l'id est passé en paramètre.
-	std::vector<SpellView> GetHeroSpells(int entityId);
+	//  Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
+	GameStaticDataView GetStaticData();
 
 	void serialize(std::ostream& output);
 

@@ -20,7 +20,7 @@ VisionMapView VisionMapView::deserialize(std::istream& input) {
 		std::vector<VisionFlags> _obj_Vision_e = std::vector<VisionFlags>();
 		int _obj_Vision_e_count; input >> _obj_Vision_e_count; input.ignore(1000, '\n');
 		for(int _obj_Vision_e_i = 0; _obj_Vision_e_i < _obj_Vision_e_count; _obj_Vision_e_i++) {
-			int _obj_Vision_e_e_asInt; input >> _obj_Vision_e_e; input.ignore(1000, '\n');
+			int _obj_Vision_e_e_asInt; input >> _obj_Vision_e_e_asInt; input.ignore(1000, '\n');
 			VisionFlags _obj_Vision_e_e = (VisionFlags)_obj_Vision_e_e_asInt;
 			_obj_Vision_e.push_back((VisionFlags)_obj_Vision_e_e);
 		}

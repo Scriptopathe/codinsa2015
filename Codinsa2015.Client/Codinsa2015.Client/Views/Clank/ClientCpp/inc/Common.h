@@ -4,6 +4,21 @@
 #include <iostream>
 #include <vector>
 #include <list>
+enum class PickAction
+{
+	Wait = 0,
+	PickActive = 1,
+	PickPassive = 2
+};
+
+enum class PickResult
+{
+	Success = 0,
+	NotYourTurn = 1,
+	SpellNotAvailable = 2,
+	InvalidOperation = 3
+};
+
 enum class EntityUniquePassives
 {
 	None = 0,

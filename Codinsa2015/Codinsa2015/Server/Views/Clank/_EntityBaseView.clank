@@ -37,8 +37,6 @@ state {
 		public EntityUniquePassives UniquePassive;
 		//Si cette entité est un héros, obtient le rôle de ce héros.
 		public EntityHeroRole Role;
-		//Obtient la liste des altérations d'état affectées à cette entité.
-		public List<StateAlterationView> StateAlterations;
 		//Représente les points d'armure de base de cette entité.
 		public float BaseArmor;
 		//Représente la direction de cette entité.

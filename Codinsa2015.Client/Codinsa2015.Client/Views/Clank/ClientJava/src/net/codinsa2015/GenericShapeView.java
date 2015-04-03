@@ -38,7 +38,7 @@ public class GenericShapeView
 		_obj.Size = _obj_Size;
 		// ShapeType
 		GenericShapeType _obj_ShapeType = GenericShapeType.fromValue(Integer.valueOf(input.readLine()));
-		_obj.ShapeType = GenericShapeType.fromValue(_obj_ShapeType);
+		_obj.ShapeType = _obj_ShapeType;
 		return _obj;
 	}
 

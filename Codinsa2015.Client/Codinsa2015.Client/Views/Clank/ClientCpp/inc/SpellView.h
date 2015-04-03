@@ -1,6 +1,5 @@
 #pragma once
 #include "Common.h"
-#include "SpellDescriptionView.h"
 
 
 class SpellView
@@ -11,8 +10,9 @@ public:
 	float CurrentCooldown;
 	// Id de l'entité possédant le sort.
 	int SourceCaster;
-	// Représente les descriptions du spell pour les différents niveaux.
-	std::vector<SpellDescriptionView> Levels;
+	// Représente l'id du modèle du spell. Ce modèle décrit les différents effets du spell pour chacun
+	// de ses niveaux
+	int Model;
 	// Niveau actuel du spell.
 	int Level;
 	void serialize(std::ostream& output);

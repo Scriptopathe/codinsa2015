@@ -12,15 +12,13 @@ import net.codinsa2015.ShopTransactionResult.*;
 import net.codinsa2015.EquipmentType.*;
 import net.codinsa2015.WeaponModelView.*;
 import java.util.ArrayList;
-import net.codinsa2015.PassiveEquipmentModelView.*;
-import net.codinsa2015.WeaponEnchantModelView.*;
 import net.codinsa2015.EntityBaseView.*;
 import net.codinsa2015.Vector2.*;
-import net.codinsa2015.MapView.*;
 import net.codinsa2015.SpellCastTargetInfoView.*;
-import net.codinsa2015.SceneMode.*;
-import net.codinsa2015.SpellDescriptionView.*;
 import net.codinsa2015.SpellView.*;
+import net.codinsa2015.SceneMode.*;
+import net.codinsa2015.SpellLevelDescriptionView.*;
+import net.codinsa2015.GameStaticDataView.*;
 
 
 @SuppressWarnings("unused")
@@ -43,7 +41,7 @@ public class State
 		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
 		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
 		ShopTransactionResult returnValue = ShopTransactionResult.fromValue(Integer.valueOf(input.readLine()));
-		return ShopTransactionResult.fromValue(returnValue);
+		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
 		} catch (IOException e) { }
 		return null;
@@ -65,7 +63,7 @@ public class State
 		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
 		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
 		ShopTransactionResult returnValue = ShopTransactionResult.fromValue(Integer.valueOf(input.readLine()));
-		return ShopTransactionResult.fromValue(returnValue);
+		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
 		} catch (IOException e) { }
 		return null;
@@ -87,7 +85,7 @@ public class State
 		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
 		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
 		ShopTransactionResult returnValue = ShopTransactionResult.fromValue(Integer.valueOf(input.readLine()));
-		return ShopTransactionResult.fromValue(returnValue);
+		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
 		} catch (IOException e) { }
 		return null;
@@ -108,7 +106,7 @@ public class State
 		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
 		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
 		ShopTransactionResult returnValue = ShopTransactionResult.fromValue(Integer.valueOf(input.readLine()));
-		return ShopTransactionResult.fromValue(returnValue);
+		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
 		} catch (IOException e) { }
 		return null;
@@ -129,7 +127,7 @@ public class State
 		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
 		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
 		ShopTransactionResult returnValue = ShopTransactionResult.fromValue(Integer.valueOf(input.readLine()));
-		return ShopTransactionResult.fromValue(returnValue);
+		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
 		} catch (IOException e) { }
 		return null;
@@ -160,8 +158,8 @@ public class State
 		return null;
 	}
 
-	//  Obtient la liste des modèles d'armures disponibles au shop.
-	public ArrayList<PassiveEquipmentModelView> ShopGetArmors()
+	//  Obtient la liste des id des modèles d'armures disponibles au shop.
+	public ArrayList<Integer> ShopGetArmors()
 	{
 		try {
 		System.out.println("[ShopGetArmors]");
@@ -173,11 +171,11 @@ public class State
 		byte[] response = TCPHelper.Receive();
 		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
 		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		ArrayList<PassiveEquipmentModelView> returnValue = new ArrayList<PassiveEquipmentModelView>();
+		ArrayList<Integer> returnValue = new ArrayList<Integer>();
 		int returnValue_count = Integer.valueOf(input.readLine());
 		for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
-			PassiveEquipmentModelView returnValue_e = PassiveEquipmentModelView.deserialize(input);
-			returnValue.add((PassiveEquipmentModelView)returnValue_e);
+			int returnValue_e = Integer.valueOf(input.readLine());
+			returnValue.add((Integer)returnValue_e);
 		}
 		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
@@ -185,8 +183,8 @@ public class State
 		return null;
 	}
 
-	//  Obtient la liste des modèles de bottes disponibles au shop.
-	public ArrayList<PassiveEquipmentModelView> ShopGetBoots()
+	//  Obtient la liste des id des modèles de bottes disponibles au shop.
+	public ArrayList<Integer> ShopGetBoots()
 	{
 		try {
 		System.out.println("[ShopGetBoots]");
@@ -198,11 +196,11 @@ public class State
 		byte[] response = TCPHelper.Receive();
 		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
 		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		ArrayList<PassiveEquipmentModelView> returnValue = new ArrayList<PassiveEquipmentModelView>();
+		ArrayList<Integer> returnValue = new ArrayList<Integer>();
 		int returnValue_count = Integer.valueOf(input.readLine());
 		for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
-			PassiveEquipmentModelView returnValue_e = PassiveEquipmentModelView.deserialize(input);
-			returnValue.add((PassiveEquipmentModelView)returnValue_e);
+			int returnValue_e = Integer.valueOf(input.readLine());
+			returnValue.add((Integer)returnValue_e);
 		}
 		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
@@ -210,8 +208,8 @@ public class State
 		return null;
 	}
 
-	//  Obtient la liste des enchantements disponibles au shop.
-	public ArrayList<WeaponEnchantModelView> ShopGetEnchants()
+	//  Obtient la liste des id des enchantements disponibles au shop.
+	public ArrayList<Integer> ShopGetEnchants()
 	{
 		try {
 		System.out.println("[ShopGetEnchants]");
@@ -223,11 +221,11 @@ public class State
 		byte[] response = TCPHelper.Receive();
 		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
 		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		ArrayList<WeaponEnchantModelView> returnValue = new ArrayList<WeaponEnchantModelView>();
+		ArrayList<Integer> returnValue = new ArrayList<Integer>();
 		int returnValue_count = Integer.valueOf(input.readLine());
 		for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
-			WeaponEnchantModelView returnValue_e = WeaponEnchantModelView.deserialize(input);
-			returnValue.add((WeaponEnchantModelView)returnValue_e);
+			int returnValue_e = Integer.valueOf(input.readLine());
+			returnValue.add((Integer)returnValue_e);
 		}
 		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
@@ -236,10 +234,10 @@ public class State
 	}
 
 	//  Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
-	public Integer GetWeaponId()
+	public Integer GetMyWeaponId()
 	{
 		try {
-		System.out.println("[GetWeaponId]");
+		System.out.println("[GetMyWeaponId]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)9).toString() + "\n");
@@ -256,10 +254,10 @@ public class State
 	}
 
 	//  Obtient le niveau du modèle d'arme équipé par le héros. (-1 si aucune arme équipée)
-	public Integer GetWeaponLevel()
+	public Integer GetMyWeaponLevel()
 	{
 		try {
-		System.out.println("[GetWeaponLevel]");
+		System.out.println("[GetMyWeaponLevel]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)10).toString() + "\n");
@@ -276,10 +274,10 @@ public class State
 	}
 
 	//  Obtient l'id du modèle d'armure équipé par le héros. (-1 si aucun)
-	public Integer GetArmorId()
+	public Integer GetMyArmorId()
 	{
 		try {
-		System.out.println("[GetArmorId]");
+		System.out.println("[GetMyArmorId]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)11).toString() + "\n");
@@ -296,10 +294,10 @@ public class State
 	}
 
 	//  Obtient le niveau du modèle d'armure équipé par le héros. (-1 si aucune armure équipée)
-	public Integer GetArmorLevel()
+	public Integer GetMyArmorLevel()
 	{
 		try {
-		System.out.println("[GetArmorLevel]");
+		System.out.println("[GetMyArmorLevel]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)12).toString() + "\n");
@@ -316,10 +314,10 @@ public class State
 	}
 
 	//  Obtient l'id du modèle de bottes équipé par le héros. (-1 si aucun)
-	public Integer GetBootsId()
+	public Integer GetMyBootsId()
 	{
 		try {
-		System.out.println("[GetBootsId]");
+		System.out.println("[GetMyBootsId]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)13).toString() + "\n");
@@ -336,10 +334,10 @@ public class State
 	}
 
 	//  Obtient le niveau du modèle de bottes équipé par le héros. (-1 si aucune paire équipée)
-	public Integer GetBootsLevel()
+	public Integer GetMyBootsLevel()
 	{
 		try {
-		System.out.println("[GetBootsLevel]");
+		System.out.println("[GetMyBootsLevel]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)14).toString() + "\n");
@@ -356,10 +354,10 @@ public class State
 	}
 
 	//  Obtient l'id du modèle d'enchantement d'arme équipé par le héros. (-1 si aucun)
-	public Integer GetWeaponEnchantId()
+	public Integer GetMyWeaponEnchantId()
 	{
 		try {
-		System.out.println("[GetWeaponEnchantId]");
+		System.out.println("[GetMyWeaponEnchantId]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)15).toString() + "\n");
@@ -376,10 +374,10 @@ public class State
 	}
 
 	//  Retourne une vue vers le héros contrôlé par ce contrôleur.
-	public EntityBaseView GetHero()
+	public EntityBaseView GetMyHero()
 	{
 		try {
-		System.out.println("[GetHero]");
+		System.out.println("[GetMyHero]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)16).toString() + "\n");
@@ -396,10 +394,10 @@ public class State
 	}
 
 	//  Retourne la position du héros.
-	public Vector2 GetPosition()
+	public Vector2 GetMyPosition()
 	{
 		try {
-		System.out.println("[GetPosition]");
+		System.out.println("[GetMyPosition]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)17).toString() + "\n");
@@ -415,26 +413,6 @@ public class State
 		return null;
 	}
 
-	//  Retourne les informations concernant la map actuelle
-	public MapView GetMapView()
-	{
-		try {
-		System.out.println("[GetMapView]");
-		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)18).toString() + "\n");
-		output.close();
-		TCPHelper.Send(s.toByteArray());
-		byte[] response = TCPHelper.Receive();
-		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
-		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		MapView returnValue = MapView.deserialize(input);
-		return returnValue;
-		} catch (UnsupportedEncodingException e) { 
-		} catch (IOException e) { }
-		return null;
-	}
-
 	//  Déplace le joueur vers la position donnée en utilisant l'A*.
 	public Boolean StartMoveTo(Vector2 position)
 	{
@@ -442,7 +420,7 @@ public class State
 		System.out.println("[StartMoveTo]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)19).toString() + "\n");
+		output.append(((Integer)18).toString() + "\n");
 		position.serialize(output);
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -463,7 +441,7 @@ public class State
 		System.out.println("[IsAutoMoving]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)20).toString() + "\n");
+		output.append(((Integer)19).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -483,7 +461,7 @@ public class State
 		System.out.println("[EndMoveTo]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)21).toString() + "\n");
+		output.append(((Integer)20).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -503,7 +481,7 @@ public class State
 		System.out.println("[GetEntitiesInSight]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)22).toString() + "\n");
+		output.append(((Integer)21).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -529,7 +507,7 @@ public class State
 		System.out.println("[GetEntityById]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)23).toString() + "\n");
+		output.append(((Integer)22).toString() + "\n");
 		output.append(((Integer)entityId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -543,11 +521,36 @@ public class State
 		return null;
 	}
 
-	//  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
-	public Boolean UseSpell(Integer spellId,SpellCastTargetInfoView target)
+	//  Obtient les id des spells possédés par le héros.
+	public ArrayList<Integer> GetMySpells()
 	{
 		try {
-		System.out.println("[UseSpell]");
+		System.out.println("[GetMySpells]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)23).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		ArrayList<Integer> returnValue = new ArrayList<Integer>();
+		int returnValue_count = Integer.valueOf(input.readLine());
+		for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+			int returnValue_e = Integer.valueOf(input.readLine());
+			returnValue.add((Integer)returnValue_e);
+		}
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
+	public Boolean UseMySpell(Integer spellId,SpellCastTargetInfoView target)
+	{
+		try {
+		System.out.println("[UseMySpell]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)24).toString() + "\n");
@@ -565,55 +568,14 @@ public class State
 		return null;
 	}
 
-	//  Obtient le mode actuel de la scène.
-	public SceneMode GetMode()
+	//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+	public SpellView GetMySpell(Integer spellId)
 	{
 		try {
-		System.out.println("[GetMode]");
+		System.out.println("[GetMySpell]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)25).toString() + "\n");
-		output.close();
-		TCPHelper.Send(s.toByteArray());
-		byte[] response = TCPHelper.Receive();
-		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
-		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		SceneMode returnValue = SceneMode.fromValue(Integer.valueOf(input.readLine()));
-		return SceneMode.fromValue(returnValue);
-		} catch (UnsupportedEncodingException e) { 
-		} catch (IOException e) { }
-		return null;
-	}
-
-	//  Obtient la description du spell dont l'id est donné en paramètre.
-	public SpellDescriptionView GetSpellCurrentLevelDescription(Integer spellId)
-	{
-		try {
-		System.out.println("[GetSpellCurrentLevelDescription]");
-		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)26).toString() + "\n");
-		output.append(((Integer)spellId).toString() + "\n");
-		output.close();
-		TCPHelper.Send(s.toByteArray());
-		byte[] response = TCPHelper.Receive();
-		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
-		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		SpellDescriptionView returnValue = SpellDescriptionView.deserialize(input);
-		return returnValue;
-		} catch (UnsupportedEncodingException e) { 
-		} catch (IOException e) { }
-		return null;
-	}
-
-	//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
-	public SpellView GetSpell(Integer spellId)
-	{
-		try {
-		System.out.println("[GetSpell]");
-		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)27).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -627,11 +589,52 @@ public class State
 		return null;
 	}
 
-	//  Obtient la liste des spells du héros contrôlé.
-	public ArrayList<SpellView> GetSpells()
+	//  Obtient le mode actuel de la scène.
+	public SceneMode GetMode()
 	{
 		try {
-		System.out.println("[GetSpells]");
+		System.out.println("[GetMode]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)26).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		SceneMode returnValue = SceneMode.fromValue(Integer.valueOf(input.readLine()));
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Obtient la description du spell dont l'id est donné en paramètre.
+	public SpellLevelDescriptionView GetSpellCurrentLevelDescription(Integer spellId)
+	{
+		try {
+		System.out.println("[GetSpellCurrentLevelDescription]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)27).toString() + "\n");
+		output.append(((Integer)spellId).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		SpellLevelDescriptionView returnValue = SpellLevelDescriptionView.deserialize(input);
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
+	public GameStaticDataView GetStaticData()
+	{
+		try {
+		System.out.println("[GetStaticData]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)28).toString() + "\n");
@@ -640,38 +643,7 @@ public class State
 		byte[] response = TCPHelper.Receive();
 		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
 		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		ArrayList<SpellView> returnValue = new ArrayList<SpellView>();
-		int returnValue_count = Integer.valueOf(input.readLine());
-		for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
-			SpellView returnValue_e = SpellView.deserialize(input);
-			returnValue.add((SpellView)returnValue_e);
-		}
-		return returnValue;
-		} catch (UnsupportedEncodingException e) { 
-		} catch (IOException e) { }
-		return null;
-	}
-
-	//  Obtient les spells possédés par le héros dont l'id est passé en paramètre.
-	public ArrayList<SpellView> GetHeroSpells(Integer entityId)
-	{
-		try {
-		System.out.println("[GetHeroSpells]");
-		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)29).toString() + "\n");
-		output.append(((Integer)entityId).toString() + "\n");
-		output.close();
-		TCPHelper.Send(s.toByteArray());
-		byte[] response = TCPHelper.Receive();
-		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
-		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		ArrayList<SpellView> returnValue = new ArrayList<SpellView>();
-		int returnValue_count = Integer.valueOf(input.readLine());
-		for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
-			SpellView returnValue_e = SpellView.deserialize(input);
-			returnValue.add((SpellView)returnValue_e);
-		}
+		GameStaticDataView returnValue = GameStaticDataView.deserialize(input);
 		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
 		} catch (IOException e) { }

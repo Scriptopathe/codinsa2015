@@ -2,6 +2,7 @@
 #include XNAMacros.clank
 main
 {
+	#include _GameStaticDataView.clank
 	#include _EntityBaseView.clank
 	#include _StateAlterationParametersView.clank
 	#include _StateAlterationView.clank
@@ -16,8 +17,9 @@ main
 	#include _GenericShapeView.clank
 	#include _SpellcastBaseView.clank
 	#include _SpellView.clank
+	#include _SpellModelView.clank
 	#include _SpellCastTargetInfoView.clank
-	#include _SpellDescriptionView.clank
+	#include _SpellLevelDescriptionView.clank
 	#include _SpellTargetInfoView.clank
 	#include _VisionMapView.clank
 	state
@@ -33,6 +35,21 @@ main
 		{
 			string package = "net.codinsa2015";
 		}
+		public enum PickAction
+		{
+			Wait = 0,
+			PickActive = 1,
+			PickPassive = 2
+		}
+
+		public enum PickResult
+		{
+			Success = 0,
+			NotYourTurn = 1,
+			SpellNotAvailable = 2,
+			InvalidOperation = 3
+		}
+
 		public enum EntityUniquePassives
 		{
 			None = 0,
@@ -289,32 +306,30 @@ main
 		ShopTransactionResult ShopUpgrade_macro(int clientId,EquipmentType equipType) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopUpgrade($(equipType))"; }
 		// Obtient la liste des modèles d'armes disponibles au shop.
 		List<WeaponModelView> ShopGetWeapons_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetWeapons()"; }
-		// Obtient la liste des modèles d'armures disponibles au shop.
-		List<PassiveEquipmentModelView> ShopGetArmors_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetArmors()"; }
-		// Obtient la liste des modèles de bottes disponibles au shop.
-		List<PassiveEquipmentModelView> ShopGetBoots_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetBoots()"; }
-		// Obtient la liste des enchantements disponibles au shop.
-		List<WeaponEnchantModelView> ShopGetEnchants_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetEnchants()"; }
+		// Obtient la liste des id des modèles d'armures disponibles au shop.
+		List<int> ShopGetArmors_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetArmors()"; }
+		// Obtient la liste des id des modèles de bottes disponibles au shop.
+		List<int> ShopGetBoots_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetBoots()"; }
+		// Obtient la liste des id des enchantements disponibles au shop.
+		List<int> ShopGetEnchants_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetEnchants()"; }
 		// Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
-		int GetWeaponId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetWeaponId()"; }
+		int GetMyWeaponId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyWeaponId()"; }
 		// Obtient le niveau du modèle d'arme équipé par le héros. (-1 si aucune arme équipée)
-		int GetWeaponLevel_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetWeaponLevel()"; }
+		int GetMyWeaponLevel_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyWeaponLevel()"; }
 		// Obtient l'id du modèle d'armure équipé par le héros. (-1 si aucun)
-		int GetArmorId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetArmorId()"; }
+		int GetMyArmorId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyArmorId()"; }
 		// Obtient le niveau du modèle d'armure équipé par le héros. (-1 si aucune armure équipée)
-		int GetArmorLevel_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetArmorLevel()"; }
+		int GetMyArmorLevel_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyArmorLevel()"; }
 		// Obtient l'id du modèle de bottes équipé par le héros. (-1 si aucun)
-		int GetBootsId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetBootsId()"; }
+		int GetMyBootsId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyBootsId()"; }
 		// Obtient le niveau du modèle de bottes équipé par le héros. (-1 si aucune paire équipée)
-		int GetBootsLevel_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetBootsLevel()"; }
+		int GetMyBootsLevel_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyBootsLevel()"; }
 		// Obtient l'id du modèle d'enchantement d'arme équipé par le héros. (-1 si aucun)
-		int GetWeaponEnchantId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetWeaponEnchantId()"; }
+		int GetMyWeaponEnchantId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyWeaponEnchantId()"; }
 		// Retourne une vue vers le héros contrôlé par ce contrôleur.
-		EntityBaseView GetHero_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHero()"; }
+		EntityBaseView GetMyHero_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyHero()"; }
 		// Retourne la position du héros.
-		Vector2 GetPosition_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetPosition()"; }
-		// Retourne les informations concernant la map actuelle
-		MapView GetMapView_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMapView()"; }
+		Vector2 GetMyPosition_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyPosition()"; }
 		// Déplace le joueur vers la position donnée en utilisant l'A*.
 		bool StartMoveTo_macro(int clientId,Vector2 position) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).StartMoveTo($(position))"; }
 		// Indique si le joueur est entrain de se déplacer en utilisant son A*.
@@ -325,18 +340,18 @@ main
 		List<EntityBaseView> GetEntitiesInSight_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntitiesInSight()"; }
 		// Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès refusé)
 		EntityBaseView GetEntityById_macro(int clientId,int entityId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntityById($(entityId))"; }
+		// Obtient les id des spells possédés par le héros.
+		List<int> GetMySpells_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMySpells()"; }
 		// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
-		bool UseSpell_macro(int clientId,int spellId,SpellCastTargetInfoView target) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseSpell($(spellId),$(target))"; }
+		bool UseMySpell_macro(int clientId,int spellId,SpellCastTargetInfoView target) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMySpell($(spellId),$(target))"; }
+		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		SpellView GetMySpell_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMySpell($(spellId))"; }
 		// Obtient le mode actuel de la scène.
 		SceneMode GetMode_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMode()"; }
 		// Obtient la description du spell dont l'id est donné en paramètre.
-		SpellDescriptionView GetSpellCurrentLevelDescription_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpellCurrentLevelDescription($(spellId))"; }
-		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
-		SpellView GetSpell_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpell($(spellId))"; }
-		// Obtient la liste des spells du héros contrôlé.
-		List<SpellView> GetSpells_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpells()"; }
-		// Obtient les spells possédés par le héros dont l'id est passé en paramètre.
-		List<SpellView> GetHeroSpells_macro(int clientId,int entityId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetHeroSpells($(entityId))"; }
+		SpellLevelDescriptionView GetSpellCurrentLevelDescription_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpellCurrentLevelDescription($(spellId))"; }
+		// Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
+		GameStaticDataView GetStaticData_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetStaticData()"; }
 
 	} // macro
 	access
@@ -377,82 +392,76 @@ main
 			return ShopGetWeapons_macro(clientId);
 		}
 
-		// Obtient la liste des modèles d'armures disponibles au shop.
-		public List<PassiveEquipmentModelView> ShopGetArmors()
+		// Obtient la liste des id des modèles d'armures disponibles au shop.
+		public List<int> ShopGetArmors()
 		{ 
 			return ShopGetArmors_macro(clientId);
 		}
 
-		// Obtient la liste des modèles de bottes disponibles au shop.
-		public List<PassiveEquipmentModelView> ShopGetBoots()
+		// Obtient la liste des id des modèles de bottes disponibles au shop.
+		public List<int> ShopGetBoots()
 		{ 
 			return ShopGetBoots_macro(clientId);
 		}
 
-		// Obtient la liste des enchantements disponibles au shop.
-		public List<WeaponEnchantModelView> ShopGetEnchants()
+		// Obtient la liste des id des enchantements disponibles au shop.
+		public List<int> ShopGetEnchants()
 		{ 
 			return ShopGetEnchants_macro(clientId);
 		}
 
 		// Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
-		public int GetWeaponId()
+		public int GetMyWeaponId()
 		{ 
-			return GetWeaponId_macro(clientId);
+			return GetMyWeaponId_macro(clientId);
 		}
 
 		// Obtient le niveau du modèle d'arme équipé par le héros. (-1 si aucune arme équipée)
-		public int GetWeaponLevel()
+		public int GetMyWeaponLevel()
 		{ 
-			return GetWeaponLevel_macro(clientId);
+			return GetMyWeaponLevel_macro(clientId);
 		}
 
 		// Obtient l'id du modèle d'armure équipé par le héros. (-1 si aucun)
-		public int GetArmorId()
+		public int GetMyArmorId()
 		{ 
-			return GetArmorId_macro(clientId);
+			return GetMyArmorId_macro(clientId);
 		}
 
 		// Obtient le niveau du modèle d'armure équipé par le héros. (-1 si aucune armure équipée)
-		public int GetArmorLevel()
+		public int GetMyArmorLevel()
 		{ 
-			return GetArmorLevel_macro(clientId);
+			return GetMyArmorLevel_macro(clientId);
 		}
 
 		// Obtient l'id du modèle de bottes équipé par le héros. (-1 si aucun)
-		public int GetBootsId()
+		public int GetMyBootsId()
 		{ 
-			return GetBootsId_macro(clientId);
+			return GetMyBootsId_macro(clientId);
 		}
 
 		// Obtient le niveau du modèle de bottes équipé par le héros. (-1 si aucune paire équipée)
-		public int GetBootsLevel()
+		public int GetMyBootsLevel()
 		{ 
-			return GetBootsLevel_macro(clientId);
+			return GetMyBootsLevel_macro(clientId);
 		}
 
 		// Obtient l'id du modèle d'enchantement d'arme équipé par le héros. (-1 si aucun)
-		public int GetWeaponEnchantId()
+		public int GetMyWeaponEnchantId()
 		{ 
-			return GetWeaponEnchantId_macro(clientId);
+			return GetMyWeaponEnchantId_macro(clientId);
 		}
 
 		// Retourne une vue vers le héros contrôlé par ce contrôleur.
-		public EntityBaseView GetHero()
+		public EntityBaseView GetMyHero()
 		{ 
-			return GetHero_macro(clientId);
+			return GetMyHero_macro(clientId);
 		}
 
 		// Retourne la position du héros.
-		public Vector2 GetPosition()
+		public Vector2 GetMyPosition()
 		{ 
-			return GetPosition_macro(clientId);
-		}
-
-		// Retourne les informations concernant la map actuelle
-		public MapView GetMapView()
-		{ 
-			return GetMapView_macro(clientId);
+			return GetMyPosition_macro(clientId);
 		}
 
 		// Déplace le joueur vers la position donnée en utilisant l'A*.
@@ -485,10 +494,22 @@ main
 			return GetEntityById_macro(clientId,entityId);
 		}
 
-		// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
-		public bool UseSpell(int spellId,SpellCastTargetInfoView target)
+		// Obtient les id des spells possédés par le héros.
+		public List<int> GetMySpells()
 		{ 
-			return UseSpell_macro(clientId,spellId,target);
+			return GetMySpells_macro(clientId);
+		}
+
+		// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
+		public bool UseMySpell(int spellId,SpellCastTargetInfoView target)
+		{ 
+			return UseMySpell_macro(clientId,spellId,target);
+		}
+
+		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		public SpellView GetMySpell(int spellId)
+		{ 
+			return GetMySpell_macro(clientId,spellId);
 		}
 
 		// Obtient le mode actuel de la scène.
@@ -498,27 +519,15 @@ main
 		}
 
 		// Obtient la description du spell dont l'id est donné en paramètre.
-		public SpellDescriptionView GetSpellCurrentLevelDescription(int spellId)
+		public SpellLevelDescriptionView GetSpellCurrentLevelDescription(int spellId)
 		{ 
 			return GetSpellCurrentLevelDescription_macro(clientId,spellId);
 		}
 
-		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
-		public SpellView GetSpell(int spellId)
+		// Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
+		public GameStaticDataView GetStaticData()
 		{ 
-			return GetSpell_macro(clientId,spellId);
-		}
-
-		// Obtient la liste des spells du héros contrôlé.
-		public List<SpellView> GetSpells()
-		{ 
-			return GetSpells_macro(clientId);
-		}
-
-		// Obtient les spells possédés par le héros dont l'id est passé en paramètre.
-		public List<SpellView> GetHeroSpells(int entityId)
-		{ 
-			return GetHeroSpells_macro(clientId,entityId);
+			return GetStaticData_macro(clientId);
 		}
 
 

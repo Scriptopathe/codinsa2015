@@ -15,8 +15,8 @@ void WeaponUpgradeModelView::serialize(std::ostream& output) {
 WeaponUpgradeModelView WeaponUpgradeModelView::deserialize(std::istream& input) {
 	WeaponUpgradeModelView _obj = WeaponUpgradeModelView();
 	// Description
-	SpellDescriptionView _obj_Description = SpellDescriptionView::deserialize(input);
-	_obj.Description = (::SpellDescriptionView)_obj_Description;
+	SpellLevelDescriptionView _obj_Description = SpellLevelDescriptionView::deserialize(input);
+	_obj.Description = (::SpellLevelDescriptionView)_obj_Description;
 	// PassiveAlterations
 	std::vector<StateAlterationModelView> _obj_PassiveAlterations = std::vector<StateAlterationModelView>();
 	int _obj_PassiveAlterations_count; input >> _obj_PassiveAlterations_count; input.ignore(1000, '\n');

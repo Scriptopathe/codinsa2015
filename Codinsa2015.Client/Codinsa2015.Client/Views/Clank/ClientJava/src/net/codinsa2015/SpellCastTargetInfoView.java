@@ -30,7 +30,7 @@ public class SpellCastTargetInfoView
 		SpellCastTargetInfoView _obj =  new SpellCastTargetInfoView();
 		// Type
 		TargettingType _obj_Type = TargettingType.fromValue(Integer.valueOf(input.readLine()));
-		_obj.Type = TargettingType.fromValue(_obj_Type);
+		_obj.Type = _obj_Type;
 		// TargetPosition
 		Vector2 _obj_TargetPosition = Vector2.deserialize(input);
 		_obj.TargetPosition = _obj_TargetPosition;

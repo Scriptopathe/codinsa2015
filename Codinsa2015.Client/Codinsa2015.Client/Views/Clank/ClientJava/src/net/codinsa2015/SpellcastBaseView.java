@@ -26,7 +26,7 @@ public class SpellcastBaseView
 		GenericShapeView _obj_Shape = GenericShapeView.deserialize(input);
 		_obj.Shape = _obj_Shape;
 		// Name
-		String _obj_Name = input.readline();
+		String _obj_Name = input.readLine();
 		_obj.Name = _obj_Name;
 		return _obj;
 	}
