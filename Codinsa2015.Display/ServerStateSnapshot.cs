@@ -32,7 +32,7 @@ namespace Codinsa2015.Rendering
         public void UpdateSnapshot()
         {
             EntitiesInSight = m_state.GetEntitiesInSight();
-            Map = m_state.GetMapView();
+            Map = m_state.GetStaticData().Map;
 
         }
 

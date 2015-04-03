@@ -47,27 +47,48 @@ namespace Codinsa2015.DebugHumanControler
                 return;
 
             // Sélectionne le sort donné.
-            int h = (int)Ressources.ScreenSize.Y;
-            int x = 5;
-            int spellId = 0;
-            var ms = Input.GetMouseState();
-            foreach (Server.Spells.Spell spell in ctrl.GetCurrentSpells())
+            const int spellSize = 64;
+            if(ctrl.IsPickingActive())
             {
-                const int spellSize = 32;
-                int y = h - spellSize - 4;
-                Rectangle dstRect = new Rectangle(x, y, spellSize, spellSize);
-
-                // Effet de surbrillance si un sort est survollé.
-                Color color = Color.White;
-                if (dstRect.Contains(new Point((int)ms.X, (int)ms.Y)))
+                int h = (int)Ressources.ScreenSize.Y;
+                int x = 5;
+                var ms = Input.GetMouseState();
+                foreach (int spellId in ctrl.GetActiveSpells())
                 {
-                    ctrl.PickSpell(m_client.Controler.Hero.ID, spellId, Server.GameServer.__INTERNAl_CLIENT_ID);
-                    ctrl.LastControlerUpdate = DateTime.Now;
-                    break;
-                }
+                    int y = h - spellSize - 4;
+                    Rectangle dstRect = new Rectangle(x, y, spellSize, spellSize);
 
-                x += spellSize + 4;
-                spellId++;
+                    // Effet de surbrillance si un sort est survollé.
+                    Color color = Color.White;
+                    if (dstRect.Contains(new Point((int)ms.X, (int)ms.Y)))
+                    {
+                        ctrl.PickActiveSpell(m_client.Controler.Hero.ID, spellId);
+                        break;
+                    }
+
+                    x += spellSize + 4;
+                }
+            }
+            else
+            {
+                int h = (int)Ressources.ScreenSize.Y;
+                int x = 5;
+                var ms = Input.GetMouseState();
+                foreach (Server.Entities.EntityUniquePassives spellId in ctrl.GetPassiveSpells())
+                {
+                    int y = h - spellSize - 4;
+                    Rectangle dstRect = new Rectangle(x, y, spellSize, spellSize);
+
+                    // Effet de surbrillance si un sort est survollé.
+                    Color color = Color.White;
+                    if (dstRect.Contains(new Point((int)ms.X, (int)ms.Y)))
+                    {
+                        ctrl.PickPassiveSpell(m_client.Controler.Hero.ID, spellId);
+                        break;
+                    }
+
+                    x += spellSize + 4;
+                }
             }
         }
     }

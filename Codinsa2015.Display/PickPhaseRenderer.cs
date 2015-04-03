@@ -103,7 +103,9 @@ namespace Codinsa2015.Rendering
                 // Dessine les messages.
                 x = 5;
                 scale = 1.0f;
-                string msg = m_sceneRenderer.GameServer.GetSrvScene().GetControlerByHeroId(ctrl.GetPickingHeroId()).HeroName + " : choisissez une compétence " + (ctrl.GetCurrentSpells() == ctrl.GetActiveSpells() ? "active" : "passive") + ".";
+                var controler = m_sceneRenderer.GameServer.GetSrvScene().GetControlerByHeroId(ctrl.GetPickingHeroId());
+                string heroName = controler == null ? "<none>" : controler.HeroName;
+                string msg = heroName + " : choisissez une compétence " + (ctrl.IsPickingActive() ? "active" : "passive") + ".";
                 sz = Ressources.CourrierFont.MeasureString(msg) * scale;
                 x = (w - (int)sz.X) / 2;
                 batch.DrawString(Ressources.CourrierFont, msg, new Vector2(x, y), Color.Black, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.5f);
@@ -125,29 +127,60 @@ namespace Codinsa2015.Rendering
             else
             {
                 x = 5;
-                foreach (Server.Spells.Spell spell in ctrl.GetCurrentSpells())
+
+                const int spellSize = 64;
+                if (ctrl.IsPickingActive())
                 {
-                    const int spellSize = 32;
-                    y = h - spellSize - 4;
-                    Rectangle dstRect = new Rectangle(x, y, spellSize, spellSize);
-
-                    // Effet de surbrillance si un sort est survollé.
-                    Color color = Color.White;
-                    var ms = Input.GetMouseState();
-                    if (dstRect.Contains(new Point((int)ms.X, (int)ms.Y)))
+                    foreach (Server.Spells.SpellModel spell in ctrl.GetActiveSpellModels())
                     {
-                        color = Color.Red;
-                    }
+                        y = h - spellSize - 4;
+                        Rectangle dstRect = new Rectangle(x, y, spellSize, spellSize);
 
-                    batch.Draw(Ressources.GetSpellTexture(spell.Name),
-                               dstRect,
-                               null,
-                               color,
-                               0.0f,
-                               Vector2.Zero,
-                               SpriteEffects.None,
-                               0.5f);
-                    x += spellSize + 4;
+                        // Effet de surbrillance si un sort est survollé.
+                        Color color = Color.White;
+                        var ms = Input.GetMouseState();
+                        if (dstRect.Contains(new Point((int)ms.X, (int)ms.Y)))
+                        {
+                            color = Color.Red;
+                        }
+
+                        batch.Draw(Ressources.GetSpellTexture(spell.Name),
+                                   dstRect,
+                                   null,
+                                   color,
+                                   0.0f,
+                                   Vector2.Zero,
+                                   SpriteEffects.None,
+                                   0.5f);
+                        x += spellSize + 4;
+                    }
+                }
+                else
+                {
+                    foreach (Server.Entities.EntityUniquePassives spell in ctrl.GetPassiveSpells())
+                    {
+                        y = h - spellSize - 4;
+                        Rectangle dstRect = new Rectangle(x, y, spellSize, spellSize);
+
+                        // Effet de surbrillance si un sort est survollé.
+                        Color color = Color.White;
+                        var ms = Input.GetMouseState();
+                        if (dstRect.Contains(new Point((int)ms.X, (int)ms.Y)))
+                        {
+                            color = Color.Red;
+                        }
+
+                        batch.Draw(Ressources.GetSpellTexture(spell.ToString()),
+                                   dstRect,
+                                   null,
+                                   color,
+                                   0.0f,
+                                   Vector2.Zero,
+                                   SpriteEffects.None,
+                                   0.5f);
+
+                        x += spellSize + 4;
+                    }
                 }
             }
 
