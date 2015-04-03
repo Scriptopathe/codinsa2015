@@ -175,7 +175,17 @@ namespace Clank.Core.Generation.Languages
                     
                     return "bool " + dstVarName + "; input >> " + dstVarName + "; input.ignore(1000, '\\n');";
                 case JSONType.Int:
-                    return "int " + dstVarName + "; input >> " + dstVarName + "; input.ignore(1000, '\\n');";
+                    if(variable.Type.BaseType.IsEnum)
+                    {
+                        string str = "int " + dstVarName + "_asInt" + "; input >> " + dstVarName + "; input.ignore(1000, '\\n');\n";
+                        str += typename + " " + dstVarName + " = (" + typename + ")" + dstVarName + "_asInt;";
+                        return str;
+                    }
+                    else
+                    {
+                        return "int " + dstVarName + "; input >> " + dstVarName + "; input.ignore(1000, '\\n');";
+
+                    }
                 case JSONType.Float:
                     return "float " + dstVarName + "; input >> " + dstVarName + "; input.ignore(1000, '\\n');";
                 case JSONType.String:

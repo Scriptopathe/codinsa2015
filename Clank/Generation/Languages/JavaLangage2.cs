@@ -341,7 +341,14 @@ namespace Clank.Core.Generation.Languages
                 case JSONType.Bool:
                     return "boolean " + dstVarName + " = Integer.valueOf(input.readLine()) == 0 ? false : true;";
                 case JSONType.Int:
-                    return "int " + dstVarName + " = Integer.valueOf(input.readLine());";
+                    if(variable.Type.BaseType.IsEnum)
+                    {
+                        return typename + " " + dstVarName + " = " + typename + ".fromValue(Integer.valueOf(input.readLine()));";
+                    }
+                    else
+                    {
+                        return "int " + dstVarName + " = Integer.valueOf(input.readLine());";
+                    }
                 case JSONType.Float:
                     return "float " + dstVarName + " = Float.valueOf(input.readLine());";
                 case JSONType.String:

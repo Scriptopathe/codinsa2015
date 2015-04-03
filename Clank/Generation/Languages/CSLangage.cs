@@ -15,8 +15,10 @@ namespace Clank.Core.Generation.Languages
     {
         public const string LANG_KEY = "cs";
         public const bool PRINT_DEBUG = false;
+        
         #region Variables
         Clank.Core.Model.ProjectFile m_project;
+        bool m_isServer;
         #endregion
 
         /// <summary>
@@ -27,6 +29,31 @@ namespace Clank.Core.Generation.Languages
         {
             SetProject(project);
         }
+                /// <summary>
+        /// Obtient la propriété de métadonnée 'metadataProperty' pour le type donné.
+        /// Retourne String.Empty par défaut.
+        /// </summary>
+        string GetMetadata(ClankType type, string metadataProperty)
+        {
+            Dictionary<string, string> metadata = new Dictionary<string,string>();
+            string metadataStr = String.Empty;
+            if (type.LanguageMetadata.ContainsKey(LANG_KEY))
+                metadata = type.LanguageMetadata[LANG_KEY];
+            if (metadata.ContainsKey(metadataProperty))
+                metadataStr = metadata[metadataProperty];
+
+            return metadataStr;
+        }
+        /// <summary>
+        /// Obtient le nom du package dans lequel seront contenues toutes les classes du projet.
+        /// Ce nom est déterminé par la propriété de métadonnée "package".
+        /// </summary>
+        /// <returns></returns>
+        string GetNamespace(ClankType type)
+        {
+            return GetMetadata(type, "namespace") + (m_isServer ? "" : ".Client");
+        }
+
         /// <summary>
         /// Crée une nouvelle instance de CSGenerator.
         /// </summary>
@@ -47,6 +74,7 @@ namespace Clank.Core.Generation.Languages
             List<OutputFile> outputFiles = new List<OutputFile>();
             List<Instruction> enums = new List<Instruction>();
             string theEnumNamespace = "Default.Namespace";
+            m_isServer = isServer;
             foreach (Model.Language.Instruction inst in instructions)
             {
                 if (inst is Model.Language.ClassDeclaration)
@@ -57,10 +85,11 @@ namespace Clank.Core.Generation.Languages
                     if(decl.Name == "State")
                     {
                         Dictionary<string, string> metadata = new Dictionary<string, string>();
-                        if (m_project.Types.Types[decl.Name].LanguageMetadata.ContainsKey(LANG_KEY))
+                        theEnumNamespace = GetNamespace(m_project.Types.Types[decl.Name]);
+                        /*if (m_project.Types.Types[decl.Name].LanguageMetadata.ContainsKey(LANG_KEY))
                             metadata = m_project.Types.Types[decl.Name].LanguageMetadata[LANG_KEY];
                         if (metadata.ContainsKey("namespace"))
-                            theEnumNamespace = metadata["namespace"];
+                            theEnumNamespace = metadata["namespace"];*/
                     }
 
                     outputFiles.Add(new OutputFile(outputDirectory + "/" + decl.Name + ".cs",
@@ -139,9 +168,7 @@ using System.Text;");
             builder.AppendLine();
 
             // Namespace !
-            string theNamespace = "Default.Namespace";
-            if (metadata.ContainsKey("namespace"))
-                theNamespace = metadata["namespace"];
+            string theNamespace = GetNamespace(m_project.Types.Types[declaration.Name]);
             builder.AppendLine("namespace " + theNamespace + "\r\n{\r\n");
 
             // Génère les potentielles enums
@@ -250,7 +277,12 @@ using System.Text;");
                 case JSONType.Bool:
                     return "bool " + dstVarName + " = Int32.Parse(input.ReadLine()) == 0 ? false : true;";
                 case JSONType.Int:
-                    return "int " + dstVarName + " = Int32.Parse(input.ReadLine());";
+                    if(variable.Type.BaseType.IsEnum)
+                        return typename + " " + dstVarName + " = (" + typename + ")Int32.Parse(input.ReadLine());";
+                    else
+                        return "int " + dstVarName + " = Int32.Parse(input.ReadLine());";
+
+
                 case JSONType.Float:
                     return "float " + dstVarName + " = Single.Parse(input.ReadLine());";
                 case JSONType.String:
