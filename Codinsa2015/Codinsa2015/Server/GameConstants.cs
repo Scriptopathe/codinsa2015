@@ -416,6 +416,7 @@ namespace Codinsa2015.Server
         public float MageShieldValueMultiplier = 1.3f;
         public float MageSilenceDurationMultiplier = 1.3f;
         public float MageSightDurationMultiplier = 1.3f;
+        public float MageRootDurationMultiplier = 1.3f;
 
         // Tank
         public float TankMoveSpeedBonusMultiplier = 1.3f;

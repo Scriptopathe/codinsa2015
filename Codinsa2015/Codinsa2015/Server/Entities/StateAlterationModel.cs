@@ -441,7 +441,9 @@ namespace Codinsa2015.Server.Entities
                     case EntityHeroRole.Mage:
                         if (Type.HasFlag(StateAlterationType.Silence))
                             duration *= constants.MageSilenceDurationMultiplier;
-                        else if(Type.HasFlag(StateAlterationType.Sight) | Type.HasFlag(StateAlterationType.TrueSight))
+                        else if (Type.HasFlag(StateAlterationType.Root))
+                            duration *= constants.MageRootDurationMultiplier;
+                        else if (Type.HasFlag(StateAlterationType.Sight) | Type.HasFlag(StateAlterationType.TrueSight))
                             duration *= constants.MageSightDurationMultiplier;
                         break;
                     case EntityHeroRole.Tank:

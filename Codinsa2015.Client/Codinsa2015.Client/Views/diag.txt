@@ -1,3 +1,5 @@
+[PickAction{bg:green}]
+[PickResult{bg:green}]
 [EntityUniquePassives{bg:green}]
 [EntityHeroRole{bg:green}]
 [EntityType{bg:green}]
@@ -7,6 +9,7 @@
 [DashDirectionType{bg:green}]
 [ConsummableType{bg:green}]
 [ConsummableUseResult{bg:green}]
+[EquipmentType{bg:green}]
 [ShopTransactionResult{bg:green}]
 [GenericShapeType{bg:green}]
 [SpellUseResult{bg:green}]
@@ -18,16 +21,25 @@
 [Vector2{bg:white}]1--1+[Vector2]
 
 
-[EntityBaseView|+GetMagicResist:float;+GetAbilityPower:float;+GetCooldownReduction:float;+GetMoveSpeed:float;+GetAttackSpeed:float;+GetHPRegen:float;+GetAttackDamage:float;+GetArmor:float;+GetHP:float;+GetMaxHP:float;+UniquePassiveLevel:int;+UniquePassive:EntityUniquePassives;+Role:EntityHeroRole;+StateAlterations:List\<StateAlterationView\>;+BaseArmor:float;+Direction:Vector2;+Position:Vector2;+ShieldPoints:float;+HP:float;+BaseHPRegen:float;+BaseMaxHP:float;+BaseMoveSpeed:float;+IsDead:bool;+Type:EntityType;+ID:int;+BaseAttackDamage:float;+BaseCooldownReduction:float;+BaseAttackSpeed:float;+BaseAbilityPower:float;+BaseMagicResist:float;+IsRooted:bool;+IsSilenced:bool;+IsStuned:bool;+IsDamageImmune:bool;+IsControlImmune:bool;+IsBlind:bool;+IsStealthed:bool;+HasTrueVision:bool;+HasWardVision:bool;+VisionRange:float;|]
+[GameStaticDataView|+Weapons:List\<WeaponModelView\>;+Armors:List\<PassiveEquipmentModelView\>;+Boots:List\<PassiveEquipmentModelView\>;+Enchants:List\<WeaponEnchantModelView\>;+Spells:List\<SpellModelView\>;+Map:MapView;|]
+[GameStaticDataView{bg:white}]1--*+[WeaponModelView]
+[GameStaticDataView{bg:white}]1--*+[PassiveEquipmentModelView]
+[GameStaticDataView{bg:white}]1--*+[PassiveEquipmentModelView]
+[GameStaticDataView{bg:white}]1--*+[WeaponEnchantModelView]
+[GameStaticDataView{bg:white}]1--*+[SpellModelView]
+[GameStaticDataView{bg:white}]1--1+[MapView]
+
+
+[EntityBaseView|+GetMagicResist:float;+GetAbilityPower:float;+GetCooldownReduction:float;+GetMoveSpeed:float;+GetAttackSpeed:float;+GetHPRegen:float;+GetAttackDamage:float;+GetArmor:float;+GetHP:float;+GetMaxHP:float;+UniquePassiveLevel:int;+UniquePassive:EntityUniquePassives;+Role:EntityHeroRole;+BaseArmor:float;+Direction:Vector2;+Position:Vector2;+ShieldPoints:float;+HP:float;+BaseHPRegen:float;+BaseMaxHP:float;+BaseMoveSpeed:float;+IsDead:bool;+Type:EntityType;+ID:int;+BaseAttackDamage:float;+BaseCooldownReduction:float;+BaseAttackSpeed:float;+BaseAbilityPower:float;+BaseMagicResist:float;+IsRooted:bool;+IsSilenced:bool;+IsStuned:bool;+IsDamageImmune:bool;+IsControlImmune:bool;+IsBlind:bool;+IsStealthed:bool;+HasTrueVision:bool;+HasWardVision:bool;+VisionRange:float;|]
 [EntityBaseView{bg:red}]1--1+[EntityUniquePassives]
 [EntityBaseView{bg:red}]1--1+[EntityHeroRole]
-[EntityBaseView{bg:red}]1--*+[StateAlterationView]
 [EntityBaseView{bg:red}]1--1+[Vector2]
 [EntityBaseView{bg:red}]1--1+[Vector2]
 [EntityBaseView{bg:red}]1--1+[EntityType]
 
 
-[StateAlterationParametersView|+DashTargetDirection:Vector2;+DashTargetEntity:int;|]
+[StateAlterationParametersView|+DashTargetDirection:Vector2;+DashTargetEntity:int;+DashTargetPosition:Vector2;|]
+[StateAlterationParametersView{bg:white}]1--1+[Vector2]
 [StateAlterationParametersView{bg:white}]1--1+[Vector2]
 
 
@@ -46,8 +58,12 @@
 [PassiveEquipmentUpgradeModelView{bg:white}]1--*+[StateAlterationModelView]
 
 
-[WeaponUpgradeModelView|+Description:SpellDescriptionView;+PassiveAlterations:List\<StateAlterationModelView\>;+Cost:float;|]
-[WeaponUpgradeModelView{bg:white}]1--1+[SpellDescriptionView]
+[PassiveEquipmentModelView|+Price:float;+Upgrades:List\<PassiveEquipmentUpgradeModelView\>;|]
+[PassiveEquipmentModelView{bg:white}]1--*+[PassiveEquipmentUpgradeModelView]
+
+
+[WeaponUpgradeModelView|+Description:SpellLevelDescriptionView;+PassiveAlterations:List\<StateAlterationModelView\>;+Cost:float;|]
+[WeaponUpgradeModelView{bg:white}]1--1+[SpellLevelDescriptionView]
 [WeaponUpgradeModelView{bg:white}]1--*+[StateAlterationModelView]
 
 
@@ -55,6 +71,10 @@
 [WeaponEnchantModelView{bg:white}]1--*+[StateAlterationModelView]
 [WeaponEnchantModelView{bg:white}]1--*+[StateAlterationModelView]
 [WeaponEnchantModelView{bg:white}]1--*+[StateAlterationModelView]
+
+
+[WeaponModelView|+Upgrades:List\<WeaponUpgradeModelView\>;+Price:float;|]
+[WeaponModelView{bg:white}]1--*+[WeaponUpgradeModelView]
 
 
 [MapView|+Passability:List\<List\<bool\>\>;|]
@@ -71,12 +91,15 @@
 [GenericShapeView{bg:white}]1--1+[GenericShapeType]
 
 
-[SpellcastBaseView|+Shape:GenericShapeView;|]
+[SpellcastBaseView|+Shape:GenericShapeView;+Name:string;|]
 [SpellcastBaseView{bg:white}]1--1+[GenericShapeView]
 
 
-[SpellView|+CurrentCooldown:float;+SourceCaster:int;+Levels:List\<SpellDescriptionView\>;+Level:int;|]
-[SpellView{bg:white}]1--*+[SpellDescriptionView]
+[SpellView|+CurrentCooldown:float;+SourceCaster:int;+Model:int;+Level:int;|]
+
+
+[SpellModelView|+ID:int;+Levels:List\<SpellLevelDescriptionView\>;|]
+[SpellModelView{bg:white}]1--*+[SpellLevelDescriptionView]
 
 
 [SpellCastTargetInfoView|+Type:TargettingType;+TargetPosition:Vector2;+TargetDirection:Vector2;+TargetId:int;|]
@@ -85,10 +108,10 @@
 [SpellCastTargetInfoView{bg:white}]1--1+[Vector2]
 
 
-[SpellDescriptionView|+BaseCooldown:float;+CastingTime:float;+CastingTimeAlterations:List\<StateAlterationModelView\>;+TargetType:SpellTargetInfoView;+OnHitEffects:List\<StateAlterationModelView\>;|]
-[SpellDescriptionView{bg:white}]1--*+[StateAlterationModelView]
-[SpellDescriptionView{bg:white}]1--1+[SpellTargetInfoView]
-[SpellDescriptionView{bg:white}]1--*+[StateAlterationModelView]
+[SpellLevelDescriptionView|+BaseCooldown:float;+CastingTime:float;+CastingTimeAlterations:List\<StateAlterationModelView\>;+TargetType:SpellTargetInfoView;+OnHitEffects:List\<StateAlterationModelView\>;|]
+[SpellLevelDescriptionView{bg:white}]1--*+[StateAlterationModelView]
+[SpellLevelDescriptionView{bg:white}]1--1+[SpellTargetInfoView]
+[SpellLevelDescriptionView{bg:white}]1--*+[StateAlterationModelView]
 
 
 [SpellTargetInfoView|+Type:TargettingType;+Range:float;+Duration:float;+AoeRadius:float;+DieOnCollision:bool;+AllowedTargetTypes:EntityTypeRelative;|]
