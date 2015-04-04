@@ -85,12 +85,12 @@ namespace Codinsa2015.Server.Entities
                 }
             }
 
-            // Si la tour n'a pas d'aggro : on cherche la première unité creep en range
+            // Si la tour n'a pas d'aggro : on cherche la première unité Virus en range
             if(m_currentAgro == null)
             {
-                EntityType ennemyCreep = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyCreep, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityBase nearestEnnemyCreep = entitiesInRange.GetEntitiesByType(ennemyCreep).NearestFrom(this.Position);
-                m_currentAgro = nearestEnnemyCreep;
+                EntityType ennemyVirus = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyVirus, this.Type & (EntityType.Team1 | EntityType.Team2));
+                EntityBase nearestEnnemyVirus = entitiesInRange.GetEntitiesByType(ennemyVirus).NearestFrom(this.Position);
+                m_currentAgro = nearestEnnemyVirus;
             }
             // Si on n'en trouve pas : on cherche le premier héros en range.
             if(m_currentAgro == null)

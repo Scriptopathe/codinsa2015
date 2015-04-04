@@ -24,7 +24,7 @@ namespace Codinsa2015.Server
     /// </summary>
     public class Scene
     {
-        public const bool SKIP_PICKS = false;
+        public const bool SKIP_PICKS = true;
         public const bool LOAD_DB_FILE = false;
         #region Variables
 
@@ -608,12 +608,12 @@ namespace Codinsa2015.Server
             if (Mode != SceneMode.End)
                 throw new Exceptions.IdiotProgrammerException("nope");
 
-            var idols = Map.Entities.GetEntitiesByType(EntityType.Idol);
+            var Datacenters = Map.Entities.GetEntitiesByType(EntityType.Datacenter);
             EntityType winner = 0;
-            foreach(var idol in idols)
+            foreach(var Datacenter in Datacenters)
             {
-                if (!idol.Value.IsDead)
-                    winner |= idol.Value.Type & EntityType.Teams;
+                if (!Datacenter.Value.IsDead)
+                    winner |= Datacenter.Value.Type & EntityType.Teams;
             }
             return winner;
         }

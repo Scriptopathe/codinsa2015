@@ -49,9 +49,9 @@ namespace Codinsa2015.Server
         /// </summary>
         public int TotalDeaths { get; set; } // done
         /// <summary>
-        /// Obtient le nombre de creeps tués par le héros.
+        /// Obtient le nombre de Virus tués par le héros.
         /// </summary>
-        public int TotalCreepsSlain { get; set; } // done
+        public int TotalVirusSlain { get; set; } // done
         /// <summary>
         /// Obtient le nombre de monstres neutres tués par le héros.
         /// </summary>
@@ -84,7 +84,7 @@ namespace Codinsa2015.Server
             b.AppendLine("----- Autres ----");
             b.AppendLine("Soins donnés : " + this.TotalHealings);
             b.AppendLine("Monstres neutres tués : " + this.TotalNeutralMonstersSlain);
-            b.AppendLine("Creepts tués : " + this.TotalCreepsSlain);
+            b.AppendLine("Virusts tués : " + this.TotalVirusSlain);
             b.AppendLine("----- Vision ----");
             b.AppendLine("Wards posées : " + this.TotalWardsUsed);
             b.AppendLine("Wards détruites : " + this.TotalWardsDestroyed);

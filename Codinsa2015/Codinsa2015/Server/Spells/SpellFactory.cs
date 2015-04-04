@@ -29,7 +29,7 @@ namespace Codinsa2015.Server.Spells
                 TargetType = new SpellTargetInfo()
                 {
                     AllowedTargetTypes = EntityTypeRelative.AllTargettableNeutral |
-                        EntityTypeRelative.EnnemyCreep | EntityTypeRelative.EnnemyPlayer,
+                        EntityTypeRelative.EnnemyVirus | EntityTypeRelative.EnnemyPlayer,
                     AoeRadius = cst.Aoes[LOW],
                     DieOnCollision = true,
                     Range = cst.Ranges[LOW],
@@ -83,7 +83,7 @@ namespace Codinsa2015.Server.Spells
                 TargetType = new SpellTargetInfo()
                 {
                     AllowedTargetTypes = EntityTypeRelative.AllTargettableNeutral |
-                        EntityTypeRelative.EnnemyCreep | EntityTypeRelative.EnnemyPlayer,
+                        EntityTypeRelative.EnnemyVirus | EntityTypeRelative.EnnemyPlayer,
                     AoeRadius = cst.Aoes[LOW],
                     DieOnCollision = true,
                     Range = cst.Ranges[HIGH],
@@ -134,7 +134,7 @@ namespace Codinsa2015.Server.Spells
                 TargetType = new SpellTargetInfo()
                 {
                     AllowedTargetTypes = EntityTypeRelative.AllTargettableNeutral |
-                        EntityTypeRelative.EnnemyCreep | EntityTypeRelative.EnnemyPlayer,
+                        EntityTypeRelative.EnnemyVirus | EntityTypeRelative.EnnemyPlayer,
                     AoeRadius = cst.Aoes[MEDIUM],
                     DieOnCollision = false,
                     Range = cst.Ranges[MEDIUM],
@@ -433,7 +433,7 @@ namespace Codinsa2015.Server.Spells
                 TargetType = new SpellTargetInfo()
                 {
                     AllowedTargetTypes = EntityTypeRelative.EnnemyPlayer |
-                            EntityTypeRelative.EnnemyCreep | EntityTypeRelative.AllTargettableNeutral,
+                            EntityTypeRelative.EnnemyVirus | EntityTypeRelative.AllTargettableNeutral,
                     AoeRadius = cst.Aoes[LOWER],
                     DieOnCollision = false,
                     Range = cst.Ranges[MEDIUM],
@@ -483,7 +483,7 @@ namespace Codinsa2015.Server.Spells
                 TargetType = new SpellTargetInfo()
                 {
                     AllowedTargetTypes = EntityTypeRelative.EnnemyPlayer |
-                                         EntityTypeRelative.EnnemyCreep,
+                                         EntityTypeRelative.EnnemyVirus,
                     AoeRadius = cst.Aoes[LOWER],
                     DieOnCollision = false,
                     Range = cst.Ranges[LOWER],
@@ -546,7 +546,7 @@ namespace Codinsa2015.Server.Spells
                 TargetType = new SpellTargetInfo()
                 {
                     AllowedTargetTypes = EntityTypeRelative.EnnemyPlayer |
-                                         EntityTypeRelative.EnnemyCreep |
+                                         EntityTypeRelative.EnnemyVirus |
                                          EntityTypeRelative.AllTargettableNeutral,
                     AoeRadius = cst.Aoes[HIGH],
                     DieOnCollision = false,

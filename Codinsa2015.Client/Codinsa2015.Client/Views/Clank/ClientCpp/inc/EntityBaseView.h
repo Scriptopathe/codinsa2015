@@ -51,8 +51,8 @@ public:
 	float BaseMoveSpeed;
 	// Retourne une valeur indiquant si l'entité est morte.
 	bool IsDead;
-	// Retourne le type de cette entité.
-	EntityType Type;
+	// Obtient le type de cette entité.
+	EntityTypeRelative Type;
 	// Obtient l'id de cette entité.
 	int ID;
 	// Obtient ou définit les points d'attaque de base de cette unité.

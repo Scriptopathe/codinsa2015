@@ -103,9 +103,9 @@ namespace Codinsa2015.Views
 		/// </summary>
 		public bool IsDead;	
 		/// <summary>
-		/// Retourne le type de cette entité.
+		/// Obtient le type de cette entité.
 		/// </summary>
-		public EntityType Type;	
+		public EntityTypeRelative Type;	
 		/// <summary>
 		/// Obtient l'id de cette entité.
 		/// </summary>
@@ -246,8 +246,8 @@ namespace Codinsa2015.Views
 			bool _obj_IsDead = Int32.Parse(input.ReadLine()) == 0 ? false : true;
 			_obj.IsDead = (bool)_obj_IsDead;
 			// Type
-			EntityType _obj_Type = (EntityType)Int32.Parse(input.ReadLine());
-			_obj.Type = (EntityType)_obj_Type;
+			EntityTypeRelative _obj_Type = (EntityTypeRelative)Int32.Parse(input.ReadLine());
+			_obj.Type = (EntityTypeRelative)_obj_Type;
 			// ID
 			int _obj_ID = Int32.Parse(input.ReadLine());
 			_obj.ID = (int)_obj_ID;

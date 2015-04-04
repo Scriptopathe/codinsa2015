@@ -264,10 +264,10 @@ namespace Codinsa2015.Server.Entities
         [Clank.ViewCreator.Export("float", "Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un monstre neute.")]
         public float MonsterBonus { get; set; }
         /// <summary>
-        /// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.
+        /// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un Virus.
         /// </summary>
-        [Clank.ViewCreator.Export("float", "Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.")]
-        public float CreepBonus { get; set; }
+        [Clank.ViewCreator.Export("float", "Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un Virus.")]
+        public float VirusBonus { get; set; }
 
 
         /// <summary>
@@ -351,8 +351,8 @@ namespace Codinsa2015.Server.Entities
                 totalValue *= StructureBonus;
             if(destination.Type.HasFlag(EntityType.Monster))
                 totalValue *= MonsterBonus;
-            if(destination.Type.HasFlag(EntityType.Creep))
-                totalValue *= CreepBonus;
+            if(destination.Type.HasFlag(EntityType.Virus))
+                totalValue *= VirusBonus;
 
             // Application des bonus de rôles.
             if(source is EntityHero)
@@ -457,7 +457,7 @@ namespace Codinsa2015.Server.Entities
 
         public StateAlterationModel()
         {
-            CreepBonus = 1.0f;
+            VirusBonus = 1.0f;
             MonsterBonus = 1.0f;
             StructureBonus = 1.0f;
         }
@@ -470,7 +470,7 @@ namespace Codinsa2015.Server.Entities
         {
             Views.StateAlterationModelView view = new Views.StateAlterationModelView();
             view.BaseDuration = BaseDuration;
-            view.CreepBonus = CreepBonus;
+            view.VirusBonus = VirusBonus;
             view.DashDirType = (Views.DashDirectionType)DashDirType;
             view.DashGoThroughWall = DashGoThroughWall;
             view.DestPercentADValue = DestPercentADValue;
@@ -500,7 +500,7 @@ namespace Codinsa2015.Server.Entities
         {
             StateAlterationModel view = new StateAlterationModel();
             view.BaseDuration = BaseDuration;
-            view.CreepBonus = CreepBonus;
+            view.VirusBonus = VirusBonus;
             view.DashDirType = DashDirType;
             view.DashGoThroughWall = DashGoThroughWall;
             view.DestPercentADValue = DestPercentADValue;

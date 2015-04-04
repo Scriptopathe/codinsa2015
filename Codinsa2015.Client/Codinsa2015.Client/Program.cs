@@ -51,7 +51,7 @@ namespace Codinsa2015.Client
                     spellId++; spellId %= mySpells.Count;
                     // On récupère la description de notre sort : elle indique comment l'utiliser ainsi que ses
                     // caractéristiques.
-                    Views.SpellLevelDescriptionView spell = state.GetSpellCurrentLevelDescription(spellId);
+                    Views.SpellLevelDescriptionView spell = state.GetMySpellCurrentLevelDescription(spellId);
 
                     Views.EntityBaseView e = state.GetEntityById(1);
                     var positionView = state.GetMyPosition();

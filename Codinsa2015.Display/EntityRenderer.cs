@@ -59,11 +59,11 @@ namespace Codinsa2015.Rendering
 
             switch(type & (Views.EntityType.Teams ^ (Views.EntityType.All)))
             {
-                // Creep
-                case Views.EntityType.Creep:
+                // Virus
+                case Views.EntityType.Virus:
                     sx = 1;
                     sy = 1;
-                    tex = blue ? Ressources.BlueCreep : Ressources.RedCreep;
+                    tex = blue ? Ressources.BlueVirus : Ressources.RedVirus;
                     break;
                 // Player
                 case Views.EntityType.Player:
@@ -91,6 +91,11 @@ namespace Codinsa2015.Rendering
                 // Checkpoint
                 case Views.EntityType.Checkpoint:
                     sx = 0.25f; sy = 0.25f; col = blue ? Color.Blue : Color.Red;
+                    return;
+                case Views.EntityType.Datacenter:
+                    sx = 3;
+                    sy = 3;
+                    tex = blue ? Ressources.BlueDatacenter : Ressources.RedDatacenter;
                     break;
             }
 

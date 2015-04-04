@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Codinsa2015.Server.Entities
 {
     /// <summary>
-    /// Représente un mini-boss.
+    /// Représente un routeur.
     /// </summary>
-    public class EntityMiniboss : EntityBase
+    public class EntityRouter : EntityBase
     {
         /// <summary>
         /// Pourcentage de la range d'attaque à laquelle va s'approcher cette unité
@@ -56,15 +56,15 @@ namespace Codinsa2015.Server.Entities
 
         #region Methods
         /// <summary>
-        /// Crée une nouvelle instance de EntityMiniboss.
+        /// Crée une nouvelle instance de EntityRouter.
         /// </summary>
-        public EntityMiniboss(Vector2 guardPosition)
+        public EntityRouter(Vector2 guardPosition)
             : base()
         {
-            Type = EntityType.Miniboss;
-            LoadEntityConstants(GameServer.GetScene().Constants.Minibosses);
-            MaxMoveDistance = GameServer.GetScene().Constants.Minibosses.MaxMoveDistance;
-            AttackRange = GameServer.GetScene().Constants.Minibosses.AttackRange;
+            Type = EntityType.Router;
+            LoadEntityConstants(GameServer.GetScene().Constants.Routeres);
+            MaxMoveDistance = GameServer.GetScene().Constants.Routeres.MaxMoveDistance;
+            AttackRange = GameServer.GetScene().Constants.Routeres.AttackRange;
             BaseAttackDamage = 60;
             BaseMagicResist = 40;
             BaseMaxHP = 100;
@@ -73,7 +73,7 @@ namespace Codinsa2015.Server.Entities
             GuardPosition = guardPosition;
             Position = GuardPosition;
             m_attackSpell = new Spells.FireballSpell(this, 1.7f, AttackRange+1, EntityTypeRelative.Player);
-            Type |= EntityType.Miniboss;
+            Type |= EntityType.Router;
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Codinsa2015.Server.Entities
         }
 
         /// <summary>
-        /// Calcule la trajectoire de ce creep.
+        /// Calcule la trajectoire de ce Virus.
         /// </summary>
         void ComputePath()
         {
@@ -133,7 +133,7 @@ namespace Codinsa2015.Server.Entities
             Vector2 nextPosition = m_path.CurrentStep;
 
 
-            // on s'arrête quand on est en range d'une tour / creep.
+            // on s'arrête quand on est en range d'une tour / Virus.
             float dstSqr = Vector2.DistanceSquared(m_path.LastPosition(), Position);
             float range = AttackRange * AttackRangeApproach;
             if (!IsAt(nextPosition))
@@ -158,7 +158,7 @@ namespace Codinsa2015.Server.Entities
         }
 
         /// <summary>
-        /// Mets à jour l'aggro de la tour.
+        /// Mets à jour l'aggro du routeur.
         /// </summary>
         void UpdateAggro(GameTime time)
         {

@@ -92,8 +92,8 @@
     <Compile Include="Server\Controlers\ShopInterface.cs" />
     <Compile Include="Server\Equip\PassiveEquipFactory.cs" />
     <Compile Include="Server\Entities\EntityBase.cs" />
-    <Compile Include="Server\Entities\EntityIdol.cs" />
-    <Compile Include="Server\Entities\EntityBigBoss.cs" />
+    <Compile Include="Server\Entities\EntityDatacenter.cs" />
+    <Compile Include="Server\Entities\EntityMiningFarm.cs" />
     <Compile Include="Server\Entities\EntityCampMonster.cs" />
     <Compile Include="Server\Entities\EntityMiniboss.cs" />
     <Compile Include="Server\Entities\EntityHeroSpawner.cs" />
@@ -104,7 +104,7 @@
     <Compile Include="Server\Entities\EntityCollection.cs" />
     <Compile Include="Server\Entities\EntityShop.cs" />
     <Compile Include="Server\Entities\EntityHero.cs" />
-    <Compile Include="Server\Entities\EntityCreep.cs" />
+    <Compile Include="Server\Entities\EntityVirus.cs" />
     <Compile Include="Server\Entities\EntityTower.cs" />
     <Compile Include="Server\Entities\EntityType.cs" />
     <Compile Include="Server\Entities\StateAlteration.cs" />
@@ -124,9 +124,9 @@
     <Compile Include="Server\Equip\WardConsummable.cs" />
     <Compile Include="Server\Equip\Weapon.cs" />
     <Compile Include="Server\Equip\WeaponFactory.cs" />
-    <Compile Include="Server\Events\EventBigBoss.cs" />
+    <Compile Include="Server\Events\EventMiningFarm.cs" />
     <Compile Include="Server\Events\EventCamp.cs" />
-    <Compile Include="Server\Events\EventMiniboss.cs" />
+    <Compile Include="Server\Events\EventRouter.cs" />
     <Compile Include="Server\Events\GameEvent.cs" />
     <Compile Include="Server\Events\PlayerResurrectorEvent.cs" />
     <Compile Include="Server\GameConstants.cs" />

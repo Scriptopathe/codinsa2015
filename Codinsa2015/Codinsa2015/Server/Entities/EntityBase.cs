@@ -321,9 +321,9 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Retourne le type de cette entité.
         /// Le type inclut des informations sur l'équipe de l'entité (Team1, Team2 ou Neutral),
-        /// ainsi que sur sa catégorie (Héros, tour, idole etc...).
+        /// ainsi que sur sa catégorie (Héros, tour, Datacenter etc...).
         /// </summary>
-        [Clank.ViewCreator.Export("EntityType", "Retourne le type de cette entité.")]
+        [Clank.ViewCreator.Export("EntityTypeRelative", "Obtient le type de cette entité.")]
         public EntityType Type
         {
             get { return m_type; }
@@ -1347,6 +1347,7 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         public void AddAlteration(StateAlteration alteration, bool notify=true)
         {
+            
             // Immunités
             #region Immunity
             if(IsDamageImmune & ((alteration.Model.Type  & StateAlterationType.AllDamage) != 0))
@@ -1390,9 +1391,10 @@ namespace Codinsa2015.Server.Entities
             {
                 if (UniquePassive == EntityUniquePassives.Unshakable && UniquePassiveLevel >= 2)
                 {
+                    alteration = alteration.Copy();
                     // unshakable => durée des slows / 2
                     if (alteration.Model.FlatValue > 0)
-                        alteration.Model.FlatValue /= 2;
+                        alteration.Model.FlatValue *= GameServer.GetScene().Constants.UniquePassives.UnshakableSlowResistance;
                 }
             }
             else if(alteration.Model.Type.HasFlag(StateAlterationType.Silence))
@@ -1647,15 +1649,15 @@ namespace Codinsa2015.Server.Entities
 
                 case EntityUniquePassives.Strategist:
                     // Bâtiments ennemis proches : pertes d'armure et RM.
-                    // Creeps alliés : +10 vit depl
+                    // Virus alliés : +10 vit depl
                     // Lvl1 : Bâtiments alliés proches +50% armure / RM
-                    // Lvl2 : creeps alliés proches +50% armure / RM
+                    // Lvl2 : Virus alliés proches +50% armure / RM
                     {
                         EntityCollection ennemyBuildings = GameServer.GetMap().Entities.
                             GetEntitiesByType(EntityType.Structure | ((EntityType.Teams & Type) ^ EntityType.Teams)).
                             GetAliveEntitiesInRange(Position, cst.StrategistActivationRange);
-                        EntityCollection allyCreeps = GameServer.GetMap().Entities.
-                            GetEntitiesByType(EntityType.Creep | (EntityType.Teams & Type)).
+                        EntityCollection allyVirus = GameServer.GetMap().Entities.
+                            GetEntitiesByType(EntityType.Virus | (EntityType.Teams & Type)).
                             GetAliveEntitiesInRange(Position, cst.StrategistActivationRange);
                         string id = "unique-passive-strategist-" + ID;
                         
@@ -1682,10 +1684,10 @@ namespace Codinsa2015.Server.Entities
                             }
                         }
 
-                        // Buff des creeps alliés.
-                        if(allyCreeps.Count > 0)
+                        // Buff des Virus alliés.
+                        if(allyVirus.Count > 0)
                         {
-                            foreach(var kvp in allyCreeps)
+                            foreach(var kvp in allyVirus)
                             {
                                 kvp.Value.StateAlterations.EndAlterations(id);
 
@@ -1694,10 +1696,10 @@ namespace Codinsa2015.Server.Entities
                                 {
                                     Type = StateAlterationType.MoveSpeed,
                                     BaseDuration = 0.25f,
-                                    FlatValue = cst.StrategistAllyCreepMSBuff,
+                                    FlatValue = cst.StrategistAllyVirusMSBuff,
                                 }, new StateAlterationParameters(), StateAlterationSource.UniquePassive), false);
 
-                                // Level 2 : creeps + tanky !
+                                // Level 2 : Virus + tanky !
                                 if(UniquePassiveLevel >= 2)
                                 {
                                     // Buff d'armure.

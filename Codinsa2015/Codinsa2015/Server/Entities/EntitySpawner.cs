@@ -7,36 +7,36 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Codinsa2015.Server.Entities
 {
     /// <summary>
-    /// Représente un spawner de creeps.
+    /// Représente un spawner de Virus.
     /// </summary>
     public class EntitySpawner : EntityBase
     {
         #region Variables
         /// <summary>
-        /// Si supérieur à 0, représente le temps restant du buff du big boss sur les creeps.
+        /// Si supérieur à 0, représente le temps restant du buff du big boss sur les Virus.
         /// </summary>
         float m_bossBuffTimer;
         float m_timer;
         /// <summary>
         /// Intervalle de temps en secondes entre l'apparition de 2 vagues de
-        /// creeps.
+        /// Virus.
         /// </summary>
         public float SpawnInterval { get; set; }
         /// <summary>
-        /// Nombre de creeps apparaissant à chaque vague.
+        /// Nombre de Virus apparaissant à chaque vague.
         /// </summary>
-        public int CreepsPerWave { get; set; }
+        public int VirusPerWave { get; set; }
         /// <summary>
-        /// Spawn position of the creeps.
+        /// Spawn position of the Virus.
         /// </summary>
         public Vector2 SpawnPosition { get; set; }
         /// <summary>
-        /// Délai entre le spawn de 2 creeps.
+        /// Délai entre le spawn de 2 Virus.
         /// </summary>
         public float SpawnDecay { get; set; }
 
         /// <summary>
-        /// Nombre de colonnes de creeps.
+        /// Nombre de colonnes de Virus.
         /// </summary>
         public int RowCount { get; set; }
         #endregion
@@ -44,7 +44,7 @@ namespace Codinsa2015.Server.Entities
         #region Properties
 
         /// <summary>
-        /// Obtient une valeur indiquant si les creeps spawnés par cette entités
+        /// Obtient une valeur indiquant si les Virus spawnés par cette entités
         /// seront renforcés du buff du big boss.
         /// </summary>
         public bool HasBossBuff
@@ -66,8 +66,8 @@ namespace Codinsa2015.Server.Entities
         {
             var cst = GameServer.GetScene().Constants.Structures.Spawners;
             RowCount = cst.Rows;
-            SpawnDecay = cst.CreepSpawnDelay;
-            CreepsPerWave = cst.CreepsPerWave;
+            SpawnDecay = cst.ViruspawnDelay;
+            VirusPerWave = cst.VirusPerWave;
             SpawnInterval = cst.WavesInterval;
             Type |= EntityType.Spawner;
         }
@@ -82,31 +82,31 @@ namespace Codinsa2015.Server.Entities
             {
                 m_timer = SpawnInterval;
                 float decay = 0;
-                for(int i = 0; i < CreepsPerWave; i++)
+                for(int i = 0; i < VirusPerWave; i++)
                 {
                     int iref = i;
-                    var idolCandidates = GameServer.GetMap().Entities.GetEntitiesByType((this.Type & EntityType.Teams) | EntityType.Idol);
-                    if (idolCandidates.Count > 0)
+                    var DatacenterCandidates = GameServer.GetMap().Entities.GetEntitiesByType((this.Type & EntityType.Teams) | EntityType.Datacenter);
+                    if (DatacenterCandidates.Count > 0)
                     {
-                        var idol = idolCandidates.First().Value;
-                        SpawnPosition = idol.Position;
+                        var Datacenter = DatacenterCandidates.First().Value;
+                        SpawnPosition = Datacenter.Position;
                     }
 
                     GameServer.GetScene().EventSheduler.Schedule(new Scheduler.ActionDelegate(() =>
                     {
-                        EntityCreep creep = new EntityCreep()
+                        EntityVirus Virus = new EntityVirus()
                         {
                             Position = SpawnPosition,
-                            Type = EntityType.Creep | (this.Type & (EntityType.Team1 | EntityType.Team2)),
+                            Type = EntityType.Virus | (this.Type & (EntityType.Team1 | EntityType.Team2)),
                             Row = iref % RowCount,
                         };
                         
                         if(HasBossBuff)
                         {
-                            creep.ApplyBossBuff();
+                            Virus.ApplyBossBuff();
                         }
 
-                        GameServer.GetMap().Entities.Add(creep.ID, creep);
+                        GameServer.GetMap().Entities.Add(Virus.ID, Virus);
                     }), decay);
                     decay += SpawnDecay;
                 }
@@ -121,11 +121,11 @@ namespace Codinsa2015.Server.Entities
 
 
         /// <summary>
-        /// Applique le buff du big boss sur les creeps pendant la durée
+        /// Applique le buff du big boss sur les Virus pendant la durée
         /// précisée en secondes.
         /// </summary>
         /// <param name="duration"></param>
-        public void BuffCreeps(float duration)
+        public void BuffVirus(float duration)
         {
             m_bossBuffTimer = duration;
         }

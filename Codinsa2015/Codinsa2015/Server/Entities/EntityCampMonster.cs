@@ -123,7 +123,7 @@ namespace Codinsa2015.Server.Entities
         }
 
         /// <summary>
-        /// Calcule la trajectoire de ce creep.
+        /// Calcule la trajectoire de ce Virus.
         /// </summary>
         void ComputePath()
         {
@@ -147,7 +147,7 @@ namespace Codinsa2015.Server.Entities
             Vector2 nextPosition = m_path.CurrentStep;
 
 
-            // on s'arrête quand on est en range d'une tour / creep.
+            // on s'arrête quand on est en range d'une tour / Virus.
             float dstSqr = Vector2.DistanceSquared(m_path.LastPosition(), Position);
             float range = AttackRange * AttackRangeApproach;
             if (!IsAt(nextPosition))

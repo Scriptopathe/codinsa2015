@@ -19,17 +19,17 @@ namespace Codinsa2015.Server.Entities
         Structure = 0x08,
         Tower = 0x10 | Structure,
         Spawner = 0x40 | Structure,
-        Idol = 0x80 | Structure,
+        Datacenter = 0x80 | Structure,
 
         // Neutral
         Monster = 0x0100,
-        Creep = 0x0200,
+        Virus = 0x0200,
         WardPlacement = 0x00010000,
         Ward = 0x00020000,
         Shop = 0x00040000,
-        // Creeps
-        Boss = 0x0400 | Monster,
-        Miniboss = 0x0800 | Monster,
+        // Virus
+        MiningFarm = 0x0400 | Monster,
+        Router = 0x0800 | Monster,
         Checkpoint = 0x4000,
 
         // Player
@@ -39,22 +39,22 @@ namespace Codinsa2015.Server.Entities
         HeroSpawner = 0x00080000,
 
         // Macros
-        AllTeam1 = Team1 | Tower | Spawner | Idol | Player | Creep,
-        AllTeam2 = Team2 | Tower | Spawner | Idol | Player | Creep,
-        AllObjectives = Tower | Spawner | Idol | Boss | Miniboss,
+        AllTeam1 = Team1 | Tower | Spawner | Datacenter | Player | Virus,
+        AllTeam2 = Team2 | Tower | Spawner | Datacenter | Player | Virus,
+        AllObjectives = Tower | Spawner | Datacenter | MiningFarm | Router,
         AllSaved = AllObjectives | Checkpoint | WardPlacement | HeroSpawner | Shop,
-        AllTargettableNeutral = Boss | Miniboss | Monster,
+        AllTargettableNeutral = MiningFarm | Router | Monster,
         // Team
         Team1Tower = Team1 | Tower,
         Team2Tower = Team2 | Tower,
         Team1Spawner = Team1 | Spawner,
         Team2Spawner = Team2 | Spawner,
-        Team1Idol = Team1 | Idol,
-        Team2Idol = Team2 | Idol,
+        Team1Datacenter = Team1 | Datacenter,
+        Team2Datacenter = Team2 | Datacenter,
         Team1Player = Player | Team1,
         Team2Player = Player | Team2,
-        Team1Creep = Team1 | Creep,
-        Team2Creep = Team2 | Creep,
+        Team1Virus = Team1 | Virus,
+        Team2Virus = Team2 | Virus,
         Team1Checkpoint = Team1 | Checkpoint,
         Team2Checkpoint = Team2 | Checkpoint,
         Team1HeroSpawner = Team1 | HeroSpawner,
@@ -78,18 +78,18 @@ namespace Codinsa2015.Server.Entities
         Structure       = 0x08,
         Tower           = 0x10 | Structure,
         Spawner         = 0x40 | Structure,
-        Idol            = 0x80 | Structure,
+        Datacenter            = 0x80 | Structure,
 
         // Neutral
         Monster         = 0x0100,
-        Creep           = 0x0200,
+        Virus           = 0x0200,
         WardPlacement   = 0x00010000,
         Ward            = 0x00020000,
         Shop            = 0x00040000,
 
-        // Creeps
-        Boss            = 0x0400 | Monster,
-        Miniboss        = 0x0800 | Monster,
+        // Virus
+        MiningFarm            = 0x0400 | Monster,
+        Router        = 0x0800 | Monster,
         Checkpoint      = 0x4000,
 
         // Player
@@ -99,23 +99,23 @@ namespace Codinsa2015.Server.Entities
         HeroSpawner = 0x00080000,
 
         // Macros
-        AllEnnemy       = Ennemy | Tower | Spawner | Idol | Player | Creep,
-        AllAlly         = Ally | Tower | Spawner | Idol | Player | Creep,
-        AllObjectives   = Tower | Spawner | Idol | Boss | Miniboss,
+        AllEnnemy       = Ennemy | Tower | Spawner | Datacenter | Player | Virus,
+        AllAlly         = Ally | Tower | Spawner | Datacenter | Player | Virus,
+        AllObjectives   = Tower | Spawner | Datacenter | MiningFarm | Router,
         AllSaved        = AllObjectives | Checkpoint | WardPlacement | HeroSpawner,
-        AllTargettableNeutral = Boss | Miniboss | Creep,
+        AllTargettableNeutral = MiningFarm | Router | Virus,
 
         // Team
         AllyTower       = Ally | Tower,
         EnnemyTower     = Ennemy | Tower,
         AllySpawner     = Ally | Spawner,
         EnnemySpawner   = Ennemy | Spawner,
-        AllyIdol        = Ally | Idol,
-        EnnemyIdol      = Ennemy | Idol,
+        AllyDatacenter        = Ally | Datacenter,
+        EnnemyDatacenter      = Ennemy | Datacenter,
         AllyPlayer      = Player | Ally,
         EnnemyPlayer    = Player | Ennemy,
-        AllyCreep       = Ally | Creep,
-        EnnemyCreep     = Ennemy | Creep,
+        AllyVirus       = Ally | Virus,
+        EnnemyVirus     = Ennemy | Virus,
         AllyCheckpoint  = Ally | Checkpoint,
         EnnemyCheckpoint = Ennemy | Checkpoint,
         AllyHeroSpawner = Ally | HeroSpawner,
@@ -224,15 +224,15 @@ namespace Codinsa2015.Server.Entities
 
         // Structures
         HeroSpawner             = 0x0100 | Untargettable,
-        CreepSpawner            = 0x0200 | Structure,
+        Viruspawner            = 0x0200 | Structure,
         Tower                   = 0x0400 | Structure,
         Inhibitor               = 0x0800 | Structure,
-        Idol                    = 0x1000 | Structure,
+        Datacenter                    = 0x1000 | Structure,
 
         // Monsters
-        Creep                   = 0x00010000 | Monster,
+        Virus                   = 0x00010000 | Monster,
         JungleMonster           = 0x00020000 | Monster,
-        MinibossMonster         = 0x00040000 | Monster,
+        RouterMonster         = 0x00040000 | Monster,
         BossMonster             = 0x00080000 | Monster,
 
         // Vision

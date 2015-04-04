@@ -12,6 +12,112 @@ namespace Codinsa2015.Views.Client
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 		/// <summary>
+		/// Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
+		/// </summary>
+		public PickAction Picks_NextAction()
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)0).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			PickAction returnValue = (PickAction)Int32.Parse(input.ReadLine());
+			return (PickAction)returnValue;
+		}
+	
+		/// <summary>
+		/// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
+		/// </summary>
+		public List<int> Picks_GetActiveSpells(int id)
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)1).ToString());
+			output.WriteLine(((int)id).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			List<int> returnValue = new List<int>();
+			int returnValue_count = Int32.Parse(input.ReadLine());
+			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+				int returnValue_e = Int32.Parse(input.ReadLine());
+				returnValue.Add((int)returnValue_e);
+			}
+			return (List<int>)returnValue;
+		}
+	
+		/// <summary>
+		/// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs
+		/// disponibles.
+		/// </summary>
+		public List<EntityUniquePassives> Picks_GetPassiveSpells(int id)
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)2).ToString());
+			output.WriteLine(((int)id).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			List<EntityUniquePassives> returnValue = new List<EntityUniquePassives>();
+			int returnValue_count = Int32.Parse(input.ReadLine());
+			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+				EntityUniquePassives returnValue_e = (EntityUniquePassives)Int32.Parse(input.ReadLine());
+				returnValue.Add((EntityUniquePassives)returnValue_e);
+			}
+			return (List<EntityUniquePassives>)returnValue;
+		}
+	
+		/// <summary>
+		/// Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).
+		/// </summary>
+		public PickResult Picks_PickPassive(EntityUniquePassives passive)
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)3).ToString());
+			output.WriteLine(((int)passive).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			PickResult returnValue = (PickResult)Int32.Parse(input.ReadLine());
+			return (PickResult)returnValue;
+		}
+	
+		/// <summary>
+		/// Lors de la phase de picks, permet à l'IA de pick un spell actif dont l'id est donné (si c'est son
+		/// tour).
+		/// </summary>
+		public PickResult Picks_PickActive(int spell)
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)4).ToString());
+			output.WriteLine(((int)spell).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			PickResult returnValue = (PickResult)Int32.Parse(input.ReadLine());
+			return (PickResult)returnValue;
+		}
+	
+		/// <summary>
 		/// Achète et équipe un objet d'id donné au shop. Les ids peuvent être obtenus via
 		/// ShopGetWeapons(),ShopGetArmors(), ShopGetBoots() etc...
 		/// </summary>
@@ -20,7 +126,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)0).ToString());
+			output.WriteLine(((int)5).ToString());
 			output.WriteLine(((int)equipId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -39,7 +145,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)1).ToString());
+			output.WriteLine(((int)6).ToString());
 			output.WriteLine(((int)consummableId).ToString());
 			output.WriteLine(((int)slot).ToString());
 			output.Close();
@@ -60,7 +166,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)2).ToString());
+			output.WriteLine(((int)7).ToString());
 			output.WriteLine(((int)equipType).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -79,7 +185,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)3).ToString());
+			output.WriteLine(((int)8).ToString());
 			output.WriteLine(((int)slot).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -98,7 +204,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)4).ToString());
+			output.WriteLine(((int)9).ToString());
 			output.WriteLine(((int)equipType).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -117,7 +223,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)5).ToString());
+			output.WriteLine(((int)10).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -140,7 +246,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)6).ToString());
+			output.WriteLine(((int)11).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -163,7 +269,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)7).ToString());
+			output.WriteLine(((int)12).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -186,7 +292,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)8).ToString());
+			output.WriteLine(((int)13).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -209,7 +315,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)9).ToString());
+			output.WriteLine(((int)14).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -227,7 +333,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)10).ToString());
+			output.WriteLine(((int)15).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -245,7 +351,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)11).ToString());
+			output.WriteLine(((int)16).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -263,7 +369,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)12).ToString());
+			output.WriteLine(((int)17).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -281,7 +387,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)13).ToString());
+			output.WriteLine(((int)18).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -299,7 +405,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)14).ToString());
+			output.WriteLine(((int)19).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -317,7 +423,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)15).ToString());
+			output.WriteLine(((int)20).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -335,7 +441,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)16).ToString());
+			output.WriteLine(((int)21).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -353,7 +459,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)17).ToString());
+			output.WriteLine(((int)22).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -371,7 +477,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)18).ToString());
+			output.WriteLine(((int)23).ToString());
 			position.Serialize(output);
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -390,7 +496,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)19).ToString());
+			output.WriteLine(((int)24).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -408,7 +514,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)20).ToString());
+			output.WriteLine(((int)25).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -426,7 +532,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)21).ToString());
+			output.WriteLine(((int)26).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -450,7 +556,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)22).ToString());
+			output.WriteLine(((int)27).ToString());
 			output.WriteLine(((int)entityId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -469,7 +575,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)23).ToString());
+			output.WriteLine(((int)28).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -492,7 +598,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)24).ToString());
+			output.WriteLine(((int)29).ToString());
 			output.WriteLine(((int)spellId).ToString());
 			target.Serialize(output);
 			output.Close();
@@ -512,7 +618,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)25).ToString());
+			output.WriteLine(((int)30).ToString());
 			output.WriteLine(((int)spellId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -524,14 +630,14 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
-		/// Obtient le mode actuel de la scène.
+		/// Obtient la phase actuelle du jeu : Pick (=> phase de picks) ou Game (phase de jeu).
 		/// </summary>
 		public SceneMode GetMode()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)26).ToString());
+			output.WriteLine(((int)31).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -544,12 +650,12 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Obtient la description du spell dont l'id est donné en paramètre.
 		/// </summary>
-		public SpellLevelDescriptionView GetSpellCurrentLevelDescription(int spellId)
+		public SpellLevelDescriptionView GetMySpellCurrentLevelDescription(int spellId)
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)27).ToString());
+			output.WriteLine(((int)32).ToString());
 			output.WriteLine(((int)spellId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -568,7 +674,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)28).ToString());
+			output.WriteLine(((int)33).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();

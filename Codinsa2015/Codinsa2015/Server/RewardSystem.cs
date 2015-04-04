@@ -204,7 +204,8 @@ namespace Codinsa2015.Server
         /// <param name="shieldAmount">Quantité de PVs enlevés au bouclier.</param>
         public void NotifyShieldConsumption(EntityHero shieldOwner, EntityHero shieldProvider, float shieldAmount)
         {
-            shieldProvider.PA += shieldAmount * GameServer.GetScene().Constants.Rewards.PAPerShieldHPConsumed;
+            if(shieldProvider.Role == EntityHeroRole.Mage)
+                shieldProvider.PA += shieldAmount * GameServer.GetScene().Constants.Rewards.MagePAPerShieldHPConsumed;
         }
 
         /// <summary>
@@ -311,25 +312,25 @@ namespace Codinsa2015.Server
         public void NotifyUnitDeath(EntityBase unit, EntityHero killer)
         {
             RewardConstants constants = GameServer.GetScene().Constants.Rewards;
-            // Si l'unité est un creep, on offre une récompense aux héros proches.
-            if(unit.Type.HasFlag(EntityType.Creep) || unit.Type.HasFlag(EntityType.Monster))
+            // Si l'unité est un Virus, on offre une récompense aux héros proches.
+            if(unit.Type.HasFlag(EntityType.Virus) || unit.Type.HasFlag(EntityType.Monster))
             {
                 if (killer != null)
                 {
-                    if (unit.Type.HasFlag(EntityType.Creep))
-                        killer.Stats.TotalCreepsSlain++;
+                    if (unit.Type.HasFlag(EntityType.Virus))
+                        killer.Stats.TotalVirusSlain++;
                     if (unit.Type.HasFlag(EntityType.Monster))
                         killer.Stats.TotalNeutralMonstersSlain++;
                 }
                 foreach(EntityHero hero in m_allHeroes)
                 {
-                    // Si le héros est dans l'équipe adverse du creep/monstre tué.
+                    // Si le héros est dans l'équipe adverse du Virus/monstre tué.
                     if(!hero.Type.HasFlag(unit.Type & EntityType.Teams))
                     {
                         if(Vector2.DistanceSquared(hero.Position, unit.Position) <= 
-                            constants.CreepDeathRewardRange * constants.CreepDeathRewardRange)
+                            constants.VirusDeathRewardRange * constants.VirusDeathRewardRange)
                         {
-                            hero.PA += constants.CreepDeathReward;
+                            hero.PA += constants.VirusDeathReward;
                         }
                     }
                 }

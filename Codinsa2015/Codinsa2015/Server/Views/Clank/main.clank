@@ -82,15 +82,15 @@ main
 			Spawner = 72,
 			Team1Spawner = 74,
 			Team2Spawner = 76,
-			Idol = 136,
-			Team1Idol = 138,
-			Team2Idol = 140,
+			Datacenter = 136,
+			Team1Datacenter = 138,
+			Team2Datacenter = 140,
 			Monster = 256,
-			Creep = 512,
-			Team1Creep = 514,
-			Team2Creep = 516,
-			Boss = 1280,
-			Miniboss = 2304,
+			Virus = 512,
+			Team1Virus = 514,
+			Team2Virus = 516,
+			MiningFarm = 1280,
+			Router = 2304,
 			AllTargettableNeutral = 3328,
 			AllObjectives = 3544,
 			Checkpoint = 16384,
@@ -125,15 +125,15 @@ main
 			Spawner = 72,
 			AllySpawner = 74,
 			EnnemySpawner = 76,
-			Idol = 136,
-			AllyIdol = 138,
-			EnnemyIdol = 140,
+			Datacenter = 136,
+			AllyDatacenter = 138,
+			EnnemyDatacenter = 140,
 			Monster = 256,
-			Creep = 512,
-			AllyCreep = 514,
-			EnnemyCreep = 516,
-			Boss = 1280,
-			Miniboss = 2304,
+			Virus = 512,
+			AllyVirus = 514,
+			EnnemyVirus = 516,
+			MiningFarm = 1280,
+			Router = 2304,
 			AllObjectives = 3544,
 			AllTargettableNeutral = 3840,
 			Checkpoint = 16384,
@@ -294,6 +294,16 @@ main
 	}
 	macro
 	{
+		// Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
+		PickAction Picks_NextAction_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_NextAction()"; }
+		// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
+		List<int> Picks_GetActiveSpells_macro(int clientId,int id) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_GetActiveSpells($(id))"; }
+		// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs disponibles.
+		List<EntityUniquePassives> Picks_GetPassiveSpells_macro(int clientId,int id) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_GetPassiveSpells($(id))"; }
+		// Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).
+		PickResult Picks_PickPassive_macro(int clientId,EntityUniquePassives passive) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_PickPassive($(passive))"; }
+		// Lors de la phase de picks, permet à l'IA de pick un spell actif dont l'id est donné (si c'est son tour).
+		PickResult Picks_PickActive_macro(int clientId,int spell) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_PickActive($(spell))"; }
 		// Achète et équipe un objet d'id donné au shop. Les ids peuvent être obtenus via ShopGetWeapons(),ShopGetArmors(), ShopGetBoots() etc...
 		ShopTransactionResult ShopPurchaseItem_macro(int clientId,int equipId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopPurchaseItem($(equipId))"; }
 		// Achète un consommable d'id donné, et le place dans le slot donné.
@@ -346,16 +356,46 @@ main
 		bool UseMySpell_macro(int clientId,int spellId,SpellCastTargetInfoView target) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMySpell($(spellId),$(target))"; }
 		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
 		SpellView GetMySpell_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMySpell($(spellId))"; }
-		// Obtient le mode actuel de la scène.
+		// Obtient la phase actuelle du jeu : Pick (=> phase de picks) ou Game (phase de jeu).
 		SceneMode GetMode_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMode()"; }
 		// Obtient la description du spell dont l'id est donné en paramètre.
-		SpellLevelDescriptionView GetSpellCurrentLevelDescription_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetSpellCurrentLevelDescription($(spellId))"; }
+		SpellLevelDescriptionView GetMySpellCurrentLevelDescription_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMySpellCurrentLevelDescription($(spellId))"; }
 		// Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
 		GameStaticDataView GetStaticData_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetStaticData()"; }
 
 	} // macro
 	access
 	{
+		// Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
+		public PickAction Picks_NextAction()
+		{ 
+			return Picks_NextAction_macro(clientId);
+		}
+
+		// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
+		public List<int> Picks_GetActiveSpells(int id)
+		{ 
+			return Picks_GetActiveSpells_macro(clientId,id);
+		}
+
+		// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs disponibles.
+		public List<EntityUniquePassives> Picks_GetPassiveSpells(int id)
+		{ 
+			return Picks_GetPassiveSpells_macro(clientId,id);
+		}
+
+		// Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).
+		public PickResult Picks_PickPassive(EntityUniquePassives passive)
+		{ 
+			return Picks_PickPassive_macro(clientId,passive);
+		}
+
+		// Lors de la phase de picks, permet à l'IA de pick un spell actif dont l'id est donné (si c'est son tour).
+		public PickResult Picks_PickActive(int spell)
+		{ 
+			return Picks_PickActive_macro(clientId,spell);
+		}
+
 		// Achète et équipe un objet d'id donné au shop. Les ids peuvent être obtenus via ShopGetWeapons(),ShopGetArmors(), ShopGetBoots() etc...
 		public ShopTransactionResult ShopPurchaseItem(int equipId)
 		{ 
@@ -512,16 +552,16 @@ main
 			return GetMySpell_macro(clientId,spellId);
 		}
 
-		// Obtient le mode actuel de la scène.
+		// Obtient la phase actuelle du jeu : Pick (=> phase de picks) ou Game (phase de jeu).
 		public SceneMode GetMode()
 		{ 
 			return GetMode_macro(clientId);
 		}
 
 		// Obtient la description du spell dont l'id est donné en paramètre.
-		public SpellLevelDescriptionView GetSpellCurrentLevelDescription(int spellId)
+		public SpellLevelDescriptionView GetMySpellCurrentLevelDescription(int spellId)
 		{ 
-			return GetSpellCurrentLevelDescription_macro(clientId,spellId);
+			return GetMySpellCurrentLevelDescription_macro(clientId,spellId);
 		}
 
 		// Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.

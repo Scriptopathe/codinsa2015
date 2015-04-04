@@ -58,8 +58,8 @@ public class StateAlterationModelView
 	public Float StructureBonus;
 	// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un monstre neute.
 	public Float MonsterBonus;
-	// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.
-	public Float CreepBonus;
+	// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un Virus.
+	public Float VirusBonus;
 	public StateAlterationModelView() {
 	}
 
@@ -122,9 +122,9 @@ public class StateAlterationModelView
 		// MonsterBonus
 		float _obj_MonsterBonus = Float.valueOf(input.readLine());
 		_obj.MonsterBonus = _obj_MonsterBonus;
-		// CreepBonus
-		float _obj_CreepBonus = Float.valueOf(input.readLine());
-		_obj.CreepBonus = _obj_CreepBonus;
+		// VirusBonus
+		float _obj_VirusBonus = Float.valueOf(input.readLine());
+		_obj.VirusBonus = _obj_VirusBonus;
 		return _obj;
 	}
 
@@ -167,8 +167,8 @@ public class StateAlterationModelView
 		output.append(((Float)this.StructureBonus).toString() + "\n");
 		// MonsterBonus
 		output.append(((Float)this.MonsterBonus).toString() + "\n");
-		// CreepBonus
-		output.append(((Float)this.CreepBonus).toString() + "\n");
+		// VirusBonus
+		output.append(((Float)this.VirusBonus).toString() + "\n");
 	}
 
 }

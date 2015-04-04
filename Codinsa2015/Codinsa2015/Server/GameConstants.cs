@@ -61,12 +61,17 @@ namespace Codinsa2015.Server
         #endregion
 
         #region Rugged
+        // Niveau 1
         public float RuggedADBonusScaling = 0.10f;
         public float RuggedAPBonusScaling = 0.10f;
         public float RuggedASBonusFlat = 0.10f;
         public float RuggedCDRBonusFlat = 0.10f;
+        // Niveau 2
         public float RuggedMSBonus = 0.20f;
+
+        // Niveau 3
         public float RuggedKillReward = 50;
+
         public float RuggedActivationRange = 3;
         #endregion
 
@@ -81,7 +86,7 @@ namespace Codinsa2015.Server
         #region Strategist
         public float StrategistEnnemyStructureArmorDebuff = -0.25f; // % de l'armure
         public float StrategistEnnemyStructureRMDebuff = -0.25f; // % de la RM
-        public float StrategistAllyCreepMSBuff = 1f; // flat
+        public float StrategistAllyVirusMSBuff = 1f; // flat
         public float StrategistAllyStructureArmorBuff = 0.5f; // % armure
         public float StrategistAllyStructureRMBuff = 0.5f; // % armure 
         public float StrategistActivationRange = 4f;
@@ -115,7 +120,6 @@ namespace Codinsa2015.Server
         public float KillReward = 100;
         public float AssistReward = 100;
         public float PAPerSecond = 1;
-        public float PAPerShieldHPConsumed = 0.1f;
 
         public float TankPAPerHPLost = 0.1f;
         public float TankPAPerHPLostRange = 8;
@@ -126,11 +130,12 @@ namespace Codinsa2015.Server
         public float MageAssistBonus = 50;
         public float MagePAPerHPHealed = 0.2f;
         public float MagePAPerDamageDealt = 0.2f;
+        public float MagePAPerShieldHPConsumed = 0.1f;
 
         public float FighterPAPerDamageDealt = 0.2f;
 
-        public float CreepDeathRewardRange = 5f;
-        public float CreepDeathReward = 4f;
+        public float VirusDeathRewardRange = 5f;
+        public float VirusDeathReward = 4f;
     }
 
     /// <summary>
@@ -143,10 +148,10 @@ namespace Codinsa2015.Server
         /// </summary>
         public float RespawnTimer;
         /// <summary>
-        /// Intervalle en secondes entre 2 spawn de creeps par le camp
+        /// Intervalle en secondes entre 2 spawn de Virus par le camp
         /// lorsqu'il est possédé.
         /// </summary>
-        public float CreepSpawnInterval;
+        public float ViruspawnInterval;
         /// <summary>
         /// Montant en PA de la récompense attribuée au tueur du camp.
         /// </summary>
@@ -154,29 +159,29 @@ namespace Codinsa2015.Server
         public MonsterCampEventConstants()
         {
             RespawnTimer = 10;
-            CreepSpawnInterval = 5;
+            ViruspawnInterval = 5;
             Reward = 30;
         }
     }
 
     /// <summary>
-    /// Constantes concernant les mini-boss.
+    /// Constantes concernant les routeur.
     /// </summary>
-    public class MinibossesEventConstants
+    public class RouteresEventConstants
     {
         /// <summary>
-        /// Range de la vision accordée à l'équipe tuant le mini-boss.
+        /// Range de la vision accordée à l'équipe tuant le routeur.
         /// </summary>
         public float VisionRange;
         /// <summary>
-        /// Temps de respawn en secondes du mini-boss après sa mort.
+        /// Temps de respawn en secondes du routeur après sa mort.
         /// </summary>
         public float RespawnTimer;
         /// <summary>
         /// Montant en PA de la récompense attribuée au tueur du camp.
         /// </summary>
         public float Reward;
-        public MinibossesEventConstants()
+        public RouteresEventConstants()
         {
             VisionRange = 8;
             RespawnTimer = 5;
@@ -197,7 +202,7 @@ namespace Codinsa2015.Server
         /// </summary>
         public float Reward;
         /// <summary>
-        /// Durée pendant laquelle le buff sur les creeps est actif.
+        /// Durée pendant laquelle le buff sur les Virus est actif.
         /// </summary>
         public float BuffDuration;
         public BigBossEventConstants()
@@ -213,12 +218,12 @@ namespace Codinsa2015.Server
     public class EventConstants
     {
         public MonsterCampEventConstants MonsterCamp;
-        public MinibossesEventConstants MinibossCamp;
+        public RouteresEventConstants RouterCamp;
         public BigBossEventConstants BigBossCamp;
         public EventConstants()
         {
             MonsterCamp = new MonsterCampEventConstants();
-            MinibossCamp = new MinibossesEventConstants();
+            RouterCamp = new RouteresEventConstants();
             BigBossCamp = new BigBossEventConstants();
         }
     }
@@ -257,16 +262,16 @@ namespace Codinsa2015.Server
     /// </summary>
     public class SpawnerConstants : EntityConstants
     {
-        public int CreepsPerWave; // nombre de creeps par vague
-        public float CreepSpawnDelay; // délai entre le spawn de 2 creeps.
+        public int VirusPerWave; // nombre de Virus par vague
+        public float ViruspawnDelay; // délai entre le spawn de 2 Virus.
         public float WavesInterval; // délai entre l'apparition de 2 vagues
         public int Rows;          // nombre de lignes de sbires.
 
         public SpawnerConstants() : base()
         {
-            CreepsPerWave = 16;
+            VirusPerWave = 16;
             WavesInterval = 45.0f;
-            CreepSpawnDelay = 0.1f;
+            ViruspawnDelay = 0.1f;
             Rows = 4;
         }
     }
@@ -346,13 +351,13 @@ namespace Codinsa2015.Server
     }
 
     /// <summary>
-    /// Constantes des creeps.
+    /// Constantes des Virus.
     /// </summary>
-    public class CreepConstants : EntityConstants
+    public class VirusConstants : EntityConstants
     {
         public float AttackRange;
 
-        public CreepConstants() : base()
+        public VirusConstants() : base()
         {
             HP = 100;
             VisionRange = 4.0f;
@@ -384,14 +389,14 @@ namespace Codinsa2015.Server
 
     }
 
-    public class MinibossConstants : EntityConstants
+    public class RouterConstants : EntityConstants
     {        
         /// <summary>
         /// Distance maximale à laquelle cette unité peut s'éloigner de GuardPosition.
         /// </summary>
         public float MaxMoveDistance;
         public float AttackRange;
-        public MinibossConstants()
+        public RouterConstants()
         {
             MaxMoveDistance = 5;
             AttackSpeed = 0.75f;
@@ -521,12 +526,12 @@ namespace Codinsa2015.Server
     }
 
     /// <summary>
-    /// Constantes concernant l'idole;
+    /// Constantes concernant l'Datacenter;
     /// </summary>
-    public class IdolConstants : EntityConstants
+    public class DatacenterConstants : EntityConstants
     {
 
-        public IdolConstants()
+        public DatacenterConstants()
         {
             
         }
@@ -540,19 +545,19 @@ namespace Codinsa2015.Server
     {
         public VisionConstants Vision;
         public StructureConstants Structures;
-        public CreepConstants Creeps;
-        public CreepConstants BuffedCreeps;
+        public VirusConstants Virus;
+        public VirusConstants BuffedVirus;
         public RoleConstants Roles;
         public RewardConstants Rewards;
         public CampMonsterConstants CampMonsters;
-        public MinibossConstants Minibosses;
+        public RouterConstants Routeres;
         public EventConstants Events;
         public UniquePassiveConstants UniquePassives;
         public ActiveSpellsConstants ActiveSpells;
         public HeroConstants Heroes;
         public TowerConstants Towers;
         public EquipConstants Equip;
-        public IdolConstants IdolConstants;
+        public DatacenterConstants DatacenterConstants;
         /// <summary>
         /// Crée une nouvelle instance de GameConstants avec des constantes par défaut.
         /// </summary>
@@ -560,19 +565,19 @@ namespace Codinsa2015.Server
         {
             Vision = new VisionConstants();
             Structures = new StructureConstants();
-            Creeps = new CreepConstants();
+            Virus = new VirusConstants();
             Roles = new RoleConstants();
             Rewards = new RewardConstants();
             Events = new EventConstants();
             CampMonsters = new CampMonsterConstants();
-            Minibosses = new MinibossConstants();
-            BuffedCreeps = new CreepConstants();
+            Routeres = new RouterConstants();
+            BuffedVirus = new VirusConstants();
             UniquePassives = new UniquePassiveConstants();
             ActiveSpells = new ActiveSpellsConstants();
             Equip = new EquipConstants();
             Heroes = new HeroConstants();
             Towers = new TowerConstants();
-            IdolConstants = new IdolConstants();
+            DatacenterConstants = new DatacenterConstants();
         }
 
         /// <summary>

@@ -7,19 +7,22 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Codinsa2015.Server.Entities
 {
     /// <summary>
-    /// Représente l'idole d'une équipe.
-    /// Une fois tué, la partie se termine.
+    /// Représente la mining farm.
+    /// Tuer la mining farm rapporte :
+    /// des points d’amélioration pour tout l’équipe
+    /// la réapparition du bâtiment d’unité de spawn s’il est détruit,
+    /// ou la création de sbires beaucoup plus puissants.
     /// </summary>
-    public class EntityIdol : EntityBase
+    public class EntityMiningFarm : EntityBase
     {
         #region Variables
         /// <summary>
-        /// Référence vers l'entité ayant l'aggro de l'idole.
+        /// Référence vers l'entité ayant l'aggro du boss.
         /// </summary>
         EntityBase m_currentAgro;
 
         /// <summary>
-        /// Sort d'attaque de l'idole.
+        /// Sort d'attaque du boss.
         /// </summary>
         Spells.Spell m_attackSpell;
 
@@ -36,9 +39,9 @@ namespace Codinsa2015.Server.Entities
 
         #region Methods
         /// <summary>
-        /// Crée une nouvelle instance de EntityIdol
+        /// Crée une nouvelle instance de EntityBigBoss.
         /// </summary>
-        public EntityIdol()
+        public EntityMiningFarm()
             : base()
         {
             BaseArmor = 80;
@@ -48,7 +51,7 @@ namespace Codinsa2015.Server.Entities
             HP = BaseMaxHP;
             VisionRange = 6.0f;
             AttackRange = VisionRange;
-            Type |= EntityType.Idol;
+            Type |= EntityType.MiningFarm;
             m_attackSpell = new Spells.FireballSpell(this);
         }
 
@@ -60,9 +63,6 @@ namespace Codinsa2015.Server.Entities
             base.DoUpdate(time);
             UpdateAggro();
             Attack(time);
-            /*
-            if ((Type & EntityType.Teams) == EntityType.Team2)
-                HP -= 1f;*/
         }
         /// <summary>
         /// Attaque l'ennemi ayant l'agro.
@@ -80,7 +80,7 @@ namespace Codinsa2015.Server.Entities
             }
         }
         /// <summary>
-        /// Mets à jour l'aggro de l'idole.
+        /// Mets à jour l'aggro du big boss.
         /// </summary>
         void UpdateAggro()
         {
@@ -95,12 +95,12 @@ namespace Codinsa2015.Server.Entities
                 }
             }
 
-            // Si la tour n'a pas d'aggro : on cherche la première unité creep en range
+            // Si la tour n'a pas d'aggro : on cherche la première unité Virus en range
             if (m_currentAgro == null)
             {
-                EntityType ennemyCreep = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyCreep, this.Type & (EntityType.Team1 | EntityType.Team2));
-                EntityBase nearestEnnemyCreep = entitiesInRange.GetEntitiesByType(ennemyCreep).NearestFrom(this.Position);
-                m_currentAgro = nearestEnnemyCreep;
+                EntityType ennemyVirus = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyVirus, this.Type & (EntityType.Team1 | EntityType.Team2));
+                EntityBase nearestEnnemyVirus = entitiesInRange.GetEntitiesByType(ennemyVirus).NearestFrom(this.Position);
+                m_currentAgro = nearestEnnemyVirus;
             }
             // Si on n'en trouve pas : on cherche le premier héros en range.
             if (m_currentAgro == null)
@@ -133,16 +133,6 @@ namespace Codinsa2015.Server.Entities
                     }
                 }
             }
-        }
-
-
-        /// <summary>
-        /// La mort de l'idole mets fin au jeu.
-        /// </summary>
-        public override void Die()
-        {
-            base.Die();
-            GameServer.GetScene().EndGame();
         }
         #endregion
 

@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Codinsa2015.Server.Entities
 {
     /// <summary>
-    /// Représente un creep.
+    /// Représente un Virus.
     /// </summary>
-    public class EntityCreep : EntityBase
+    public class EntityVirus : EntityBase
     {
         static Random s_random = new Random();
         /// <summary>
@@ -18,7 +18,7 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         const float AttackRangeApproach = 0.80f;
         /// <summary>
-        /// Délai moyen (+- 10%) après lequel l'aggro des creeps sera mise à jour.
+        /// Délai moyen (+- 10%) après lequel l'aggro des Virus sera mise à jour.
         /// </summary>
         const float AggroUpdateDelay = 0.100f;
         /// <summary>
@@ -38,12 +38,12 @@ namespace Codinsa2015.Server.Entities
         Spells.Spell m_attackSpell;
 
         /// <summary>
-        /// Range du creep, en unités métriques.
+        /// Range du Virus, en unités métriques.
         /// </summary>
         float AttackRange { get; set; }
 
         /// <summary>
-        /// Obtient la rangée de checkpoints que devra suivre ce creep.
+        /// Obtient la rangée de checkpoints que devra suivre ce Virus.
         /// </summary>
         public int Row { get; set; }
         
@@ -51,7 +51,7 @@ namespace Codinsa2015.Server.Entities
         Trajectory m_path;
 
         /// <summary>
-        /// Checkpoint actuel de la trajectoire prévue du creep.
+        /// Checkpoint actuel de la trajectoire prévue du Virus.
         /// </summary>
         int m_currentCheckpointId;
 
@@ -65,14 +65,14 @@ namespace Codinsa2015.Server.Entities
         /// <summary>
         /// Crée une nouvelle instance de EntityTower.
         /// </summary>
-        public EntityCreep() : base()
+        public EntityVirus() : base()
         {
-            LoadEntityConstants(GameServer.GetScene().Constants.Creeps);
-            AttackRange = GameServer.GetScene().Constants.Creeps.AttackRange;
+            LoadEntityConstants(GameServer.GetScene().Constants.Virus);
+            AttackRange = GameServer.GetScene().Constants.Virus.AttackRange;
             HP = BaseMaxHP;
             m_currentCheckpointId = -1;
             m_attackSpell = new Spells.FireballSpell(this);
-            Type |= EntityType.Creep;
+            Type |= EntityType.Virus;
         }
 
         /// <summary>
@@ -87,12 +87,12 @@ namespace Codinsa2015.Server.Entities
         }
         
         /// <summary>
-        /// Applique le buff du big boss à ce creep.
+        /// Applique le buff du big boss à ce Virus.
         /// </summary>
         public void ApplyBossBuff()
         {
-            LoadEntityConstants(GameServer.GetScene().Constants.BuffedCreeps);
-            AttackRange = GameServer.GetScene().Constants.BuffedCreeps.AttackRange;
+            LoadEntityConstants(GameServer.GetScene().Constants.BuffedVirus);
+            AttackRange = GameServer.GetScene().Constants.BuffedVirus.AttackRange;
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace Codinsa2015.Server.Entities
         }
 
         /// <summary>
-        /// Calcule la trajectoire de ce creep.
+        /// Calcule la trajectoire de ce Virus.
         /// </summary>
         void ComputePath()
         {
@@ -132,7 +132,7 @@ namespace Codinsa2015.Server.Entities
         }
 
         /// <summary>
-        /// Fait avancer ce creep vers sa destination.
+        /// Fait avancer ce Virus vers sa destination.
         /// </summary>
         void Travel(GameTime time)
         {
@@ -146,15 +146,15 @@ namespace Codinsa2015.Server.Entities
             Vector2 nextPosition = m_path.CurrentStep;
 
             // Si on est trop près d'un sbire, on s'arrête
-            EntityType allyCreepsType = EntityTypeConverter.ToAbsolute(EntityTypeRelative.AllyCreep, Type);
-            EntityCollection allyCreeps = GameServer.GetMap().Entities.GetEntitiesByType(allyCreepsType);
-            foreach(var kvp in allyCreeps)
+            EntityType allyVirusType = EntityTypeConverter.ToAbsolute(EntityTypeRelative.AllyVirus, Type);
+            EntityCollection allyVirus = GameServer.GetMap().Entities.GetEntitiesByType(allyVirusType);
+            foreach(var kvp in allyVirus)
             {
-                EntityCreep entity = (EntityCreep)kvp.Value;
+                EntityVirus entity = (EntityVirus)kvp.Value;
                 if (entity == this || entity.Row != this.Row)
                     continue;
 
-                // Ce creep est trop près, on s'arrête s'il a le même aggro et est plus proche.
+                // Ce Virus est trop près, on s'arrête s'il a le même aggro et est plus proche.
                 if(Vector2.DistanceSquared(entity.Position, Position) <= 4.0f)
                 {
                     if (entity.ID < this.ID)
@@ -163,7 +163,7 @@ namespace Codinsa2015.Server.Entities
                 }
             }
 
-            // on s'arrête quand on est en range d'une tour / creep.
+            // on s'arrête quand on est en range d'une tour / Virus.
             float dstSqr = Vector2.DistanceSquared(m_path.LastPosition(), Position);
             float range = AttackRange * AttackRangeApproach;
             if (m_currentAgro.Type.HasFlag(EntityType.Checkpoint) || dstSqr > range * range)
@@ -175,7 +175,7 @@ namespace Codinsa2015.Server.Entities
 
         float __updateAgroDelay;
         /// <summary>
-        /// Mets à jour l'aggro du creep.
+        /// Mets à jour l'aggro du Virus.
         /// </summary>
         void UpdateAggro(GameTime time)
         {
@@ -199,23 +199,23 @@ namespace Codinsa2015.Server.Entities
             if (m_currentAgro != null && (m_currentAgro.IsDead || !HasSightOn(m_currentAgro)))
                 m_currentAgro = null;
 
-            // Si la creep n'a pas d'aggro : on cherche la première unité creep en range
-            EntityType ennemyCreepType = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyCreep, this.Type & (EntityType.Team1 | EntityType.Team2));
-            EntityBase nearestEnnemyCreep = entitiesInRange.GetEntitiesByType(ennemyCreepType).NearestFrom(this.Position);
-            if(nearestEnnemyCreep != null)
-                m_currentAgro = nearestEnnemyCreep;
+            // Si la Virus n'a pas d'aggro : on cherche la première unité Virus en range
+            EntityType ennemyVirusType = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyVirus, this.Type & (EntityType.Team1 | EntityType.Team2));
+            EntityBase nearestEnnemyVirus = entitiesInRange.GetEntitiesByType(ennemyVirusType).NearestFrom(this.Position);
+            if(nearestEnnemyVirus != null)
+                m_currentAgro = nearestEnnemyVirus;
             
-            // S'il n'y a pas de creep ennemi en range, on regarde si il y a une tour en range.
+            // S'il n'y a pas de Virus ennemi en range, on regarde si il y a une tour en range.
             EntityType ennemyTower = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyTower, this.Type & (EntityType.Team1 | EntityType.Team2));
             EntityBase nearestTower = entitiesInRange.GetEntitiesByType(ennemyTower).NearestFrom(this.Position);
             if(nearestTower != null)
                 m_currentAgro = nearestTower;
 
-            // Idole
-            EntityType ennemyIdol = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyIdol, this.Type & (EntityType.Team1 | EntityType.Team2));
-            EntityBase nearestIdol = entitiesInRange.GetEntitiesByType(ennemyIdol).NearestFrom(this.Position);
-            if (nearestIdol != null)
-                m_currentAgro = nearestIdol;
+            // Datacenter
+            EntityType ennemyDatacenter = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyDatacenter, this.Type & (EntityType.Team1 | EntityType.Team2));
+            EntityBase nearestDatacenter = entitiesInRange.GetEntitiesByType(ennemyDatacenter).NearestFrom(this.Position);
+            if (nearestDatacenter != null)
+                m_currentAgro = nearestDatacenter;
 
             // Si on n'en trouve pas : on cherche le premier héros en range.
             EntityType ennemyHero = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyPlayer, this.Type & (EntityType.Team1 | EntityType.Team2));

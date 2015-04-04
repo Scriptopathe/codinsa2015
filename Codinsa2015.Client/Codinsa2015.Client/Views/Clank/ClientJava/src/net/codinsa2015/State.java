@@ -8,10 +8,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import net.codinsa2015.PickAction.*;
+import java.util.ArrayList;
+import net.codinsa2015.EntityUniquePassives.*;
+import net.codinsa2015.PickResult.*;
 import net.codinsa2015.ShopTransactionResult.*;
 import net.codinsa2015.EquipmentType.*;
 import net.codinsa2015.WeaponModelView.*;
-import java.util.ArrayList;
 import net.codinsa2015.EntityBaseView.*;
 import net.codinsa2015.Vector2.*;
 import net.codinsa2015.SpellCastTargetInfoView.*;
@@ -25,6 +28,122 @@ import net.codinsa2015.GameStaticDataView.*;
 public class State
 {
 
+	//  Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
+	public PickAction Picks_NextAction()
+	{
+		try {
+		System.out.println("[Picks_NextAction]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)0).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		PickAction returnValue = PickAction.fromValue(Integer.valueOf(input.readLine()));
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
+	public ArrayList<Integer> Picks_GetActiveSpells(Integer id)
+	{
+		try {
+		System.out.println("[Picks_GetActiveSpells]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)1).toString() + "\n");
+		output.append(((Integer)id).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		ArrayList<Integer> returnValue = new ArrayList<Integer>();
+		int returnValue_count = Integer.valueOf(input.readLine());
+		for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+			int returnValue_e = Integer.valueOf(input.readLine());
+			returnValue.add((Integer)returnValue_e);
+		}
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs
+	// disponibles.
+	public ArrayList<EntityUniquePassives> Picks_GetPassiveSpells(Integer id)
+	{
+		try {
+		System.out.println("[Picks_GetPassiveSpells]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)2).toString() + "\n");
+		output.append(((Integer)id).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		ArrayList<EntityUniquePassives> returnValue = new ArrayList<EntityUniquePassives>();
+		int returnValue_count = Integer.valueOf(input.readLine());
+		for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+			EntityUniquePassives returnValue_e = EntityUniquePassives.fromValue(Integer.valueOf(input.readLine()));
+			returnValue.add((EntityUniquePassives)returnValue_e);
+		}
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).
+	public PickResult Picks_PickPassive(EntityUniquePassives passive)
+	{
+		try {
+		System.out.println("[Picks_PickPassive]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)3).toString() + "\n");
+		output.append(((Integer)(passive.getValue())).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		PickResult returnValue = PickResult.fromValue(Integer.valueOf(input.readLine()));
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Lors de la phase de picks, permet à l'IA de pick un spell actif dont l'id est donné (si c'est son
+	// tour).
+	public PickResult Picks_PickActive(Integer spell)
+	{
+		try {
+		System.out.println("[Picks_PickActive]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)4).toString() + "\n");
+		output.append(((Integer)spell).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		PickResult returnValue = PickResult.fromValue(Integer.valueOf(input.readLine()));
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
 	//  Achète et équipe un objet d'id donné au shop. Les ids peuvent être obtenus via
 	// ShopGetWeapons(),ShopGetArmors(), ShopGetBoots() etc...
 	public ShopTransactionResult ShopPurchaseItem(Integer equipId)
@@ -33,7 +152,7 @@ public class State
 		System.out.println("[ShopPurchaseItem]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)0).toString() + "\n");
+		output.append(((Integer)5).toString() + "\n");
 		output.append(((Integer)equipId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -54,7 +173,7 @@ public class State
 		System.out.println("[ShopPurchaseConsummable]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)1).toString() + "\n");
+		output.append(((Integer)6).toString() + "\n");
 		output.append(((Integer)consummableId).toString() + "\n");
 		output.append(((Integer)slot).toString() + "\n");
 		output.close();
@@ -77,7 +196,7 @@ public class State
 		System.out.println("[ShopSell]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)2).toString() + "\n");
+		output.append(((Integer)7).toString() + "\n");
 		output.append(((Integer)(equipType.getValue())).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -98,7 +217,7 @@ public class State
 		System.out.println("[ShopSellConsummable]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)3).toString() + "\n");
+		output.append(((Integer)8).toString() + "\n");
 		output.append(((Integer)slot).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -119,7 +238,7 @@ public class State
 		System.out.println("[ShopUpgrade]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)4).toString() + "\n");
+		output.append(((Integer)9).toString() + "\n");
 		output.append(((Integer)(equipType.getValue())).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -140,7 +259,7 @@ public class State
 		System.out.println("[ShopGetWeapons]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)5).toString() + "\n");
+		output.append(((Integer)10).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -165,7 +284,7 @@ public class State
 		System.out.println("[ShopGetArmors]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)6).toString() + "\n");
+		output.append(((Integer)11).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -190,7 +309,7 @@ public class State
 		System.out.println("[ShopGetBoots]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)7).toString() + "\n");
+		output.append(((Integer)12).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -215,7 +334,7 @@ public class State
 		System.out.println("[ShopGetEnchants]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)8).toString() + "\n");
+		output.append(((Integer)13).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -240,7 +359,7 @@ public class State
 		System.out.println("[GetMyWeaponId]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)9).toString() + "\n");
+		output.append(((Integer)14).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -260,7 +379,7 @@ public class State
 		System.out.println("[GetMyWeaponLevel]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)10).toString() + "\n");
+		output.append(((Integer)15).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -280,7 +399,7 @@ public class State
 		System.out.println("[GetMyArmorId]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)11).toString() + "\n");
+		output.append(((Integer)16).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -300,7 +419,7 @@ public class State
 		System.out.println("[GetMyArmorLevel]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)12).toString() + "\n");
+		output.append(((Integer)17).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -320,7 +439,7 @@ public class State
 		System.out.println("[GetMyBootsId]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)13).toString() + "\n");
+		output.append(((Integer)18).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -340,7 +459,7 @@ public class State
 		System.out.println("[GetMyBootsLevel]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)14).toString() + "\n");
+		output.append(((Integer)19).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -360,7 +479,7 @@ public class State
 		System.out.println("[GetMyWeaponEnchantId]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)15).toString() + "\n");
+		output.append(((Integer)20).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -380,7 +499,7 @@ public class State
 		System.out.println("[GetMyHero]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)16).toString() + "\n");
+		output.append(((Integer)21).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -400,7 +519,7 @@ public class State
 		System.out.println("[GetMyPosition]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)17).toString() + "\n");
+		output.append(((Integer)22).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -420,7 +539,7 @@ public class State
 		System.out.println("[StartMoveTo]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)18).toString() + "\n");
+		output.append(((Integer)23).toString() + "\n");
 		position.serialize(output);
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -441,7 +560,7 @@ public class State
 		System.out.println("[IsAutoMoving]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)19).toString() + "\n");
+		output.append(((Integer)24).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -461,7 +580,7 @@ public class State
 		System.out.println("[EndMoveTo]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)20).toString() + "\n");
+		output.append(((Integer)25).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -481,7 +600,7 @@ public class State
 		System.out.println("[GetEntitiesInSight]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)21).toString() + "\n");
+		output.append(((Integer)26).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -507,7 +626,7 @@ public class State
 		System.out.println("[GetEntityById]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)22).toString() + "\n");
+		output.append(((Integer)27).toString() + "\n");
 		output.append(((Integer)entityId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -528,7 +647,7 @@ public class State
 		System.out.println("[GetMySpells]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)23).toString() + "\n");
+		output.append(((Integer)28).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -553,7 +672,7 @@ public class State
 		System.out.println("[UseMySpell]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)24).toString() + "\n");
+		output.append(((Integer)29).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		target.serialize(output);
 		output.close();
@@ -575,7 +694,7 @@ public class State
 		System.out.println("[GetMySpell]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)25).toString() + "\n");
+		output.append(((Integer)30).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -589,14 +708,14 @@ public class State
 		return null;
 	}
 
-	//  Obtient le mode actuel de la scène.
+	//  Obtient la phase actuelle du jeu : Pick (=> phase de picks) ou Game (phase de jeu).
 	public SceneMode GetMode()
 	{
 		try {
 		System.out.println("[GetMode]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)26).toString() + "\n");
+		output.append(((Integer)31).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -610,13 +729,13 @@ public class State
 	}
 
 	//  Obtient la description du spell dont l'id est donné en paramètre.
-	public SpellLevelDescriptionView GetSpellCurrentLevelDescription(Integer spellId)
+	public SpellLevelDescriptionView GetMySpellCurrentLevelDescription(Integer spellId)
 	{
 		try {
-		System.out.println("[GetSpellCurrentLevelDescription]");
+		System.out.println("[GetMySpellCurrentLevelDescription]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)27).toString() + "\n");
+		output.append(((Integer)32).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -637,7 +756,7 @@ public class State
 		System.out.println("[GetStaticData]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)28).toString() + "\n");
+		output.append(((Integer)33).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();

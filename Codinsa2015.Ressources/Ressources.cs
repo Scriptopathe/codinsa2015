@@ -152,14 +152,16 @@ namespace Codinsa2015
         public static Texture2D RedFighter { get; set; }
         public static Texture2D RedMage { get; set; }
         public static Texture2D RedTank { get; set; }
-        public static Texture2D RedCreep { get; set; }
-        public static Texture2D BlueCreep { get; set; }
+        public static Texture2D RedVirus { get; set; }
+        public static Texture2D BlueVirus { get; set; }
         public static Texture2D Fireball { get; set; }
         public static Texture2D SpellZone { get; set; }
         public static Texture2D BlindIcon { get; set; }
         public static Texture2D SilenceIcon { get; set; }
         public static Texture2D Team1Wins { get; set; }
         public static Texture2D Team2Wins { get; set; }
+        public static Texture2D BlueDatacenter { get; set; }
+        public static Texture2D RedDatacenter { get; set; }
         /// <summary>
         /// Charge les ressources à partir du content manager passé en paramètre.
         /// </summary>
@@ -168,14 +170,16 @@ namespace Codinsa2015
         {
             Content = content;
             Device = device;
+            BlueDatacenter = content.Load<Texture2D>("textures/charsets/nexus_bleu"); 
+            RedDatacenter = content.Load<Texture2D>("textures/charsets/nexus_rouge");
             Team1Wins = content.Load<Texture2D>("textures/team1wins");
             Team2Wins = content.Load<Texture2D>("textures/team2wins");
             BlindIcon = content.Load<Texture2D>("textures/effects/blind");
             SilenceIcon = content.Load<Texture2D>("textures/effects/silence");
             SpellZone = content.Load<Texture2D>("textures/effects/spellzone");
             Fireball = content.Load<Texture2D>("textures/effects/fireball");
-            BlueCreep = content.Load<Texture2D>("textures/charsets/creep_bleu");
-            RedCreep = content.Load<Texture2D>("textures/charsets/creep_rouge");
+            BlueVirus = content.Load<Texture2D>("textures/charsets/Virus_bleu");
+            RedVirus = content.Load<Texture2D>("textures/charsets/Virus_rouge");
             BlueFighter = content.Load<Texture2D>("textures/charsets/combattant_bleu");
             BlueMage = content.Load<Texture2D>("textures/charsets/mage_bleu");
             BlueTank = content.Load<Texture2D>("textures/charsets/tank_bleu");

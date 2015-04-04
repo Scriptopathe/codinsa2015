@@ -21,9 +21,9 @@ namespace Codinsa2015.Server.Events
         /// </summary>
         Vector2 m_position;
         /// <summary>
-        /// Offset déterminant le spawn des creeps.
+        /// Offset déterminant le spawn des Virus.
         /// </summary>
-        Vector2 m_creepSpawnOffset;
+        Vector2 m_ViruspawnOffset;
         /// <summary>
         /// Indique si le camp est actuellement dans l'état détruit.
         /// </summary>
@@ -41,9 +41,9 @@ namespace Codinsa2015.Server.Events
         /// </summary>
         float m_respawnTimer;
         /// <summary>
-        /// Temps restant avec le spawn du prochain creep.
+        /// Temps restant avec le spawn du prochain Virus.
         /// </summary>
-        float m_creepSpawnTimer;
+        float m_ViruspawnTimer;
         /// <summary>
         /// Représente la team propriétaire du camp.
         /// </summary>
@@ -83,7 +83,7 @@ namespace Codinsa2015.Server.Events
             m_teamOwner = 0;
             m_monsters = new List<Entities.EntityCampMonster>();
             m_lastKiller = null;
-            m_creepSpawnOffset = new Vector2(0, 2);
+            m_ViruspawnOffset = new Vector2(0, 2);
             m_respawnTimer = 0; // GameServer.GetScene().Constants.Events.MonsterCamp.RespawnTimer;
         }
 
@@ -145,11 +145,11 @@ namespace Codinsa2015.Server.Events
             // Si une team a l'ownership du camp, on fait spawn des sbires.
             if (m_teamOwner != 0)
             {
-                m_creepSpawnTimer -= (float)time.ElapsedGameTime.TotalSeconds;
-                if (m_creepSpawnTimer <= 0)
+                m_ViruspawnTimer -= (float)time.ElapsedGameTime.TotalSeconds;
+                if (m_ViruspawnTimer <= 0)
                 {
-                    m_creepSpawnTimer = GameServer.GetScene().Constants.Events.MonsterCamp.CreepSpawnInterval;
-                    SpawnCreep();
+                    m_ViruspawnTimer = GameServer.GetScene().Constants.Events.MonsterCamp.ViruspawnInterval;
+                    SpawnVirus();
                 }
             }
           
@@ -177,17 +177,17 @@ namespace Codinsa2015.Server.Events
                 }
         }
         /// <summary>
-        /// Fait apparaître un creep.
+        /// Fait apparaître un Virus.
         /// </summary>
-        void SpawnCreep()
+        void SpawnVirus()
         {
-            Entities.EntityCreep creep = new Entities.EntityCreep()
+            Entities.EntityVirus Virus = new Entities.EntityVirus()
             {
-                Type = Entities.EntityType.Creep | m_teamOwner,
+                Type = Entities.EntityType.Virus | m_teamOwner,
                 Row = 0,
-                Position = m_position + m_creepSpawnOffset
+                Position = m_position + m_ViruspawnOffset
             };
-            GameServer.GetMap().AddEntity(creep);
+            GameServer.GetMap().AddEntity(Virus);
         }
 
         /// <summary>

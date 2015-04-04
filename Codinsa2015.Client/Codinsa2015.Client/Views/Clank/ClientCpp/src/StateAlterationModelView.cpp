@@ -38,8 +38,8 @@ void StateAlterationModelView::serialize(std::ostream& output) {
 	output << ((float)this->StructureBonus) << '\n';
 	// MonsterBonus
 	output << ((float)this->MonsterBonus) << '\n';
-	// CreepBonus
-	output << ((float)this->CreepBonus) << '\n';
+	// VirusBonus
+	output << ((float)this->VirusBonus) << '\n';
 }
 
 StateAlterationModelView StateAlterationModelView::deserialize(std::istream& input) {
@@ -103,9 +103,9 @@ StateAlterationModelView StateAlterationModelView::deserialize(std::istream& inp
 	// MonsterBonus
 	float _obj_MonsterBonus; input >> _obj_MonsterBonus; input.ignore(1000, '\n');
 	_obj.MonsterBonus = (float)_obj_MonsterBonus;
-	// CreepBonus
-	float _obj_CreepBonus; input >> _obj_CreepBonus; input.ignore(1000, '\n');
-	_obj.CreepBonus = (float)_obj_CreepBonus;
+	// VirusBonus
+	float _obj_VirusBonus; input >> _obj_VirusBonus; input.ignore(1000, '\n');
+	_obj.VirusBonus = (float)_obj_VirusBonus;
 	return _obj;
 }
 

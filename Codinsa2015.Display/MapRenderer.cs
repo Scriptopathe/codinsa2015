@@ -359,7 +359,7 @@ namespace Codinsa2015.Rendering
                 case DataMode.Remote:
                     foreach(var entity in MapView.Entities)
                     {
-                        m_entityRenderer.Draw(batch, time, entity.Position, entity.Type, entity.Role);
+                        // m_entityRenderer.Draw(batch, time, entity.Position, entity.Type, entity.Role);
                     }
                     foreach(var cast in MapView.SpellCasts)
                     {

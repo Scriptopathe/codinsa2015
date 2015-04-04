@@ -88,20 +88,20 @@ namespace Codinsa2015.Server.Controlers
         }
 
         [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.")]
-        public PickAction Picks_NextAction()
+        public Views.PickAction Picks_NextAction()
         {
             if(GameServer.GetScene().Mode != SceneMode.Pick)
-                return PickAction.Wait;
+                return Views.PickAction.Wait;
 
             bool myTurn = GameServer.GetScene().PickControler.IsMyTurn(Hero.ID);
             if (!myTurn)
-                return PickAction.Wait;
+                return Views.PickAction.Wait;
             else
             {
                 if (GameServer.GetScene().PickControler.IsPickingActive())
-                    return PickAction.PickActive;
+                    return Views.PickAction.PickActive;
                 else
-                    return PickAction.PickPassive;
+                    return Views.PickAction.PickPassive;
             }
         }
         [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.")]
@@ -124,31 +124,31 @@ namespace Codinsa2015.Server.Controlers
         }
 
         [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).")]
-        public PickResult Picks_PickPassive(Views.EntityUniquePassives passive)
+        public Views.PickResult Picks_PickPassive(Views.EntityUniquePassives passive)
         {
             if (GameServer.GetScene().Mode != SceneMode.Pick)
-                return PickResult.NotYourTurn;
+                return Views.PickResult.NotYourTurn;
             bool myTurn = GameServer.GetScene().PickControler.IsMyTurn(Hero.ID);
             bool isPickingActive = GameServer.GetScene().PickControler.IsPickingActive();
             Entities.EntityUniquePassives p = (Entities.EntityUniquePassives)passive;
             if (!myTurn || isPickingActive)
-                return PickResult.NotYourTurn;
+                return Views.PickResult.NotYourTurn;
 
-            return GameServer.GetScene().PickControler.PickPassiveSpell(this.Hero.ID, p);
+            return (Views.PickResult)GameServer.GetScene().PickControler.PickPassiveSpell(this.Hero.ID, p);
         }
 
         [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, permet à l'IA de pick un spell actif dont l'id est donné (si c'est son tour).")]
-        public PickResult Picks_PickActive(int spell)
+        public Views.PickResult Picks_PickActive(int spell)
         {
             if (GameServer.GetScene().Mode != SceneMode.Pick)
-                return PickResult.NotYourTurn;
+                return Views.PickResult.NotYourTurn;
             bool myTurn = GameServer.GetScene().PickControler.IsMyTurn(Hero.ID);
             bool isPickingActive = GameServer.GetScene().PickControler.IsPickingActive();
             
             if (!myTurn || !isPickingActive)
-                return PickResult.NotYourTurn;
+                return Views.PickResult.NotYourTurn;
 
-            return GameServer.GetScene().PickControler.PickActiveSpell(this.Hero.ID, spell);
+            return (Views.PickResult)GameServer.GetScene().PickControler.PickActiveSpell(this.Hero.ID, spell);
         }
 
         #endregion
@@ -540,7 +540,7 @@ namespace Codinsa2015.Server.Controlers
                 view.Position = V2ToView(entity.Position);
                 view.ShieldPoints = entity.ShieldPoints;
                 // view.StateAlterations = entity.StateAlterations.ToView();
-                view.Type = (Views.EntityType)entity.Type;
+                view.Type = (Views.EntityTypeRelative)(Entities.EntityTypeConverter.ToRelative(entity.Type, Hero.Type & Entities.EntityType.Teams));
                 view.VisionRange = entity.VisionRange;
                 return view;
             }
@@ -613,7 +613,7 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Obtient le mode de scène actuel.
         /// </summary>
-        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient le mode actuel de la scène.")]
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient la phase actuelle du jeu : Pick (=> phase de picks) ou Game (phase de jeu).")]
         public Views.SceneMode GetMode()
         {
             return (Views.SceneMode)GameServer.GetScene().Mode;
@@ -623,7 +623,7 @@ namespace Codinsa2015.Server.Controlers
         /// Obtient la description du spell dont l'id est donné en paramètre.
         /// </summary>
         [Clank.ViewCreator.Access(controlerAccessStr, "Obtient la description du spell dont l'id est donné en paramètre.")]
-        public Views.SpellLevelDescriptionView GetSpellCurrentLevelDescription(int spellId)
+        public Views.SpellLevelDescriptionView GetMySpellCurrentLevelDescription(int spellId)
         {
             if (GameServer.GetScene().Mode != SceneMode.Game)
                 return new Views.SpellLevelDescriptionView();

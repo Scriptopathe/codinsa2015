@@ -178,8 +178,8 @@ namespace Codinsa2015.Server
                                     CheckpointID = id
                                 };
                                 break;
-                            case EntityType.Idol:
-                                newEntity = new EntityIdol()
+                            case EntityType.Datacenter:
+                                newEntity = new EntityDatacenter()
                                 {
                                     Type = type,
                                     Position = new Vector2(sX, sY)
@@ -192,7 +192,7 @@ namespace Codinsa2015.Server
                                     Position = new Vector2(sX, sY)
                                 };
                                 break;
-                            case EntityType.Boss:
+                            case EntityType.MiningFarm:
                                 throw new NotImplementedException();
                                 break;
                         }
@@ -227,12 +227,12 @@ namespace Codinsa2015.Server
                             case EventId.Camp1:
                                 newEvent = new EventMonsterCamp() { Position = new Vector2(sX, sY) };
                                 break;
-                            case EventId.Miniboss1:
-                            case EventId.Miniboss2:
-                                newEvent = new EventMiniboss() { Position = new Vector2(sX, sY) };
+                            case EventId.Router1:
+                            case EventId.Router2:
+                                newEvent = new EventRouter() { Position = new Vector2(sX, sY) };
                                 break;
-                            case EventId.Bigboss:
-                                newEvent = new EventBigBoss() { Position = new Vector2(sX, sY) };
+                            case EventId.MiningFarm:
+                                newEvent = new EventMiningFarm() { Position = new Vector2(sX, sY) };
                                 break;
                         }
 

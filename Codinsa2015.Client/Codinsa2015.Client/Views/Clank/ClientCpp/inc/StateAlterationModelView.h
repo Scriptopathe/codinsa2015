@@ -47,8 +47,8 @@ public:
 	float StructureBonus;
 	// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un monstre neute.
 	float MonsterBonus;
-	// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.
-	float CreepBonus;
+	// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un Virus.
+	float VirusBonus;
 	void serialize(std::ostream& output);
 
 	static StateAlterationModelView deserialize(std::istream& input);

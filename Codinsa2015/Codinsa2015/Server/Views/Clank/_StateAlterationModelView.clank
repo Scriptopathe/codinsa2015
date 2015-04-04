@@ -49,7 +49,7 @@ state {
 		public float StructureBonus;
 		//Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un monstre neute.
 		public float MonsterBonus;
-		//Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.
-		public float CreepBonus;
+		//Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un Virus.
+		public float VirusBonus;
 	}
 }

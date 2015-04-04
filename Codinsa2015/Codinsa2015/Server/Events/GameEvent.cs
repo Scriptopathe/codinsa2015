@@ -10,7 +10,7 @@ namespace Codinsa2015.Server.Events
     /// </summary>
     public enum EventId
     {
-        Bigboss,
+        MiningFarm,
         Camp1,
         Camp2,
         Camp3,
@@ -19,8 +19,8 @@ namespace Codinsa2015.Server.Events
         Camp6,
         Camp7,
         Camp8,
-        Miniboss1,
-        Miniboss2,
+        Router1,
+        Router2,
         Resurrector,
     }
     /// <summary>

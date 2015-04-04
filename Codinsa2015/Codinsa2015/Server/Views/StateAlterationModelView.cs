@@ -94,9 +94,9 @@ namespace Codinsa2015.Views
 		/// </summary>
 		public float MonsterBonus;	
 		/// <summary>
-		/// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un creep.
+		/// Obtient le multiplicateur de dégâts lorsque l'altération est appliquée sur un Virus.
 		/// </summary>
-		public float CreepBonus;	
+		public float VirusBonus;	
 		public StateAlterationModelView() {
 		}
 
@@ -159,9 +159,9 @@ namespace Codinsa2015.Views
 			// MonsterBonus
 			float _obj_MonsterBonus = Single.Parse(input.ReadLine());
 			_obj.MonsterBonus = (float)_obj_MonsterBonus;
-			// CreepBonus
-			float _obj_CreepBonus = Single.Parse(input.ReadLine());
-			_obj.CreepBonus = (float)_obj_CreepBonus;
+			// VirusBonus
+			float _obj_VirusBonus = Single.Parse(input.ReadLine());
+			_obj.VirusBonus = (float)_obj_VirusBonus;
 			return _obj;
 		}
 
@@ -204,8 +204,8 @@ namespace Codinsa2015.Views
 			output.WriteLine(((float)this.StructureBonus).ToString());
 			// MonsterBonus
 			output.WriteLine(((float)this.MonsterBonus).ToString());
-			// CreepBonus
-			output.WriteLine(((float)this.CreepBonus).ToString());
+			// VirusBonus
+			output.WriteLine(((float)this.VirusBonus).ToString());
 		}
 
 	}

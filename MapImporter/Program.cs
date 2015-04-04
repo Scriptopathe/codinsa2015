@@ -69,8 +69,8 @@ namespace MapImporter
                 case 0xFF0000: // rouge = inhibiteur / spawner
                     b.AppendLine(teamStr + "Spawner " + posStr);
                     break;
-                case 0x0000FF: // bleu = idole
-                    b.AppendLine(teamStr + "Idol " + posStr);
+                case 0x0000FF: // bleu = Datacenter
+                    b.AppendLine(teamStr + "Datacenter " + posStr);
                     break;
                 case 0x00FF00: // vert = hero spawner
                     b.AppendLine(teamStr + "HeroSpawner " + posStr);
@@ -86,7 +86,7 @@ namespace MapImporter
                     s_campId++;
                     break;
                 case 0x404040: // gris = miniboss
-                    b.AppendLine("Miniboss" + s_minibossId + " " + posStr);
+                    b.AppendLine("Router" + s_minibossId + " " + posStr);
                     s_minibossId++;
                     break;
                 default: // checkpoints

@@ -152,8 +152,8 @@ EntityBaseView EntityBaseView::deserialize(std::istream& input) {
 	_obj.IsDead = (bool)_obj_IsDead;
 	// Type
 	int _obj_Type_asInt; input >> _obj_Type_asInt; input.ignore(1000, '\n');
-	EntityType _obj_Type = (EntityType)_obj_Type_asInt;
-	_obj.Type = (::EntityType)_obj_Type;
+	EntityTypeRelative _obj_Type = (EntityTypeRelative)_obj_Type_asInt;
+	_obj.Type = (::EntityTypeRelative)_obj_Type;
 	// ID
 	int _obj_ID; input >> _obj_ID; input.ignore(1000, '\n');
 	_obj.ID = (int)_obj_ID;

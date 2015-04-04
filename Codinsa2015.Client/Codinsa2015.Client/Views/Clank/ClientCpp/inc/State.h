@@ -16,6 +16,23 @@ class State
 {
 
 public: 
+	//  Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
+	PickAction Picks_NextAction();
+
+	//  Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
+	std::vector<int> Picks_GetActiveSpells(int id);
+
+	//  Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs
+	// disponibles.
+	std::vector<EntityUniquePassives> Picks_GetPassiveSpells(int id);
+
+	//  Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).
+	PickResult Picks_PickPassive(EntityUniquePassives passive);
+
+	//  Lors de la phase de picks, permet à l'IA de pick un spell actif dont l'id est donné (si c'est son
+	// tour).
+	PickResult Picks_PickActive(int spell);
+
 	//  Achète et équipe un objet d'id donné au shop. Les ids peuvent être obtenus via
 	// ShopGetWeapons(),ShopGetArmors(), ShopGetBoots() etc...
 	ShopTransactionResult ShopPurchaseItem(int equipId);
@@ -97,11 +114,11 @@ public:
 	//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
 	SpellView GetMySpell(int spellId);
 
-	//  Obtient le mode actuel de la scène.
+	//  Obtient la phase actuelle du jeu : Pick (=> phase de picks) ou Game (phase de jeu).
 	SceneMode GetMode();
 
 	//  Obtient la description du spell dont l'id est donné en paramètre.
-	SpellLevelDescriptionView GetSpellCurrentLevelDescription(int spellId);
+	SpellLevelDescriptionView GetMySpellCurrentLevelDescription(int spellId);
 
 	//  Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
 	GameStaticDataView GetStaticData();

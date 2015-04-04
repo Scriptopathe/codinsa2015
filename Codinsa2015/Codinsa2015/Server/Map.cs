@@ -176,7 +176,7 @@ namespace Codinsa2015.Server
         void CreateDebugEvents()
         {
             m_events.Add(EventId.Camp1, new Events.EventMonsterCamp());
-            m_events.Add(EventId.Miniboss2, new Events.EventMiniboss());
+            m_events.Add(EventId.Router2, new Events.EventRouter());
         }
 
         /// <summary>

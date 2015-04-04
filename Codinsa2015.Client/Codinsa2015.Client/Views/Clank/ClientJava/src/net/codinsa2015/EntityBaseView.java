@@ -11,7 +11,7 @@ import java.io.UnsupportedEncodingException;
 import net.codinsa2015.EntityUniquePassives.*;
 import net.codinsa2015.EntityHeroRole.*;
 import net.codinsa2015.Vector2.*;
-import net.codinsa2015.EntityType.*;
+import net.codinsa2015.EntityTypeRelative.*;
 
 
 @SuppressWarnings("unused")
@@ -63,8 +63,8 @@ public class EntityBaseView
 	public Float BaseMoveSpeed;
 	// Retourne une valeur indiquant si l'entité est morte.
 	public Boolean IsDead;
-	// Retourne le type de cette entité.
-	public EntityType Type;
+	// Obtient le type de cette entité.
+	public EntityTypeRelative Type;
 	// Obtient l'id de cette entité.
 	public Integer ID;
 	// Obtient ou définit les points d'attaque de base de cette unité.
@@ -173,7 +173,7 @@ public class EntityBaseView
 		boolean _obj_IsDead = Integer.valueOf(input.readLine()) == 0 ? false : true;
 		_obj.IsDead = _obj_IsDead;
 		// Type
-		EntityType _obj_Type = EntityType.fromValue(Integer.valueOf(input.readLine()));
+		EntityTypeRelative _obj_Type = EntityTypeRelative.fromValue(Integer.valueOf(input.readLine()));
 		_obj.Type = _obj_Type;
 		// ID
 		int _obj_ID = Integer.valueOf(input.readLine());

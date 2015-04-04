@@ -49,7 +49,7 @@
 [StateAlterationView{bg:white}]1--1+[StateAlterationParametersView]
 
 
-[StateAlterationModelView|+Type:StateAlterationType;+BaseDuration:float;+DashGoThroughWall:bool;+DashDirType:DashDirectionType;+FlatValue:float;+SourcePercentADValue:float;+SourcePercentHPValue:float;+SourcePercentMaxHPValue:float;+SourcePercentArmorValue:float;+SourcePercentAPValue:float;+SourcePercentRMValue:float;+DestPercentADValue:float;+DestPercentHPValue:float;+DestPercentMaxHPValue:float;+DestPercentArmorValue:float;+DestPercentAPValue:float;+DestPercentRMValue:float;+StructureBonus:float;+MonsterBonus:float;+CreepBonus:float;|]
+[StateAlterationModelView|+Type:StateAlterationType;+BaseDuration:float;+DashGoThroughWall:bool;+DashDirType:DashDirectionType;+FlatValue:float;+SourcePercentADValue:float;+SourcePercentHPValue:float;+SourcePercentMaxHPValue:float;+SourcePercentArmorValue:float;+SourcePercentAPValue:float;+SourcePercentRMValue:float;+DestPercentADValue:float;+DestPercentHPValue:float;+DestPercentMaxHPValue:float;+DestPercentArmorValue:float;+DestPercentAPValue:float;+DestPercentRMValue:float;+StructureBonus:float;+MonsterBonus:float;+VirusBonus:float;|]
 [StateAlterationModelView{bg:white}]1--1+[StateAlterationType]
 [StateAlterationModelView{bg:white}]1--1+[DashDirectionType]
 
