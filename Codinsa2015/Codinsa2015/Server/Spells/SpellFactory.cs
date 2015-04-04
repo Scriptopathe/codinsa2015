@@ -228,7 +228,7 @@ namespace Codinsa2015.Server.Spells
             });
 
             SpellModel spell = new SpellModel(new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
-                "hold on!");
+                "hold-on");
 
             return spell;
         }
@@ -276,7 +276,7 @@ namespace Codinsa2015.Server.Spells
             });
 
             SpellModel spell = new SpellModel(new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
-                "go!");
+                "go");
 
             return spell;
         }
@@ -413,7 +413,7 @@ namespace Codinsa2015.Server.Spells
             });
             SpellModel spell = new SpellModel(
                 new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
-                "bro-force");
+                "war-cry");
 
             return spell;
         }
@@ -466,7 +466,7 @@ namespace Codinsa2015.Server.Spells
 
             SpellModel spell = new SpellModel(
                 new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
-                "bim!");
+                "bim");
 
             return spell;
         }
@@ -586,7 +586,7 @@ namespace Codinsa2015.Server.Spells
 
             SpellModel spell = new SpellModel(
                 new List<SpellLevelDescription>() { lvl1, lvl2, lvl3 },
-                "max-gravity");
+                "maximum-gravity");
 
             return spell;
         }

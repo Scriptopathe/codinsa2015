@@ -727,7 +727,7 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 		/// </summary>
-		public bool UseMySpell(int spellId,SpellCastTargetInfoView target)
+		public SpellUseResult UseMySpell(int spellId,SpellCastTargetInfoView target)
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
@@ -740,8 +740,8 @@ namespace Codinsa2015.Views.Client
 			byte[] response = TCPHelper.Receive();
 			s = new System.IO.MemoryStream(response);
 			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			bool returnValue = Int32.Parse(input.ReadLine()) == 0 ? false : true;
-			return (bool)returnValue;
+			SpellUseResult returnValue = (SpellUseResult)Int32.Parse(input.ReadLine());
+			return (SpellUseResult)returnValue;
 		}
 	
 		/// <summary>

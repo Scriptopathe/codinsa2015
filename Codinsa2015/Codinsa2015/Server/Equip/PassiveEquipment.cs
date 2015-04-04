@@ -68,6 +68,7 @@ namespace Codinsa2015.Server.Equip
     /// <summary>
     /// Représente un modèle d'équipement passif.
     /// </summary>
+    [Clank.ViewCreator.AddField("int", "ID", "ID unique de l'équipement")]
     public class PassiveEquipmentModel : EquipmentModel
     {
         #region Properties
@@ -110,6 +111,7 @@ namespace Codinsa2015.Server.Equip
             Views.PassiveEquipmentModelView view = new Views.PassiveEquipmentModelView();
             view.Price = Price;
             view.Upgrades = new List<Views.PassiveEquipmentUpgradeModelView>();
+            view.ID = ID;
             foreach (var upgrade in Upgrades) { view.Upgrades.Add(upgrade.ToView()); }
             return view;
         }

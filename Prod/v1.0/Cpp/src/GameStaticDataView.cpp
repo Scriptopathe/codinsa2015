@@ -1,23 +1,5 @@
 #include "../inc/GameStaticDataView.h"
 void GameStaticDataView::serialize(std::ostream& output) {
-	// CampsPositions
-	output << this->CampsPositions.size() << '\n';
-	for(int CampsPositions_it = 0; CampsPositions_it < this->CampsPositions.size(); CampsPositions_it++) {
-		this->CampsPositions[CampsPositions_it].serialize(output);
-	}
-
-	// RouterPositions
-	output << this->RouterPositions.size() << '\n';
-	for(int RouterPositions_it = 0; RouterPositions_it < this->RouterPositions.size(); RouterPositions_it++) {
-		this->RouterPositions[RouterPositions_it].serialize(output);
-	}
-
-	// VirusCheckpoints
-	output << this->VirusCheckpoints.size() << '\n';
-	for(int VirusCheckpoints_it = 0; VirusCheckpoints_it < this->VirusCheckpoints.size(); VirusCheckpoints_it++) {
-		this->VirusCheckpoints[VirusCheckpoints_it].serialize(output);
-	}
-
 	// Weapons
 	output << this->Weapons.size() << '\n';
 	for(int Weapons_it = 0; Weapons_it < this->Weapons.size(); Weapons_it++) {
@@ -48,45 +30,12 @@ void GameStaticDataView::serialize(std::ostream& output) {
 		this->Spells[Spells_it].serialize(output);
 	}
 
-	// Structures
-	output << this->Structures.size() << '\n';
-	for(int Structures_it = 0; Structures_it < this->Structures.size(); Structures_it++) {
-		this->Structures[Structures_it].serialize(output);
-	}
-
 	// Map
 	this->Map.serialize(output);
 }
 
 GameStaticDataView GameStaticDataView::deserialize(std::istream& input) {
 	GameStaticDataView _obj = GameStaticDataView();
-	// CampsPositions
-	std::vector<Vector2> _obj_CampsPositions = std::vector<Vector2>();
-	int _obj_CampsPositions_count; input >> _obj_CampsPositions_count; input.ignore(1000, '\n');
-	for(int _obj_CampsPositions_i = 0; _obj_CampsPositions_i < _obj_CampsPositions_count; _obj_CampsPositions_i++) {
-		Vector2 _obj_CampsPositions_e = Vector2::deserialize(input);
-		_obj_CampsPositions.push_back((Vector2)_obj_CampsPositions_e);
-	}
-
-	_obj.CampsPositions = (::std::vector<Vector2>)_obj_CampsPositions;
-	// RouterPositions
-	std::vector<Vector2> _obj_RouterPositions = std::vector<Vector2>();
-	int _obj_RouterPositions_count; input >> _obj_RouterPositions_count; input.ignore(1000, '\n');
-	for(int _obj_RouterPositions_i = 0; _obj_RouterPositions_i < _obj_RouterPositions_count; _obj_RouterPositions_i++) {
-		Vector2 _obj_RouterPositions_e = Vector2::deserialize(input);
-		_obj_RouterPositions.push_back((Vector2)_obj_RouterPositions_e);
-	}
-
-	_obj.RouterPositions = (::std::vector<Vector2>)_obj_RouterPositions;
-	// VirusCheckpoints
-	std::vector<EntityBaseView> _obj_VirusCheckpoints = std::vector<EntityBaseView>();
-	int _obj_VirusCheckpoints_count; input >> _obj_VirusCheckpoints_count; input.ignore(1000, '\n');
-	for(int _obj_VirusCheckpoints_i = 0; _obj_VirusCheckpoints_i < _obj_VirusCheckpoints_count; _obj_VirusCheckpoints_i++) {
-		EntityBaseView _obj_VirusCheckpoints_e = EntityBaseView::deserialize(input);
-		_obj_VirusCheckpoints.push_back((EntityBaseView)_obj_VirusCheckpoints_e);
-	}
-
-	_obj.VirusCheckpoints = (::std::vector<EntityBaseView>)_obj_VirusCheckpoints;
 	// Weapons
 	std::vector<WeaponModelView> _obj_Weapons = std::vector<WeaponModelView>();
 	int _obj_Weapons_count; input >> _obj_Weapons_count; input.ignore(1000, '\n');
@@ -132,22 +81,10 @@ GameStaticDataView GameStaticDataView::deserialize(std::istream& input) {
 	}
 
 	_obj.Spells = (::std::vector<SpellModelView>)_obj_Spells;
-	// Structures
-	std::vector<EntityBaseView> _obj_Structures = std::vector<EntityBaseView>();
-	int _obj_Structures_count; input >> _obj_Structures_count; input.ignore(1000, '\n');
-	for(int _obj_Structures_i = 0; _obj_Structures_i < _obj_Structures_count; _obj_Structures_i++) {
-		EntityBaseView _obj_Structures_e = EntityBaseView::deserialize(input);
-		_obj_Structures.push_back((EntityBaseView)_obj_Structures_e);
-	}
-
-	_obj.Structures = (::std::vector<EntityBaseView>)_obj_Structures;
 	// Map
 	MapView _obj_Map = MapView::deserialize(input);
 	_obj.Map = (::MapView)_obj_Map;
 	return _obj;
-}
-
-GameStaticDataView::GameStaticDataView() {
 }
 
 

@@ -13,7 +13,7 @@ namespace Codinsa2015.Views
 	{
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
-	
+        public int ID;
 		/// <summary>
 		/// prix d'achat de l'équipement
 		/// </summary>

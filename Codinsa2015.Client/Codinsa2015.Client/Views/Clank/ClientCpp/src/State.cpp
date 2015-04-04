@@ -629,7 +629,7 @@ SpellUpgradeResult State::UpgradeMyPassiveSpell()
 
 
 //  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
-bool State::UseMySpell(int spellId,SpellCastTargetInfoView target)
+SpellUseResult State::UseMySpell(int spellId,SpellCastTargetInfoView target)
 {
 	std::ostringstream output = std::ostringstream();
 	output << ((int)36) << '\n';
@@ -639,8 +639,9 @@ bool State::UseMySpell(int spellId,SpellCastTargetInfoView target)
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
 	TCPHelper::tcpreceive(input);
-	bool returnValue; input >> returnValue; input.ignore(1000, '\n');
-	return (bool)returnValue;
+	int returnValue_asInt; input >> returnValue_asInt; input.ignore(1000, '\n');
+	SpellUseResult returnValue = (SpellUseResult)returnValue_asInt;
+	return (SpellUseResult)returnValue;
 }
 
 

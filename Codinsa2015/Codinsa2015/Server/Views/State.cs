@@ -272,7 +272,7 @@ namespace Codinsa2015.Views
 		/// <summary>
 		///  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 		/// </summary>
-		public bool UseMySpell(int spellId, SpellCastTargetInfoView target, int clientId)
+		public SpellUseResult UseMySpell(int spellId, SpellCastTargetInfoView target, int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMySpell(spellId,target);
 		}	
@@ -648,8 +648,8 @@ namespace Codinsa2015.Views
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				bool retValue36 = UseMySpell(arg36_0, arg36_1, clientId);
-				output.WriteLine(retValue36 ? 1 : 0);
+				SpellUseResult retValue36 = UseMySpell(arg36_0, arg36_1, clientId);
+				output.WriteLine(((int)retValue36).ToString());
 				output.Close();
 				return s.ToArray();
 			case 37:

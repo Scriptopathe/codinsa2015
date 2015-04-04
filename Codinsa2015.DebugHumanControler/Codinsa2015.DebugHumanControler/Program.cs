@@ -29,9 +29,26 @@ namespace Codinsa2015.DebugHumanControler
                 .ForEach(x => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(x)));
 
 
-            try
+            if (launcher.UseDebugLog)
             {
+                try
+                {
 
+                    if (launcher.DialogResult == DialogResult.OK)
+                    {
+                        using (GameClient client = new GameClient(launcher.Resolution, launcher.Spectate, launcher.Port))
+                        {
+                            client.Run();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    System.IO.File.AppendAllText("log.txt", "=======================\n" + e.Message + "\n" + e.StackTrace);
+                }
+            }
+            else
+            {
                 if (launcher.DialogResult == DialogResult.OK)
                 {
                     using (GameClient client = new GameClient(launcher.Resolution, launcher.Spectate, launcher.Port))
@@ -39,10 +56,6 @@ namespace Codinsa2015.DebugHumanControler
                         client.Run();
                     }
                 }
-            }
-            catch(Exception e)
-            {
-
             }
         }
     }

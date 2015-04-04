@@ -470,6 +470,25 @@ namespace Codinsa2015.Server.Controlers
         #endregion
 
         #region Entities / Sight
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient une liste des héros morts.")]
+        public List<Views.EntityBaseView> GetDeadHeroes()
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return new List<Views.EntityBaseView>();
+
+            List<Views.EntityBaseView> view = new List<Views.EntityBaseView>();
+            foreach(var hero in GameServer.GetMap().Heroes)
+            {
+                if (hero.IsDead)
+                    view.Add(EToView(hero));
+            }
+
+            return view;
+        }
+
+
+
         /// <summary>
         /// Retourne la liste des entités en vue.
         /// </summary>
@@ -503,51 +522,59 @@ namespace Codinsa2015.Server.Controlers
 
             if(Hero.HasSightOn(entity))
             {
-                Views.EntityBaseView view = new Views.EntityBaseView();
-                view.BaseHPRegen = entity.BaseHPRegen;
-                view.BaseAbilityPower = entity.BaseAbilityPower;
-                view.BaseArmor = entity.BaseArmor;
-                view.BaseAttackDamage = entity.BaseAttackDamage;
-                view.BaseAttackSpeed = entity.BaseAttackSpeed;
-                view.BaseCooldownReduction = entity.BaseCooldownReduction;
-                view.BaseMagicResist = entity.BaseMagicResist;
-                view.BaseMaxHP = entity.BaseMaxHP;
-                view.BaseMoveSpeed = entity.BaseMoveSpeed;
-                view.Direction = V2ToView(entity.Direction);
-                view.GetAbilityPower = entity.GetAbilityPower();
-                view.GetArmor = entity.GetArmor();
-                view.GetAttackDamage = entity.GetAttackDamage();
-                view.GetCooldownReduction = entity.GetCooldownReduction();
-                view.GetHP = entity.GetHP();
-                view.GetMagicResist = entity.GetMagicResist();
-                view.GetMaxHP = entity.GetMaxHP();
-                view.GetMoveSpeed = entity.GetMoveSpeed();
-                view.GetHPRegen = entity.GetHPRegen();
-                view.UniquePassive = (Views.EntityUniquePassives)entity.UniquePassive;
-                view.UniquePassiveLevel = entity.UniquePassiveLevel;
-                view.HasTrueVision = entity.HasTrueVision;
-                view.HasWardVision = entity.HasWardVision;
-                view.HP = entity.HP;
-                view.ID = entity.ID;
-                view.IsDead = entity.IsDead;
-                view.IsRooted = entity.IsRooted;
-                view.IsSilenced = entity.IsSilenced;
-                view.IsStealthed = entity.IsStealthed;
-                view.IsStuned = entity.IsStuned;
-                view.IsDamageImmune = entity.IsDamageImmune;
-                view.IsControlImmune = entity.IsControlImmune;
-                view.Role = (Views.EntityHeroRole)entity.Role;
-                view.Position = V2ToView(entity.Position);
-                view.ShieldPoints = entity.ShieldPoints;
-                // view.StateAlterations = entity.StateAlterations.ToView();
-                view.Type = (Views.EntityTypeRelative)(Entities.EntityTypeConverter.ToRelative(entity.Type, Hero.Type & Entities.EntityType.Teams));
-                view.VisionRange = entity.VisionRange;
+                Views.EntityBaseView view = EToView(entity);
                 return view;
             }
             else
             {
                 return new Views.EntityBaseView() { ID = -1 };
             }
+        }
+
+        /// <summary>
+        /// Transforme l'entité en vue.
+        /// </summary>
+        public Views.EntityBaseView EToView(Entities.EntityBase entity)
+        {
+            Views.EntityBaseView view = new Views.EntityBaseView();
+            view.BaseHPRegen = entity.BaseHPRegen;
+            view.BaseAbilityPower = entity.BaseAbilityPower;
+            view.BaseArmor = entity.BaseArmor;
+            view.BaseAttackDamage = entity.BaseAttackDamage;
+            view.BaseAttackSpeed = entity.BaseAttackSpeed;
+            view.BaseCooldownReduction = entity.BaseCooldownReduction;
+            view.BaseMagicResist = entity.BaseMagicResist;
+            view.BaseMaxHP = entity.BaseMaxHP;
+            view.BaseMoveSpeed = entity.BaseMoveSpeed;
+            view.Direction = V2ToView(entity.Direction);
+            view.GetAbilityPower = entity.GetAbilityPower();
+            view.GetArmor = entity.GetArmor();
+            view.GetAttackDamage = entity.GetAttackDamage();
+            view.GetCooldownReduction = entity.GetCooldownReduction();
+            view.GetHP = entity.GetHP();
+            view.GetMagicResist = entity.GetMagicResist();
+            view.GetMaxHP = entity.GetMaxHP();
+            view.GetMoveSpeed = entity.GetMoveSpeed();
+            view.GetHPRegen = entity.GetHPRegen();
+            view.UniquePassive = (Views.EntityUniquePassives)entity.UniquePassive;
+            view.UniquePassiveLevel = entity.UniquePassiveLevel;
+            view.HasTrueVision = entity.HasTrueVision;
+            view.HasWardVision = entity.HasWardVision;
+            view.HP = entity.HP;
+            view.ID = entity.ID;
+            view.IsDead = entity.IsDead;
+            view.IsRooted = entity.IsRooted;
+            view.IsSilenced = entity.IsSilenced;
+            view.IsStealthed = entity.IsStealthed;
+            view.IsStuned = entity.IsStuned;
+            view.IsDamageImmune = entity.IsDamageImmune;
+            view.IsControlImmune = entity.IsControlImmune;
+            view.Role = (Views.EntityHeroRole)entity.Role;
+            view.Position = V2ToView(entity.Position);
+            view.ShieldPoints = entity.ShieldPoints;
+            view.Type = (Views.EntityTypeRelative)(Entities.EntityTypeConverter.ToRelative(entity.Type, Hero.Type & Entities.EntityType.Teams));
+            view.VisionRange = entity.VisionRange;
+            return view;
         }
         #endregion
 
@@ -587,9 +614,12 @@ namespace Codinsa2015.Server.Controlers
             return vectors;
         }
 
-        [Clank.ViewCreator.Access(controlerAccessStr, "Déplace le héros selon la direction donnée. Retourne toujours true.")]
+        [Clank.ViewCreator.Access(controlerAccessStr, "Déplace le héros selon la direction donnée.")]
         public bool MoveTowards(Views.Vector2 direction)
         {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return false;
+
             Hero.Direction = ViewToV2(direction);
             Hero.MoveForward(GameServer.GetTime());
             return true;
@@ -670,24 +700,24 @@ namespace Codinsa2015.Server.Controlers
         /// </summary>
         /// <returns>Retourne true si l'action a été effectuée.</returns>
         [Clank.ViewCreator.Access(controlerAccessStr, "Utilise le sort d'id donné. Retourne true si l'action a été effectuée.")]
-        public bool UseMySpell(int spellId, Views.SpellCastTargetInfoView target)
+        public Views.SpellUseResult UseMySpell(int spellId, Views.SpellCastTargetInfoView target)
         {
             if (GameServer.GetScene().Mode != SceneMode.Game)
-                return false;
+                return Views.SpellUseResult.InvalidOperation;
 
             if(Hero.Spells.Count <= spellId)
             {
-                return false;
+                return Views.SpellUseResult.InvalidOperation;
             }
 
-            return Hero.Spells[spellId].Use(new Spells.SpellCastTargetInfo()
+            return (Views.SpellUseResult)Hero.Spells[spellId].Use(new Spells.SpellCastTargetInfo()
             {
                 TargetDirection = ViewToV2(target.TargetDirection),
                 TargetPosition = ViewToV2(target.TargetPosition),
                 TargetId = target.TargetId,
                 Type = (Codinsa2015.Server.Spells.TargettingType)target.Type,
                 AlterationParameters = new Entities.StateAlterationParameters()
-            }) == Spells.SpellUseResult.Success; // TODO
+            }); 
         }
         /// <summary>
         /// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
@@ -835,6 +865,42 @@ namespace Codinsa2015.Server.Controlers
             view.Enchants = GetDBEnchants();
             view.Spells = GetDBSpells();
             view.Map = GetMapView();
+
+            // Structures
+            view.Structures = new List<Views.EntityBaseView>();
+            var structures = GameServer.GetMap().Entities.GetEntitiesByType(Entities.EntityType.Structure);
+            foreach(var structure in structures)
+            {
+                view.Structures.Add(EToView(structure.Value));
+            }
+
+            // Routeurs
+            view.RouterPositions = new List<Views.Vector2>();
+            var routers = GameServer.GetMap().Entities.GetEntitiesByType(Entities.EntityType.Router);
+            foreach(var router in routers)
+            {
+                view.RouterPositions.Add(V2ToView(router.Value.Position));
+            }
+
+            // Camps
+            var events = GameServer.GetMap().Events;
+            List<Events.EventId> ids = new List<Events.EventId>() { Events.EventId.Camp1, Events.EventId.Camp2, 
+                Events.EventId.Camp3, Events.EventId.Camp4, Events.EventId.Camp5, Events.EventId.Camp6, Events.EventId.Camp7,Events.EventId.Camp1, Events.EventId.Camp8 };
+            view.CampsPositions = new List<Views.Vector2>();
+            foreach(var id in ids)
+            {
+                if (events.ContainsKey(id))
+                    view.CampsPositions.Add(V2ToView(events[id].Position));
+            }
+
+            // Virus checkpoints
+            var checkpoints = GameServer.GetMap().Entities.GetEntitiesByType(Entities.EntityType.Checkpoint);
+            view.VirusCheckpoints = new List<Views.EntityBaseView>();
+            foreach(var checkpoint in checkpoints)
+            {
+                view.VirusCheckpoints.Add(EToView(checkpoint.Value));
+            }
+            
             return view;
         }
         #endregion

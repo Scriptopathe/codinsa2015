@@ -131,7 +131,7 @@ public:
 	SpellUpgradeResult UpgradeMyPassiveSpell();
 
 	//  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
-	bool UseMySpell(int spellId,SpellCastTargetInfoView target);
+	SpellUseResult UseMySpell(int spellId,SpellCastTargetInfoView target);
 
 	//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
 	SpellView GetMySpell(int spellId);

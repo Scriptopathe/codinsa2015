@@ -816,7 +816,7 @@ public class State
 	}
 
 	//  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
-	public Boolean UseMySpell(Integer spellId,SpellCastTargetInfoView target)
+	public SpellUseResult UseMySpell(Integer spellId,SpellCastTargetInfoView target)
 	{
 		try {
 		System.out.println("[UseMySpell]");
@@ -830,7 +830,7 @@ public class State
 		byte[] response = TCPHelper.Receive();
 		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
 		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		boolean returnValue = Integer.valueOf(input.readLine()) == 0 ? false : true;
+		SpellUseResult returnValue = SpellUseResult.fromValue(Integer.valueOf(input.readLine()));
 		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
 		} catch (IOException e) { }

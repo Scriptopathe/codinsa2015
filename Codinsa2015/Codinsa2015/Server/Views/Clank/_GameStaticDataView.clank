@@ -11,6 +11,12 @@ state {
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
+		//Obtient la position de tous les camps
+		public List<Vector2> CampsPositions;
+		//Obtient la position de tous les routeurs.
+		public List<Vector2> RouterPositions;
+		//
+		public List<EntityBaseView> VirusCheckpoints;
 		//Obtient une liste de tous les modèles d'armes du jeu
 		public List<WeaponModelView> Weapons;
 		//Obtient une liste de tous les modèles d'armures du jeu
@@ -21,6 +27,8 @@ state {
 		public List<WeaponEnchantModelView> Enchants;
 		//Obtient une liste de tous les modèles de sorts du jeu.
 		public List<SpellModelView> Spells;
+		//Obtient la liste des structures présentes sur la carte. Attention : cette liste n'est pas tenue à jour (statistiques / PV).
+		public List<EntityBaseView> Structures;
 		//Obtient une vue sur les données statiques de la carte (telles que sa table de passabilité).
 		public MapView Map;
 	}

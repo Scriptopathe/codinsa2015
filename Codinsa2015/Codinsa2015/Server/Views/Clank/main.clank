@@ -376,7 +376,7 @@ main
 		// Effectue une upgrade du spell passif du héros.
 		SpellUpgradeResult UpgradeMyPassiveSpell_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UpgradeMyPassiveSpell()"; }
 		// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
-		bool UseMySpell_macro(int clientId,int spellId,SpellCastTargetInfoView target) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMySpell($(spellId),$(target))"; }
+		SpellUseResult UseMySpell_macro(int clientId,int spellId,SpellCastTargetInfoView target) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMySpell($(spellId),$(target))"; }
 		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
 		SpellView GetMySpell_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMySpell($(spellId))"; }
 		// Obtient la phase actuelle du jeu : Pick (=> phase de picks) ou Game (phase de jeu).
@@ -606,7 +606,7 @@ main
 		}
 
 		// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
-		public bool UseMySpell(int spellId,SpellCastTargetInfoView target)
+		public SpellUseResult UseMySpell(int spellId,SpellCastTargetInfoView target)
 		{ 
 			return UseMySpell_macro(clientId,spellId,target);
 		}
