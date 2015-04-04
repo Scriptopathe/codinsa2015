@@ -162,6 +162,12 @@ namespace Codinsa2015
         public static Texture2D Team2Wins { get; set; }
         public static Texture2D BlueDatacenter { get; set; }
         public static Texture2D RedDatacenter { get; set; }
+        public static Texture2D BlueSpawner { get; set; }
+        public static Texture2D RedSpawner { get; set; }
+        public static Texture2D CampMonster { get; set; }
+        public static Texture2D Router { get; set; }
+        public static Texture2D BlueWard { get; set; }
+        public static Texture2D RedWard { get; set; }
         /// <summary>
         /// Charge les ressources à partir du content manager passé en paramètre.
         /// </summary>
@@ -170,6 +176,12 @@ namespace Codinsa2015
         {
             Content = content;
             Device = device;
+            Router = content.Load<Texture2D>("textures/charsets/router");
+            BlueWard = content.Load<Texture2D>("textures/charsets/ward_bleu");
+            RedWard = content.Load<Texture2D>("textures/charsets/ward_rouge");
+            BlueSpawner = content.Load<Texture2D>("textures/charsets/spawner_bleu");
+            RedSpawner = content.Load<Texture2D>("textures/charsets/spawner_rouge");
+            CampMonster = content.Load<Texture2D>("textures/charsets/camp_monster");
             BlueDatacenter = content.Load<Texture2D>("textures/charsets/nexus_bleu"); 
             RedDatacenter = content.Load<Texture2D>("textures/charsets/nexus_rouge");
             Team1Wins = content.Load<Texture2D>("textures/team1wins");

@@ -93,10 +93,30 @@ namespace Codinsa2015.Rendering
                     sx = 0.25f; sy = 0.25f; col = blue ? Color.Blue : Color.Red;
                     return;
                 case Views.EntityType.Datacenter:
-                    sx = 3;
-                    sy = 3;
+                    sx = 2.5f;
+                    sy = 2.5f;
                     tex = blue ? Ressources.BlueDatacenter : Ressources.RedDatacenter;
                     break;
+                case Views.EntityType.Spawner:
+                    sx = 2;
+                    sy = 2;
+                    tex = blue ? Ressources.BlueSpawner : Ressources.RedSpawner;
+                    break;
+                case Views.EntityType.Monster:
+                    tex = Ressources.CampMonster;
+                    break;
+                case Views.EntityType.Router:
+                    sx = 2;
+                    sy = 2;
+                    tex = Ressources.Router;
+                    break;
+                case Views.EntityType.Ward:
+                    sx = 1;
+                    sy = 1;
+                    tex = blue ? Ressources.BlueWard : Ressources.RedWard;
+                    break;
+                case Views.EntityType.WardPlacement:
+                    return;
             }
 
 

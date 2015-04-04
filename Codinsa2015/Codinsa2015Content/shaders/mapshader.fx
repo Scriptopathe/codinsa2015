@@ -80,7 +80,8 @@ float4 PixelShaderFunction(float2 coords: TEXCOORD0) : COLOR0
 		col = tex2D(grass, texCoords);
 		if (col.r < 0.03)
 		{
-			col = tex2D(lava, texCoords * 1.5 + xTime * 4) * 2;
+			texCoords.y = texCoords.y + xTime * 2;
+			col = tex2D(lava, texCoords * 1.5) * 2;
 		}
 	}
 	else
