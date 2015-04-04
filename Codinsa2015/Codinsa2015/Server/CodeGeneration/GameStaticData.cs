@@ -21,6 +21,7 @@ namespace Codinsa2015.Server.CodeGeneration
         public List<Equip.WeaponEnchantModel> Enchants;
         [Clank.ViewCreator.Export("List<SpellModelView>", "Obtient une liste de tous les modèles de sorts du jeu.")]
         public List<Spells.SpellModel> Spells;
+
         [Clank.ViewCreator.Export("MapView", "Obtient une vue sur les données statiques de la carte (telles que sa table de passabilité).")]
         public Map Map;
 

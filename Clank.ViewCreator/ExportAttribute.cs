@@ -18,7 +18,21 @@ namespace Clank.ViewCreator
             Comment = comment;
         }
     }
-
+    /// <summary>
+    /// Indique qu'un champ doit être exporté par ViewCreator vers le type clank donné.
+    /// </summary>
+    public class AddFieldAttribute : Attribute
+    {
+        public string AttrName { get; set; }
+        public string AttrType { get; set; }
+        public string Comment { get; set; }
+        public AddFieldAttribute(string attrtype, string attrname, string comment)
+        {
+            AttrType = attrtype;
+            AttrName = attrname;
+            Comment = comment;
+        }
+    }
     public class AccessAttribute : Attribute
     {
         public string ObjectSource { get; set; }

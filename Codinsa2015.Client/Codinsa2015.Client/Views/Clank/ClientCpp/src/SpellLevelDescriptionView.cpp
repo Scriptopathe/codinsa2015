@@ -52,4 +52,7 @@ SpellLevelDescriptionView SpellLevelDescriptionView::deserialize(std::istream& i
 	return _obj;
 }
 
+SpellLevelDescriptionView::SpellLevelDescriptionView() {
+}
+
 

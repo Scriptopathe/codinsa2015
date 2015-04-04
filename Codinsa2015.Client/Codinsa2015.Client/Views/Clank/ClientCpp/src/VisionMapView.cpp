@@ -31,4 +31,7 @@ VisionMapView VisionMapView::deserialize(std::istream& input) {
 	return _obj;
 }
 
+VisionMapView::VisionMapView() {
+}
+
 

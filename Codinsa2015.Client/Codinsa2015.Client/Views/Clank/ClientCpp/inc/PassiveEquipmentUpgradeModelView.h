@@ -14,6 +14,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static PassiveEquipmentUpgradeModelView deserialize(std::istream& input);
+	PassiveEquipmentUpgradeModelView();
 private: 
 
 };

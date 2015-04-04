@@ -24,7 +24,7 @@ namespace Codinsa2015.Server
     /// </summary>
     public class Scene
     {
-        public const bool SKIP_PICKS = true;
+        public bool m_skipPicks = false;
         public const bool LOAD_DB_FILE = false;
         #region Variables
 
@@ -123,8 +123,9 @@ namespace Codinsa2015.Server
         /// <summary>
         /// Crée une nouvelle instance de Codinsa2015.Scene.
         /// </summary>
-        public Scene() 
+        public Scene(bool skipPicks=false) 
         {
+            m_skipPicks = skipPicks;
             m_commands = new Queue<Tuple<int, byte[]>>();
             m_clientIdToControlerId = new Dictionary<int, int>();
 
@@ -140,7 +141,7 @@ namespace Codinsa2015.Server
             // Controleurs.
             Controlers = new Dictionary<int, Server.Controlers.ControlerBase>();
 
-            if (!SKIP_PICKS)
+            if (!m_skipPicks)
             {
                 Mode = SceneMode.Lobby;
             }
@@ -195,7 +196,7 @@ namespace Codinsa2015.Server
             CommandServer.CommandReceived += CommandServer_CommandReceived;
 
 
-            if (SKIP_PICKS)
+            if (m_skipPicks)
             {
                 InitializeGameMode();
             }
@@ -248,7 +249,7 @@ namespace Codinsa2015.Server
         /// </summary>
         void InitializeGameMode()
         {
-            if(SKIP_PICKS)
+            if(m_skipPicks)
             {
                 // Charge le contrôleur humain.
                 /*Entities.EntityHero hero = new EntityHero() { Position = new Vector2(25, 25), Type = EntityType.Team1Player, Role = EntityHeroRole.Fighter, BaseMaxHP = 50000, HP = 50000 };
@@ -260,6 +261,8 @@ namespace Codinsa2015.Server
             // Création de la map.
             Map = new Map();
             Map.Initialize();
+            MapFile loaded = MapFile.FromFile(Ressources.MapFilename);
+            Map.Load(loaded);
             // Création de l'event scheduler.
             EventSheduler = new Scheduler();
 

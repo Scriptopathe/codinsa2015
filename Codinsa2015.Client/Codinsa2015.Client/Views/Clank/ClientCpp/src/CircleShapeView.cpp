@@ -17,4 +17,7 @@ CircleShapeView CircleShapeView::deserialize(std::istream& input) {
 	return _obj;
 }
 
+CircleShapeView::CircleShapeView() {
+}
+
 

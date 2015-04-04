@@ -149,6 +149,7 @@ namespace Codinsa2015.DebugHumanControler
             {
                 GameServer.GetScene().Map.Load(file);
             });
+
         }
         #endregion
 

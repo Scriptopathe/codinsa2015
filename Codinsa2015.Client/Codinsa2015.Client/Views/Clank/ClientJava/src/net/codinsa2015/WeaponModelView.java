@@ -17,6 +17,8 @@ public class WeaponModelView
 {
 
 
+	// ID unique de l'arme.
+	public Integer ID;
 	// Liste des upgrades possibles de l'arme.
 	public ArrayList<WeaponUpgradeModelView> Upgrades;
 	// Prix d'achat de l'arme
@@ -27,6 +29,9 @@ public class WeaponModelView
 
 	public static WeaponModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		WeaponModelView _obj =  new WeaponModelView();
+		// ID
+		int _obj_ID = Integer.valueOf(input.readLine());
+		_obj.ID = _obj_ID;
 		// Upgrades
 		ArrayList<WeaponUpgradeModelView> _obj_Upgrades = new ArrayList<WeaponUpgradeModelView>();
 		int _obj_Upgrades_count = Integer.valueOf(input.readLine());
@@ -42,6 +47,8 @@ public class WeaponModelView
 	}
 
 	public void serialize(OutputStreamWriter output) throws UnsupportedEncodingException, IOException {
+		// ID
+		output.append(((Integer)this.ID).toString() + "\n");
 		// Upgrades
 		output.append(String.valueOf(this.Upgrades.size()) + "\n");
 		for(int Upgrades_it = 0; Upgrades_it < this.Upgrades.size();Upgrades_it++) {

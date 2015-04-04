@@ -81,6 +81,7 @@ namespace Codinsa2015.Server.Equip
     /// <summary>
     /// Représente un modèle enchantement d'arme.
     /// </summary>
+    [Clank.ViewCreator.AddField("int", "ID", "ID unique de l'enchantement.")]
     public class WeaponEnchantModel : EquipmentModel
     {
         /// <summary>
@@ -139,6 +140,7 @@ namespace Codinsa2015.Server.Equip
             view.OnHitEffects = new List<Views.StateAlterationModelView>();
             view.CastingEffects = new List<Views.StateAlterationModelView>();
             view.PassiveEffects = new List<Views.StateAlterationModelView>();
+            view.ID = ID;
             foreach (var e in OnHitEffects) { view.OnHitEffects.Add(e.ToView()); }
             foreach (var e in PassiveEffects) { view.PassiveEffects.Add(e.ToView()); }
             foreach (var e in CastingEffects) { view.CastingEffects.Add(e.ToView()); }
@@ -309,6 +311,7 @@ namespace Codinsa2015.Server.Equip
     /// Représente un modèle d'arme.
     /// Le modèle contient la description des upgrades (ainsi que leur prix).
     /// </summary>
+    [Clank.ViewCreator.AddField("int", "ID", "ID unique de l'arme.")]
     public class WeaponModel : EquipmentModel
     {
         /// <summary>
@@ -341,6 +344,7 @@ namespace Codinsa2015.Server.Equip
         {
             Views.WeaponModelView view = new Views.WeaponModelView();
             view.Upgrades = new List<Views.WeaponUpgradeModelView>();
+            view.ID = ID;
             foreach (var upgrade in Upgrades) { view.Upgrades.Add(upgrade.ToView()); }
             view.Price = Price;
             return view;

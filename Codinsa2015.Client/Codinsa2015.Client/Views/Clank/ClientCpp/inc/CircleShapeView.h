@@ -14,6 +14,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static CircleShapeView deserialize(std::istream& input);
+	CircleShapeView();
 private: 
 
 };

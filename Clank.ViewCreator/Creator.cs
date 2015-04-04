@@ -303,6 +303,20 @@ namespace Clank.ViewCreator
             List<Record> records = new List<Record>();
             string typename = type.Name;
 
+            // Add field attribute.
+            object[] typeAttrs = type.GetCustomAttributes(typeof(AddFieldAttribute), true);
+            foreach (object att in typeAttrs)
+            {
+                AddFieldAttribute attr = att as AddFieldAttribute;
+                if (attr != null)
+                {
+                    records.Add(new Record(attr.AttrType, attr.AttrName, attr.Comment));
+                }
+            }
+            
+
+
+
             MemberInfo[] fields = type.GetMembers();
             foreach (MemberInfo info in fields)
             {

@@ -253,6 +253,7 @@ namespace Clank.Core.Generation.Languages
             }
             builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializer(declaration)));
             builder.AppendLine(Tools.StringUtils.Indent(GenerateDeserializer(declaration)));
+            builder.AppendLine(Tools.StringUtils.Indent(GenerateConstructor(declaration)));
             // Génère les instructions privées.
             if(privateInstructions.Count > 0)
                 builder.AppendLine("private: ");
@@ -267,6 +268,10 @@ namespace Clank.Core.Generation.Languages
             return builder.ToString();
         }
 
+        string GenerateConstructor(ClassDeclaration declaration)
+        {
+            return declaration.Name + "();";
+        }
         /// <summary>
         /// Génère le sérializer pour la classe donnée.
         /// </summary>

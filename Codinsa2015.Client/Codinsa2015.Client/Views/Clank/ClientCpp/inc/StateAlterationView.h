@@ -21,6 +21,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static StateAlterationView deserialize(std::istream& input);
+	StateAlterationView();
 private: 
 
 };

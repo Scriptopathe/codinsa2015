@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using System.Reflection;
+using System.Windows.Forms;
 namespace Codinsa2015.DebugHumanControler
 {
     static class Program
@@ -12,6 +13,10 @@ namespace Codinsa2015.DebugHumanControler
         /// </summary>
         static void Main(string[] args)
         {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Launcher launcher = new Launcher();
+            Application.Run(launcher);
             // Chargement de toutes les assemblys au démarrage
             // pour éviter des vieux laggs.
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
@@ -22,13 +27,23 @@ namespace Codinsa2015.DebugHumanControler
                 .Where(y => loadedAssemblies.Any((a) => a.FullName == y.FullName) == false)
                 .ToList()
                 .ForEach(x => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(x)));
-            
-            using(GameClient client = new GameClient())
+
+
+            try
             {
 
-                client.Run();
+                if (launcher.DialogResult == DialogResult.OK)
+                {
+                    using (GameClient client = new GameClient(launcher.Resolution, launcher.Spectate, launcher.Port))
+                    {
+                        client.Run();
+                    }
+                }
             }
+            catch(Exception e)
+            {
 
+            }
         }
     }
 }

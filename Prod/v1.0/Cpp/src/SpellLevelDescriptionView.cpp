@@ -1,5 +1,5 @@
-#include "../inc/SpellDescriptionView.h"
-void SpellDescriptionView::serialize(std::ostream& output) {
+#include "../inc/SpellLevelDescriptionView.h"
+void SpellLevelDescriptionView::serialize(std::ostream& output) {
 	// BaseCooldown
 	output << ((float)this->BaseCooldown) << '\n';
 	// CastingTime
@@ -20,8 +20,8 @@ void SpellDescriptionView::serialize(std::ostream& output) {
 
 }
 
-SpellDescriptionView SpellDescriptionView::deserialize(std::istream& input) {
-	SpellDescriptionView _obj = SpellDescriptionView();
+SpellLevelDescriptionView SpellLevelDescriptionView::deserialize(std::istream& input) {
+	SpellLevelDescriptionView _obj = SpellLevelDescriptionView();
 	// BaseCooldown
 	float _obj_BaseCooldown; input >> _obj_BaseCooldown; input.ignore(1000, '\n');
 	_obj.BaseCooldown = (float)_obj_BaseCooldown;

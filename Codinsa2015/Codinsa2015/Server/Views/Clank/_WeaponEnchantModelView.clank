@@ -11,6 +11,8 @@ state {
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
+		//ID unique de l'enchantement.
+		public int ID;
 		//Obtient les altértions d'état appliquées à l'impact de l'attaque sur la cible.
 		public List<StateAlterationModelView> OnHitEffects;
 		//Obtient les altérations d'état appliquées lors de l'attaque sur le caster.

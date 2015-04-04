@@ -27,4 +27,7 @@ SpellView SpellView::deserialize(std::istream& input) {
 	return _obj;
 }
 
+SpellView::SpellView() {
+}
+
 

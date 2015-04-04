@@ -12,9 +12,6 @@ namespace Codinsa2015.Views.Client
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
-		public Vector2()
-		{
-		}	
 		public Vector2(float x, float y)
 		{
 			this.X = x;

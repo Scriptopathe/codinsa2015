@@ -28,4 +28,7 @@ SpellCastTargetInfoView SpellCastTargetInfoView::deserialize(std::istream& input
 	return _obj;
 }
 
+SpellCastTargetInfoView::SpellCastTargetInfoView() {
+}
+
 

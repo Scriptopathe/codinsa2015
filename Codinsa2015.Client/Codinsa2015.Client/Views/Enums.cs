@@ -232,7 +232,16 @@ namespace Codinsa2015.Views.Client
 		OnCooldown = 3,
 		Silenced = 4,
 		Blind = 5,
-		OutOfRange = 6
+		OutOfRange = 6,
+		InvalidOperation = 7
+	}
+	
+	public enum SpellUpgradeResult
+	{
+		Success = 0,
+		AlreadyMaxLevel = 1,
+		NotEnoughPA = 2,
+		InvalidOperation = 3
 	}
 	
 	public enum TargettingType

@@ -14,7 +14,7 @@ import net.codinsa2015.SpellTargetInfoView.*;
 
 
 @SuppressWarnings("unused")
-public class SpellDescriptionView
+public class SpellLevelDescriptionView
 {
 
 
@@ -28,8 +28,14 @@ public class SpellDescriptionView
 	public SpellTargetInfoView TargetType;
 	// Effets à l'impact du sort. Ils sont appliqués une fois le casting time terminé.
 	public ArrayList<StateAlterationModelView> OnHitEffects;
-	public static SpellDescriptionView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
-		SpellDescriptionView _obj =  new SpellDescriptionView();
+	public SpellLevelDescriptionView() {
+		CastingTimeAlterations = new ArrayList<StateAlterationModelView>();
+		TargetType = new SpellTargetInfoView();
+		OnHitEffects = new ArrayList<StateAlterationModelView>();
+	}
+
+	public static SpellLevelDescriptionView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
+		SpellLevelDescriptionView _obj =  new SpellLevelDescriptionView();
 		// BaseCooldown
 		float _obj_BaseCooldown = Float.valueOf(input.readLine());
 		_obj.BaseCooldown = _obj_BaseCooldown;

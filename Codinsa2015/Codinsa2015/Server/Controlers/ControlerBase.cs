@@ -104,8 +104,9 @@ namespace Codinsa2015.Server.Controlers
                     return Views.PickAction.PickPassive;
             }
         }
+
         [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.")]
-        public List<int> Picks_GetActiveSpells(int id)
+        public List<int> Picks_GetActiveSpells()
         {
             if (GameServer.GetScene().Mode != SceneMode.Pick)
                 return new List<int>();
@@ -113,7 +114,7 @@ namespace Codinsa2015.Server.Controlers
         }
 
         [Clank.ViewCreator.Access(controlerAccessStr, "Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs disponibles.")]
-        public List<Views.EntityUniquePassives> Picks_GetPassiveSpells(int id)
+        public List<Views.EntityUniquePassives> Picks_GetPassiveSpells()
         {
             if (GameServer.GetScene().Mode != SceneMode.Pick)
                 return new List<Views.EntityUniquePassives>();
@@ -243,7 +244,6 @@ namespace Codinsa2015.Server.Controlers
 
             Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
                 Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
-
             
             List<Equip.EquipmentModel> items = shopEntity.Shop.GetWeapons(Hero);
             List<Views.WeaponModelView> views = new List<Views.WeaponModelView>();
@@ -552,6 +552,49 @@ namespace Codinsa2015.Server.Controlers
         #endregion
 
         #region Spell
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Utilise l'arme du héros sur l'entité dont l'id est donné.")]
+        public Views.SpellUseResult UseMyWeapon(int entityId)
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return Views.SpellUseResult.InvalidOperation;
+
+            if (Hero.Weapon == null)
+                return Views.SpellUseResult.InvalidOperation;
+
+            Entities.EntityBase entity = GameServer.GetMap().GetEntityById(entityId);
+            if(entity == null)
+                return Views.SpellUseResult.InvalidTarget;
+
+            return (Views.SpellUseResult)Hero.Weapon.Use(this.Hero, entity);
+        }
+
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient les points de la trajectoire du héros;")]
+        public List<Views.Vector2> GetMyTrajectory()
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return new List<Views.Vector2>();
+            if(Hero.Path == null)
+                return new List<Views.Vector2>();
+            List<Views.Vector2> vectors = new List<Views.Vector2>();
+            
+            foreach(var vect in Hero.Path.TrajectoryUnits)
+            {
+                vectors.Add(V2ToView(vect));
+            }
+
+            return vectors;
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Déplace le héros selon la direction donnée. Retourne toujours true.")]
+        public bool MoveTowards(Views.Vector2 direction)
+        {
+            Hero.Direction = ViewToV2(direction);
+            Hero.MoveForward(GameServer.GetTime());
+            return true;
+        }
+
         /// <summary>
         /// Obtient les spells du héros.
         /// </summary>
@@ -568,6 +611,60 @@ namespace Codinsa2015.Server.Controlers
             }
             return spells;
         }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Effectue une upgrade du spell d'id donné (0 ou 1).")]
+        public Views.SpellUpgradeResult UpgradeMyActiveSpell(int spellId)
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return Views.SpellUpgradeResult.InvalidOperation;
+
+            if (spellId >= Hero.Spells.Count)
+                return Views.SpellUpgradeResult.InvalidOperation;
+
+            return (Views.SpellUpgradeResult)Hero.Spells[spellId].Upgrade();
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient le niveau actuel du spell d'id donné (numéro du spell : 0 ou 1). -1 si le spell n'existe pas.")]
+        public int GetMyActiveSpellLevel(int spellId)
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return -1;
+
+            if (spellId >= Hero.Spells.Count)
+                return -1;
+
+            return Hero.Spells[spellId].Level;
+        }
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient le niveau actuel du spell passif. -1 si erreur.")]
+        public int GetMyPassiveSpellLevel()
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return -1;
+
+
+            return Hero.UniquePassiveLevel;
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Effectue une upgrade du spell passif du héros.")]
+        public Views.SpellUpgradeResult UpgradeMyPassiveSpell()
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return Views.SpellUpgradeResult.InvalidOperation;
+
+            if (Hero.UniquePassiveLevel >= 3) // désolé pour cette constante
+                return Views.SpellUpgradeResult.AlreadyMaxLevel;
+
+            Hero.UniquePassiveLevel++;
+            float price = GameServer.GetScene().Constants.ActiveSpells.SpellUpgradeCost[Hero.UniquePassiveLevel];
+
+            if (price > Hero.PA)
+                return Views.SpellUpgradeResult.NotEnoughPA;
+
+            Hero.PA -= price;
+
+            return Views.SpellUpgradeResult.Success;
+        }
+
         /// <summary>
         /// Utilise le sort d'id donné.
         /// </summary>

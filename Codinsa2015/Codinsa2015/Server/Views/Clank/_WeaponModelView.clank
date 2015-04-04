@@ -11,6 +11,8 @@ state {
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
+		//ID unique de l'arme.
+		public int ID;
 		//Liste des upgrades possibles de l'arme.
 		public List<WeaponUpgradeModelView> Upgrades;
 		//Prix d'achat de l'arme

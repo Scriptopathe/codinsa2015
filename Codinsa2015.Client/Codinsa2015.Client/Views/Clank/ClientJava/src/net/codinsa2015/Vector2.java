@@ -16,9 +16,6 @@ public class Vector2
 {
 
 
-	public Vector2()
-	{
-	}
 	public Vector2(Float x, Float y)
 	{
 		this.X = x;

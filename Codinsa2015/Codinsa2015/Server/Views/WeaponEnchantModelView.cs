@@ -15,6 +15,10 @@ namespace Codinsa2015.Views
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		/// <summary>
+		/// ID unique de l'enchantement.
+		/// </summary>
+		public int ID;	
+		/// <summary>
 		/// Obtient les altértions d'état appliquées à l'impact de l'attaque sur la cible.
 		/// </summary>
 		public List<StateAlterationModelView> OnHitEffects;	
@@ -34,6 +38,9 @@ namespace Codinsa2015.Views
 
 		public static WeaponEnchantModelView Deserialize(System.IO.StreamReader input) {
 			WeaponEnchantModelView _obj =  new WeaponEnchantModelView();
+			// ID
+			int _obj_ID = Int32.Parse(input.ReadLine());
+			_obj.ID = (int)_obj_ID;
 			// OnHitEffects
 			List<StateAlterationModelView> _obj_OnHitEffects = new List<StateAlterationModelView>();
 			int _obj_OnHitEffects_count = Int32.Parse(input.ReadLine());
@@ -62,6 +69,8 @@ namespace Codinsa2015.Views
 		}
 
 		public void Serialize(System.IO.StreamWriter output) {
+			// ID
+			output.WriteLine(((int)this.ID).ToString());
 			// OnHitEffects
 			output.WriteLine(this.OnHitEffects.Count.ToString());
 			for(int OnHitEffects_it = 0; OnHitEffects_it < this.OnHitEffects.Count;OnHitEffects_it++) {

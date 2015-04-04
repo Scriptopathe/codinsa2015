@@ -1,5 +1,7 @@
 #include "../inc/WeaponModelView.h"
 void WeaponModelView::serialize(std::ostream& output) {
+	// ID
+	output << ((int)this->ID) << '\n';
 	// Upgrades
 	output << this->Upgrades.size() << '\n';
 	for(int Upgrades_it = 0; Upgrades_it < this->Upgrades.size(); Upgrades_it++) {
@@ -12,6 +14,9 @@ void WeaponModelView::serialize(std::ostream& output) {
 
 WeaponModelView WeaponModelView::deserialize(std::istream& input) {
 	WeaponModelView _obj = WeaponModelView();
+	// ID
+	int _obj_ID; input >> _obj_ID; input.ignore(1000, '\n');
+	_obj.ID = (int)_obj_ID;
 	// Upgrades
 	std::vector<WeaponUpgradeModelView> _obj_Upgrades = std::vector<WeaponUpgradeModelView>();
 	int _obj_Upgrades_count; input >> _obj_Upgrades_count; input.ignore(1000, '\n');
@@ -25,6 +30,9 @@ WeaponModelView WeaponModelView::deserialize(std::istream& input) {
 	float _obj_Price; input >> _obj_Price; input.ignore(1000, '\n');
 	_obj.Price = (float)_obj_Price;
 	return _obj;
+}
+
+WeaponModelView::WeaponModelView() {
 }
 
 

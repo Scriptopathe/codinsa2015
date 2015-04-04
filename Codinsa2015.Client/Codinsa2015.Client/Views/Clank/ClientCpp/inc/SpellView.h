@@ -18,6 +18,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static SpellView deserialize(std::istream& input);
+	SpellView();
 private: 
 
 };

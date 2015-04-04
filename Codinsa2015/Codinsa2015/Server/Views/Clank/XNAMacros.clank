@@ -10,10 +10,6 @@
     			string usingStatements = "";
     			string namespace = "Codinsa2015.Views";
     		}
-    		public constructor Vector2 new() 
-    		{
-    		    
-    		}
     		public constructor Vector2 new(float x, float y) 
     		{
     		    this.X = x;

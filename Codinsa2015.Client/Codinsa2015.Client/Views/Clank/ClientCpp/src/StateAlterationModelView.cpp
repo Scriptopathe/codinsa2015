@@ -109,4 +109,7 @@ StateAlterationModelView StateAlterationModelView::deserialize(std::istream& inp
 	return _obj;
 }
 
+StateAlterationModelView::StateAlterationModelView() {
+}
+
 

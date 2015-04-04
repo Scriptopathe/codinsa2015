@@ -21,17 +21,17 @@ namespace Codinsa2015.Views
 		/// <summary>
 		///  Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
 		/// </summary>
-		public List<int> Picks_GetActiveSpells(int id, int clientId)
+		public List<int> Picks_GetActiveSpells(int clientId)
 		{
-			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_GetActiveSpells(id);
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_GetActiveSpells();
 		}	
 		/// <summary>
 		///  Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs
 		/// disponibles.
 		/// </summary>
-		public List<EntityUniquePassives> Picks_GetPassiveSpells(int id, int clientId)
+		public List<EntityUniquePassives> Picks_GetPassiveSpells(int clientId)
 		{
-			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_GetPassiveSpells(id);
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_GetPassiveSpells();
 		}	
 		/// <summary>
 		///  Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).
@@ -213,11 +213,61 @@ namespace Codinsa2015.Views
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntityById(entityId);
 		}	
 		/// <summary>
+		///  Utilise l'arme du héros sur l'entité dont l'id est donné.
+		/// </summary>
+		public SpellUseResult UseMyWeapon(int entityId, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMyWeapon(entityId);
+		}	
+		/// <summary>
+		///  Obtient les points de la trajectoire du héros;
+		/// </summary>
+		public List<Vector2> GetMyTrajectory(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyTrajectory();
+		}	
+		/// <summary>
+		///  Déplace le héros selon la direction donnée. Retourne toujours true.
+		/// </summary>
+		public bool MoveTowards(Vector2 direction, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).MoveTowards(direction);
+		}	
+		/// <summary>
 		///  Obtient les id des spells possédés par le héros.
 		/// </summary>
 		public List<int> GetMySpells(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMySpells();
+		}	
+		/// <summary>
+		///  Effectue une upgrade du spell d'id donné (0 ou 1).
+		/// </summary>
+		public SpellUpgradeResult UpgradeMyActiveSpell(int spellId, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UpgradeMyActiveSpell(spellId);
+		}	
+		/// <summary>
+		///  Obtient le niveau actuel du spell d'id donné (numéro du spell : 0 ou 1). -1 si le spell n'existe
+		/// pas.
+		/// </summary>
+		public int GetMyActiveSpellLevel(int spellId, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyActiveSpellLevel(spellId);
+		}	
+		/// <summary>
+		///  Obtient le niveau actuel du spell passif. -1 si erreur.
+		/// </summary>
+		public int GetMyPassiveSpellLevel(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyPassiveSpellLevel();
+		}	
+		/// <summary>
+		///  Effectue une upgrade du spell passif du héros.
+		/// </summary>
+		public SpellUpgradeResult UpgradeMyPassiveSpell(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UpgradeMyPassiveSpell();
 		}	
 		/// <summary>
 		///  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
@@ -272,11 +322,10 @@ namespace Codinsa2015.Views
 				output.Close();
 				return s.ToArray();
 			case 1:
-				int arg1_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<int> retValue1 = Picks_GetActiveSpells(arg1_0, clientId);
+				List<int> retValue1 = Picks_GetActiveSpells(clientId);
 				output.WriteLine(retValue1.Count.ToString());
 				for(int retValue1_it = 0; retValue1_it < retValue1.Count;retValue1_it++) {
 					output.WriteLine(((int)retValue1[retValue1_it]).ToString());
@@ -284,11 +333,10 @@ namespace Codinsa2015.Views
 				output.Close();
 				return s.ToArray();
 			case 2:
-				int arg2_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<EntityUniquePassives> retValue2 = Picks_GetPassiveSpells(arg2_0, clientId);
+				List<EntityUniquePassives> retValue2 = Picks_GetPassiveSpells(clientId);
 				output.WriteLine(retValue2.Count.ToString());
 				for(int retValue2_it = 0; retValue2_it < retValue2.Count;retValue2_it++) {
 					output.WriteLine(((int)retValue2[retValue2_it]).ToString());
@@ -521,41 +569,43 @@ namespace Codinsa2015.Views
 				output.Close();
 				return s.ToArray();
 			case 28:
+				int arg28_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<int> retValue28 = GetMySpells(clientId);
-				output.WriteLine(retValue28.Count.ToString());
-				for(int retValue28_it = 0; retValue28_it < retValue28.Count;retValue28_it++) {
-					output.WriteLine(((int)retValue28[retValue28_it]).ToString());
-				}
+				SpellUseResult retValue28 = UseMyWeapon(arg28_0, clientId);
+				output.WriteLine(((int)retValue28).ToString());
 				output.Close();
 				return s.ToArray();
 			case 29:
-				int arg29_0 = Int32.Parse(input.ReadLine());
-				SpellCastTargetInfoView arg29_1 = SpellCastTargetInfoView.Deserialize(input);
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				bool retValue29 = UseMySpell(arg29_0, arg29_1, clientId);
-				output.WriteLine(retValue29 ? 1 : 0);
+				List<Vector2> retValue29 = GetMyTrajectory(clientId);
+				output.WriteLine(retValue29.Count.ToString());
+				for(int retValue29_it = 0; retValue29_it < retValue29.Count;retValue29_it++) {
+					retValue29[retValue29_it].Serialize(output);
+				}
 				output.Close();
 				return s.ToArray();
 			case 30:
-				int arg30_0 = Int32.Parse(input.ReadLine());
+				Vector2 arg30_0 = Vector2.Deserialize(input);
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SpellView retValue30 = GetMySpell(arg30_0, clientId);
-				retValue30.Serialize(output);
+				bool retValue30 = MoveTowards(arg30_0, clientId);
+				output.WriteLine(retValue30 ? 1 : 0);
 				output.Close();
 				return s.ToArray();
 			case 31:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SceneMode retValue31 = GetMode(clientId);
-				output.WriteLine(((int)retValue31).ToString());
+				List<int> retValue31 = GetMySpells(clientId);
+				output.WriteLine(retValue31.Count.ToString());
+				for(int retValue31_it = 0; retValue31_it < retValue31.Count;retValue31_it++) {
+					output.WriteLine(((int)retValue31[retValue31_it]).ToString());
+				}
 				output.Close();
 				return s.ToArray();
 			case 32:
@@ -563,16 +613,77 @@ namespace Codinsa2015.Views
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SpellLevelDescriptionView retValue32 = GetMySpellCurrentLevelDescription(arg32_0, clientId);
-				retValue32.Serialize(output);
+				SpellUpgradeResult retValue32 = UpgradeMyActiveSpell(arg32_0, clientId);
+				output.WriteLine(((int)retValue32).ToString());
 				output.Close();
 				return s.ToArray();
 			case 33:
+				int arg33_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				GameStaticDataView retValue33 = GetStaticData(clientId);
-				retValue33.Serialize(output);
+				int retValue33 = GetMyActiveSpellLevel(arg33_0, clientId);
+				output.WriteLine(((int)retValue33).ToString());
+				output.Close();
+				return s.ToArray();
+			case 34:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				int retValue34 = GetMyPassiveSpellLevel(clientId);
+				output.WriteLine(((int)retValue34).ToString());
+				output.Close();
+				return s.ToArray();
+			case 35:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				SpellUpgradeResult retValue35 = UpgradeMyPassiveSpell(clientId);
+				output.WriteLine(((int)retValue35).ToString());
+				output.Close();
+				return s.ToArray();
+			case 36:
+				int arg36_0 = Int32.Parse(input.ReadLine());
+				SpellCastTargetInfoView arg36_1 = SpellCastTargetInfoView.Deserialize(input);
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				bool retValue36 = UseMySpell(arg36_0, arg36_1, clientId);
+				output.WriteLine(retValue36 ? 1 : 0);
+				output.Close();
+				return s.ToArray();
+			case 37:
+				int arg37_0 = Int32.Parse(input.ReadLine());
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				SpellView retValue37 = GetMySpell(arg37_0, clientId);
+				retValue37.Serialize(output);
+				output.Close();
+				return s.ToArray();
+			case 38:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				SceneMode retValue38 = GetMode(clientId);
+				output.WriteLine(((int)retValue38).ToString());
+				output.Close();
+				return s.ToArray();
+			case 39:
+				int arg39_0 = Int32.Parse(input.ReadLine());
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				SpellLevelDescriptionView retValue39 = GetMySpellCurrentLevelDescription(arg39_0, clientId);
+				retValue39.Serialize(output);
+				output.Close();
+				return s.ToArray();
+			case 40:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				GameStaticDataView retValue40 = GetStaticData(clientId);
+				retValue40.Serialize(output);
 				output.Close();
 				return s.ToArray();
 			}

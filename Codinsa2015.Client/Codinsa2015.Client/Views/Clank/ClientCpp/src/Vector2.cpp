@@ -1,7 +1,4 @@
 #include "../inc/Vector2.h"
-Vector2::Vector2()
-{
-}
 Vector2::Vector2(float x, float y)
 {
 	this->X = x;
@@ -23,6 +20,9 @@ Vector2 Vector2::deserialize(std::istream& input) {
 	float _obj_Y; input >> _obj_Y; input.ignore(1000, '\n');
 	_obj.Y = (float)_obj_Y;
 	return _obj;
+}
+
+Vector2::Vector2() {
 }
 
 

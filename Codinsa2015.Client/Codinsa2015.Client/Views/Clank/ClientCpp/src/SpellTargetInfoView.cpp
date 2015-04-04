@@ -39,4 +39,7 @@ SpellTargetInfoView SpellTargetInfoView::deserialize(std::istream& input) {
 	return _obj;
 }
 
+SpellTargetInfoView::SpellTargetInfoView() {
+}
+
 

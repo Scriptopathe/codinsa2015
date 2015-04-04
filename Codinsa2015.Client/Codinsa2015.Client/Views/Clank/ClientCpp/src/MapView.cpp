@@ -30,4 +30,7 @@ MapView MapView::deserialize(std::istream& input) {
 	return _obj;
 }
 
+MapView::MapView() {
+}
+
 

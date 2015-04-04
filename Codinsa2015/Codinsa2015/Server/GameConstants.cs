@@ -467,6 +467,7 @@ namespace Codinsa2015.Server
         public ArrayBS ADAPBonusesDurations = new float[] { 1, 2, 3, 5 };
         public ArrayBS ScalingADAPBonuses = new float[] { 0.05f, 0.10f, 0.15f, 0.20f };
         public ArrayBS ProjectileSpeed = new float[] { 0.5f, 1, 1.5f, 2.0f };
+        public LinearBS SpellUpgradeCost = new LinearBS(100, 100);
         public ActiveSpellsConstants()
         {
 

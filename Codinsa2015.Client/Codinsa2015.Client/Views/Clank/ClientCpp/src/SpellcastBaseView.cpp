@@ -17,4 +17,7 @@ SpellcastBaseView SpellcastBaseView::deserialize(std::istream& input) {
 	return _obj;
 }
 
+SpellcastBaseView::SpellcastBaseView() {
+}
+
 

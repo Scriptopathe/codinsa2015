@@ -21,6 +21,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static SpellLevelDescriptionView deserialize(std::istream& input);
+	SpellLevelDescriptionView();
 private: 
 
 };

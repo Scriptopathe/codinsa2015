@@ -262,7 +262,16 @@ main
 			OnCooldown = 3,
 			Silenced = 4,
 			Blind = 5,
-			OutOfRange = 6
+			OutOfRange = 6,
+			InvalidOperation = 7
+		}
+
+		public enum SpellUpgradeResult
+		{
+			Success = 0,
+			AlreadyMaxLevel = 1,
+			NotEnoughPA = 2,
+			InvalidOperation = 3
 		}
 
 		public enum TargettingType
@@ -297,9 +306,9 @@ main
 		// Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
 		PickAction Picks_NextAction_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_NextAction()"; }
 		// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
-		List<int> Picks_GetActiveSpells_macro(int clientId,int id) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_GetActiveSpells($(id))"; }
+		List<int> Picks_GetActiveSpells_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_GetActiveSpells()"; }
 		// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs disponibles.
-		List<EntityUniquePassives> Picks_GetPassiveSpells_macro(int clientId,int id) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_GetPassiveSpells($(id))"; }
+		List<EntityUniquePassives> Picks_GetPassiveSpells_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_GetPassiveSpells()"; }
 		// Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).
 		PickResult Picks_PickPassive_macro(int clientId,EntityUniquePassives passive) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_PickPassive($(passive))"; }
 		// Lors de la phase de picks, permet à l'IA de pick un spell actif dont l'id est donné (si c'est son tour).
@@ -350,8 +359,22 @@ main
 		List<EntityBaseView> GetEntitiesInSight_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntitiesInSight()"; }
 		// Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès refusé)
 		EntityBaseView GetEntityById_macro(int clientId,int entityId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntityById($(entityId))"; }
+		// Utilise l'arme du héros sur l'entité dont l'id est donné.
+		SpellUseResult UseMyWeapon_macro(int clientId,int entityId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMyWeapon($(entityId))"; }
+		// Obtient les points de la trajectoire du héros;
+		List<Vector2> GetMyTrajectory_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyTrajectory()"; }
+		// Déplace le héros selon la direction donnée. Retourne toujours true.
+		bool MoveTowards_macro(int clientId,Vector2 direction) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).MoveTowards($(direction))"; }
 		// Obtient les id des spells possédés par le héros.
 		List<int> GetMySpells_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMySpells()"; }
+		// Effectue une upgrade du spell d'id donné (0 ou 1).
+		SpellUpgradeResult UpgradeMyActiveSpell_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UpgradeMyActiveSpell($(spellId))"; }
+		// Obtient le niveau actuel du spell d'id donné (numéro du spell : 0 ou 1). -1 si le spell n'existe pas.
+		int GetMyActiveSpellLevel_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyActiveSpellLevel($(spellId))"; }
+		// Obtient le niveau actuel du spell passif. -1 si erreur.
+		int GetMyPassiveSpellLevel_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyPassiveSpellLevel()"; }
+		// Effectue une upgrade du spell passif du héros.
+		SpellUpgradeResult UpgradeMyPassiveSpell_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UpgradeMyPassiveSpell()"; }
 		// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 		bool UseMySpell_macro(int clientId,int spellId,SpellCastTargetInfoView target) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMySpell($(spellId),$(target))"; }
 		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
@@ -373,15 +396,15 @@ main
 		}
 
 		// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
-		public List<int> Picks_GetActiveSpells(int id)
+		public List<int> Picks_GetActiveSpells()
 		{ 
-			return Picks_GetActiveSpells_macro(clientId,id);
+			return Picks_GetActiveSpells_macro(clientId);
 		}
 
 		// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs disponibles.
-		public List<EntityUniquePassives> Picks_GetPassiveSpells(int id)
+		public List<EntityUniquePassives> Picks_GetPassiveSpells()
 		{ 
-			return Picks_GetPassiveSpells_macro(clientId,id);
+			return Picks_GetPassiveSpells_macro(clientId);
 		}
 
 		// Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).
@@ -534,10 +557,52 @@ main
 			return GetEntityById_macro(clientId,entityId);
 		}
 
+		// Utilise l'arme du héros sur l'entité dont l'id est donné.
+		public SpellUseResult UseMyWeapon(int entityId)
+		{ 
+			return UseMyWeapon_macro(clientId,entityId);
+		}
+
+		// Obtient les points de la trajectoire du héros;
+		public List<Vector2> GetMyTrajectory()
+		{ 
+			return GetMyTrajectory_macro(clientId);
+		}
+
+		// Déplace le héros selon la direction donnée. Retourne toujours true.
+		public bool MoveTowards(Vector2 direction)
+		{ 
+			return MoveTowards_macro(clientId,direction);
+		}
+
 		// Obtient les id des spells possédés par le héros.
 		public List<int> GetMySpells()
 		{ 
 			return GetMySpells_macro(clientId);
+		}
+
+		// Effectue une upgrade du spell d'id donné (0 ou 1).
+		public SpellUpgradeResult UpgradeMyActiveSpell(int spellId)
+		{ 
+			return UpgradeMyActiveSpell_macro(clientId,spellId);
+		}
+
+		// Obtient le niveau actuel du spell d'id donné (numéro du spell : 0 ou 1). -1 si le spell n'existe pas.
+		public int GetMyActiveSpellLevel(int spellId)
+		{ 
+			return GetMyActiveSpellLevel_macro(clientId,spellId);
+		}
+
+		// Obtient le niveau actuel du spell passif. -1 si erreur.
+		public int GetMyPassiveSpellLevel()
+		{ 
+			return GetMyPassiveSpellLevel_macro(clientId);
+		}
+
+		// Effectue une upgrade du spell passif du héros.
+		public SpellUpgradeResult UpgradeMyPassiveSpell()
+		{ 
+			return UpgradeMyPassiveSpell_macro(clientId);
 		}
 
 		// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.

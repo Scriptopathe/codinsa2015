@@ -4,7 +4,7 @@
 #include "SpellTargetInfoView.h"
 
 
-class SpellDescriptionView
+class SpellLevelDescriptionView
 {
 
 public: 
@@ -20,7 +20,7 @@ public:
 	std::vector<StateAlterationModelView> OnHitEffects;
 	void serialize(std::ostream& output);
 
-	static SpellDescriptionView deserialize(std::istream& input);
+	static SpellLevelDescriptionView deserialize(std::istream& input);
 private: 
 
 };

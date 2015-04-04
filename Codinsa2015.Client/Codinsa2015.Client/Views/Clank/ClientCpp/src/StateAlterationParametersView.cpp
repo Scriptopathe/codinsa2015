@@ -22,4 +22,7 @@ StateAlterationParametersView StateAlterationParametersView::deserialize(std::is
 	return _obj;
 }
 
+StateAlterationParametersView::StateAlterationParametersView() {
+}
+
 

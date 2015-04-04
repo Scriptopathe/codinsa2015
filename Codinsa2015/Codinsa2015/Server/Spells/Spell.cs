@@ -10,7 +10,7 @@ namespace Codinsa2015.Server.Spells
     /// <summary>
     /// Représente les différents résultats possibles d'utilisation d'un sort.
     /// </summary>
-    [Clank.ViewCreator.Enum("Représente les différents résultats possibles d'utilisation d'un sort.")]
+    [Clank.ViewCreator.Enum("Enumère les différents codes de retour possibles lors de d'utilisation d'un sort.")]
     public enum SpellUseResult
     {
         Success,
@@ -20,6 +20,16 @@ namespace Codinsa2015.Server.Spells
         Silenced,
         Blind,
         OutOfRange,
+        InvalidOperation
+    }
+
+    [Clank.ViewCreator.Enum("Enumère les différents codes de retour possibles lors de l'upgrade d'un sort.")]
+    public enum SpellUpgradeResult
+    {
+        Success,
+        AlreadyMaxLevel,
+        NotEnoughPA,
+        InvalidOperation
     }
 
     /// <summary>
@@ -139,6 +149,30 @@ namespace Codinsa2015.Server.Spells
             return Description.BaseCooldown;
         }
 
+        /// <summary>
+        /// Tente une upgrade du spell.
+        /// </summary>
+        public SpellUpgradeResult Upgrade()
+        {
+            if(!CanUpgrade)
+                return SpellUpgradeResult.AlreadyMaxLevel;
+
+            EntityHero hero = SourceCaster as EntityHero;
+            if(hero != null)
+            {
+                float price = GameServer.GetScene().Constants.ActiveSpells.SpellUpgradeCost[Level];;
+                bool priceOK = hero.PA >= Level * price;
+                if (!priceOK)
+                    return SpellUpgradeResult.NotEnoughPA;
+
+                hero.PA -= price;
+                Level++;
+                return SpellUpgradeResult.Success;
+
+            }
+
+            return SpellUpgradeResult.AlreadyMaxLevel;
+        }
         /// <summary>
         /// Indique si oui ou non ce sort a un effet sur l'entité donné.
         /// </summary>

@@ -19,6 +19,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static SpellCastTargetInfoView deserialize(std::istream& input);
+	SpellCastTargetInfoView();
 private: 
 
 };

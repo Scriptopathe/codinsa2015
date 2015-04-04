@@ -90,6 +90,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static EntityBaseView deserialize(std::istream& input);
+	EntityBaseView();
 private: 
 
 };

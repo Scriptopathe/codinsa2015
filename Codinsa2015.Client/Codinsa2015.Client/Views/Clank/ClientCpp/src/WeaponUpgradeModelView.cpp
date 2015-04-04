@@ -32,4 +32,7 @@ WeaponUpgradeModelView WeaponUpgradeModelView::deserialize(std::istream& input) 
 	return _obj;
 }
 
+WeaponUpgradeModelView::WeaponUpgradeModelView() {
+}
+
 

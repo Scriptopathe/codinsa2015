@@ -32,13 +32,12 @@ namespace Codinsa2015.Views.Client
 		/// <summary>
 		/// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
 		/// </summary>
-		public List<int> Picks_GetActiveSpells(int id)
+		public List<int> Picks_GetActiveSpells()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
 			output.WriteLine(((int)1).ToString());
-			output.WriteLine(((int)id).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -57,13 +56,12 @@ namespace Codinsa2015.Views.Client
 		/// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs
 		/// disponibles.
 		/// </summary>
-		public List<EntityUniquePassives> Picks_GetPassiveSpells(int id)
+		public List<EntityUniquePassives> Picks_GetPassiveSpells()
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
 			output.WriteLine(((int)2).ToString());
-			output.WriteLine(((int)id).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -568,6 +566,67 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
+		/// Utilise l'arme du héros sur l'entité dont l'id est donné.
+		/// </summary>
+		public SpellUseResult UseMyWeapon(int entityId)
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)28).ToString());
+			output.WriteLine(((int)entityId).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			SpellUseResult returnValue = (SpellUseResult)Int32.Parse(input.ReadLine());
+			return (SpellUseResult)returnValue;
+		}
+	
+		/// <summary>
+		/// Obtient les points de la trajectoire du héros;
+		/// </summary>
+		public List<Vector2> GetMyTrajectory()
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)29).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			List<Vector2> returnValue = new List<Vector2>();
+			int returnValue_count = Int32.Parse(input.ReadLine());
+			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+				Vector2 returnValue_e = Vector2.Deserialize(input);
+				returnValue.Add((Vector2)returnValue_e);
+			}
+			return (List<Vector2>)returnValue;
+		}
+	
+		/// <summary>
+		/// Déplace le héros selon la direction donnée. Retourne toujours true.
+		/// </summary>
+		public bool MoveTowards(Vector2 direction)
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)30).ToString());
+			direction.Serialize(output);
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			bool returnValue = Int32.Parse(input.ReadLine()) == 0 ? false : true;
+			return (bool)returnValue;
+		}
+	
+		/// <summary>
 		/// Obtient les id des spells possédés par le héros.
 		/// </summary>
 		public List<int> GetMySpells()
@@ -575,7 +634,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)28).ToString());
+			output.WriteLine(((int)31).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -591,6 +650,81 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
+		/// Effectue une upgrade du spell d'id donné (0 ou 1).
+		/// </summary>
+		public SpellUpgradeResult UpgradeMyActiveSpell(int spellId)
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)32).ToString());
+			output.WriteLine(((int)spellId).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			SpellUpgradeResult returnValue = (SpellUpgradeResult)Int32.Parse(input.ReadLine());
+			return (SpellUpgradeResult)returnValue;
+		}
+	
+		/// <summary>
+		/// Obtient le niveau actuel du spell d'id donné (numéro du spell : 0 ou 1). -1 si le spell n'existe
+		/// pas.
+		/// </summary>
+		public int GetMyActiveSpellLevel(int spellId)
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)33).ToString());
+			output.WriteLine(((int)spellId).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			int returnValue = Int32.Parse(input.ReadLine());
+			return (int)returnValue;
+		}
+	
+		/// <summary>
+		/// Obtient le niveau actuel du spell passif. -1 si erreur.
+		/// </summary>
+		public int GetMyPassiveSpellLevel()
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)34).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			int returnValue = Int32.Parse(input.ReadLine());
+			return (int)returnValue;
+		}
+	
+		/// <summary>
+		/// Effectue une upgrade du spell passif du héros.
+		/// </summary>
+		public SpellUpgradeResult UpgradeMyPassiveSpell()
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)35).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			SpellUpgradeResult returnValue = (SpellUpgradeResult)Int32.Parse(input.ReadLine());
+			return (SpellUpgradeResult)returnValue;
+		}
+	
+		/// <summary>
 		/// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 		/// </summary>
 		public bool UseMySpell(int spellId,SpellCastTargetInfoView target)
@@ -598,7 +732,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)29).ToString());
+			output.WriteLine(((int)36).ToString());
 			output.WriteLine(((int)spellId).ToString());
 			target.Serialize(output);
 			output.Close();
@@ -618,7 +752,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)30).ToString());
+			output.WriteLine(((int)37).ToString());
 			output.WriteLine(((int)spellId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -637,7 +771,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)31).ToString());
+			output.WriteLine(((int)38).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -655,7 +789,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)32).ToString());
+			output.WriteLine(((int)39).ToString());
 			output.WriteLine(((int)spellId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -674,7 +808,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)33).ToString());
+			output.WriteLine(((int)40).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();

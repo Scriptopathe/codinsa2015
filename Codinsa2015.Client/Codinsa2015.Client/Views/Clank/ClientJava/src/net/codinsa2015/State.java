@@ -17,6 +17,8 @@ import net.codinsa2015.EquipmentType.*;
 import net.codinsa2015.WeaponModelView.*;
 import net.codinsa2015.EntityBaseView.*;
 import net.codinsa2015.Vector2.*;
+import net.codinsa2015.SpellUseResult.*;
+import net.codinsa2015.SpellUpgradeResult.*;
 import net.codinsa2015.SpellCastTargetInfoView.*;
 import net.codinsa2015.SpellView.*;
 import net.codinsa2015.SceneMode.*;
@@ -49,14 +51,13 @@ public class State
 	}
 
 	//  Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
-	public ArrayList<Integer> Picks_GetActiveSpells(Integer id)
+	public ArrayList<Integer> Picks_GetActiveSpells()
 	{
 		try {
 		System.out.println("[Picks_GetActiveSpells]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)1).toString() + "\n");
-		output.append(((Integer)id).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -76,14 +77,13 @@ public class State
 
 	//  Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs
 	// disponibles.
-	public ArrayList<EntityUniquePassives> Picks_GetPassiveSpells(Integer id)
+	public ArrayList<EntityUniquePassives> Picks_GetPassiveSpells()
 	{
 		try {
 		System.out.println("[Picks_GetPassiveSpells]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)2).toString() + "\n");
-		output.append(((Integer)id).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -640,6 +640,73 @@ public class State
 		return null;
 	}
 
+	//  Utilise l'arme du héros sur l'entité dont l'id est donné.
+	public SpellUseResult UseMyWeapon(Integer entityId)
+	{
+		try {
+		System.out.println("[UseMyWeapon]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)28).toString() + "\n");
+		output.append(((Integer)entityId).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		SpellUseResult returnValue = SpellUseResult.fromValue(Integer.valueOf(input.readLine()));
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Obtient les points de la trajectoire du héros;
+	public ArrayList<Vector2> GetMyTrajectory()
+	{
+		try {
+		System.out.println("[GetMyTrajectory]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)29).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		ArrayList<Vector2> returnValue = new ArrayList<Vector2>();
+		int returnValue_count = Integer.valueOf(input.readLine());
+		for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+			Vector2 returnValue_e = Vector2.deserialize(input);
+			returnValue.add((Vector2)returnValue_e);
+		}
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Déplace le héros selon la direction donnée. Retourne toujours true.
+	public Boolean MoveTowards(Vector2 direction)
+	{
+		try {
+		System.out.println("[MoveTowards]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)30).toString() + "\n");
+		direction.serialize(output);
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		boolean returnValue = Integer.valueOf(input.readLine()) == 0 ? false : true;
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
 	//  Obtient les id des spells possédés par le héros.
 	public ArrayList<Integer> GetMySpells()
 	{
@@ -647,7 +714,7 @@ public class State
 		System.out.println("[GetMySpells]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)28).toString() + "\n");
+		output.append(((Integer)31).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -665,6 +732,89 @@ public class State
 		return null;
 	}
 
+	//  Effectue une upgrade du spell d'id donné (0 ou 1).
+	public SpellUpgradeResult UpgradeMyActiveSpell(Integer spellId)
+	{
+		try {
+		System.out.println("[UpgradeMyActiveSpell]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)32).toString() + "\n");
+		output.append(((Integer)spellId).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		SpellUpgradeResult returnValue = SpellUpgradeResult.fromValue(Integer.valueOf(input.readLine()));
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Obtient le niveau actuel du spell d'id donné (numéro du spell : 0 ou 1). -1 si le spell n'existe
+	// pas.
+	public Integer GetMyActiveSpellLevel(Integer spellId)
+	{
+		try {
+		System.out.println("[GetMyActiveSpellLevel]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)33).toString() + "\n");
+		output.append(((Integer)spellId).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		int returnValue = Integer.valueOf(input.readLine());
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Obtient le niveau actuel du spell passif. -1 si erreur.
+	public Integer GetMyPassiveSpellLevel()
+	{
+		try {
+		System.out.println("[GetMyPassiveSpellLevel]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)34).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		int returnValue = Integer.valueOf(input.readLine());
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Effectue une upgrade du spell passif du héros.
+	public SpellUpgradeResult UpgradeMyPassiveSpell()
+	{
+		try {
+		System.out.println("[UpgradeMyPassiveSpell]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)35).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		SpellUpgradeResult returnValue = SpellUpgradeResult.fromValue(Integer.valueOf(input.readLine()));
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
 	//  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 	public Boolean UseMySpell(Integer spellId,SpellCastTargetInfoView target)
 	{
@@ -672,7 +822,7 @@ public class State
 		System.out.println("[UseMySpell]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)29).toString() + "\n");
+		output.append(((Integer)36).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		target.serialize(output);
 		output.close();
@@ -694,7 +844,7 @@ public class State
 		System.out.println("[GetMySpell]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)30).toString() + "\n");
+		output.append(((Integer)37).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -715,7 +865,7 @@ public class State
 		System.out.println("[GetMode]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)31).toString() + "\n");
+		output.append(((Integer)38).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -735,7 +885,7 @@ public class State
 		System.out.println("[GetMySpellCurrentLevelDescription]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)32).toString() + "\n");
+		output.append(((Integer)39).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -756,7 +906,7 @@ public class State
 		System.out.println("[GetStaticData]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)33).toString() + "\n");
+		output.append(((Integer)40).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();

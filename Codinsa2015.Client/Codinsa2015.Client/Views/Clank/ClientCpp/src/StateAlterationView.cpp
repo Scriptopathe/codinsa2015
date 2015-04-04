@@ -33,4 +33,7 @@ StateAlterationView StateAlterationView::deserialize(std::istream& input) {
 	return _obj;
 }
 
+StateAlterationView::StateAlterationView() {
+}
+
 

@@ -46,7 +46,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Generation\Languages\CppHLangage.cs" />
+    <Compile Include="Generation\Languages\CppLangageWin.cs" />
     <Compile Include="Generation\Languages\CppLangage.cs" />
+    <Compile Include="Generation\Languages\PythonLangage.cs" />
     <Compile Include="Generation\Languages\YumlLangage.cs" />
     <Compile Include="Generation\Languages\JavaLangage2.cs" />
     <Compile Include="Generation\Languages\ILanguageGenerator.cs" />

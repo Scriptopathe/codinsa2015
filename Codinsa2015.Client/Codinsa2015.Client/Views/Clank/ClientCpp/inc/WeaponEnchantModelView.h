@@ -7,6 +7,8 @@ class WeaponEnchantModelView
 {
 
 public: 
+	// ID unique de l'enchantement.
+	int ID;
 	// Obtient les altértions d'état appliquées à l'impact de l'attaque sur la cible.
 	std::vector<StateAlterationModelView> OnHitEffects;
 	// Obtient les altérations d'état appliquées lors de l'attaque sur le caster.
@@ -16,6 +18,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static WeaponEnchantModelView deserialize(std::istream& input);
+	WeaponEnchantModelView();
 private: 
 
 };

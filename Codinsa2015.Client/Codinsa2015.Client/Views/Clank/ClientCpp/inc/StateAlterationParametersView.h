@@ -16,6 +16,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static StateAlterationParametersView deserialize(std::istream& input);
+	StateAlterationParametersView();
 private: 
 
 };

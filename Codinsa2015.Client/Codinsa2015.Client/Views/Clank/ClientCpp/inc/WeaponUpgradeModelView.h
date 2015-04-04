@@ -17,6 +17,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static WeaponUpgradeModelView deserialize(std::istream& input);
+	WeaponUpgradeModelView();
 private: 
 
 };

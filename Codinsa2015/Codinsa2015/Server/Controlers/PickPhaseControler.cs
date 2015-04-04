@@ -23,8 +23,8 @@ namespace Codinsa2015.Server.Controlers
     /// </summary>
     public class PickPhaseControler
     {
-        const float HumanTimeoutSeconds = 30;
-        const float IATimeoutSeconds = 0.01f;
+        const float HumanTimeoutSeconds = 10;
+        const float IATimeoutSeconds = 1.5f;
 
         #region Variables
         Scene m_scene;

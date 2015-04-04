@@ -26,6 +26,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static GameStaticDataView deserialize(std::istream& input);
+	GameStaticDataView();
 private: 
 
 };

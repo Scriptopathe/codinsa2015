@@ -27,4 +27,7 @@ PassiveEquipmentUpgradeModelView PassiveEquipmentUpgradeModelView::deserialize(s
 	return _obj;
 }
 
+PassiveEquipmentUpgradeModelView::PassiveEquipmentUpgradeModelView() {
+}
+
 

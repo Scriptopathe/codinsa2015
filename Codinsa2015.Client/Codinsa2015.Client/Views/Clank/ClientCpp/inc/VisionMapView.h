@@ -11,6 +11,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static VisionMapView deserialize(std::istream& input);
+	VisionMapView();
 private: 
 
 };

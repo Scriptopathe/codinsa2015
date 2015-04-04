@@ -1,5 +1,7 @@
 #include "../inc/WeaponEnchantModelView.h"
 void WeaponEnchantModelView::serialize(std::ostream& output) {
+	// ID
+	output << ((int)this->ID) << '\n';
 	// OnHitEffects
 	output << this->OnHitEffects.size() << '\n';
 	for(int OnHitEffects_it = 0; OnHitEffects_it < this->OnHitEffects.size(); OnHitEffects_it++) {
@@ -22,6 +24,9 @@ void WeaponEnchantModelView::serialize(std::ostream& output) {
 
 WeaponEnchantModelView WeaponEnchantModelView::deserialize(std::istream& input) {
 	WeaponEnchantModelView _obj = WeaponEnchantModelView();
+	// ID
+	int _obj_ID; input >> _obj_ID; input.ignore(1000, '\n');
+	_obj.ID = (int)_obj_ID;
 	// OnHitEffects
 	std::vector<StateAlterationModelView> _obj_OnHitEffects = std::vector<StateAlterationModelView>();
 	int _obj_OnHitEffects_count; input >> _obj_OnHitEffects_count; input.ignore(1000, '\n');
@@ -50,6 +55,9 @@ WeaponEnchantModelView WeaponEnchantModelView::deserialize(std::istream& input) 
 
 	_obj.PassiveEffects = (::std::vector<StateAlterationModelView>)_obj_PassiveEffects;
 	return _obj;
+}
+
+WeaponEnchantModelView::WeaponEnchantModelView() {
 }
 
 

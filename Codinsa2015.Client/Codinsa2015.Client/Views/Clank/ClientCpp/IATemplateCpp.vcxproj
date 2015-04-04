@@ -117,7 +117,6 @@
     <ClCompile Include="src\PassiveEquipmentUpgradeModelView.cpp" />
     <ClCompile Include="src\SpellcastBaseView.cpp" />
     <ClCompile Include="src\SpellCastTargetInfoView.cpp" />
-    <ClCompile Include="src\SpellDescriptionView.cpp" />
     <ClCompile Include="src\SpellLevelDescriptionView.cpp" />
     <ClCompile Include="src\SpellModelView.cpp" />
     <ClCompile Include="src\SpellTargetInfoView.cpp" />

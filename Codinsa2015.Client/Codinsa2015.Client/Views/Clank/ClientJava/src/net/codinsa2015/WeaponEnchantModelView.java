@@ -17,6 +17,8 @@ public class WeaponEnchantModelView
 {
 
 
+	// ID unique de l'enchantement.
+	public Integer ID;
 	// Obtient les altértions d'état appliquées à l'impact de l'attaque sur la cible.
 	public ArrayList<StateAlterationModelView> OnHitEffects;
 	// Obtient les altérations d'état appliquées lors de l'attaque sur le caster.
@@ -31,6 +33,9 @@ public class WeaponEnchantModelView
 
 	public static WeaponEnchantModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		WeaponEnchantModelView _obj =  new WeaponEnchantModelView();
+		// ID
+		int _obj_ID = Integer.valueOf(input.readLine());
+		_obj.ID = _obj_ID;
 		// OnHitEffects
 		ArrayList<StateAlterationModelView> _obj_OnHitEffects = new ArrayList<StateAlterationModelView>();
 		int _obj_OnHitEffects_count = Integer.valueOf(input.readLine());
@@ -59,6 +64,8 @@ public class WeaponEnchantModelView
 	}
 
 	public void serialize(OutputStreamWriter output) throws UnsupportedEncodingException, IOException {
+		// ID
+		output.append(((Integer)this.ID).toString() + "\n");
 		// OnHitEffects
 		output.append(String.valueOf(this.OnHitEffects.size()) + "\n");
 		for(int OnHitEffects_it = 0; OnHitEffects_it < this.OnHitEffects.size();OnHitEffects_it++) {

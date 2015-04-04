@@ -28,6 +28,8 @@ namespace Codinsa2015.DebugHumanControler
         SceneRenderer m_renderer;
         HumanControler m_controler;
         bool m_spectateMode;
+        Vector2 m_screenSize;
+        int m_port;
         #endregion
 
         #region Properties
@@ -44,16 +46,19 @@ namespace Codinsa2015.DebugHumanControler
         /// <returns></returns>
         static Vector2 GetScreenSize()
         {
-            return new Vector2(1366, 768 + 100);//new Vector2(800, 600 + 100);//new Vector2(1366, 768 + 100);
+            return Instance.m_screenSize; //new Vector2(1366, 768 + 100);//new Vector2(800, 600 + 100);//new Vector2(1366, 768 + 100);
         }
 
-        public GameClient(bool spectateMode=false)
+        public GameClient(Vector2 screenSize, bool spectateMode=false, int port=5000)
         {
+            GameServer.__DEBUG_PORT = port;
             Instance = this;
+            m_screenSize = screenSize;
             m_graphics = new GraphicsDeviceManager(this);
             m_server = new GameServer();
             m_renderer = new SceneRenderer(DataMode.Direct);
             m_spectateMode = spectateMode;
+            m_port = port;
             Content.RootDirectory = "Content";
             m_graphics.PreferredBackBufferWidth = (int)GameClient.GetScreenSize().X;
             m_graphics.PreferredBackBufferHeight = (int)GameClient.GetScreenSize().Y;

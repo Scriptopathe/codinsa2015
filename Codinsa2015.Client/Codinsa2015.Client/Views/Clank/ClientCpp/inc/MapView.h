@@ -11,6 +11,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static MapView deserialize(std::istream& input);
+	MapView();
 private: 
 
 };

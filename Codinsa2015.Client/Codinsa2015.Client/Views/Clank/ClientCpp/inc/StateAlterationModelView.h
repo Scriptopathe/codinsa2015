@@ -52,6 +52,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static StateAlterationModelView deserialize(std::istream& input);
+	StateAlterationModelView();
 private: 
 
 };

@@ -14,6 +14,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static SpellModelView deserialize(std::istream& input);
+	SpellModelView();
 private: 
 
 };

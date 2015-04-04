@@ -109,6 +109,7 @@ namespace Clank.Core.Generation.Languages
 
             builder.AppendLine(GenerateSerializer(declaration));
             builder.AppendLine(GenerateDeserializer(declaration));
+            builder.AppendLine(GenerateConstructor(declaration));
             // Génère les instructions privées.
             //if(privateInstructions.Count > 0)
             //    builder.AppendLine("private: ");
@@ -123,7 +124,30 @@ namespace Clank.Core.Generation.Languages
             return builder.ToString();
         }
 
+        /// <summary>
+        /// Génère un constructeur initialisant tous les champs bien comme il faut.
+        /// </summary>
+        /// <param name="decl"></param>
+        /// <returns></returns>
+        public string GenerateConstructor(ClassDeclaration decl)
+        {
+            StringBuilder b = new StringBuilder();
+            b.AppendLine(decl.Name + "::" + decl.Name + "() {");
+            
+            /*var varDecls = decl.Instructions.Where(inst => inst is VariableDeclarationInstruction).ToList();
 
+            foreach (var vdecl in varDecls)
+            {
+                var d = vdecl as VariableDeclarationInstruction;
+                if (d.Var.Type.BaseType.JType == JSONType.Array || d.Var.Type.BaseType.JType == JSONType.Object)
+                {
+                    b.AppendLine("\t" + d.Var.Name + " = " + GenerateTypeInstanceName(d.Var.Type) + "();");
+                }
+            }*/
+
+            b.AppendLine("}");
+            return b.ToString();
+        }
         #region Deserialization
         /// <summary>
         /// Génère une fonction de désérialisation pour la classe donnée.
@@ -435,7 +459,7 @@ namespace Clank.Core.Generation.Languages
             {
                 builder.AppendLine("\tConsole.WriteLine(\"[" + instruction.Func.Func.Name + "]\");");
             }*/
-            builder.AppendLine("\tstd::ostringstream output = std::ostringstream(std::ios::out);");
+            builder.AppendLine("\tstd::ostringstream output = std::ostringstream();");
             // Sérialise le numéro de la fonction.
             builder.AppendLine(Tools.StringUtils.Indent(GenerateSerializationInstruction(new Variable()
             {

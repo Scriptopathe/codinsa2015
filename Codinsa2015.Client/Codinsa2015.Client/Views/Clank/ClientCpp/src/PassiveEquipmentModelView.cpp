@@ -27,4 +27,7 @@ PassiveEquipmentModelView PassiveEquipmentModelView::deserialize(std::istream& i
 	return _obj;
 }
 
+PassiveEquipmentModelView::PassiveEquipmentModelView() {
+}
+
 

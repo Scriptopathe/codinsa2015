@@ -15,6 +15,10 @@ namespace Codinsa2015.Views.Client
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 	
 		/// <summary>
+		/// ID unique de l'arme.
+		/// </summary>
+		public int ID;	
+		/// <summary>
 		/// Liste des upgrades possibles de l'arme.
 		/// </summary>
 		public List<WeaponUpgradeModelView> Upgrades;	
@@ -28,6 +32,9 @@ namespace Codinsa2015.Views.Client
 
 		public static WeaponModelView Deserialize(System.IO.StreamReader input) {
 			WeaponModelView _obj =  new WeaponModelView();
+			// ID
+			int _obj_ID = Int32.Parse(input.ReadLine());
+			_obj.ID = (int)_obj_ID;
 			// Upgrades
 			List<WeaponUpgradeModelView> _obj_Upgrades = new List<WeaponUpgradeModelView>();
 			int _obj_Upgrades_count = Int32.Parse(input.ReadLine());
@@ -43,6 +50,8 @@ namespace Codinsa2015.Views.Client
 		}
 
 		public void Serialize(System.IO.StreamWriter output) {
+			// ID
+			output.WriteLine(((int)this.ID).ToString());
 			// Upgrades
 			output.WriteLine(this.Upgrades.Count.ToString());
 			for(int Upgrades_it = 0; Upgrades_it < this.Upgrades.Count;Upgrades_it++) {

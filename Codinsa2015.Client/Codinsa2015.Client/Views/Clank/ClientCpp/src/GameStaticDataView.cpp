@@ -87,4 +87,7 @@ GameStaticDataView GameStaticDataView::deserialize(std::istream& input) {
 	return _obj;
 }
 
+GameStaticDataView::GameStaticDataView() {
+}
+
 

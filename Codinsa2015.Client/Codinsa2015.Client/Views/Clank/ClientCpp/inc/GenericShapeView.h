@@ -18,6 +18,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static GenericShapeView deserialize(std::istream& input);
+	GenericShapeView();
 private: 
 
 };

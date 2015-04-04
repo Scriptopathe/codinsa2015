@@ -116,9 +116,6 @@
     <ClCompile Include="src\SpellCastTargetInfoView.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\SpellDescriptionView.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="src\SpellTargetInfoView.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>

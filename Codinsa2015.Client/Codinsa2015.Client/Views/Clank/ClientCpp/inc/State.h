@@ -20,11 +20,11 @@ public:
 	PickAction Picks_NextAction();
 
 	//  Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
-	std::vector<int> Picks_GetActiveSpells(int id);
+	std::vector<int> Picks_GetActiveSpells();
 
 	//  Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells passifs
 	// disponibles.
-	std::vector<EntityUniquePassives> Picks_GetPassiveSpells(int id);
+	std::vector<EntityUniquePassives> Picks_GetPassiveSpells();
 
 	//  Lors de la phase de picks, permet à l'IA de pick un passif donné (si c'est son tour).
 	PickResult Picks_PickPassive(EntityUniquePassives passive);
@@ -105,8 +105,30 @@ public:
 	// refusé)
 	EntityBaseView GetEntityById(int entityId);
 
+	//  Utilise l'arme du héros sur l'entité dont l'id est donné.
+	SpellUseResult UseMyWeapon(int entityId);
+
+	//  Obtient les points de la trajectoire du héros;
+	std::vector<Vector2> GetMyTrajectory();
+
+	//  Déplace le héros selon la direction donnée. Retourne toujours true.
+	bool MoveTowards(Vector2 direction);
+
 	//  Obtient les id des spells possédés par le héros.
 	std::vector<int> GetMySpells();
+
+	//  Effectue une upgrade du spell d'id donné (0 ou 1).
+	SpellUpgradeResult UpgradeMyActiveSpell(int spellId);
+
+	//  Obtient le niveau actuel du spell d'id donné (numéro du spell : 0 ou 1). -1 si le spell n'existe
+	// pas.
+	int GetMyActiveSpellLevel(int spellId);
+
+	//  Obtient le niveau actuel du spell passif. -1 si erreur.
+	int GetMyPassiveSpellLevel();
+
+	//  Effectue une upgrade du spell passif du héros.
+	SpellUpgradeResult UpgradeMyPassiveSpell();
 
 	//  Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 	bool UseMySpell(int spellId,SpellCastTargetInfoView target);
@@ -126,4 +148,5 @@ public:
 	void serialize(std::ostream& output);
 
 	static State deserialize(std::istream& input);
+	State();
 };

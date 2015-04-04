@@ -28,4 +28,7 @@ GenericShapeView GenericShapeView::deserialize(std::istream& input) {
 	return _obj;
 }
 
+GenericShapeView::GenericShapeView() {
+}
+
 

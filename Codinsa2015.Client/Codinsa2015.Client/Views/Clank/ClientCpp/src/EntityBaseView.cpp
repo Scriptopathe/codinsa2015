@@ -205,4 +205,7 @@ EntityBaseView EntityBaseView::deserialize(std::istream& input) {
 	return _obj;
 }
 
+EntityBaseView::EntityBaseView() {
+}
+
 

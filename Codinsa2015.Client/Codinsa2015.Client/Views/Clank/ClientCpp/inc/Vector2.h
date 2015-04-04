@@ -7,8 +7,6 @@ class Vector2
 {
 
 public: 
-	Vector2();
-
 	Vector2(float x, float y);
 
 	float X;
@@ -16,6 +14,7 @@ public:
 	void serialize(std::ostream& output);
 
 	static Vector2 deserialize(std::istream& input);
+	Vector2();
 private: 
 
 };
