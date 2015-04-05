@@ -13,8 +13,16 @@ public enum EntityUniquePassives
 	EntityUniquePassives(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static EntityUniquePassives fromValue(int value) { 
-		EntityUniquePassives val = None;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 0: return None;
+			case 1: return Hunter;
+			case 2: return Rugged;
+			case 4: return Unshakable;
+			case 16: return Strategist;
+			case 32: return Soldier;
+			case 64: return Altruistic;
+			case 65535: return All;
+		}
+		return None;
 	}
 }

@@ -244,11 +244,9 @@ namespace Codinsa2015.Server.Entities
             {
                 Spells.Add(new Spells.BasicSpell(this, Server.Spells.SpellFactory.Meteor())); //new Spells.FireballSpell(this, 4));
                 Spells.Add(new Spells.BasicSpell(this, Server.Spells.SpellFactory.BroForce())); //(new Spells.DashForwardSpell(this));
-                Spells.Add(new Spells.BasicSpell(this, Server.Spells.SpellFactory.Stasis()));
-                Spells.Add(new Spells.BasicSpell(this, Server.Spells.SpellFactory.MaximumGravity()));
+                /*Spells.Add(new Spells.BasicSpell(this, Server.Spells.SpellFactory.Stasis()));
+                Spells.Add(new Spells.BasicSpell(this, Server.Spells.SpellFactory.MaximumGravity()));*/
             }
-            Weapon = new Equip.Weapon(this, Server.Equip.WeaponFactory.Hammer());
-            Weapon.Enchant = Equip.EnchantFactory.Fury();
 
             Type |= EntityType.Player;
             VisionRange = 8;

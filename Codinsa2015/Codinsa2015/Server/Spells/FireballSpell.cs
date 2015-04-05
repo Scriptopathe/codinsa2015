@@ -52,7 +52,7 @@ namespace Codinsa2015.Server.Spells
                     Range = attackRange,
                     Duration = 0.6f,
                     DieOnCollision = true,
-                    Type = TargettingType.Direction
+                    Type = TargettingType.Targetted
                 },
                 BaseCooldown = cooldownBase,
                 CastingTime = 0.01f,

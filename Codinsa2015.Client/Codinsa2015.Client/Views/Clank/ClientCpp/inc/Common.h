@@ -223,6 +223,13 @@ enum class GenericShapeType
 	Rectangle = 1
 };
 
+enum class SignalType
+{
+	ComingToPosition = 0,
+	AttackEntity = 1,
+	DefendEntity = 2
+};
+
 enum class SpellUseResult
 {
 	Success = 0,

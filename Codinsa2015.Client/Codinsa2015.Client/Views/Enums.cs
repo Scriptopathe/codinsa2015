@@ -224,6 +224,13 @@ namespace Codinsa2015.Views.Client
 		Rectangle = 1
 	}
 	
+	public enum SignalType
+	{
+		ComingToPosition = 0,
+		AttackEntity = 1,
+		DefendEntity = 2
+	}
+	
 	public enum SpellUseResult
 	{
 		Success = 0,

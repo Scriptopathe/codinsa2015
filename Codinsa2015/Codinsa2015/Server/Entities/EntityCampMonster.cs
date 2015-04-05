@@ -114,8 +114,8 @@ namespace Codinsa2015.Server.Entities
                 {
                     m_attackSpell.Use(new Spells.SpellCastTargetInfo()
                     {
-                        TargetDirection = m_currentAgro.Position - Position,
-                        Type = Spells.TargettingType.Direction,
+                        TargetId = m_currentAgro.ID,
+                        Type = Spells.TargettingType.Targetted,
                     });
                 }
 

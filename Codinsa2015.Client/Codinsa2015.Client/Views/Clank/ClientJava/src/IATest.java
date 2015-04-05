@@ -5,12 +5,21 @@ import java.util.ArrayList;
 import net.codinsa2015.*;
 
 public class IATest {
-	public static void main(String[] args) throws UnknownHostException, IOException {
+	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
 		TCPHelper.Initialize("127.0.0.1", 5000, "IA Java mdr");
-		
+		Thread.sleep(1000);
 		State state = new State();
-
+		GameStaticDataView data = state.GetStaticData();
+		System.out.println(data.Armors.size());
+		
 		SceneMode mode = state.GetMode();
+		
+		while(mode.getValue() == SceneMode.Pick.getValue())
+			mode = state.GetMode();
+		
+		data = state.GetStaticData();
+		System.out.println(data.RouterPositions.size());
+		state.ShopGetWeapons();
 		System.out.println(mode);
 		ArrayList<Integer> spells = state.GetMySpells();
 		int spellId = 0;

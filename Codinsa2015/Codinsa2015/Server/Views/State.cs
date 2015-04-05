@@ -12,6 +12,15 @@ namespace Codinsa2015.Views
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 		/// <summary>
+		///  Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement. A appeler une
+		/// fois en PickPhase (pour récup les sorts) et une fois en GamePhase (pour récup les données de la
+		/// map)
+		/// </summary>
+		public GameStaticDataView GetStaticData(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetStaticData();
+		}	
+		/// <summary>
 		///  Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
 		/// </summary>
 		public PickAction Picks_NextAction(int clientId)
@@ -57,26 +66,12 @@ namespace Codinsa2015.Views
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopPurchaseItem(equipId);
 		}	
 		/// <summary>
-		///  Achète un consommable d'id donné, et le place dans le slot donné.
-		/// </summary>
-		public ShopTransactionResult ShopPurchaseConsummable(int consummableId, int slot, int clientId)
-		{
-			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopPurchaseConsummable(consummableId,slot);
-		}	
-		/// <summary>
 		///  Vend l'équipement du type passé en paramètre. (vends l'arme si Weapon, l'armure si Armor
 		/// etc...)
 		/// </summary>
 		public ShopTransactionResult ShopSell(EquipmentType equipType, int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopSell(equipType);
-		}	
-		/// <summary>
-		///  Vends un consommable situé dans le slot donné.
-		/// </summary>
-		public ShopTransactionResult ShopSellConsummable(int slot, int clientId)
-		{
-			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopSellConsummable(slot);
 		}	
 		/// <summary>
 		///  Effectue une upgrade d'un équipement indiqué en paramètre.
@@ -112,6 +107,13 @@ namespace Codinsa2015.Views
 		public List<int> ShopGetEnchants(int clientId)
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetEnchants();
+		}	
+		/// <summary>
+		///  Obtient le nombre de Point d'améliorations du héros.
+		/// </summary>
+		public float GetMyPA(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyPA();
 		}	
 		/// <summary>
 		///  Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
@@ -198,6 +200,20 @@ namespace Codinsa2015.Views
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).EndMoveTo();
 		}	
 		/// <summary>
+		///  Obtient une valeur indiquant si votre équipe possède la vision à la position donnée.
+		/// </summary>
+		public bool HasSightAt(Vector2 position, int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).HasSightAt(position);
+		}	
+		/// <summary>
+		///  Obtient une liste des héros morts.
+		/// </summary>
+		public List<EntityBaseView> GetDeadHeroes(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetDeadHeroes();
+		}	
+		/// <summary>
 		///  Retourne la liste des entités en vue
 		/// </summary>
 		public List<EntityBaseView> GetEntitiesInSight(int clientId)
@@ -220,6 +236,13 @@ namespace Codinsa2015.Views
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMyWeapon(entityId);
 		}	
 		/// <summary>
+		///  Obtient l'attack range de l'arme du héros au niveau actuel.
+		/// </summary>
+		public float GetMyAttackRange(int clientId)
+		{
+			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyAttackRange();
+		}	
+		/// <summary>
 		///  Obtient les points de la trajectoire du héros;
 		/// </summary>
 		public List<Vector2> GetMyTrajectory(int clientId)
@@ -227,7 +250,7 @@ namespace Codinsa2015.Views
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyTrajectory();
 		}	
 		/// <summary>
-		///  Déplace le héros selon la direction donnée. Retourne toujours true.
+		///  Déplace le héros selon la direction donnée.
 		/// </summary>
 		public bool MoveTowards(Vector2 direction, int clientId)
 		{
@@ -277,7 +300,7 @@ namespace Codinsa2015.Views
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMySpell(spellId,target);
 		}	
 		/// <summary>
-		///  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		///  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre. (soit 0 soit 1)
 		/// </summary>
 		public SpellView GetMySpell(int spellId, int clientId)
 		{
@@ -297,13 +320,6 @@ namespace Codinsa2015.Views
 		{
 			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMySpellCurrentLevelDescription(spellId);
 		}	
-		/// <summary>
-		///  Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
-		/// </summary>
-		public GameStaticDataView GetStaticData(int clientId)
-		{
-			return Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetStaticData();
-		}	
 		// Génère le code pour la fonction de traitement des messages.
 		public byte[] ProcessRequest(byte[] request, int clientId)
 		{
@@ -317,26 +333,23 @@ namespace Codinsa2015.Views
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				PickAction retValue0 = Picks_NextAction(clientId);
-				output.WriteLine(((int)retValue0).ToString());
+				GameStaticDataView retValue0 = GetStaticData(clientId);
+				retValue0.Serialize(output);
 				output.Close();
 				return s.ToArray();
 			case 1:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<int> retValue1 = Picks_GetActiveSpells(clientId);
-				output.WriteLine(retValue1.Count.ToString());
-				for(int retValue1_it = 0; retValue1_it < retValue1.Count;retValue1_it++) {
-					output.WriteLine(((int)retValue1[retValue1_it]).ToString());
-				}
+				PickAction retValue1 = Picks_NextAction(clientId);
+				output.WriteLine(((int)retValue1).ToString());
 				output.Close();
 				return s.ToArray();
 			case 2:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<EntityUniquePassives> retValue2 = Picks_GetPassiveSpells(clientId);
+				List<int> retValue2 = Picks_GetActiveSpells(clientId);
 				output.WriteLine(retValue2.Count.ToString());
 				for(int retValue2_it = 0; retValue2_it < retValue2.Count;retValue2_it++) {
 					output.WriteLine(((int)retValue2[retValue2_it]).ToString());
@@ -344,20 +357,22 @@ namespace Codinsa2015.Views
 				output.Close();
 				return s.ToArray();
 			case 3:
-				EntityUniquePassives arg3_0 = (EntityUniquePassives)Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				PickResult retValue3 = Picks_PickPassive(arg3_0, clientId);
-				output.WriteLine(((int)retValue3).ToString());
+				List<EntityUniquePassives> retValue3 = Picks_GetPassiveSpells(clientId);
+				output.WriteLine(retValue3.Count.ToString());
+				for(int retValue3_it = 0; retValue3_it < retValue3.Count;retValue3_it++) {
+					output.WriteLine(((int)retValue3[retValue3_it]).ToString());
+				}
 				output.Close();
 				return s.ToArray();
 			case 4:
-				int arg4_0 = Int32.Parse(input.ReadLine());
+				EntityUniquePassives arg4_0 = (EntityUniquePassives)Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				PickResult retValue4 = Picks_PickActive(arg4_0, clientId);
+				PickResult retValue4 = Picks_PickPassive(arg4_0, clientId);
 				output.WriteLine(((int)retValue4).ToString());
 				output.Close();
 				return s.ToArray();
@@ -366,17 +381,16 @@ namespace Codinsa2015.Views
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				ShopTransactionResult retValue5 = ShopPurchaseItem(arg5_0, clientId);
+				PickResult retValue5 = Picks_PickActive(arg5_0, clientId);
 				output.WriteLine(((int)retValue5).ToString());
 				output.Close();
 				return s.ToArray();
 			case 6:
 				int arg6_0 = Int32.Parse(input.ReadLine());
-				int arg6_1 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				ShopTransactionResult retValue6 = ShopPurchaseConsummable(arg6_0, arg6_1, clientId);
+				ShopTransactionResult retValue6 = ShopPurchaseItem(arg6_0, clientId);
 				output.WriteLine(((int)retValue6).ToString());
 				output.Close();
 				return s.ToArray();
@@ -390,31 +404,33 @@ namespace Codinsa2015.Views
 				output.Close();
 				return s.ToArray();
 			case 8:
-				int arg8_0 = Int32.Parse(input.ReadLine());
+				EquipmentType arg8_0 = (EquipmentType)Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				ShopTransactionResult retValue8 = ShopSellConsummable(arg8_0, clientId);
+				ShopTransactionResult retValue8 = ShopUpgrade(arg8_0, clientId);
 				output.WriteLine(((int)retValue8).ToString());
 				output.Close();
 				return s.ToArray();
 			case 9:
-				EquipmentType arg9_0 = (EquipmentType)Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				ShopTransactionResult retValue9 = ShopUpgrade(arg9_0, clientId);
-				output.WriteLine(((int)retValue9).ToString());
+				List<WeaponModelView> retValue9 = ShopGetWeapons(clientId);
+				output.WriteLine(retValue9.Count.ToString());
+				for(int retValue9_it = 0; retValue9_it < retValue9.Count;retValue9_it++) {
+					retValue9[retValue9_it].Serialize(output);
+				}
 				output.Close();
 				return s.ToArray();
 			case 10:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<WeaponModelView> retValue10 = ShopGetWeapons(clientId);
+				List<int> retValue10 = ShopGetArmors(clientId);
 				output.WriteLine(retValue10.Count.ToString());
 				for(int retValue10_it = 0; retValue10_it < retValue10.Count;retValue10_it++) {
-					retValue10[retValue10_it].Serialize(output);
+					output.WriteLine(((int)retValue10[retValue10_it]).ToString());
 				}
 				output.Close();
 				return s.ToArray();
@@ -422,7 +438,7 @@ namespace Codinsa2015.Views
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<int> retValue11 = ShopGetArmors(clientId);
+				List<int> retValue11 = ShopGetBoots(clientId);
 				output.WriteLine(retValue11.Count.ToString());
 				for(int retValue11_it = 0; retValue11_it < retValue11.Count;retValue11_it++) {
 					output.WriteLine(((int)retValue11[retValue11_it]).ToString());
@@ -433,7 +449,7 @@ namespace Codinsa2015.Views
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<int> retValue12 = ShopGetBoots(clientId);
+				List<int> retValue12 = ShopGetEnchants(clientId);
 				output.WriteLine(retValue12.Count.ToString());
 				for(int retValue12_it = 0; retValue12_it < retValue12.Count;retValue12_it++) {
 					output.WriteLine(((int)retValue12[retValue12_it]).ToString());
@@ -444,11 +460,8 @@ namespace Codinsa2015.Views
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<int> retValue13 = ShopGetEnchants(clientId);
-				output.WriteLine(retValue13.Count.ToString());
-				for(int retValue13_it = 0; retValue13_it < retValue13.Count;retValue13_it++) {
-					output.WriteLine(((int)retValue13[retValue13_it]).ToString());
-				}
+				float retValue13 = GetMyPA(clientId);
+				output.WriteLine(((float)retValue13).ToString());
 				output.Close();
 				return s.ToArray();
 			case 14:
@@ -549,141 +562,161 @@ namespace Codinsa2015.Views
 				output.Close();
 				return s.ToArray();
 			case 26:
+				Vector2 arg26_0 = Vector2.Deserialize(input);
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<EntityBaseView> retValue26 = GetEntitiesInSight(clientId);
-				output.WriteLine(retValue26.Count.ToString());
-				for(int retValue26_it = 0; retValue26_it < retValue26.Count;retValue26_it++) {
-					retValue26[retValue26_it].Serialize(output);
-				}
+				bool retValue26 = HasSightAt(arg26_0, clientId);
+				output.WriteLine(retValue26 ? 1 : 0);
 				output.Close();
 				return s.ToArray();
 			case 27:
-				int arg27_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				EntityBaseView retValue27 = GetEntityById(arg27_0, clientId);
-				retValue27.Serialize(output);
-				output.Close();
-				return s.ToArray();
-			case 28:
-				int arg28_0 = Int32.Parse(input.ReadLine());
-				s = new System.IO.MemoryStream();
-				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
-				output.NewLine = "\n";
-				SpellUseResult retValue28 = UseMyWeapon(arg28_0, clientId);
-				output.WriteLine(((int)retValue28).ToString());
-				output.Close();
-				return s.ToArray();
-			case 29:
-				s = new System.IO.MemoryStream();
-				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
-				output.NewLine = "\n";
-				List<Vector2> retValue29 = GetMyTrajectory(clientId);
-				output.WriteLine(retValue29.Count.ToString());
-				for(int retValue29_it = 0; retValue29_it < retValue29.Count;retValue29_it++) {
-					retValue29[retValue29_it].Serialize(output);
+				List<EntityBaseView> retValue27 = GetDeadHeroes(clientId);
+				output.WriteLine(retValue27.Count.ToString());
+				for(int retValue27_it = 0; retValue27_it < retValue27.Count;retValue27_it++) {
+					retValue27[retValue27_it].Serialize(output);
 				}
 				output.Close();
 				return s.ToArray();
-			case 30:
-				Vector2 arg30_0 = Vector2.Deserialize(input);
+			case 28:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				bool retValue30 = MoveTowards(arg30_0, clientId);
-				output.WriteLine(retValue30 ? 1 : 0);
+				List<EntityBaseView> retValue28 = GetEntitiesInSight(clientId);
+				output.WriteLine(retValue28.Count.ToString());
+				for(int retValue28_it = 0; retValue28_it < retValue28.Count;retValue28_it++) {
+					retValue28[retValue28_it].Serialize(output);
+				}
+				output.Close();
+				return s.ToArray();
+			case 29:
+				int arg29_0 = Int32.Parse(input.ReadLine());
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				EntityBaseView retValue29 = GetEntityById(arg29_0, clientId);
+				retValue29.Serialize(output);
+				output.Close();
+				return s.ToArray();
+			case 30:
+				int arg30_0 = Int32.Parse(input.ReadLine());
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				SpellUseResult retValue30 = UseMyWeapon(arg30_0, clientId);
+				output.WriteLine(((int)retValue30).ToString());
 				output.Close();
 				return s.ToArray();
 			case 31:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				List<int> retValue31 = GetMySpells(clientId);
-				output.WriteLine(retValue31.Count.ToString());
-				for(int retValue31_it = 0; retValue31_it < retValue31.Count;retValue31_it++) {
-					output.WriteLine(((int)retValue31[retValue31_it]).ToString());
-				}
+				float retValue31 = GetMyAttackRange(clientId);
+				output.WriteLine(((float)retValue31).ToString());
 				output.Close();
 				return s.ToArray();
 			case 32:
-				int arg32_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SpellUpgradeResult retValue32 = UpgradeMyActiveSpell(arg32_0, clientId);
-				output.WriteLine(((int)retValue32).ToString());
+				List<Vector2> retValue32 = GetMyTrajectory(clientId);
+				output.WriteLine(retValue32.Count.ToString());
+				for(int retValue32_it = 0; retValue32_it < retValue32.Count;retValue32_it++) {
+					retValue32[retValue32_it].Serialize(output);
+				}
 				output.Close();
 				return s.ToArray();
 			case 33:
-				int arg33_0 = Int32.Parse(input.ReadLine());
+				Vector2 arg33_0 = Vector2.Deserialize(input);
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				int retValue33 = GetMyActiveSpellLevel(arg33_0, clientId);
-				output.WriteLine(((int)retValue33).ToString());
+				bool retValue33 = MoveTowards(arg33_0, clientId);
+				output.WriteLine(retValue33 ? 1 : 0);
 				output.Close();
 				return s.ToArray();
 			case 34:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				int retValue34 = GetMyPassiveSpellLevel(clientId);
-				output.WriteLine(((int)retValue34).ToString());
+				List<int> retValue34 = GetMySpells(clientId);
+				output.WriteLine(retValue34.Count.ToString());
+				for(int retValue34_it = 0; retValue34_it < retValue34.Count;retValue34_it++) {
+					output.WriteLine(((int)retValue34[retValue34_it]).ToString());
+				}
 				output.Close();
 				return s.ToArray();
 			case 35:
+				int arg35_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SpellUpgradeResult retValue35 = UpgradeMyPassiveSpell(clientId);
+				SpellUpgradeResult retValue35 = UpgradeMyActiveSpell(arg35_0, clientId);
 				output.WriteLine(((int)retValue35).ToString());
 				output.Close();
 				return s.ToArray();
 			case 36:
 				int arg36_0 = Int32.Parse(input.ReadLine());
-				SpellCastTargetInfoView arg36_1 = SpellCastTargetInfoView.Deserialize(input);
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SpellUseResult retValue36 = UseMySpell(arg36_0, arg36_1, clientId);
+				int retValue36 = GetMyActiveSpellLevel(arg36_0, clientId);
 				output.WriteLine(((int)retValue36).ToString());
 				output.Close();
 				return s.ToArray();
 			case 37:
-				int arg37_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SpellView retValue37 = GetMySpell(arg37_0, clientId);
-				retValue37.Serialize(output);
+				int retValue37 = GetMyPassiveSpellLevel(clientId);
+				output.WriteLine(((int)retValue37).ToString());
 				output.Close();
 				return s.ToArray();
 			case 38:
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SceneMode retValue38 = GetMode(clientId);
+				SpellUpgradeResult retValue38 = UpgradeMyPassiveSpell(clientId);
 				output.WriteLine(((int)retValue38).ToString());
 				output.Close();
 				return s.ToArray();
 			case 39:
 				int arg39_0 = Int32.Parse(input.ReadLine());
+				SpellCastTargetInfoView arg39_1 = SpellCastTargetInfoView.Deserialize(input);
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				SpellLevelDescriptionView retValue39 = GetMySpellCurrentLevelDescription(arg39_0, clientId);
-				retValue39.Serialize(output);
+				SpellUseResult retValue39 = UseMySpell(arg39_0, arg39_1, clientId);
+				output.WriteLine(((int)retValue39).ToString());
 				output.Close();
 				return s.ToArray();
 			case 40:
+				int arg40_0 = Int32.Parse(input.ReadLine());
 				s = new System.IO.MemoryStream();
 				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-				GameStaticDataView retValue40 = GetStaticData(clientId);
+				SpellView retValue40 = GetMySpell(arg40_0, clientId);
 				retValue40.Serialize(output);
+				output.Close();
+				return s.ToArray();
+			case 41:
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				SceneMode retValue41 = GetMode(clientId);
+				output.WriteLine(((int)retValue41).ToString());
+				output.Close();
+				return s.ToArray();
+			case 42:
+				int arg42_0 = Int32.Parse(input.ReadLine());
+				s = new System.IO.MemoryStream();
+				output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+				SpellLevelDescriptionView retValue42 = GetMySpellCurrentLevelDescription(arg42_0, clientId);
+				retValue42.Serialize(output);
 				output.Close();
 				return s.ToArray();
 			}

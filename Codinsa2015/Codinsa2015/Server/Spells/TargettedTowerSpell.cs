@@ -68,8 +68,8 @@ namespace Codinsa2015.Server.Spells
                     {
                         Type = StateAlterationType.AttackDamage,
                         BaseDuration = 0.0f,
-                        FlatValue = 10.0f,
-                        SourcePercentADValue = 10.0f,
+                        FlatValue = 0.0f,
+                        SourcePercentADValue = 1.0f,
                     },
                 }
             }}, "TowerSpell");

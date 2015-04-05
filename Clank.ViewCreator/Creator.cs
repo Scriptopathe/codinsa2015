@@ -310,7 +310,8 @@ namespace Clank.ViewCreator
                 AddFieldAttribute attr = att as AddFieldAttribute;
                 if (attr != null)
                 {
-                    records.Add(new Record(attr.AttrType, attr.AttrName, attr.Comment));
+                    foreach(var f in attr.Fields)
+                        records.Add(new Record(f.AttrType, f.AttrName, f.Comment));
                 }
             }
             

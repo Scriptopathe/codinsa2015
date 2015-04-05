@@ -10,8 +10,13 @@ public enum EquipmentType
 	EquipmentType(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static EquipmentType fromValue(int value) { 
-		EquipmentType val = Consummable;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 0: return Consummable;
+			case 1: return Armor;
+			case 2: return Weapon;
+			case 3: return WeaponEnchant;
+			case 4: return Boots;
+		}
+		return Consummable;
 	}
 }

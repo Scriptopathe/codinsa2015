@@ -9,8 +9,12 @@ public enum DashDirectionType
 	DashDirectionType(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static DashDirectionType fromValue(int value) { 
-		DashDirectionType val = TowardsEntity;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 0: return TowardsEntity;
+			case 1: return Direction;
+			case 2: return TowardsSpellPosition;
+			case 3: return BackwardsCaster;
+		}
+		return TowardsEntity;
 	}
 }

@@ -16,7 +16,8 @@ namespace Codinsa2015.Server.Entities
         /// Si supérieur à 0, représente le temps restant du buff du big boss sur les Virus.
         /// </summary>
         float m_bossBuffTimer;
-        float m_timer;
+        float m_respawnTimer;
+        float m_waveTimer;
         /// <summary>
         /// Intervalle de temps en secondes entre l'apparition de 2 vagues de
         /// Virus.
@@ -51,10 +52,33 @@ namespace Codinsa2015.Server.Entities
         {
             get
             {
-                return m_timer > 0;
+                return m_waveTimer > 0;
             }
         }
 
+        /// <summary>
+        /// Le spawner est immunisé au dégâts si il est désactivé.
+        /// </summary>
+        public override bool IsDamageImmune
+        {
+            get
+            {
+                if (m_respawnTimer > 0)
+                    return true;
+                return base.IsDamageImmune;
+            }
+        }
+
+        /// <summary>
+        /// Désactive le timer.
+        /// </summary>
+        public override void Die()
+        {
+            m_respawnTimer = GameServer.GetScene().Constants.Structures.Spawners.RespawnTimer;
+            m_waveTimer = 0;
+            m_bossBuffTimer = 0;
+            HP = GetMaxHP();
+        }
 
         #endregion
 
@@ -78,9 +102,18 @@ namespace Codinsa2015.Server.Entities
         protected override void DoUpdate(GameTime time)
         {
             base.DoUpdate(time);
-            if(m_timer <= 0)
+
+            // Temps d'attente avant de respawn.
+            if(m_respawnTimer > 0)
             {
-                m_timer = SpawnInterval;
+                m_respawnTimer -= (float)time.ElapsedGameTime.TotalSeconds;
+                return;
+            }
+
+            // Si on doit spawn une vague
+            if(m_waveTimer <= 0)
+            {
+                m_waveTimer = SpawnInterval;
                 float decay = 0;
                 for(int i = 0; i < VirusPerWave; i++)
                 {
@@ -113,7 +146,7 @@ namespace Codinsa2015.Server.Entities
             }
 
             // Décrémente le timer d'apparition des vagues.
-            m_timer -= (float)time.ElapsedGameTime.TotalSeconds;
+            m_waveTimer -= (float)time.ElapsedGameTime.TotalSeconds;
 
             if(m_bossBuffTimer > 0)
                 m_bossBuffTimer -= (float)time.ElapsedGameTime.TotalSeconds;
@@ -128,6 +161,7 @@ namespace Codinsa2015.Server.Entities
         public void BuffVirus(float duration)
         {
             m_bossBuffTimer = duration;
+            m_respawnTimer = 0;
         }
         #endregion
 

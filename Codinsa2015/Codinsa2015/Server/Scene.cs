@@ -261,8 +261,7 @@ namespace Codinsa2015.Server
             // Création de la map.
             Map = new Map();
             Map.Initialize();
-            MapFile loaded = MapFile.FromFile(Ressources.MapFilename);
-            Map.Load(loaded);
+            
             // Création de l'event scheduler.
             EventSheduler = new Scheduler();
 
@@ -280,8 +279,16 @@ namespace Codinsa2015.Server
             // Création du système de récompenses.
             RewardSystem = new RewardSystem(Map.Heroes);
 
-            // Démarre le serveur de commandes.
-            CommandServer.Start();
+            // Chargement de la map.
+            MapFile loaded = MapFile.FromFile(Ressources.MapFilename);
+            Map.Load(loaded);
+
+            if (m_skipPicks)
+            {
+                // Démarre le serveur de commandes.
+                CommandServer.Start();
+            }
+
 
             
             // DEBUG
@@ -426,6 +433,8 @@ namespace Codinsa2015.Server
                     {
                         return kvp.Value.Hero;
                     })).ToList());
+
+            CommandServer.Start();
         }
         /// <summary>
         /// Mets à jour la scène en mode "Pick".
@@ -512,12 +521,11 @@ namespace Codinsa2015.Server
             // Mets à jour l'event scheduler.
             EventSheduler.Update(time);
 
-            // Mise à jour du serveur de commandes.
-            CommandServer_Update();
-
             // Mets à jour la map
             Map.Update(time);
 
+            // Mise à jour du serveur de commandes.
+            CommandServer_Update();
             // Mets à jour les contrôleurs
             lock (ControlerLock)
                 foreach (var kvp in Controlers) { CurrentControler = kvp.Value; kvp.Value.Update(time); }

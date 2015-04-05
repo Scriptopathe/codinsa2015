@@ -12,8 +12,15 @@ public enum VisionFlags
 	VisionFlags(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static VisionFlags fromValue(int value) { 
-		VisionFlags val = None;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 0: return None;
+			case 1: return Team1Vision;
+			case 2: return Team2Vision;
+			case 5: return Team1TrueVision;
+			case 10: return Team2TrueVision;
+			case 17: return Team1WardSight;
+			case 18: return Team2WardSight;
+		}
+		return None;
 	}
 }

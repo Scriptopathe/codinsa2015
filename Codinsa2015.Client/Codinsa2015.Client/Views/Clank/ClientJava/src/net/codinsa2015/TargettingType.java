@@ -8,8 +8,11 @@ public enum TargettingType
 	TargettingType(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static TargettingType fromValue(int value) { 
-		TargettingType val = Targetted;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 1: return Targetted;
+			case 2: return Position;
+			case 4: return Direction;
+		}
+		return Targetted;
 	}
 }

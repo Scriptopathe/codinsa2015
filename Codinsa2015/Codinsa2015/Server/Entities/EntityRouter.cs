@@ -62,9 +62,9 @@ namespace Codinsa2015.Server.Entities
             : base()
         {
             Type = EntityType.Router;
-            LoadEntityConstants(GameServer.GetScene().Constants.Routeres);
-            MaxMoveDistance = GameServer.GetScene().Constants.Routeres.MaxMoveDistance;
-            AttackRange = GameServer.GetScene().Constants.Routeres.AttackRange;
+            LoadEntityConstants(GameServer.GetScene().Constants.Routers);
+            MaxMoveDistance = GameServer.GetScene().Constants.Routers.MaxMoveDistance;
+            AttackRange = GameServer.GetScene().Constants.Routers.AttackRange;
             BaseAttackDamage = 60;
             BaseMagicResist = 40;
             BaseMaxHP = 100;
@@ -100,8 +100,8 @@ namespace Codinsa2015.Server.Entities
                 {
                     m_attackSpell.Use(new Spells.SpellCastTargetInfo()
                     {
-                        TargetDirection = m_currentAgro.Position - Position,
-                        Type = Spells.TargettingType.Direction,
+                        TargetId = m_currentAgro.ID,
+                        Type = Spells.TargettingType.Targetted,
                     });
                 }
 

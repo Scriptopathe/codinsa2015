@@ -73,8 +73,8 @@ namespace Codinsa2015.DebugHumanControler.Components
         /// </summary>
         public void LoadContent()
         {
-            int width = 600;//(int)(GameServer.GetScreenSize().X/2);
-            int screenHeight = 800;
+            int width = (int)GameClient.GetScreenSize().X;
+            int screenHeight = (int)GameClient.GetScreenSize().Y;
             const int h1 = 75;
             const int h2 = 25;
             const int bar = 15;

@@ -8,8 +8,11 @@ public enum ConsummableType
 	ConsummableType(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static ConsummableType fromValue(int value) { 
-		ConsummableType val = Empty;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 0: return Empty;
+			case 1: return Ward;
+			case 2: return Unward;
+		}
+		return Empty;
 	}
 }

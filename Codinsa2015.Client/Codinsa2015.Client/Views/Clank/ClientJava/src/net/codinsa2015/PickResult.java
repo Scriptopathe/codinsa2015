@@ -9,8 +9,12 @@ public enum PickResult
 	PickResult(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static PickResult fromValue(int value) { 
-		PickResult val = Success;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 0: return Success;
+			case 1: return NotYourTurn;
+			case 2: return SpellNotAvailable;
+			case 3: return InvalidOperation;
+		}
+		return Success;
 	}
 }

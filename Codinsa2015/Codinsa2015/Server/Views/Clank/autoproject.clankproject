@@ -16,6 +16,7 @@
     <string>_MapView.clank</string>
     <string>_CircleShapeView.clank</string>
     <string>_GenericShapeView.clank</string>
+    <string>_SignalView.clank</string>
     <string>_SpellcastBaseView.clank</string>
     <string>_SpellView.clank</string>
     <string>_SpellModelView.clank</string>

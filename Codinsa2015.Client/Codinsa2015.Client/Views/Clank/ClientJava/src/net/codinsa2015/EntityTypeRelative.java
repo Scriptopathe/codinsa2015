@@ -42,8 +42,45 @@ public enum EntityTypeRelative
 	EntityTypeRelative(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static EntityTypeRelative fromValue(int value) { 
-		EntityTypeRelative val = Me;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 1: return Me;
+			case 2: return Ally;
+			case 4: return Ennemy;
+			case 8: return Structure;
+			case 24: return Tower;
+			case 26: return AllyTower;
+			case 28: return EnnemyTower;
+			case 72: return Spawner;
+			case 74: return AllySpawner;
+			case 76: return EnnemySpawner;
+			case 136: return Datacenter;
+			case 138: return AllyDatacenter;
+			case 140: return EnnemyDatacenter;
+			case 256: return Monster;
+			case 512: return Virus;
+			case 514: return AllyVirus;
+			case 516: return EnnemyVirus;
+			case 1280: return MiningFarm;
+			case 2304: return Router;
+			case 3544: return AllObjectives;
+			case 3840: return AllTargettableNeutral;
+			case 16384: return Checkpoint;
+			case 16386: return AllyCheckpoint;
+			case 16388: return EnnemyCheckpoint;
+			case 32768: return Player;
+			case 32770: return AllyPlayer;
+			case 32772: return EnnemyPlayer;
+			case 33498: return AllAlly;
+			case 33500: return AllEnnemy;
+			case 65536: return WardPlacement;
+			case 131072: return Ward;
+			case 262144: return Shop;
+			case 524288: return HeroSpawner;
+			case 524290: return AllyHeroSpawner;
+			case 524292: return EnnemyHeroSpawner;
+			case 609752: return AllSaved;
+			case 16777215: return All;
+		}
+		return Me;
 	}
 }

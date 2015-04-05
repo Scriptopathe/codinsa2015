@@ -50,6 +50,9 @@ namespace Codinsa2015.Server
         /// Indique si les évents doivent être initialisés à la prochaine update.
         /// </summary>
         bool m_refreshEvents;
+
+        List<Signals.Signal> m_thisFrameSignals;
+        List<Signals.Signal> m_nextFrameSignals;
         #endregion
 
         #region Events
@@ -135,7 +138,51 @@ namespace Codinsa2015.Server
         
         #endregion
 
-        
+        #region Signals
+        /// <summary>
+        /// Ajoute un signal que recevront les entités une frame + tard.
+        /// </summary>
+        /// <param name="signal"></param>
+        public void AddSignal(Signals.Signal signal)
+        {
+            m_nextFrameSignals.Add(signal);
+        }
+
+        /// <summary>
+        /// Obtient les signaux à destination du héros passé en paramètre.
+        /// </summary>
+        /// <param name="hero"></param>
+        /// <returns></returns>
+        public List<Signals.Signal> GetSignals(Entities.EntityHero hero)
+        {
+            List<Signals.Signal> signals = new List<Signals.Signal>();
+
+            foreach(var signal in m_thisFrameSignals)
+            {
+                if(signal.SourceEntity != hero.ID)
+                {
+                    if(signal.Team == (hero.Type & EntityType.Teams))
+                    {
+                        signals.Add(signal);
+                    }
+                }
+            }
+
+            return signals;
+        }
+
+        /// <summary>
+        /// Mets à jour les signaux.
+        /// </summary>
+        public void UpdateSignals()
+        {
+            var tmp = m_thisFrameSignals;
+            m_thisFrameSignals = m_nextFrameSignals;
+            m_nextFrameSignals = tmp;
+            m_nextFrameSignals.Clear();
+        }
+        #endregion
+
         #region Methods
         /// <summary>
         /// Crée une nouvelle instance de Map.
@@ -146,6 +193,8 @@ namespace Codinsa2015.Server
             m_entitiesAddList = new EntityCollection();
             m_spellcasts = new List<Spellcast>();
             m_events = new Dictionary<EventId, GameEvent>();
+            m_nextFrameSignals = new List<Signals.Signal>();
+            m_thisFrameSignals = new List<Signals.Signal>();
 
             // DEBUG CODE
             m_passability = new bool[50, 50];
@@ -196,6 +245,9 @@ namespace Codinsa2015.Server
         {
             // Mise à jour de la vision.
             Vision.Update(time, Entities);
+
+            // Mets à jour les signaux.
+            UpdateSignals();
 
             // Mise à jour des entités
             List<int> entitiesToDelete = new List<int>();

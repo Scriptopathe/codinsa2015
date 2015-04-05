@@ -17,8 +17,20 @@ public enum ShopTransactionResult
 	ShopTransactionResult(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static ShopTransactionResult fromValue(int value) { 
-		ShopTransactionResult val = ItemDoesNotExist;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 0: return ItemDoesNotExist;
+			case 1: return ItemIsNotAConsummable;
+			case 2: return NoItemToSell;
+			case 3: return NotEnoughMoney;
+			case 4: return NotInShopRange;
+			case 5: return UnavailableItem;
+			case 6: return ProvidedSlotDoesNotExist;
+			case 7: return NoSlotAvailableOnHero;
+			case 8: return EnchantForNoWeapon;
+			case 9: return StackOverflow;
+			case 10: return Success;
+			case 11: return AlreadyMaxLevel;
+		}
+		return ItemDoesNotExist;
 	}
 }

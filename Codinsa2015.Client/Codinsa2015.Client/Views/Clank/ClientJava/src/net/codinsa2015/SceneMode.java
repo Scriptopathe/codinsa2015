@@ -9,8 +9,12 @@ public enum SceneMode
 	SceneMode(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static SceneMode fromValue(int value) { 
-		SceneMode val = Lobby;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 0: return Lobby;
+			case 1: return Pick;
+			case 2: return Game;
+			case 3: return End;
+		}
+		return Lobby;
 	}
 }

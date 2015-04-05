@@ -9,8 +9,12 @@ public enum SpellUpgradeResult
 	SpellUpgradeResult(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static SpellUpgradeResult fromValue(int value) { 
-		SpellUpgradeResult val = Success;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 0: return Success;
+			case 1: return AlreadyMaxLevel;
+			case 2: return NotEnoughPA;
+			case 3: return InvalidOperation;
+		}
+		return Success;
 	}
 }

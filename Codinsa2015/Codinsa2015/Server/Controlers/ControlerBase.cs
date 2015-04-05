@@ -156,6 +156,44 @@ namespace Codinsa2015.Server.Controlers
 
         #region  Game IFACE
         /* --------------------------------------------------------------------------------------
+         * Signals
+         * ------------------------------------------------------------------------------------*/
+        #region Signals
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient la liste de tous les signaux émis par les coéquipiers de ce héros.")]
+        public List<Views.SignalView> GetSignals()
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return new List<Views.SignalView>();
+
+            List<Views.SignalView> view = new List<Views.SignalView>();
+            foreach(var v in GameServer.GetMap().GetSignals(Hero))
+            {
+                view.Add(v.ToView());
+            }
+
+            return view;
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Envoie le signal passé en paramètre aux coéquipiers. (le champ SourceEntity est automatiquement rempli par la fonction)")]
+        public bool SendSignal(Views.SignalView signal)
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return false;
+
+            GameServer.GetMap().AddSignal(new Signals.Signal() 
+                { SourceEntity = Hero.ID, DestinationPosition = ViewToV2(signal.DestinationPosition), DestinationEntity = signal.DestinationEntity });
+
+            return true;
+        }
+
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient l'id du héros contrôlé.")]
+        public int GetMyId()
+        {
+            return Hero.ID;
+        }
+
+        #endregion
+        /* --------------------------------------------------------------------------------------
          * Shop
          * ------------------------------------------------------------------------------------*/
         #region Shop
@@ -163,6 +201,13 @@ namespace Codinsa2015.Server.Controlers
          * Purchase / sell
          * ------------------------------------------------------------------------------------*/
         #region Shop Purchase / sell
+        Entities.EntityShop GetShop()
+        {
+            var entities = GameServer.GetMap().Entities.GetEntitiesByType(
+                Entities.EntityType.Shop | (Hero.Type & Entities.EntityType.Teams));
+            Entities.EntityShop shopEntity = (Entities.EntityShop)entities.First().Value;
+            return shopEntity;
+        }
         /// <summary>
         /// Achète un objet d'id donné au shop.
         /// Les ids peuvent être obtenus via ShopGetWeapons(), ShopGetArmors(), ShopGetBoots() etc...
@@ -173,8 +218,7 @@ namespace Codinsa2015.Server.Controlers
         {
             if (GameServer.GetScene().Mode != SceneMode.Game)
                 return Views.ShopTransactionResult.UnavailableItem;
-            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
-                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+            Entities.EntityShop shopEntity = GetShop();
 
             return (Views.ShopTransactionResult)shopEntity.Shop.Purchase(this.Hero, equipId);
         }
@@ -182,13 +226,12 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Achète un consommable pour le héros donné, et le place dans le slot donné.
         /// </summary>
-        [Clank.ViewCreator.Access(controlerAccessStr, "Achète un consommable d'id donné, et le place dans le slot donné.")]
+        // [Clank.ViewCreator.Access(controlerAccessStr, "Achète un consommable d'id donné, et le place dans le slot donné.")]
         public Views.ShopTransactionResult ShopPurchaseConsummable(int consummableId, int slot)
         {
             if (GameServer.GetScene().Mode != SceneMode.Game)
                 return Views.ShopTransactionResult.UnavailableItem;
-            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
-                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+            Entities.EntityShop shopEntity = GetShop();
 
             return (Views.ShopTransactionResult)shopEntity.Shop.PurchaseConsummable(this.Hero, consummableId, slot);
         }
@@ -201,8 +244,7 @@ namespace Codinsa2015.Server.Controlers
         {
             if (GameServer.GetScene().Mode != SceneMode.Game)
                 return Views.ShopTransactionResult.UnavailableItem;
-            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
-                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+            Entities.EntityShop shopEntity = GetShop();
 
             return (Views.ShopTransactionResult)shopEntity.Shop.Sell(this.Hero, (Equip.EquipmentType)equipType);
         }
@@ -210,13 +252,12 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Vends un consommable situé dans le slot donné.
         /// </summary>
-        [Clank.ViewCreator.Access(controlerAccessStr, "Vends un consommable situé dans le slot donné.")]
+        // [Clank.ViewCreator.Access(controlerAccessStr, "Vends un consommable situé dans le slot donné.")]
         public Views.ShopTransactionResult ShopSellConsummable(int slot)
         {
             if (GameServer.GetScene().Mode != SceneMode.Game)
                 return Views.ShopTransactionResult.UnavailableItem;
-            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
-                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+            Entities.EntityShop shopEntity = GetShop();
 
             return (Views.ShopTransactionResult)shopEntity.Shop.SellConsummable(this.Hero, slot);
         }
@@ -230,8 +271,7 @@ namespace Codinsa2015.Server.Controlers
             if (GameServer.GetScene().Mode != SceneMode.Game)
                 return Views.ShopTransactionResult.UnavailableItem;
 
-            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
-                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+            Entities.EntityShop shopEntity = GetShop();
 
             return (Views.ShopTransactionResult)shopEntity.Shop.UpgradeEquip(Hero, (Equip.EquipmentType)equipType);
         }
@@ -242,8 +282,7 @@ namespace Codinsa2015.Server.Controlers
             if (GameServer.GetScene().Mode != SceneMode.Game)
                 return new List<Views.WeaponModelView>();
 
-            Entities.EntityShop shopEntity = (Entities.EntityShop)GameServer.GetMap().Entities.GetEntitiesByType(
-                Entities.EntityType.Shop & (Hero.Type & Entities.EntityType.Teams)).First().Value;
+            var shopEntity = GetShop();
             
             List<Equip.EquipmentModel> items = shopEntity.Shop.GetWeapons(Hero);
             List<Views.WeaponModelView> views = new List<Views.WeaponModelView>();
@@ -321,6 +360,11 @@ namespace Codinsa2015.Server.Controlers
          * Hero equip
          * ------------------------------------------------------------------------------------*/
         #region Hero equip
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient le nombre de Point d'améliorations du héros.")]
+        public float GetMyPA()
+        {
+            return Hero.PA;
+        }
 
         [Clank.ViewCreator.Access(controlerAccessStr, "Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)")]
         public int GetMyWeaponId()
@@ -471,6 +515,22 @@ namespace Codinsa2015.Server.Controlers
 
         #region Entities / Sight
 
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient une valeur indiquant si votre équipe possède la vision à la position donnée.")]
+        public bool HasSightAt(Views.Vector2 position)
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return false;
+
+            int w = GameServer.GetMap().Passability.GetLength(0);
+            int h = GameServer.GetMap().Passability.GetLength(1);
+
+            if (position.X < 0 || position.Y < 0 || position.X >= w - 1 || position.Y >= h - 1)
+                return false;
+
+            return GameServer.GetMap().Vision.HasVision(Hero.Type, ViewToV2(position));
+        }
+
+
         [Clank.ViewCreator.Access(controlerAccessStr, "Obtient une liste des héros morts.")]
         public List<Views.EntityBaseView> GetDeadHeroes()
         {
@@ -596,6 +656,16 @@ namespace Codinsa2015.Server.Controlers
             return (Views.SpellUseResult)Hero.Weapon.Use(this.Hero, entity);
         }
 
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient l'attack range de l'arme du héros au niveau actuel.")]
+        public float GetMyAttackRange()
+        {
+            if (GameServer.GetScene().Mode != SceneMode.Game)
+                return 0;
+            if (Hero.Weapon == null)
+                return 0;
+
+            return Hero.Weapon.Model.Upgrades[Hero.Weapon.Level].Description.TargetType.Range;
+        }
 
         [Clank.ViewCreator.Access(controlerAccessStr, "Obtient les points de la trajectoire du héros;")]
         public List<Views.Vector2> GetMyTrajectory()
@@ -722,7 +792,7 @@ namespace Codinsa2015.Server.Controlers
         /// <summary>
         /// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
         /// </summary>
-        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.")]
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre. (soit 0 soit 1)")]
         public Views.SpellView GetMySpell(int spellId)
         {
             if (GameServer.GetScene().Mode != SceneMode.Game)
@@ -736,6 +806,8 @@ namespace Codinsa2015.Server.Controlers
 
             return Hero.Spells[spellId].ToView();
         }
+
+
         #endregion
         /// <summary>
         /// Obtient le mode de scène actuel.
@@ -743,7 +815,9 @@ namespace Codinsa2015.Server.Controlers
         [Clank.ViewCreator.Access(controlerAccessStr, "Obtient la phase actuelle du jeu : Pick (=> phase de picks) ou Game (phase de jeu).")]
         public Views.SceneMode GetMode()
         {
-            return (Views.SceneMode)GameServer.GetScene().Mode;
+            var mode = GameServer.GetScene().Mode;
+            var view = (Views.SceneMode)mode;
+            return view;
         }
 
         /// <summary>
@@ -855,7 +929,7 @@ namespace Codinsa2015.Server.Controlers
             view.Passability = passability;
             return view;
         }
-        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.")]
+        [Clank.ViewCreator.Access(controlerAccessStr, "Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement. A appeler une fois en PickPhase (pour récup les sorts) et une fois en GamePhase (pour récup les données de la map)")]
         public Views.GameStaticDataView GetStaticData()
         {
             Views.GameStaticDataView view = new Views.GameStaticDataView();
@@ -864,41 +938,46 @@ namespace Codinsa2015.Server.Controlers
             view.Boots = GetDBBoots();
             view.Enchants = GetDBEnchants();
             view.Spells = GetDBSpells();
-            view.Map = GetMapView();
 
-            // Structures
-            view.Structures = new List<Views.EntityBaseView>();
-            var structures = GameServer.GetMap().Entities.GetEntitiesByType(Entities.EntityType.Structure);
-            foreach(var structure in structures)
+            if (GameServer.GetScene().Mode == SceneMode.Game)
             {
-                view.Structures.Add(EToView(structure.Value));
-            }
+                view.Map = GetMapView();
 
-            // Routeurs
-            view.RouterPositions = new List<Views.Vector2>();
-            var routers = GameServer.GetMap().Entities.GetEntitiesByType(Entities.EntityType.Router);
-            foreach(var router in routers)
-            {
-                view.RouterPositions.Add(V2ToView(router.Value.Position));
-            }
+                // Structures
+                view.Structures = new List<Views.EntityBaseView>();
+                var structures = GameServer.GetMap().Entities.GetEntitiesByType(Entities.EntityType.Structure);
+                foreach (var structure in structures)
+                {
+                    view.Structures.Add(EToView(structure.Value));
+                }
 
-            // Camps
-            var events = GameServer.GetMap().Events;
-            List<Events.EventId> ids = new List<Events.EventId>() { Events.EventId.Camp1, Events.EventId.Camp2, 
+                // Routeurs
+                view.RouterPositions = new List<Views.Vector2>();
+                var entities = GameServer.GetMap().Entities;
+                var routers = GameServer.GetMap().Entities.GetEntitiesByType(Entities.EntityType.Router);
+                foreach (var router in routers)
+                {
+                    view.RouterPositions.Add(V2ToView(router.Value.Position));
+                }
+
+                // Camps
+                var events = GameServer.GetMap().Events;
+                List<Events.EventId> ids = new List<Events.EventId>() { Events.EventId.Camp1, Events.EventId.Camp2, 
                 Events.EventId.Camp3, Events.EventId.Camp4, Events.EventId.Camp5, Events.EventId.Camp6, Events.EventId.Camp7,Events.EventId.Camp1, Events.EventId.Camp8 };
-            view.CampsPositions = new List<Views.Vector2>();
-            foreach(var id in ids)
-            {
-                if (events.ContainsKey(id))
-                    view.CampsPositions.Add(V2ToView(events[id].Position));
-            }
+                view.CampsPositions = new List<Views.Vector2>();
+                foreach (var id in ids)
+                {
+                    if (events.ContainsKey(id))
+                        view.CampsPositions.Add(V2ToView(events[id].Position));
+                }
 
-            // Virus checkpoints
-            var checkpoints = GameServer.GetMap().Entities.GetEntitiesByType(Entities.EntityType.Checkpoint);
-            view.VirusCheckpoints = new List<Views.EntityBaseView>();
-            foreach(var checkpoint in checkpoints)
-            {
-                view.VirusCheckpoints.Add(EToView(checkpoint.Value));
+                // Virus checkpoints
+                var checkpoints = GameServer.GetMap().Entities.GetEntitiesByType(Entities.EntityType.Checkpoint);
+                view.VirusCheckpoints = new List<Views.EntityBaseView>();
+                foreach (var checkpoint in checkpoints)
+                {
+                    view.VirusCheckpoints.Add(EToView(checkpoint.Value));
+                }
             }
             
             return view;

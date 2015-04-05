@@ -26,9 +26,12 @@ namespace Codinsa2015.Server.Entities
     }
     /// <summary>
     /// Classe de base pour les entités in-game.
-    /// 
-    /// 
     /// </summary>
+    /*[Clank.ViewCreator.AddField(new List<Clank.ViewCreator.AddFieldElem>()
+    {
+        new Clank.ViewCreator.AddFieldElem("int", "CheckpointRow", "Pour les checkpoint ou virus : le numéro de la 'lane' du checkpoint."),
+        new Clank.ViewCreator.AddFieldElem("int", "CheckpointID", "Pour les checkpoint : le numéro du checkpoint.")
+    })]*/
     public class EntityBase
     {
         #region Events / Delegate

@@ -11,6 +11,8 @@ state {
 			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
 			string namespace = "Codinsa2015.Views";
 		}
+		//ID unique de l'équipement
+		public int ID;
 		//prix d'achat de l'équipement
 		public float Price;
 		//liste des upgrades de cet équipement.

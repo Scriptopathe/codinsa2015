@@ -40,7 +40,7 @@ namespace Codinsa2015.Server.Entities
         public EntityTower() : base()
         {
             LoadEntityConstants(GameServer.GetScene().Constants.Towers);
-            TowerRange = GameServer.GetScene().Constants.Towers.AttackRange;
+            TowerRange = GameServer.GetScene().Constants.Towers.VisionRange;
             Type |= EntityType.Tower;
             m_attackSpell = new Spells.FireballSpell(this);
         }
@@ -64,8 +64,8 @@ namespace Codinsa2015.Server.Entities
             {
                 m_attackSpell.Use(new Spells.SpellCastTargetInfo()
                 {
-                    TargetDirection = m_currentAgro.Position - Position,
-                    Type = Spells.TargettingType.Direction,
+                    TargetId = m_currentAgro.ID,
+                    Type = Spells.TargettingType.Targetted,
                 });
             }
         }
@@ -74,8 +74,25 @@ namespace Codinsa2015.Server.Entities
         /// </summary>
         void UpdateAggro()
         {
-            EntityCollection entitiesInRange = GameServer.GetMap().Entities.GetAliveEntitiesInRange(this.Position, TowerRange);
+            EntityCollection entitiesInRange = GameServer.GetMap().Entities.GetAliveEntitiesInRange(this.Position, TowerRange).GetEntitiesInSight(Type);
             
+         
+            // Buff d'armure si pas de virus ennemis en vue.
+            EntityType eVirus = EntityTypeConverter.ToAbsolute(EntityTypeRelative.EnnemyVirus, this.Type & (EntityType.Team1 | EntityType.Team2));
+            EntityCollection eViruses = entitiesInRange.GetEntitiesByType(eVirus);
+            var cst = GameServer.GetScene().Constants.Towers;
+            if (eViruses.Count == 0)
+            {
+                BaseArmor = cst.BuffedArmor;
+                BaseMagicResist = cst.BuffedMagicResist;
+            }
+            else
+            {
+                BaseArmor = cst.Armor;
+                BaseMagicResist = cst.MagicResist;
+            }
+            
+
             // Si la cible sort de l'aggro : on annule l'agro.
             if(m_currentAgro != null)
             {

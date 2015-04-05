@@ -25,7 +25,7 @@ namespace Codinsa2015.Server.Entities
         /// Sort d'attaque du boss.
         /// </summary>
         Spells.Spell m_attackSpell;
-
+        Spells.Spell m_attackSpell2;
         /// <summary>
         /// Range d'attaque, en unités métriques.
         /// </summary>
@@ -53,6 +53,7 @@ namespace Codinsa2015.Server.Entities
             AttackRange = VisionRange;
             Type |= EntityType.MiningFarm;
             m_attackSpell = new Spells.FireballSpell(this);
+            
         }
 
         /// <summary>

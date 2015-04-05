@@ -1202,27 +1202,43 @@ namespace Clank.Core.Generation.Languages
 
             // Crée l'enum.
             builder.Append("public enum " + decl.Name + "\n{\n");
+            List<int> keys = new List<int>();
+            StringBuilder b = new StringBuilder();
             foreach (var kvp in decl.Members)
             {
                 string member = kvp.Key;
                 int value = kvp.Value;
-                builder.Append(Tools.StringUtils.Indent(member, 1));
-                builder.Append("(" + value.ToString() + ")");
-                if (kvp.Key != decl.Members.Last().Key)
-                    builder.Append(',');
-                else
-                    builder.Append(';');
-                builder.Append("\n");
-            }
 
+                if (keys.Contains(value))
+                    continue;
+
+                keys.Add(value);
+
+                b.Append(Tools.StringUtils.Indent(member, 1));
+                b.Append("(" + value.ToString() + ")");
+                b.Append(',');
+                b.Append("\n");
+            }
+            string corrected = b.ToString().TrimEnd('\n', ',') + ";";
+            builder.AppendLine(corrected);
             // Ajoute les champs permettant d'utiliser l'enum avec ses valeurs numériques.
             builder.AppendLine("\tint _value;");
             builder.AppendLine("\t" + decl.Name + "(int value) { _value = value; } ");
             builder.AppendLine("\tpublic int getValue() { return _value; }");
             builder.AppendLine("\tpublic static " + decl.Name + " fromValue(int value) { ");
-            builder.AppendLine("\t\t" + decl.Name + " val = " + decl.Members.First().Key + ";");
-            builder.AppendLine("\t\tval._value = value;");
-            builder.AppendLine("\t\treturn val;");
+            builder.AppendLine("\t\tswitch(value) { ");
+           
+            keys.Clear();
+            foreach(var kvp in decl.Members)
+            {
+                if (keys.Contains(kvp.Value))
+                    continue;
+                keys.Add(kvp.Value);
+                builder.AppendLine("\t\t\tcase " + kvp.Value + ": return " + kvp.Key + ";");
+            }
+            builder.AppendLine("\t\t}");
+            builder.AppendLine("\t\treturn " + decl.Members.First().Key + ";");
+
             builder.AppendLine("\t}");
             builder.AppendLine("}");
             return builder.ToString();

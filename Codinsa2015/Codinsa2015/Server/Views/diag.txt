@@ -13,29 +13,33 @@
 [ShopTransactionResult{bg:green}]
 [GenericShapeType{bg:green}]
 [SpellUseResult{bg:green}]
+[SpellUpgradeResult{bg:green}]
 [TargettingType{bg:green}]
 [VisionFlags{bg:green}]
 [SceneMode{bg:green}]
-[Vector2|+X:float;+Y:float;|+new():Vector2;+new(x:float;y:float):Vector2]
-[Vector2{bg:white}]1--1+[Vector2]
+[Vector2|+X:float;+Y:float;|+new(x:float;y:float):Vector2]
 [Vector2{bg:white}]1--1+[Vector2]
 
 
-[GameStaticDataView|+Weapons:List\<WeaponModelView\>;+Armors:List\<PassiveEquipmentModelView\>;+Boots:List\<PassiveEquipmentModelView\>;+Enchants:List\<WeaponEnchantModelView\>;+Spells:List\<SpellModelView\>;+Map:MapView;|]
+[GameStaticDataView|+CampsPositions:List\<Vector2\>;+RouterPositions:List\<Vector2\>;+VirusCheckpoints:List\<EntityBaseView\>;+Weapons:List\<WeaponModelView\>;+Armors:List\<PassiveEquipmentModelView\>;+Boots:List\<PassiveEquipmentModelView\>;+Enchants:List\<WeaponEnchantModelView\>;+Spells:List\<SpellModelView\>;+Structures:List\<EntityBaseView\>;+Map:MapView;|]
+[GameStaticDataView{bg:white}]1--*+[Vector2]
+[GameStaticDataView{bg:white}]1--*+[Vector2]
+[GameStaticDataView{bg:white}]1--*+[EntityBaseView]
 [GameStaticDataView{bg:white}]1--*+[WeaponModelView]
 [GameStaticDataView{bg:white}]1--*+[PassiveEquipmentModelView]
 [GameStaticDataView{bg:white}]1--*+[PassiveEquipmentModelView]
 [GameStaticDataView{bg:white}]1--*+[WeaponEnchantModelView]
 [GameStaticDataView{bg:white}]1--*+[SpellModelView]
+[GameStaticDataView{bg:white}]1--*+[EntityBaseView]
 [GameStaticDataView{bg:white}]1--1+[MapView]
 
 
-[EntityBaseView|+GetMagicResist:float;+GetAbilityPower:float;+GetCooldownReduction:float;+GetMoveSpeed:float;+GetAttackSpeed:float;+GetHPRegen:float;+GetAttackDamage:float;+GetArmor:float;+GetHP:float;+GetMaxHP:float;+UniquePassiveLevel:int;+UniquePassive:EntityUniquePassives;+Role:EntityHeroRole;+BaseArmor:float;+Direction:Vector2;+Position:Vector2;+ShieldPoints:float;+HP:float;+BaseHPRegen:float;+BaseMaxHP:float;+BaseMoveSpeed:float;+IsDead:bool;+Type:EntityType;+ID:int;+BaseAttackDamage:float;+BaseCooldownReduction:float;+BaseAttackSpeed:float;+BaseAbilityPower:float;+BaseMagicResist:float;+IsRooted:bool;+IsSilenced:bool;+IsStuned:bool;+IsDamageImmune:bool;+IsControlImmune:bool;+IsBlind:bool;+IsStealthed:bool;+HasTrueVision:bool;+HasWardVision:bool;+VisionRange:float;|]
+[EntityBaseView|+GetMagicResist:float;+GetAbilityPower:float;+GetCooldownReduction:float;+GetMoveSpeed:float;+GetAttackSpeed:float;+GetHPRegen:float;+GetAttackDamage:float;+GetArmor:float;+GetHP:float;+GetMaxHP:float;+UniquePassiveLevel:int;+UniquePassive:EntityUniquePassives;+Role:EntityHeroRole;+BaseArmor:float;+Direction:Vector2;+Position:Vector2;+ShieldPoints:float;+HP:float;+BaseHPRegen:float;+BaseMaxHP:float;+BaseMoveSpeed:float;+IsDead:bool;+Type:EntityTypeRelative;+ID:int;+BaseAttackDamage:float;+BaseCooldownReduction:float;+BaseAttackSpeed:float;+BaseAbilityPower:float;+BaseMagicResist:float;+IsRooted:bool;+IsSilenced:bool;+IsStuned:bool;+IsDamageImmune:bool;+IsControlImmune:bool;+IsBlind:bool;+IsStealthed:bool;+HasTrueVision:bool;+HasWardVision:bool;+VisionRange:float;|]
 [EntityBaseView{bg:red}]1--1+[EntityUniquePassives]
 [EntityBaseView{bg:red}]1--1+[EntityHeroRole]
 [EntityBaseView{bg:red}]1--1+[Vector2]
 [EntityBaseView{bg:red}]1--1+[Vector2]
-[EntityBaseView{bg:red}]1--1+[EntityType]
+[EntityBaseView{bg:red}]1--1+[EntityTypeRelative]
 
 
 [StateAlterationParametersView|+DashTargetDirection:Vector2;+DashTargetEntity:int;+DashTargetPosition:Vector2;|]
@@ -58,7 +62,7 @@
 [PassiveEquipmentUpgradeModelView{bg:white}]1--*+[StateAlterationModelView]
 
 
-[PassiveEquipmentModelView|+Price:float;+Upgrades:List\<PassiveEquipmentUpgradeModelView\>;|]
+[PassiveEquipmentModelView|+ID:int;+Price:float;+Upgrades:List\<PassiveEquipmentUpgradeModelView\>;|]
 [PassiveEquipmentModelView{bg:white}]1--*+[PassiveEquipmentUpgradeModelView]
 
 
@@ -67,13 +71,13 @@
 [WeaponUpgradeModelView{bg:white}]1--*+[StateAlterationModelView]
 
 
-[WeaponEnchantModelView|+OnHitEffects:List\<StateAlterationModelView\>;+CastingEffects:List\<StateAlterationModelView\>;+PassiveEffects:List\<StateAlterationModelView\>;|]
+[WeaponEnchantModelView|+ID:int;+OnHitEffects:List\<StateAlterationModelView\>;+CastingEffects:List\<StateAlterationModelView\>;+PassiveEffects:List\<StateAlterationModelView\>;|]
 [WeaponEnchantModelView{bg:white}]1--*+[StateAlterationModelView]
 [WeaponEnchantModelView{bg:white}]1--*+[StateAlterationModelView]
 [WeaponEnchantModelView{bg:white}]1--*+[StateAlterationModelView]
 
 
-[WeaponModelView|+Upgrades:List\<WeaponUpgradeModelView\>;+Price:float;|]
+[WeaponModelView|+ID:int;+Upgrades:List\<WeaponUpgradeModelView\>;+Price:float;|]
 [WeaponModelView{bg:white}]1--*+[WeaponUpgradeModelView]
 
 
@@ -123,7 +127,7 @@
 [VisionMapView{bg:white}]1--*+[VisionFlags]
 
 
-[State||+Picks_NextAction(clientId:int):PickAction;+Picks_GetActiveSpells(id:int;clientId:int):List\<int\>;+Picks_GetPassiveSpells(id:int;clientId:int):List\<EntityUniquePassives\>;+Picks_PickPassive(passive:EntityUniquePassives;clientId:int):PickResult;+Picks_PickActive(spell:int;clientId:int):PickResult;+ShopPurchaseItem(equipId:int;clientId:int):ShopTransactionResult;+ShopPurchaseConsummable(consummableId:int;slot:int;clientId:int):ShopTransactionResult;+ShopSell(equipType:EquipmentType;clientId:int):ShopTransactionResult;+ShopSellConsummable(slot:int;clientId:int):ShopTransactionResult;+ShopUpgrade(equipType:EquipmentType;clientId:int):ShopTransactionResult;+ShopGetWeapons(clientId:int):List\<WeaponModelView\>;+ShopGetArmors(clientId:int):List\<int\>;+ShopGetBoots(clientId:int):List\<int\>;+ShopGetEnchants(clientId:int):List\<int\>;+GetMyWeaponId(clientId:int):int;+GetMyWeaponLevel(clientId:int):int;+GetMyArmorId(clientId:int):int;+GetMyArmorLevel(clientId:int):int;+GetMyBootsId(clientId:int):int;+GetMyBootsLevel(clientId:int):int;+GetMyWeaponEnchantId(clientId:int):int;+GetMyHero(clientId:int):EntityBaseView;+GetMyPosition(clientId:int):Vector2;+StartMoveTo(position:Vector2;clientId:int):bool;+IsAutoMoving(clientId:int):bool;+EndMoveTo(clientId:int):bool;+GetEntitiesInSight(clientId:int):List\<EntityBaseView\>;+GetEntityById(entityId:int;clientId:int):EntityBaseView;+GetMySpells(clientId:int):List\<int\>;+UseMySpell(spellId:int;target:SpellCastTargetInfoView;clientId:int):bool;+GetMySpell(spellId:int;clientId:int):SpellView;+GetMode(clientId:int):SceneMode;+GetSpellCurrentLevelDescription(spellId:int;clientId:int):SpellLevelDescriptionView;+GetStaticData(clientId:int):GameStaticDataView]
+[State||+Picks_NextAction(clientId:int):PickAction;+Picks_GetActiveSpells(clientId:int):List\<int\>;+Picks_GetPassiveSpells(clientId:int):List\<EntityUniquePassives\>;+Picks_PickPassive(passive:EntityUniquePassives;clientId:int):PickResult;+Picks_PickActive(spell:int;clientId:int):PickResult;+ShopPurchaseItem(equipId:int;clientId:int):ShopTransactionResult;+ShopPurchaseConsummable(consummableId:int;slot:int;clientId:int):ShopTransactionResult;+ShopSell(equipType:EquipmentType;clientId:int):ShopTransactionResult;+ShopSellConsummable(slot:int;clientId:int):ShopTransactionResult;+ShopUpgrade(equipType:EquipmentType;clientId:int):ShopTransactionResult;+ShopGetWeapons(clientId:int):List\<WeaponModelView\>;+ShopGetArmors(clientId:int):List\<int\>;+ShopGetBoots(clientId:int):List\<int\>;+ShopGetEnchants(clientId:int):List\<int\>;+GetMyWeaponId(clientId:int):int;+GetMyWeaponLevel(clientId:int):int;+GetMyArmorId(clientId:int):int;+GetMyArmorLevel(clientId:int):int;+GetMyBootsId(clientId:int):int;+GetMyBootsLevel(clientId:int):int;+GetMyWeaponEnchantId(clientId:int):int;+GetMyHero(clientId:int):EntityBaseView;+GetMyPosition(clientId:int):Vector2;+StartMoveTo(position:Vector2;clientId:int):bool;+IsAutoMoving(clientId:int):bool;+EndMoveTo(clientId:int):bool;+GetDeadHeroes(clientId:int):List\<EntityBaseView\>;+GetEntitiesInSight(clientId:int):List\<EntityBaseView\>;+GetEntityById(entityId:int;clientId:int):EntityBaseView;+UseMyWeapon(entityId:int;clientId:int):SpellUseResult;+GetMyTrajectory(clientId:int):List\<Vector2\>;+MoveTowards(direction:Vector2;clientId:int):bool;+GetMySpells(clientId:int):List\<int\>;+UpgradeMyActiveSpell(spellId:int;clientId:int):SpellUpgradeResult;+GetMyActiveSpellLevel(spellId:int;clientId:int):int;+GetMyPassiveSpellLevel(clientId:int):int;+UpgradeMyPassiveSpell(clientId:int):SpellUpgradeResult;+UseMySpell(spellId:int;target:SpellCastTargetInfoView;clientId:int):SpellUseResult;+GetMySpell(spellId:int;clientId:int):SpellView;+GetMode(clientId:int):SceneMode;+GetMySpellCurrentLevelDescription(spellId:int;clientId:int):SpellLevelDescriptionView;+GetStaticData(clientId:int):GameStaticDataView]
 [State{bg:blue}]1--1+[PickAction]
 [State{bg:blue}]1--*+[int]
 [State{bg:blue}]1--*+[EntityUniquePassives]
@@ -141,8 +145,14 @@
 [State{bg:blue}]1--1+[EntityBaseView]
 [State{bg:blue}]1--1+[Vector2]
 [State{bg:blue}]1--*+[EntityBaseView]
+[State{bg:blue}]1--*+[EntityBaseView]
 [State{bg:blue}]1--1+[EntityBaseView]
+[State{bg:blue}]1--1+[SpellUseResult]
+[State{bg:blue}]1--*+[Vector2]
 [State{bg:blue}]1--*+[int]
+[State{bg:blue}]1--1+[SpellUpgradeResult]
+[State{bg:blue}]1--1+[SpellUpgradeResult]
+[State{bg:blue}]1--1+[SpellUseResult]
 [State{bg:blue}]1--1+[SpellView]
 [State{bg:blue}]1--1+[SceneMode]
 [State{bg:blue}]1--1+[SpellLevelDescriptionView]

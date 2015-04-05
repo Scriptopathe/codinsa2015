@@ -12,6 +12,26 @@ namespace Codinsa2015.Views.Client
 
 		static Encoding BOMLESS_UTF8 = new UTF8Encoding(false);
 		/// <summary>
+		/// Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement. A appeler une
+		/// fois en PickPhase (pour récup les sorts) et une fois en GamePhase (pour récup les données de la
+		/// map)
+		/// </summary>
+		public GameStaticDataView GetStaticData()
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)0).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			GameStaticDataView returnValue = GameStaticDataView.Deserialize(input);
+			return (GameStaticDataView)returnValue;
+		}
+	
+		/// <summary>
 		/// Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
 		/// </summary>
 		public PickAction Picks_NextAction()
@@ -19,7 +39,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)0).ToString());
+			output.WriteLine(((int)1).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -37,7 +57,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)1).ToString());
+			output.WriteLine(((int)2).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -61,7 +81,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)2).ToString());
+			output.WriteLine(((int)3).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -84,7 +104,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)3).ToString());
+			output.WriteLine(((int)4).ToString());
 			output.WriteLine(((int)passive).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -104,7 +124,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)4).ToString());
+			output.WriteLine(((int)5).ToString());
 			output.WriteLine(((int)spell).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -124,28 +144,8 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)5).ToString());
-			output.WriteLine(((int)equipId).ToString());
-			output.Close();
-			TCPHelper.Send(s.ToArray());
-			byte[] response = TCPHelper.Receive();
-			s = new System.IO.MemoryStream(response);
-			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			ShopTransactionResult returnValue = (ShopTransactionResult)Int32.Parse(input.ReadLine());
-			return (ShopTransactionResult)returnValue;
-		}
-	
-		/// <summary>
-		/// Achète un consommable d'id donné, et le place dans le slot donné.
-		/// </summary>
-		public ShopTransactionResult ShopPurchaseConsummable(int consummableId,int slot)
-		{
-			System.IO.MemoryStream s = new System.IO.MemoryStream();
-			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
-				output.NewLine = "\n";
 			output.WriteLine(((int)6).ToString());
-			output.WriteLine(((int)consummableId).ToString());
-			output.WriteLine(((int)slot).ToString());
+			output.WriteLine(((int)equipId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -176,25 +176,6 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
-		/// Vends un consommable situé dans le slot donné.
-		/// </summary>
-		public ShopTransactionResult ShopSellConsummable(int slot)
-		{
-			System.IO.MemoryStream s = new System.IO.MemoryStream();
-			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
-				output.NewLine = "\n";
-			output.WriteLine(((int)8).ToString());
-			output.WriteLine(((int)slot).ToString());
-			output.Close();
-			TCPHelper.Send(s.ToArray());
-			byte[] response = TCPHelper.Receive();
-			s = new System.IO.MemoryStream(response);
-			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			ShopTransactionResult returnValue = (ShopTransactionResult)Int32.Parse(input.ReadLine());
-			return (ShopTransactionResult)returnValue;
-		}
-	
-		/// <summary>
 		/// Effectue une upgrade d'un équipement indiqué en paramètre.
 		/// </summary>
 		public ShopTransactionResult ShopUpgrade(EquipmentType equipType)
@@ -202,7 +183,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)9).ToString());
+			output.WriteLine(((int)8).ToString());
 			output.WriteLine(((int)equipType).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -221,7 +202,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)10).ToString());
+			output.WriteLine(((int)9).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -244,7 +225,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)11).ToString());
+			output.WriteLine(((int)10).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -267,7 +248,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)12).ToString());
+			output.WriteLine(((int)11).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -290,7 +271,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)13).ToString());
+			output.WriteLine(((int)12).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -303,6 +284,24 @@ namespace Codinsa2015.Views.Client
 				returnValue.Add((int)returnValue_e);
 			}
 			return (List<int>)returnValue;
+		}
+	
+		/// <summary>
+		/// Obtient le nombre de Point d'améliorations du héros.
+		/// </summary>
+		public float GetMyPA()
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)13).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			float returnValue = Single.Parse(input.ReadLine());
+			return (float)returnValue;
 		}
 	
 		/// <summary>
@@ -523,6 +522,48 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
+		/// Obtient une valeur indiquant si votre équipe possède la vision à la position donnée.
+		/// </summary>
+		public bool HasSightAt(Vector2 position)
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)26).ToString());
+			position.Serialize(output);
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			bool returnValue = Int32.Parse(input.ReadLine()) == 0 ? false : true;
+			return (bool)returnValue;
+		}
+	
+		/// <summary>
+		/// Obtient une liste des héros morts.
+		/// </summary>
+		public List<EntityBaseView> GetDeadHeroes()
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)27).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			List<EntityBaseView> returnValue = new List<EntityBaseView>();
+			int returnValue_count = Int32.Parse(input.ReadLine());
+			for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+				EntityBaseView returnValue_e = EntityBaseView.Deserialize(input);
+				returnValue.Add((EntityBaseView)returnValue_e);
+			}
+			return (List<EntityBaseView>)returnValue;
+		}
+	
+		/// <summary>
 		/// Retourne la liste des entités en vue
 		/// </summary>
 		public List<EntityBaseView> GetEntitiesInSight()
@@ -530,7 +571,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)26).ToString());
+			output.WriteLine(((int)28).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -554,7 +595,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)27).ToString());
+			output.WriteLine(((int)29).ToString());
 			output.WriteLine(((int)entityId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -573,7 +614,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)28).ToString());
+			output.WriteLine(((int)30).ToString());
 			output.WriteLine(((int)entityId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -585,6 +626,24 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
+		/// Obtient l'attack range de l'arme du héros au niveau actuel.
+		/// </summary>
+		public float GetMyAttackRange()
+		{
+			System.IO.MemoryStream s = new System.IO.MemoryStream();
+			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
+				output.NewLine = "\n";
+			output.WriteLine(((int)31).ToString());
+			output.Close();
+			TCPHelper.Send(s.ToArray());
+			byte[] response = TCPHelper.Receive();
+			s = new System.IO.MemoryStream(response);
+			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
+			float returnValue = Single.Parse(input.ReadLine());
+			return (float)returnValue;
+		}
+	
+		/// <summary>
 		/// Obtient les points de la trajectoire du héros;
 		/// </summary>
 		public List<Vector2> GetMyTrajectory()
@@ -592,7 +651,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)29).ToString());
+			output.WriteLine(((int)32).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -608,14 +667,14 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
-		/// Déplace le héros selon la direction donnée. Retourne toujours true.
+		/// Déplace le héros selon la direction donnée.
 		/// </summary>
 		public bool MoveTowards(Vector2 direction)
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)30).ToString());
+			output.WriteLine(((int)33).ToString());
 			direction.Serialize(output);
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -634,7 +693,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)31).ToString());
+			output.WriteLine(((int)34).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -657,7 +716,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)32).ToString());
+			output.WriteLine(((int)35).ToString());
 			output.WriteLine(((int)spellId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -677,7 +736,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)33).ToString());
+			output.WriteLine(((int)36).ToString());
 			output.WriteLine(((int)spellId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -696,7 +755,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)34).ToString());
+			output.WriteLine(((int)37).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -714,7 +773,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)35).ToString());
+			output.WriteLine(((int)38).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -732,7 +791,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)36).ToString());
+			output.WriteLine(((int)39).ToString());
 			output.WriteLine(((int)spellId).ToString());
 			target.Serialize(output);
 			output.Close();
@@ -745,14 +804,14 @@ namespace Codinsa2015.Views.Client
 		}
 	
 		/// <summary>
-		/// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		/// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre. (soit 0 soit 1)
 		/// </summary>
 		public SpellView GetMySpell(int spellId)
 		{
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)37).ToString());
+			output.WriteLine(((int)40).ToString());
 			output.WriteLine(((int)spellId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -771,7 +830,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)38).ToString());
+			output.WriteLine(((int)41).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
 			byte[] response = TCPHelper.Receive();
@@ -789,7 +848,7 @@ namespace Codinsa2015.Views.Client
 			System.IO.MemoryStream s = new System.IO.MemoryStream();
 			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
 				output.NewLine = "\n";
-			output.WriteLine(((int)39).ToString());
+			output.WriteLine(((int)42).ToString());
 			output.WriteLine(((int)spellId).ToString());
 			output.Close();
 			TCPHelper.Send(s.ToArray());
@@ -798,24 +857,6 @@ namespace Codinsa2015.Views.Client
 			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
 			SpellLevelDescriptionView returnValue = SpellLevelDescriptionView.Deserialize(input);
 			return (SpellLevelDescriptionView)returnValue;
-		}
-	
-		/// <summary>
-		/// Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
-		/// </summary>
-		public GameStaticDataView GetStaticData()
-		{
-			System.IO.MemoryStream s = new System.IO.MemoryStream();
-			System.IO.StreamWriter output = new System.IO.StreamWriter(s, BOMLESS_UTF8);
-				output.NewLine = "\n";
-			output.WriteLine(((int)40).ToString());
-			output.Close();
-			TCPHelper.Send(s.ToArray());
-			byte[] response = TCPHelper.Receive();
-			s = new System.IO.MemoryStream(response);
-			System.IO.StreamReader input = new System.IO.StreamReader(s, BOMLESS_UTF8);
-			GameStaticDataView returnValue = GameStaticDataView.Deserialize(input);
-			return (GameStaticDataView)returnValue;
 		}
 	
 		public State() {

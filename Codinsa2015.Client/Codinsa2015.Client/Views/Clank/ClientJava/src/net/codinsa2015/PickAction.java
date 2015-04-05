@@ -8,8 +8,11 @@ public enum PickAction
 	PickAction(int value) { _value = value; } 
 	public int getValue() { return _value; }
 	public static PickAction fromValue(int value) { 
-		PickAction val = Wait;
-		val._value = value;
-		return val;
+		switch(value) { 
+			case 0: return Wait;
+			case 1: return PickActive;
+			case 2: return PickPassive;
+		}
+		return Wait;
 	}
 }

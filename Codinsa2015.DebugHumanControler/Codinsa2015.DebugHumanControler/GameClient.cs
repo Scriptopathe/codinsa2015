@@ -44,10 +44,15 @@ namespace Codinsa2015.DebugHumanControler
         /// Obtient la taille de l'écran.
         /// </summary>
         /// <returns></returns>
-        static Vector2 GetScreenSize()
+        public static Vector2 GetScreenSize()
         {
             return Instance.m_screenSize; //new Vector2(1366, 768 + 100);//new Vector2(800, 600 + 100);//new Vector2(1366, 768 + 100);
         }
+
+        /// <summary>
+        /// Obtient la taille de l'écran en pixels.
+        /// </summary>
+        public Vector2 ScreenSize { get { return m_screenSize; } }
 
         public GameClient(Vector2 screenSize, bool spectateMode=false, int port=5000)
         {

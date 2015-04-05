@@ -2,11 +2,28 @@
  * Contient toutes les informations concernant l'état du serveur.
  */
 #include "../inc/State.h"
+//  Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement. A appeler une
+// fois en PickPhase (pour récup les sorts) et une fois en GamePhase (pour récup les données de la
+// map)
+GameStaticDataView State::GetStaticData()
+{
+	std::ostringstream output = std::ostringstream();
+	output << ((int)0) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	GameStaticDataView returnValue = GameStaticDataView::deserialize(input);
+	return (GameStaticDataView)returnValue;
+}
+
+
+
 //  Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
 PickAction State::Picks_NextAction()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)0) << '\n';
+	output << ((int)1) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -22,7 +39,7 @@ PickAction State::Picks_NextAction()
 std::vector<int> State::Picks_GetActiveSpells()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)1) << '\n';
+	output << ((int)2) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -44,7 +61,7 @@ std::vector<int> State::Picks_GetActiveSpells()
 std::vector<EntityUniquePassives> State::Picks_GetPassiveSpells()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)2) << '\n';
+	output << ((int)3) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -66,7 +83,7 @@ std::vector<EntityUniquePassives> State::Picks_GetPassiveSpells()
 PickResult State::Picks_PickPassive(EntityUniquePassives passive)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)3) << '\n';
+	output << ((int)4) << '\n';
 	output << ((int)passive) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -84,7 +101,7 @@ PickResult State::Picks_PickPassive(EntityUniquePassives passive)
 PickResult State::Picks_PickActive(int spell)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)4) << '\n';
+	output << ((int)5) << '\n';
 	output << ((int)spell) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -102,26 +119,8 @@ PickResult State::Picks_PickActive(int spell)
 ShopTransactionResult State::ShopPurchaseItem(int equipId)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)5) << '\n';
-	output << ((int)equipId) << '\n';
-	output.flush();
-	TCPHelper::tcpsend(output);
-	std::istringstream input;
-	TCPHelper::tcpreceive(input);
-	int returnValue_asInt; input >> returnValue_asInt; input.ignore(1000, '\n');
-	ShopTransactionResult returnValue = (ShopTransactionResult)returnValue_asInt;
-	return (ShopTransactionResult)returnValue;
-}
-
-
-
-//  Achète un consommable d'id donné, et le place dans le slot donné.
-ShopTransactionResult State::ShopPurchaseConsummable(int consummableId,int slot)
-{
-	std::ostringstream output = std::ostringstream();
 	output << ((int)6) << '\n';
-	output << ((int)consummableId) << '\n';
-	output << ((int)slot) << '\n';
+	output << ((int)equipId) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -151,28 +150,11 @@ ShopTransactionResult State::ShopSell(EquipmentType equipType)
 
 
 
-//  Vends un consommable situé dans le slot donné.
-ShopTransactionResult State::ShopSellConsummable(int slot)
-{
-	std::ostringstream output = std::ostringstream();
-	output << ((int)8) << '\n';
-	output << ((int)slot) << '\n';
-	output.flush();
-	TCPHelper::tcpsend(output);
-	std::istringstream input;
-	TCPHelper::tcpreceive(input);
-	int returnValue_asInt; input >> returnValue_asInt; input.ignore(1000, '\n');
-	ShopTransactionResult returnValue = (ShopTransactionResult)returnValue_asInt;
-	return (ShopTransactionResult)returnValue;
-}
-
-
-
 //  Effectue une upgrade d'un équipement indiqué en paramètre.
 ShopTransactionResult State::ShopUpgrade(EquipmentType equipType)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)9) << '\n';
+	output << ((int)8) << '\n';
 	output << ((int)equipType) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -189,7 +171,7 @@ ShopTransactionResult State::ShopUpgrade(EquipmentType equipType)
 std::vector<WeaponModelView> State::ShopGetWeapons()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)10) << '\n';
+	output << ((int)9) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -210,7 +192,7 @@ std::vector<WeaponModelView> State::ShopGetWeapons()
 std::vector<int> State::ShopGetArmors()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)11) << '\n';
+	output << ((int)10) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -231,7 +213,7 @@ std::vector<int> State::ShopGetArmors()
 std::vector<int> State::ShopGetBoots()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)12) << '\n';
+	output << ((int)11) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -252,7 +234,7 @@ std::vector<int> State::ShopGetBoots()
 std::vector<int> State::ShopGetEnchants()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)13) << '\n';
+	output << ((int)12) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -265,6 +247,21 @@ std::vector<int> State::ShopGetEnchants()
 	}
 
 	return (std::vector<int>)returnValue;
+}
+
+
+
+//  Obtient le nombre de Point d'améliorations du héros.
+float State::GetMyPA()
+{
+	std::ostringstream output = std::ostringstream();
+	output << ((int)13) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	float returnValue; input >> returnValue; input.ignore(1000, '\n');
+	return (float)returnValue;
 }
 
 
@@ -450,11 +447,48 @@ bool State::EndMoveTo()
 
 
 
+//  Obtient une valeur indiquant si votre équipe possède la vision à la position donnée.
+bool State::HasSightAt(Vector2 position)
+{
+	std::ostringstream output = std::ostringstream();
+	output << ((int)26) << '\n';
+	position.serialize(output);
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	bool returnValue; input >> returnValue; input.ignore(1000, '\n');
+	return (bool)returnValue;
+}
+
+
+
+//  Obtient une liste des héros morts.
+std::vector<EntityBaseView> State::GetDeadHeroes()
+{
+	std::ostringstream output = std::ostringstream();
+	output << ((int)27) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	std::vector<EntityBaseView> returnValue = std::vector<EntityBaseView>();
+	int returnValue_count; input >> returnValue_count; input.ignore(1000, '\n');
+	for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+		EntityBaseView returnValue_e = EntityBaseView::deserialize(input);
+		returnValue.push_back((EntityBaseView)returnValue_e);
+	}
+
+	return (std::vector<EntityBaseView>)returnValue;
+}
+
+
+
 //  Retourne la liste des entités en vue
 std::vector<EntityBaseView> State::GetEntitiesInSight()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)26) << '\n';
+	output << ((int)28) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -476,7 +510,7 @@ std::vector<EntityBaseView> State::GetEntitiesInSight()
 EntityBaseView State::GetEntityById(int entityId)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)27) << '\n';
+	output << ((int)29) << '\n';
 	output << ((int)entityId) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -492,7 +526,7 @@ EntityBaseView State::GetEntityById(int entityId)
 SpellUseResult State::UseMyWeapon(int entityId)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)28) << '\n';
+	output << ((int)30) << '\n';
 	output << ((int)entityId) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -505,11 +539,26 @@ SpellUseResult State::UseMyWeapon(int entityId)
 
 
 
+//  Obtient l'attack range de l'arme du héros au niveau actuel.
+float State::GetMyAttackRange()
+{
+	std::ostringstream output = std::ostringstream();
+	output << ((int)31) << '\n';
+	output.flush();
+	TCPHelper::tcpsend(output);
+	std::istringstream input;
+	TCPHelper::tcpreceive(input);
+	float returnValue; input >> returnValue; input.ignore(1000, '\n');
+	return (float)returnValue;
+}
+
+
+
 //  Obtient les points de la trajectoire du héros;
 std::vector<Vector2> State::GetMyTrajectory()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)29) << '\n';
+	output << ((int)32) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -526,11 +575,11 @@ std::vector<Vector2> State::GetMyTrajectory()
 
 
 
-//  Déplace le héros selon la direction donnée. Retourne toujours true.
+//  Déplace le héros selon la direction donnée.
 bool State::MoveTowards(Vector2 direction)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)30) << '\n';
+	output << ((int)33) << '\n';
 	direction.serialize(output);
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -546,7 +595,7 @@ bool State::MoveTowards(Vector2 direction)
 std::vector<int> State::GetMySpells()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)31) << '\n';
+	output << ((int)34) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -567,7 +616,7 @@ std::vector<int> State::GetMySpells()
 SpellUpgradeResult State::UpgradeMyActiveSpell(int spellId)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)32) << '\n';
+	output << ((int)35) << '\n';
 	output << ((int)spellId) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -585,7 +634,7 @@ SpellUpgradeResult State::UpgradeMyActiveSpell(int spellId)
 int State::GetMyActiveSpellLevel(int spellId)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)33) << '\n';
+	output << ((int)36) << '\n';
 	output << ((int)spellId) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -601,7 +650,7 @@ int State::GetMyActiveSpellLevel(int spellId)
 int State::GetMyPassiveSpellLevel()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)34) << '\n';
+	output << ((int)37) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -616,7 +665,7 @@ int State::GetMyPassiveSpellLevel()
 SpellUpgradeResult State::UpgradeMyPassiveSpell()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)35) << '\n';
+	output << ((int)38) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -632,7 +681,7 @@ SpellUpgradeResult State::UpgradeMyPassiveSpell()
 SpellUseResult State::UseMySpell(int spellId,SpellCastTargetInfoView target)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)36) << '\n';
+	output << ((int)39) << '\n';
 	output << ((int)spellId) << '\n';
 	target.serialize(output);
 	output.flush();
@@ -646,11 +695,11 @@ SpellUseResult State::UseMySpell(int spellId,SpellCastTargetInfoView target)
 
 
 
-//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre. (soit 0 soit 1)
 SpellView State::GetMySpell(int spellId)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)37) << '\n';
+	output << ((int)40) << '\n';
 	output << ((int)spellId) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -666,7 +715,7 @@ SpellView State::GetMySpell(int spellId)
 SceneMode State::GetMode()
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)38) << '\n';
+	output << ((int)41) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
 	std::istringstream input;
@@ -682,7 +731,7 @@ SceneMode State::GetMode()
 SpellLevelDescriptionView State::GetMySpellCurrentLevelDescription(int spellId)
 {
 	std::ostringstream output = std::ostringstream();
-	output << ((int)39) << '\n';
+	output << ((int)42) << '\n';
 	output << ((int)spellId) << '\n';
 	output.flush();
 	TCPHelper::tcpsend(output);
@@ -690,21 +739,6 @@ SpellLevelDescriptionView State::GetMySpellCurrentLevelDescription(int spellId)
 	TCPHelper::tcpreceive(input);
 	SpellLevelDescriptionView returnValue = SpellLevelDescriptionView::deserialize(input);
 	return (SpellLevelDescriptionView)returnValue;
-}
-
-
-
-//  Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
-GameStaticDataView State::GetStaticData()
-{
-	std::ostringstream output = std::ostringstream();
-	output << ((int)40) << '\n';
-	output.flush();
-	TCPHelper::tcpsend(output);
-	std::istringstream input;
-	TCPHelper::tcpreceive(input);
-	GameStaticDataView returnValue = GameStaticDataView::deserialize(input);
-	return (GameStaticDataView)returnValue;
 }
 
 

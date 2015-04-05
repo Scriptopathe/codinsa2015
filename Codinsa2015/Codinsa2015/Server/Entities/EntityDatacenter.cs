@@ -31,7 +31,18 @@ namespace Codinsa2015.Server.Entities
         #endregion
 
         #region Properties
-
+        /// <summary>
+        /// Un datacenter est immunisé aux dégâts si les tours sont toutes mortes.
+        /// </summary>
+        public override bool IsDamageImmune
+        {
+            get
+            {
+                var entities = GameServer.GetMap().Entities.GetEntitiesInSight((Type & EntityType.Teams));
+                entities = entities.GetEntitiesByType(EntityType.Tower);
+                return entities.Count != 0;
+            }
+        }
         #endregion
 
         #region Methods
@@ -41,10 +52,7 @@ namespace Codinsa2015.Server.Entities
         public EntityDatacenter()
             : base()
         {
-            BaseArmor = 80;
-            BaseAttackDamage = 900;
-            BaseMagicResist = 40;
-            BaseMaxHP = 400;
+            LoadEntityConstants(GameServer.GetScene().Constants.DatacenterConstants);
             HP = BaseMaxHP;
             VisionRange = 6.0f;
             AttackRange = VisionRange;

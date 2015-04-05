@@ -17,6 +17,8 @@ public class PassiveEquipmentModelView
 {
 
 
+	// ID unique de l'équipement
+	public Integer ID;
 	// prix d'achat de l'équipement
 	public Float Price;
 	// liste des upgrades de cet équipement.
@@ -27,6 +29,9 @@ public class PassiveEquipmentModelView
 
 	public static PassiveEquipmentModelView deserialize(BufferedReader input) throws UnsupportedEncodingException, IOException {
 		PassiveEquipmentModelView _obj =  new PassiveEquipmentModelView();
+		// ID
+		int _obj_ID = Integer.valueOf(input.readLine());
+		_obj.ID = _obj_ID;
 		// Price
 		float _obj_Price = Float.valueOf(input.readLine());
 		_obj.Price = _obj_Price;
@@ -42,6 +47,8 @@ public class PassiveEquipmentModelView
 	}
 
 	public void serialize(OutputStreamWriter output) throws UnsupportedEncodingException, IOException {
+		// ID
+		output.append(((Integer)this.ID).toString() + "\n");
 		// Price
 		output.append(((Float)this.Price).toString() + "\n");
 		// Upgrades

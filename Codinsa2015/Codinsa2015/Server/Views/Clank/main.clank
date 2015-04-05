@@ -15,6 +15,7 @@ main
 	#include _MapView.clank
 	#include _CircleShapeView.clank
 	#include _GenericShapeView.clank
+	#include _SignalView.clank
 	#include _SpellcastBaseView.clank
 	#include _SpellView.clank
 	#include _SpellModelView.clank
@@ -254,6 +255,13 @@ main
 			Rectangle = 1
 		}
 
+		public enum SignalType
+		{
+			ComingToPosition = 0,
+			AttackEntity = 1,
+			DefendEntity = 2
+		}
+
 		public enum SpellUseResult
 		{
 			Success = 0,
@@ -303,6 +311,8 @@ main
 	}
 	macro
 	{
+		// Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement. A appeler une fois en PickPhase (pour récup les sorts) et une fois en GamePhase (pour récup les données de la map)
+		GameStaticDataView GetStaticData_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetStaticData()"; }
 		// Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
 		PickAction Picks_NextAction_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_NextAction()"; }
 		// Lors de la phase de picks, permet à l'IA d'obtenir la liste des ID des spells actifs disponibles.
@@ -315,12 +325,8 @@ main
 		PickResult Picks_PickActive_macro(int clientId,int spell) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).Picks_PickActive($(spell))"; }
 		// Achète et équipe un objet d'id donné au shop. Les ids peuvent être obtenus via ShopGetWeapons(),ShopGetArmors(), ShopGetBoots() etc...
 		ShopTransactionResult ShopPurchaseItem_macro(int clientId,int equipId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopPurchaseItem($(equipId))"; }
-		// Achète un consommable d'id donné, et le place dans le slot donné.
-		ShopTransactionResult ShopPurchaseConsummable_macro(int clientId,int consummableId,int slot) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopPurchaseConsummable($(consummableId),$(slot))"; }
 		// Vend l'équipement du type passé en paramètre. (vends l'arme si Weapon, l'armure si Armor etc...)
 		ShopTransactionResult ShopSell_macro(int clientId,EquipmentType equipType) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopSell($(equipType))"; }
-		// Vends un consommable situé dans le slot donné.
-		ShopTransactionResult ShopSellConsummable_macro(int clientId,int slot) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopSellConsummable($(slot))"; }
 		// Effectue une upgrade d'un équipement indiqué en paramètre.
 		ShopTransactionResult ShopUpgrade_macro(int clientId,EquipmentType equipType) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopUpgrade($(equipType))"; }
 		// Obtient la liste des modèles d'armes disponibles au shop.
@@ -331,6 +337,8 @@ main
 		List<int> ShopGetBoots_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetBoots()"; }
 		// Obtient la liste des id des enchantements disponibles au shop.
 		List<int> ShopGetEnchants_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).ShopGetEnchants()"; }
+		// Obtient le nombre de Point d'améliorations du héros.
+		float GetMyPA_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyPA()"; }
 		// Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
 		int GetMyWeaponId_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyWeaponId()"; }
 		// Obtient le niveau du modèle d'arme équipé par le héros. (-1 si aucune arme équipée)
@@ -355,15 +363,21 @@ main
 		bool IsAutoMoving_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).IsAutoMoving()"; }
 		// Arrête le déplacement automatique (A*) du joueur.
 		bool EndMoveTo_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).EndMoveTo()"; }
+		// Obtient une valeur indiquant si votre équipe possède la vision à la position donnée.
+		bool HasSightAt_macro(int clientId,Vector2 position) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).HasSightAt($(position))"; }
+		// Obtient une liste des héros morts.
+		List<EntityBaseView> GetDeadHeroes_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetDeadHeroes()"; }
 		// Retourne la liste des entités en vue
 		List<EntityBaseView> GetEntitiesInSight_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntitiesInSight()"; }
 		// Obtient une vue sur l'entité dont l'id est passé en paramètre. (si l'id retourné est -1 : accès refusé)
 		EntityBaseView GetEntityById_macro(int clientId,int entityId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetEntityById($(entityId))"; }
 		// Utilise l'arme du héros sur l'entité dont l'id est donné.
 		SpellUseResult UseMyWeapon_macro(int clientId,int entityId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMyWeapon($(entityId))"; }
+		// Obtient l'attack range de l'arme du héros au niveau actuel.
+		float GetMyAttackRange_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyAttackRange()"; }
 		// Obtient les points de la trajectoire du héros;
 		List<Vector2> GetMyTrajectory_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMyTrajectory()"; }
-		// Déplace le héros selon la direction donnée. Retourne toujours true.
+		// Déplace le héros selon la direction donnée.
 		bool MoveTowards_macro(int clientId,Vector2 direction) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).MoveTowards($(direction))"; }
 		// Obtient les id des spells possédés par le héros.
 		List<int> GetMySpells_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMySpells()"; }
@@ -377,18 +391,22 @@ main
 		SpellUpgradeResult UpgradeMyPassiveSpell_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UpgradeMyPassiveSpell()"; }
 		// Utilise le sort d'id donné. Retourne true si l'action a été effectuée.
 		SpellUseResult UseMySpell_macro(int clientId,int spellId,SpellCastTargetInfoView target) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).UseMySpell($(spellId),$(target))"; }
-		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre. (soit 0 soit 1)
 		SpellView GetMySpell_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMySpell($(spellId))"; }
 		// Obtient la phase actuelle du jeu : Pick (=> phase de picks) ou Game (phase de jeu).
 		SceneMode GetMode_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMode()"; }
 		// Obtient la description du spell dont l'id est donné en paramètre.
 		SpellLevelDescriptionView GetMySpellCurrentLevelDescription_macro(int clientId,int spellId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetMySpellCurrentLevelDescription($(spellId))"; }
-		// Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
-		GameStaticDataView GetStaticData_macro(int clientId) { string cs = "Codinsa2015.Server.GameServer.GetScene().GetControler(clientId).GetStaticData()"; }
 
 	} // macro
 	access
 	{
+		// Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement. A appeler une fois en PickPhase (pour récup les sorts) et une fois en GamePhase (pour récup les données de la map)
+		public GameStaticDataView GetStaticData()
+		{ 
+			return GetStaticData_macro(clientId);
+		}
+
 		// Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
 		public PickAction Picks_NextAction()
 		{ 
@@ -425,22 +443,10 @@ main
 			return ShopPurchaseItem_macro(clientId,equipId);
 		}
 
-		// Achète un consommable d'id donné, et le place dans le slot donné.
-		public ShopTransactionResult ShopPurchaseConsummable(int consummableId,int slot)
-		{ 
-			return ShopPurchaseConsummable_macro(clientId,consummableId,slot);
-		}
-
 		// Vend l'équipement du type passé en paramètre. (vends l'arme si Weapon, l'armure si Armor etc...)
 		public ShopTransactionResult ShopSell(EquipmentType equipType)
 		{ 
 			return ShopSell_macro(clientId,equipType);
-		}
-
-		// Vends un consommable situé dans le slot donné.
-		public ShopTransactionResult ShopSellConsummable(int slot)
-		{ 
-			return ShopSellConsummable_macro(clientId,slot);
 		}
 
 		// Effectue une upgrade d'un équipement indiqué en paramètre.
@@ -471,6 +477,12 @@ main
 		public List<int> ShopGetEnchants()
 		{ 
 			return ShopGetEnchants_macro(clientId);
+		}
+
+		// Obtient le nombre de Point d'améliorations du héros.
+		public float GetMyPA()
+		{ 
+			return GetMyPA_macro(clientId);
 		}
 
 		// Obtient l'id du modèle d'arme équipé par le héros. (-1 si aucun)
@@ -545,6 +557,18 @@ main
 			return EndMoveTo_macro(clientId);
 		}
 
+		// Obtient une valeur indiquant si votre équipe possède la vision à la position donnée.
+		public bool HasSightAt(Vector2 position)
+		{ 
+			return HasSightAt_macro(clientId,position);
+		}
+
+		// Obtient une liste des héros morts.
+		public List<EntityBaseView> GetDeadHeroes()
+		{ 
+			return GetDeadHeroes_macro(clientId);
+		}
+
 		// Retourne la liste des entités en vue
 		public List<EntityBaseView> GetEntitiesInSight()
 		{ 
@@ -563,13 +587,19 @@ main
 			return UseMyWeapon_macro(clientId,entityId);
 		}
 
+		// Obtient l'attack range de l'arme du héros au niveau actuel.
+		public float GetMyAttackRange()
+		{ 
+			return GetMyAttackRange_macro(clientId);
+		}
+
 		// Obtient les points de la trajectoire du héros;
 		public List<Vector2> GetMyTrajectory()
 		{ 
 			return GetMyTrajectory_macro(clientId);
 		}
 
-		// Déplace le héros selon la direction donnée. Retourne toujours true.
+		// Déplace le héros selon la direction donnée.
 		public bool MoveTowards(Vector2 direction)
 		{ 
 			return MoveTowards_macro(clientId,direction);
@@ -611,7 +641,7 @@ main
 			return UseMySpell_macro(clientId,spellId,target);
 		}
 
-		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+		// Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre. (soit 0 soit 1)
 		public SpellView GetMySpell(int spellId)
 		{ 
 			return GetMySpell_macro(clientId,spellId);
@@ -627,12 +657,6 @@ main
 		public SpellLevelDescriptionView GetMySpellCurrentLevelDescription(int spellId)
 		{ 
 			return GetMySpellCurrentLevelDescription_macro(clientId,spellId);
-		}
-
-		// Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
-		public GameStaticDataView GetStaticData()
-		{ 
-			return GetStaticData_macro(clientId);
 		}
 
 

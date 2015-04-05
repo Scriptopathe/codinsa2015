@@ -233,15 +233,18 @@ namespace Codinsa2015.Server
     /// </summary>
     public class TowerConstants : EntityConstants
     {
-        public float AttackRange;
+        public float BuffedArmor;
+        public float BuffedMagicResist;
         public TowerConstants()
         {
             HP = 100;
+            BuffedArmor = 300;
+            BuffedMagicResist = 300;
             Armor = 100;
             MagicResist = 200;
             AttackSpeed = 1.5f;
-            AttackDamage = 150;
-            AttackRange = 8f;
+            AttackDamage = 250;
+            VisionRange = 10;
         }
     }
 
@@ -266,13 +269,14 @@ namespace Codinsa2015.Server
         public float ViruspawnDelay; // délai entre le spawn de 2 Virus.
         public float WavesInterval; // délai entre l'apparition de 2 vagues
         public int Rows;          // nombre de lignes de sbires.
-
+        public float RespawnTimer;
         public SpawnerConstants() : base()
         {
             VirusPerWave = 16;
             WavesInterval = 45.0f;
             ViruspawnDelay = 0.1f;
             Rows = 4;
+            RespawnTimer = 60.0f;
         }
     }
 
@@ -534,9 +538,26 @@ namespace Codinsa2015.Server
 
         public DatacenterConstants()
         {
-            
+            Armor = 80;
+            AttackDamage = 900;
+            MagicResist = 40;
+            HP = 400;
         }
     }
+
+    /// <summary>
+    /// Constantes du mining farm (big boss).
+    /// </summary>
+    public class MiningfarmConstants : EntityConstants
+    {
+
+        public MiningfarmConstants()
+        {
+            HP = 1000;
+        }
+    }
+
+
     /// <summary>
     /// Représente toutes les constantes du jeu.
     /// Elles sont hierarchisées dans d'autres objets, afin que le fichier
@@ -551,7 +572,7 @@ namespace Codinsa2015.Server
         public RoleConstants Roles;
         public RewardConstants Rewards;
         public CampMonsterConstants CampMonsters;
-        public RouterConstants Routeres;
+        public RouterConstants Routers;
         public EventConstants Events;
         public UniquePassiveConstants UniquePassives;
         public ActiveSpellsConstants ActiveSpells;
@@ -559,6 +580,7 @@ namespace Codinsa2015.Server
         public TowerConstants Towers;
         public EquipConstants Equip;
         public DatacenterConstants DatacenterConstants;
+        public MiningfarmConstants MiningFarms;
         /// <summary>
         /// Crée une nouvelle instance de GameConstants avec des constantes par défaut.
         /// </summary>
@@ -571,7 +593,7 @@ namespace Codinsa2015.Server
             Rewards = new RewardConstants();
             Events = new EventConstants();
             CampMonsters = new CampMonsterConstants();
-            Routeres = new RouterConstants();
+            Routers = new RouterConstants();
             BuffedVirus = new VirusConstants();
             UniquePassives = new UniquePassiveConstants();
             ActiveSpells = new ActiveSpellsConstants();
@@ -579,6 +601,7 @@ namespace Codinsa2015.Server
             Heroes = new HeroConstants();
             Towers = new TowerConstants();
             DatacenterConstants = new DatacenterConstants();
+            MiningFarms = new MiningfarmConstants();
         }
 
         /// <summary>

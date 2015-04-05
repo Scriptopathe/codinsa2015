@@ -1,0 +1,21 @@
+// Généré automatiquement (Clank.ViewCreator)
+
+
+state {
+	public serializable class SignalView
+	{
+
+		// Rajoute les statements using et le bon namespace pour la classe state.
+		void getClassMetadata_cs()
+		{
+			string usingStatements = "using Microsoft.Xna.Framework.Graphics;using Microsoft.Xna.Framework;";
+			string namespace = "Codinsa2015.Views";
+		}
+		//id de l'entité émétrice du signal
+		public int SourceEntity;
+		//ID de l'entité que cible le signal (pour les signaux AttackEntity, DefendEntity)
+		public int DestinationEntity;
+		//Position que cible le signal (pour les signaux ComingToPosition)
+		public Vector2 DestinationPosition;
+	}
+}

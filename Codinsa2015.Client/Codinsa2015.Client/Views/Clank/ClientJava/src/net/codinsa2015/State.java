@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import net.codinsa2015.GameStaticDataView.*;
 import net.codinsa2015.PickAction.*;
 import java.util.ArrayList;
 import net.codinsa2015.EntityUniquePassives.*;
@@ -23,12 +24,33 @@ import net.codinsa2015.SpellCastTargetInfoView.*;
 import net.codinsa2015.SpellView.*;
 import net.codinsa2015.SceneMode.*;
 import net.codinsa2015.SpellLevelDescriptionView.*;
-import net.codinsa2015.GameStaticDataView.*;
 
 
 @SuppressWarnings("unused")
 public class State
 {
+
+	//  Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement. A appeler une
+	// fois en PickPhase (pour récup les sorts) et une fois en GamePhase (pour récup les données de la
+	// map)
+	public GameStaticDataView GetStaticData()
+	{
+		try {
+		System.out.println("[GetStaticData]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)0).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		GameStaticDataView returnValue = GameStaticDataView.deserialize(input);
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
 
 	//  Lors de la phase de picks, retourne l'action actuellement attendue de la part de ce héros.
 	public PickAction Picks_NextAction()
@@ -37,7 +59,7 @@ public class State
 		System.out.println("[Picks_NextAction]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)0).toString() + "\n");
+		output.append(((Integer)1).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -57,7 +79,7 @@ public class State
 		System.out.println("[Picks_GetActiveSpells]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)1).toString() + "\n");
+		output.append(((Integer)2).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -83,7 +105,7 @@ public class State
 		System.out.println("[Picks_GetPassiveSpells]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)2).toString() + "\n");
+		output.append(((Integer)3).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -108,7 +130,7 @@ public class State
 		System.out.println("[Picks_PickPassive]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)3).toString() + "\n");
+		output.append(((Integer)4).toString() + "\n");
 		output.append(((Integer)(passive.getValue())).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -130,7 +152,7 @@ public class State
 		System.out.println("[Picks_PickActive]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)4).toString() + "\n");
+		output.append(((Integer)5).toString() + "\n");
 		output.append(((Integer)spell).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -152,30 +174,8 @@ public class State
 		System.out.println("[ShopPurchaseItem]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)5).toString() + "\n");
-		output.append(((Integer)equipId).toString() + "\n");
-		output.close();
-		TCPHelper.Send(s.toByteArray());
-		byte[] response = TCPHelper.Receive();
-		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
-		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		ShopTransactionResult returnValue = ShopTransactionResult.fromValue(Integer.valueOf(input.readLine()));
-		return returnValue;
-		} catch (UnsupportedEncodingException e) { 
-		} catch (IOException e) { }
-		return null;
-	}
-
-	//  Achète un consommable d'id donné, et le place dans le slot donné.
-	public ShopTransactionResult ShopPurchaseConsummable(Integer consummableId,Integer slot)
-	{
-		try {
-		System.out.println("[ShopPurchaseConsummable]");
-		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
 		output.append(((Integer)6).toString() + "\n");
-		output.append(((Integer)consummableId).toString() + "\n");
-		output.append(((Integer)slot).toString() + "\n");
+		output.append(((Integer)equipId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -210,27 +210,6 @@ public class State
 		return null;
 	}
 
-	//  Vends un consommable situé dans le slot donné.
-	public ShopTransactionResult ShopSellConsummable(Integer slot)
-	{
-		try {
-		System.out.println("[ShopSellConsummable]");
-		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)8).toString() + "\n");
-		output.append(((Integer)slot).toString() + "\n");
-		output.close();
-		TCPHelper.Send(s.toByteArray());
-		byte[] response = TCPHelper.Receive();
-		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
-		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		ShopTransactionResult returnValue = ShopTransactionResult.fromValue(Integer.valueOf(input.readLine()));
-		return returnValue;
-		} catch (UnsupportedEncodingException e) { 
-		} catch (IOException e) { }
-		return null;
-	}
-
 	//  Effectue une upgrade d'un équipement indiqué en paramètre.
 	public ShopTransactionResult ShopUpgrade(EquipmentType equipType)
 	{
@@ -238,7 +217,7 @@ public class State
 		System.out.println("[ShopUpgrade]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)9).toString() + "\n");
+		output.append(((Integer)8).toString() + "\n");
 		output.append(((Integer)(equipType.getValue())).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -259,7 +238,7 @@ public class State
 		System.out.println("[ShopGetWeapons]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)10).toString() + "\n");
+		output.append(((Integer)9).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -284,7 +263,7 @@ public class State
 		System.out.println("[ShopGetArmors]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)11).toString() + "\n");
+		output.append(((Integer)10).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -309,7 +288,7 @@ public class State
 		System.out.println("[ShopGetBoots]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)12).toString() + "\n");
+		output.append(((Integer)11).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -334,7 +313,7 @@ public class State
 		System.out.println("[ShopGetEnchants]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)13).toString() + "\n");
+		output.append(((Integer)12).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -346,6 +325,26 @@ public class State
 			int returnValue_e = Integer.valueOf(input.readLine());
 			returnValue.add((Integer)returnValue_e);
 		}
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Obtient le nombre de Point d'améliorations du héros.
+	public Float GetMyPA()
+	{
+		try {
+		System.out.println("[GetMyPA]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)13).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		float returnValue = Float.valueOf(input.readLine());
 		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
 		} catch (IOException e) { }
@@ -593,6 +592,52 @@ public class State
 		return null;
 	}
 
+	//  Obtient une valeur indiquant si votre équipe possède la vision à la position donnée.
+	public Boolean HasSightAt(Vector2 position)
+	{
+		try {
+		System.out.println("[HasSightAt]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)26).toString() + "\n");
+		position.serialize(output);
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		boolean returnValue = Integer.valueOf(input.readLine()) == 0 ? false : true;
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
+	//  Obtient une liste des héros morts.
+	public ArrayList<EntityBaseView> GetDeadHeroes()
+	{
+		try {
+		System.out.println("[GetDeadHeroes]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)27).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		ArrayList<EntityBaseView> returnValue = new ArrayList<EntityBaseView>();
+		int returnValue_count = Integer.valueOf(input.readLine());
+		for(int returnValue_i = 0; returnValue_i < returnValue_count; returnValue_i++) {
+			EntityBaseView returnValue_e = EntityBaseView.deserialize(input);
+			returnValue.add((EntityBaseView)returnValue_e);
+		}
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
 	//  Retourne la liste des entités en vue
 	public ArrayList<EntityBaseView> GetEntitiesInSight()
 	{
@@ -600,7 +645,7 @@ public class State
 		System.out.println("[GetEntitiesInSight]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)26).toString() + "\n");
+		output.append(((Integer)28).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -626,7 +671,7 @@ public class State
 		System.out.println("[GetEntityById]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)27).toString() + "\n");
+		output.append(((Integer)29).toString() + "\n");
 		output.append(((Integer)entityId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -647,7 +692,7 @@ public class State
 		System.out.println("[UseMyWeapon]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)28).toString() + "\n");
+		output.append(((Integer)30).toString() + "\n");
 		output.append(((Integer)entityId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -661,6 +706,26 @@ public class State
 		return null;
 	}
 
+	//  Obtient l'attack range de l'arme du héros au niveau actuel.
+	public Float GetMyAttackRange()
+	{
+		try {
+		System.out.println("[GetMyAttackRange]");
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
+		output.append(((Integer)31).toString() + "\n");
+		output.close();
+		TCPHelper.Send(s.toByteArray());
+		byte[] response = TCPHelper.Receive();
+		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
+		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
+		float returnValue = Float.valueOf(input.readLine());
+		return returnValue;
+		} catch (UnsupportedEncodingException e) { 
+		} catch (IOException e) { }
+		return null;
+	}
+
 	//  Obtient les points de la trajectoire du héros;
 	public ArrayList<Vector2> GetMyTrajectory()
 	{
@@ -668,7 +733,7 @@ public class State
 		System.out.println("[GetMyTrajectory]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)29).toString() + "\n");
+		output.append(((Integer)32).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -686,14 +751,14 @@ public class State
 		return null;
 	}
 
-	//  Déplace le héros selon la direction donnée. Retourne toujours true.
+	//  Déplace le héros selon la direction donnée.
 	public Boolean MoveTowards(Vector2 direction)
 	{
 		try {
 		System.out.println("[MoveTowards]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)30).toString() + "\n");
+		output.append(((Integer)33).toString() + "\n");
 		direction.serialize(output);
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -714,7 +779,7 @@ public class State
 		System.out.println("[GetMySpells]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)31).toString() + "\n");
+		output.append(((Integer)34).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -739,7 +804,7 @@ public class State
 		System.out.println("[UpgradeMyActiveSpell]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)32).toString() + "\n");
+		output.append(((Integer)35).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -761,7 +826,7 @@ public class State
 		System.out.println("[GetMyActiveSpellLevel]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)33).toString() + "\n");
+		output.append(((Integer)36).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -782,7 +847,7 @@ public class State
 		System.out.println("[GetMyPassiveSpellLevel]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)34).toString() + "\n");
+		output.append(((Integer)37).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -802,7 +867,7 @@ public class State
 		System.out.println("[UpgradeMyPassiveSpell]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)35).toString() + "\n");
+		output.append(((Integer)38).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -822,7 +887,7 @@ public class State
 		System.out.println("[UseMySpell]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)36).toString() + "\n");
+		output.append(((Integer)39).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		target.serialize(output);
 		output.close();
@@ -837,14 +902,14 @@ public class State
 		return null;
 	}
 
-	//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre.
+	//  Obtient une vue sur le spell du héros contrôlé dont l'id est passé en paramètre. (soit 0 soit 1)
 	public SpellView GetMySpell(Integer spellId)
 	{
 		try {
 		System.out.println("[GetMySpell]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)37).toString() + "\n");
+		output.append(((Integer)40).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -865,7 +930,7 @@ public class State
 		System.out.println("[GetMode]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)38).toString() + "\n");
+		output.append(((Integer)41).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
 		byte[] response = TCPHelper.Receive();
@@ -885,7 +950,7 @@ public class State
 		System.out.println("[GetMySpellCurrentLevelDescription]");
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)39).toString() + "\n");
+		output.append(((Integer)42).toString() + "\n");
 		output.append(((Integer)spellId).toString() + "\n");
 		output.close();
 		TCPHelper.Send(s.toByteArray());
@@ -893,26 +958,6 @@ public class State
 		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
 		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
 		SpellLevelDescriptionView returnValue = SpellLevelDescriptionView.deserialize(input);
-		return returnValue;
-		} catch (UnsupportedEncodingException e) { 
-		} catch (IOException e) { }
-		return null;
-	}
-
-	//  Obtient toutes les données du jeu qui ne vont pas varier lors de son déroulement.
-	public GameStaticDataView GetStaticData()
-	{
-		try {
-		System.out.println("[GetStaticData]");
-		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputStreamWriter output = new OutputStreamWriter(s, "UTF-8");
-		output.append(((Integer)40).toString() + "\n");
-		output.close();
-		TCPHelper.Send(s.toByteArray());
-		byte[] response = TCPHelper.Receive();
-		ByteArrayInputStream s2 = new ByteArrayInputStream(response);
-		BufferedReader input = new BufferedReader(new InputStreamReader(s2, "UTF-8"));
-		GameStaticDataView returnValue = GameStaticDataView.deserialize(input);
 		return returnValue;
 		} catch (UnsupportedEncodingException e) { 
 		} catch (IOException e) { }
